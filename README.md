@@ -1,0 +1,2 @@
+mackerel-agent-plugins
+======================
