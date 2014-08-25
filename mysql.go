@@ -12,47 +12,57 @@ import (
 )
 
 var graphdef map[string](mp.Graphs) = map[string](mp.Graphs){
-	"mysql.connections": mp.Graphs{
-		Label: "MySQL Connections",
-		Unit:  "integer",
-		Metrics: [](mp.Metrics){
-			mp.Metrics{Key: "curr_connections", Label: "Connections", Diff: false},
-		},
-	},
 	"mysql.cmd": mp.Graphs{
 		Label: "MySQL Command",
 		Unit:  "integer",
 		Metrics: [](mp.Metrics){
-			mp.Metrics{Key: "Com_insert", Label: "Insert", Diff: true},
-			mp.Metrics{Key: "Com_select", Label: "Select", Diff: true},
-			mp.Metrics{Key: "Com_update", Label: "Update", Diff: true},
-			mp.Metrics{Key: "Com_update_multi", Label: "Update Multi", Diff: true},
-			mp.Metrics{Key: "Com_delete", Label: "Delete", Diff: true},
-			mp.Metrics{Key: "Com_delete_multi", Label: "Delete Multi", Diff: true},
-			mp.Metrics{Key: "Com_replace", Label: "Replace", Diff: true},
-			mp.Metrics{Key: "Com_set_option", Label: "Set Option", Diff: true},
-			mp.Metrics{Key: "Qcache_hits", Label: "Query Cache Hits", Diff: true},
-			mp.Metrics{Key: "Questions", Label: "Questions", Diff: true},
+			mp.Metrics{Key: "Com_insert", Label: "Insert", Diff: true, Stacked: true},
+			mp.Metrics{Key: "Com_select", Label: "Select", Diff: true, Stacked: true},
+			mp.Metrics{Key: "Com_update", Label: "Update", Diff: true, Stacked: true},
+			mp.Metrics{Key: "Com_update_multi", Label: "Update Multi", Diff: true, Stacked: true},
+			mp.Metrics{Key: "Com_delete", Label: "Delete", Diff: true, Stacked: true},
+			mp.Metrics{Key: "Com_delete_multi", Label: "Delete Multi", Diff: true, Stacked: true},
+			mp.Metrics{Key: "Com_replace", Label: "Replace", Diff: true, Stacked: true},
+			mp.Metrics{Key: "Com_set_option", Label: "Set Option", Diff: true, Stacked: true},
+			mp.Metrics{Key: "Qcache_hits", Label: "Query Cache Hits", Diff: true, Stacked: false},
+			mp.Metrics{Key: "Questions", Label: "Questions", Diff: true, Stacked: false},
 		},
 	},
 	"mysql.join": mp.Graphs{
 		Label: "MySQL Join/Scan",
 		Unit:  "integer",
 		Metrics: [](mp.Metrics){
-			mp.Metrics{Key: "Select_full_join", Label: "Select Full JOIN", Diff: true},
-			mp.Metrics{Key: "Select_full_range_join", Label: "Select Full Range JOIN", Diff: true},
-			mp.Metrics{Key: "Select_scan", Label: "Select SCAN", Diff: true},
-			mp.Metrics{Key: "Sort_scan", Label: "Sort SCAN", Diff: true},
+			mp.Metrics{Key: "Select_full_join", Label: "Select Full JOIN", Diff: true, Stacked: false},
+			mp.Metrics{Key: "Select_full_range_join", Label: "Select Full Range JOIN", Diff: true, Stacked: false},
+			mp.Metrics{Key: "Select_scan", Label: "Select SCAN", Diff: true, Stacked: false},
+			mp.Metrics{Key: "Sort_scan", Label: "Sort SCAN", Diff: true, Stacked: false},
 		},
 	},
-	"mysql.Threads": mp.Graphs{
+	"mysql.threads": mp.Graphs{
 		Label: "MySQL Threads",
 		Unit:  "integer",
 		Metrics: [](mp.Metrics){
-			mp.Metrics{Key: "Max_used_connections", Label: "Max used connections", Diff: true},
-			mp.Metrics{Key: "Threads_connected", Label: "Connected", Diff: true},
-			mp.Metrics{Key: "Threads_running", Label: "Running", Diff: true},
-			mp.Metrics{Key: "Threads_cached", Label: "Cached", Diff: true},
+			mp.Metrics{Key: "Max_used_connections", Label: "Max used connections", Diff: false, Stacked: false},
+			mp.Metrics{Key: "Threads_connected", Label: "Connected", Diff: false, Stacked: false},
+			mp.Metrics{Key: "Threads_running", Label: "Running", Diff: false, Stacked: false},
+			mp.Metrics{Key: "Threads_cached", Label: "Cached", Diff: false, Stacked: false},
+		},
+	},
+	"mysql.connections": mp.Graphs{
+		Label: "MySQL Connections",
+		Unit:  "integer",
+		Metrics: [](mp.Metrics){
+			mp.Metrics{Key: "Connections", Label: "Connections", Diff: true, Stacked: false},
+			mp.Metrics{Key: "Thread_created", Label: "Created Threads", Diff: true, Stacked: false},
+			mp.Metrics{Key: "Aborted_clients", Label: "Aborted Clients", Diff: true, Stacked: false},
+			mp.Metrics{Key: "Aborted_connects", Label: "Aborted Connects", Diff: true, Stacked: false},
+		},
+	},
+	"mysql.seconds_behind_master": mp.Graphs{
+		Label: "MySQL Slave status",
+		Unit:  "integer",
+		Metrics: [](mp.Metrics){
+			mp.Metrics{Key: "Seconds_Behind_Master", Label: "Seconds Behind Master", Diff: false, Stacked: false},
 		},
 	},
 }
@@ -77,17 +87,28 @@ func (m MySQLPlugin) FetchData() (map[string]float64, error) {
 
 	rows, _, err := db.Query("show /*!50002 global */ status")
 	if err != nil {
-		log.Fatalln("FetchData2: ", err)
+		log.Fatalln("FetchData: ", err)
 		return nil, err
 	}
 	for _, row := range rows {
 		Variable_name := string(row[0].([]byte))
 		Value, err := strconv.Atoi(string(row[1].([]byte)))
 		if err != nil {
-			log.Println("FetchData2: ", err)
+			log.Println("FetchData: ", err)
 		}
-		// fmt.Println(Variable_name, Value)
+		//fmt.Println(Variable_name, Value)
 		stat[Variable_name] = float64(Value)
+	}
+
+	rows, res, err := db.Query("show slave status")
+	if err != nil {
+		log.Fatalln("FetchData: ", err)
+		return nil, err
+	}
+	for _, row := range rows {
+		idx := res.Map("Seconds_Behind_Master")
+		Value := row.Int(idx)
+		stat["Seconds_Behind_Master"] = float64(Value)
 	}
 	return stat, err
 }
