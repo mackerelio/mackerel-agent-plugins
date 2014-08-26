@@ -6,4 +6,5 @@ Standards-Version: 3.9.2
 
 Package: mackerel-agent-plugins
 Architecture: all
+Depends: mackerel-agent (>= 0.12.1)
 Description: plugins for Mackerel
