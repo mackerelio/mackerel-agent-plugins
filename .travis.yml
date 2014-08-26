@@ -6,5 +6,6 @@ env: "PATH=/home/travis/gopath/bin:$PATH"
 install:
     - go get github.com/mitchellh/gox
     - gox -build-toolchain -osarch=linux/386
+    - go get -d -v ./... && go build -v ./...
 
 script: go test -v ./...
