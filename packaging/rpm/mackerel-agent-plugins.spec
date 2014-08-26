@@ -20,14 +20,13 @@ This package provides plugins for Mackerel.
 %prep
 
 %build
-export GOPATH=${GOPATH:=/tmp/gopath}
 rm -rf %{__buildroot}
 mkdir -p %{__buildroot}
 cd %{__buildroot}
 go get github.com/mitchellh/gox
-$GOPATH/bin/gox -build-toolchain -osarch="linux/386"
-$GOPATH/bin/gox -osarch="linux/386" github.com/mackerelio/mackerel-agent-plugins/mackerel-plugin-mysql
-$GOPATH/bin/gox -osarch="linux/386" github.com/mackerelio/mackerel-agent-plugins/mackerel-plugin-memcached
+gox -build-toolchain -osarch="linux/386"
+gox -osarch="linux/386" github.com/mackerelio/mackerel-agent-plugins/mackerel-plugin-mysql
+gox -osarch="linux/386" github.com/mackerelio/mackerel-agent-plugins/mackerel-plugin-memcached
 
 %install
 %{__rm} -rf %{buildroot}
