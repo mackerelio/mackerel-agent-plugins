@@ -1,0 +1,17 @@
+#!/usr/bin/make -f
+
+%:
+	dh $@
+
+package=mackerel-agent-plugins
+
+override_dh_auto_install:
+	dh_auto_install
+	install -d -m 755 debian/tmp/usr/libexec/mackerel/plugins/
+	#install -d -m 755 debian/${package}/usr/libexec/mackerel/plugins/
+	install    -m 755 debian/mackerel-plugin-mysql debian/tmp/usr/libexec/mackerel/plugins/
+	#install    -m 755 debian/mackerel-plugin-mysql debian/${package}/usr/libexec/mackerel/plugins/
+
+override_dh_usrlocal:
+
+
