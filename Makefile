@@ -1,10 +1,12 @@
 all: build deb rpm
 
 build:
+	mkdir build
 	go get github.com/mitchellh/gox
 	gox -build-toolchain -osarch="linux/386"
-	gox -osarch="linux/386" -output mackerel-plugin-mysql github.com/mackerelio/mackerel-agent-plugins/mackerel-plugin-mysql
-	cp mackerel-plugin-mysql packaging/deb/debian/
+	gox -osarch="linux/386" -output build/mackerel-plugin-mysql github.com/mackerelio/mackerel-agent-plugins/mackerel-plugin-mysql
+	gox -osarch="linux/386" -output build/mackerel-plugin-memcached github.com/mackerelio/mackerel-agent-plugins/mackerel-plugin-memcached
+	cp build/mackerel-plugin-* packaging/deb/debian/
 
 rpm:
 	rpmbuild --define "_sourcedir `pwd`" -ba packaging/rpm/mackerel-agent-plugins.spec 
