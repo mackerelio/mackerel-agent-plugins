@@ -84,7 +84,7 @@ type MemcachedPlugin struct {
 	Tempfile string
 }
 
-func (m MemcachedPlugin) FetchData() (map[string]float64, error) {
+func (m MemcachedPlugin) FetchMetrics() (map[string]float64, error) {
 	conn, err := net.Dial("tcp", m.Target)
 	if err != nil {
 		return nil, err
@@ -104,7 +104,7 @@ func (m MemcachedPlugin) FetchData() (map[string]float64, error) {
 		if res[0] == "STAT" {
 			stat[res[1]], err = strconv.ParseFloat(res[2], 64)
 			if err != nil {
-				log.Println("FetchData:", err)
+				log.Println("FetchMetrics:", err)
 			}
 		}
 	}
@@ -114,12 +114,8 @@ func (m MemcachedPlugin) FetchData() (map[string]float64, error) {
 	return nil, nil
 }
 
-func (m MemcachedPlugin) GetGraphDefinition() map[string](mp.Graphs) {
+func (m MemcachedPlugin) GraphDefinition() map[string](mp.Graphs) {
 	return graphdef
-}
-
-func (m MemcachedPlugin) GetTempfilename() string {
-	return m.Tempfile
 }
 
 func main() {
@@ -129,15 +125,14 @@ func main() {
 	flag.Parse()
 
 	var memcached MemcachedPlugin
+	helper := mp.NewMackerelPlugin(memcached)
 
 	memcached.Target = fmt.Sprintf("%s:%s", *optHost, *optPort)
 	if *optTempfile != "" {
-		memcached.Tempfile = *optTempfile
+		helper.Tempfile = *optTempfile
 	} else {
-		memcached.Tempfile = fmt.Sprintf("/tmp/mackerel-plugin-memcached-%s-%s", *optHost, *optPort)
+		helper.Tempfile = fmt.Sprintf("/tmp/mackerel-plugin-memcached-%s-%s", *optHost, *optPort)
 	}
-
-	helper := mp.MackerelPlugin{memcached}
 
 	if os.Getenv("MACKEREL_AGENT_PLUGIN_META") != "" {
 		helper.OutputDefinitions()

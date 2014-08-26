@@ -4,11 +4,11 @@ import (
 	"testing"
 )
 
-func TestGetTempfilename(t *testing.T) {
+func TestGraphDefinition(t *testing.T) {
 	var mysql MySQLPlugin
-	tempfile := "localhost"
-	mysql.Tempfile = tempfile
-	if tempfile != mysql.GetTempfilename() {
-		t.Errorf("GetTempfilename: %s is not target %s", mysql.GetTempfilename(), tempfile)
+
+	graphdef := mysql.GraphDefinition()
+	if len(graphdef) != 10 {
+		t.Errorf("GetTempfilename: %d should be 10", len(graphdef))
 	}
 }
