@@ -1,6 +1,5 @@
 %define revision 1
 
-%define __go /home/stanaka/go/bin/go
 %define __buildroot %{_builddir}/%{name}
 %define __targetdir %{_libexecdir}/mackerel/plugins
 
@@ -25,7 +24,7 @@ export GOPATH=${GOPATH:=/tmp/gopath}
 rm -rf %{__buildroot}
 mkdir -p %{__buildroot}
 cd %{__buildroot}
-%{__go} get github.com/mitchellh/gox
+go get github.com/mitchellh/gox
 $GOPATH/bin/gox -build-toolchain -osarch="linux/386"
 $GOPATH/bin/gox -osarch="linux/386" github.com/mackerelio/mackerel-agent-plugins/mackerel-plugin-mysql
 $GOPATH/bin/gox -osarch="linux/386" github.com/mackerelio/mackerel-agent-plugins/mackerel-plugin-memcached
