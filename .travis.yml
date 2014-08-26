@@ -18,6 +18,7 @@ deploy:
     secure: c2pLKkM2leWMIzakVisNf3kAK6TBYslDM8SFEVrTTHpHnTI/6jUFnDLuL9cKuq9c76QcgYfqdLDn/hP+uFHf5WdtdJR00R+bX8cCx6NfOe7Kk9GlqGinUcXKAVs0kQHaYtQrN/rCOIG92kYFdbRHMD8uMrADJVRySePTMMhMX9o=
   file: "/home/travis/rpmbuild/RPMS/x86_64/mackerel-agent-plugins-0.1-1.x86_64.rpm"
   skip_cleanup: true
-  all_branches: true
   on:
     repo: mackerelio/mackerel-agent-plugins
+    all_branches: true
+
