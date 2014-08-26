@@ -21,4 +21,4 @@ deploy:
   on:
     repo: mackerelio/mackerel-agent-plugins
     all_branches: true
-
+    tags: true
