@@ -5,7 +5,7 @@
 
 Summary: Monitoring program plugins for Mackerel
 Name: mackerel-agent-plugins
-Version: 0.1
+Version: 0.3
 Release: %{revision}%{?dist}
 License: Apache-2
 Group: Applications/System
@@ -46,5 +46,8 @@ gox -osarch="linux/386" github.com/mackerelio/mackerel-agent-plugins/mackerel-pl
 %{__targetdir}
 
 %changelog
+* Tue Aug 27 2014 <stanaka@hatena.ne.jp> - 0.3
+- Update version string
+
 * Tue Aug 26 2014 <stanaka@hatena.ne.jp> - 0.1
 - initial release
