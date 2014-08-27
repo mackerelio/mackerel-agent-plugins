@@ -17,7 +17,7 @@ deploy:
   api_key:
     secure: c2pLKkM2leWMIzakVisNf3kAK6TBYslDM8SFEVrTTHpHnTI/6jUFnDLuL9cKuq9c76QcgYfqdLDn/hP+uFHf5WdtdJR00R+bX8cCx6NfOe7Kk9GlqGinUcXKAVs0kQHaYtQrN/rCOIG92kYFdbRHMD8uMrADJVRySePTMMhMX9o=
   file:
-  - "/home/travis/rpmbuild/RPMS/x86_64/mackerel-agent-plugins-0.3.1-1.x86_64.rpm"
+  - "/home/travis/rpmbuild/RPMS/x86_64/mackerel-agent-plugins-0.3.1-1.noarch.rpm"
   - "/home/travis/gopath/src/github.com/mackerelio/mackerel-agent-plugins/packaging/mackerel-agent-plugins_0.3.1-1_all.deb"
   skip_cleanup: true
   on:
