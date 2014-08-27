@@ -13,6 +13,8 @@ URL: https://mackerel.io/
 Requires: mackerel-agent >= 0.12.1
 
 Source0: README.md
+Packager:  Hatena
+BuildArch: noarch
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root
 
 %description
