@@ -1,5 +1,7 @@
 %define revision 1
 
+%define _binaries_in_noarch_packages_terminate_build   0
+
 %define __buildroot %{_builddir}/%{name}
 %define __targetdir %{_libexecdir}/mackerel/plugins
 
