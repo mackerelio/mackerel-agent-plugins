@@ -5,6 +5,7 @@ env: PATH=/home/travis/gopath/bin:$PATH
 install:
 - go get github.com/mitchellh/gox
 - gox -build-toolchain -osarch=linux/386
+- go get github.com/stretchr/testify/assert
 - go get -d -v ./... && go build -v ./...
 - sudo apt-get update
 - DEBIAN_FRONTEND=noninteractive sudo apt-get install -y rpm devscripts debhelper
