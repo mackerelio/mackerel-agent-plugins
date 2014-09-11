@@ -3,7 +3,7 @@ mackerel-plugin-apache2
 
 ## Description
 
-Get apache "server-status" information for Mackerel and Sensu.
+Get apache "server-status" metrics for Mackerel and Sensu.
 
 ## Usage
 
