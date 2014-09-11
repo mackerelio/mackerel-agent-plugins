@@ -52,7 +52,7 @@ type = "metric"
 
 Please execute 'mackerel-plugin-apache2 -h' and you can get command line options.
 
-## Refrences
+## References
 
 This program to use as reference from [Percona Monitoring Plugins for Cacti](http://www.percona.com/doc/percona-monitoring-plugins/).
 
