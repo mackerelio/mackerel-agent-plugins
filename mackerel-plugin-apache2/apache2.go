@@ -8,6 +8,7 @@ import (
     "strconv"
     "strings"
     "errors"
+    "regexp"
     "github.com/codegangsta/cli"
     mp "github.com/mackerelio/go-mackerel-plugin"
 )
@@ -107,12 +108,42 @@ func ( c Apache2Plugin ) FetchMetrics() ( map[string]float64, error ){
     }
 
     stat := make(map[string]float64)
-    err2 := parseApache2Status( data, &stat )
-    if err2 != nil {
-        return nil, err2
+    err_stat := parseApache2Status( data, &stat )
+    if err_stat != nil {
+        return nil, err_stat
+    }
+    err_score := parseApache2Scoreboard( data, &stat )
+    if err_score != nil {
+        return nil, err_score
     }
 
     return stat, nil
+}
+
+
+// parsing scoreboard from server-status?auto
+func parseApache2Scoreboard( str string, p *map[string]float64 )( error ) {
+    for _, line := range strings.Split( str, "\n" ){
+        matched, err := regexp.MatchString( "Scoreboard(.*)", line )
+        if err != nil {
+            return err
+        }
+        if !matched {
+            continue
+        }
+        record := strings.Split( line, ":" )
+        for _, sb := range strings.Split( strings.Trim( record[1], " " ), "" ){
+            name := fmt.Sprintf( "score-%s", sb )
+            c, assert := (*p)[ name ]
+            if !assert {
+                c = 0
+            }
+            (*p)[ name ] = c + 1
+        }
+        return nil
+    }
+
+    return errors.New( "Scoreboard data is not found." )
 }
 
 

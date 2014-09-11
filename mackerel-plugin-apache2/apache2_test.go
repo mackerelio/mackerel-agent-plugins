@@ -5,6 +5,25 @@ import (
     "testing"
 )
 
+func TestParseApache2Scoreboard( t *testing.T ){
+    stub := "Scoreboard: W._SRWKDCLGI...."
+    stat := make(map[string]float64)
+
+    err := parseApache2Scoreboard( stub, &stat )
+    assert.Nil( t, err )
+    assert.Equal( t, stat[ "score-_" ], 1 )
+    assert.Equal( t, stat[ "score-S" ], 1 )
+    assert.Equal( t, stat[ "score-R" ], 1 )
+    assert.Equal( t, stat[ "score-W" ], 2 )
+    assert.Equal( t, stat[ "score-K" ], 1 )
+    assert.Equal( t, stat[ "score-D" ], 1 )
+    assert.Equal( t, stat[ "score-C" ], 1 )
+    assert.Equal( t, stat[ "score-L" ], 1 )
+    assert.Equal( t, stat[ "score-G" ], 1 )
+    assert.Equal( t, stat[ "score-I" ], 1 )
+    assert.Equal( t, stat[ "score-." ], 5 )
+}
+
 func TestParseApache2Status( t *testing.T ){
     stub := `Total Accesses: 358
 Total kBytes: 20
