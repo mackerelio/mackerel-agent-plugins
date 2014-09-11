@@ -2,45 +2,147 @@ package main
 
 import (
 	"os"
+    "fmt"
     "net/http"
     "io/ioutil"
     "strconv"
-    "log"
-    "split"
+    "strings"
+    "errors"
 	"github.com/codegangsta/cli"
+    mp "github.com/mackerelio/go-mackerel-plugin"
 )
 
 
-// General error handling
-type GeneralError struct {
-    Error string
+// metric value structure
+var graphdef map[string](mp.Graphs) = map[string](mp.Graphs){
+    "apache2.workers": mp.Graphs{
+        Label: "Apache Workers",
+        Unit: "integer",
+        Metrics: [](mp.Metrics){
+            mp.Metrics{ Name: "busy_workers", Label: "Busy Workers", Diff: false },
+            mp.Metrics{ Name: "idle_workers", Label: "Idle Workers", Diff: false },
+        },
+    },
+    "apache2.bytes": mp.Graphs{
+        Label: "Apache Bytes",
+        Unit: "integer",
+        Metrics: [](mp.Metrics){
+            mp.Metrics{ Name: "bytes_sent", Label: "Bytes Sent", Diff: false },
+        },
+    },
+    "apache2.cpu": mp.Graphs{
+        Label: "Apache CPU Load",
+        Unit: "float",
+        Metrics: [](mp.Metrics){
+            mp.Metrics{ Name: "cpu_load", Label: "CPU Load", Diff: false },
+        },
+    },
+    "apache2.req": mp.Graphs{
+        Label: "Apache Requests",
+        Unit: "integer",
+        Metrics: [](mp.Metrics){
+            mp.Metrics{ Name: "requests", Label: "Requests", Diff: false },
+        },
+    },
+    "apache2.scoreboard": mp.Graphs{
+        Label: "Apache Scoreboard",
+        Unit: "integer",
+        Metrics: [](mp.Metrics){
+            mp.Metrics{ Name: "score-_", Label: "Waiting for connection", Diff: false },
+            mp.Metrics{ Name: "score-S", Label: "Starting up", Diff: false },
+            mp.Metrics{ Name: "score-R", Label: "Reading request", Diff: false },
+            mp.Metrics{ Name: "scpre-W", Label: "Sending reply", Diff: false },
+            mp.Metrics{ Name: "score-K", Label: "Keepalive", Diff: false },
+            mp.Metrics{ Name: "score-D", Label: "DNS lookup", Diff: false },
+            mp.Metrics{ Name: "score-C", Label: "Closing connection", Diff: false },
+            mp.Metrics{ Name: "score-L", Label: "Logging", Diff: false },
+            mp.Metrics{ Name: "score-G", Label: "Gracefully finishing", Diff: false },
+            mp.Metrics{ Name: "score-I", Label: "Idle cleanup", Diff: false },
+            mp.Metrics{ Name: "score-.", Label: "Open slot", Diff: false },
+        },
+    },
 }
 
 
-// Get metrics main function
-func getMetrics( c *cli.Context ) {
-    status, err := getApache2Metrics(
-        c.String( "http_host" ),
-        uint16( c.Int( "http_port" ) ),
-        c.String( "status_page" ) )
-    if err != nil {
-        log.Fatal( err.Error )
+// for fetching metrics
+type Apache2Plugin struct {
+    Host string
+    Port uint16
+    Path string
+    Tempfile string
+}
+
+
+// Graph definition
+func ( c Apache2Plugin ) GraphDefinition() map[string](mp.Graphs) {
+    return graphdef
+}
+
+
+// main function
+func doMain( c *cli.Context ) {
+
+    var apache2 Apache2Plugin
+
+    apache2.Host = c.String( "http_host" )
+    apache2.Port = uint16( c.Int( "http_port" ) )
+    apache2.Path = c.String( "status_page" )
+    apache2.Tempfile = c.String( "tempfile" )
+
+    helper := mp.NewMackerelPlugin( apache2 )
+
+    if os.Getenv("MACKEREL_AGENT_PLUGIN_META") != "" {
+        helper.OutputDefinitions()
+    } else {
+        helper.OutputValues()
     }
-    status = status
+}
+
+
+// fetch metrics
+func ( c Apache2Plugin ) FetchMetrics() ( map[string]float64, error ){
+    data, err := getApache2Metrics( c.Host, c.Port, c.Path )
+    if err != nil {
+        return nil, err
+    }
+
+    stat := make(map[string]float64)
+    err2 := parseApache2Status( data, &stat )
+    if err2 != nil {
+        return nil, err2
+    }
+
+    return stat, nil
 }
 
 
 // parsing metrics from server-status?auto
-func parseApache2Status( str string )( string, error ) {
-    const Params := map[string]string{
+func parseApache2Status( str string, p *map[string]float64 )( error ) {
+    Params := map[string]string{
         "Total Accesses": "requests",
         "Total kBytes": "bytes_sent",
         "CPULoad": "cpu_load",
         "BusyWorkers": "busy_workers",
-        "IdleWorkers": "idle_workers"
-        }
-    datas = strings.Sprit( str, "\n" )
+        "IdleWorkers": "idle_workers" }
 
+    for _, line := range strings.Split( str, "\n" ){
+        record := strings.Split( line, ":" )
+        _, assert := Params[ record[0] ];
+        if !assert {
+            continue
+        }
+        var err_parse error
+        (*p)[ Params[ record[0] ] ], err_parse = strconv.ParseFloat( strings.Trim( record[1], " " ), 64 )
+        if err_parse != nil {
+            return err_parse
+        }
+    }
+
+    if len(*p) == 0 {
+        return errors.New( "Status data not found." )
+    }
+
+    return nil
 }
 
 
@@ -51,12 +153,15 @@ func getApache2Metrics( host string, port uint16, path string )( string, error )
     if err != nil {
         return "", err
     }
-    status, err := ioutil.ReadAll( resp.Body )
+    if resp.StatusCode != http.StatusOK {
+        return "", errors.New( fmt.Sprintf( "HTTP status error: %d", resp.StatusCode ) )
+    }
+    body, err := ioutil.ReadAll( resp.Body )
     resp.Body.Close()
     if err != nil {
         return "", err
     }
-    return string( status[:] ), nil
+    return string( body[:] ), nil
 }
 
 
@@ -69,7 +174,7 @@ func main() {
 	app.Author = "Yuichiro Saito"
 	app.Email = "saito@heartbeats.jp"
 	app.Flags = Flags
-    app.Action = getMetrics
+    app.Action = doMain
 
 	app.Run(os.Args)
 }
