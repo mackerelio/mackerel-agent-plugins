@@ -1,14 +1,14 @@
 package main
 
 import (
-	"os"
+    "os"
     "fmt"
     "net/http"
     "io/ioutil"
     "strconv"
     "strings"
     "errors"
-	"github.com/codegangsta/cli"
+    "github.com/codegangsta/cli"
     mp "github.com/mackerelio/go-mackerel-plugin"
 )
 
@@ -167,14 +167,14 @@ func getApache2Metrics( host string, port uint16, path string )( string, error )
 
 // main
 func main() {
-	app := cli.NewApp()
-	app.Name = "apache2_metrics"
-	app.Version = Version
-	app.Usage = "Get metrics from apache2."
-	app.Author = "Yuichiro Saito"
-	app.Email = "saito@heartbeats.jp"
-	app.Flags = Flags
+    app := cli.NewApp()
+    app.Name = "apache2_metrics"
+    app.Version = Version
+    app.Usage = "Get metrics from apache2."
+    app.Author = "Yuichiro Saito"
+    app.Email = "saito@heartbeats.jp"
+    app.Flags = Flags
     app.Action = doMain
 
-	app.Run(os.Args)
+    app.Run(os.Args)
 }
