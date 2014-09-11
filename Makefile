@@ -6,6 +6,7 @@ build:
 	gox -build-toolchain -osarch="linux/386"
 	gox -osarch="linux/386" -output build/mackerel-plugin-mysql github.com/mackerelio/mackerel-agent-plugins/mackerel-plugin-mysql
 	gox -osarch="linux/386" -output build/mackerel-plugin-memcached github.com/mackerelio/mackerel-agent-plugins/mackerel-plugin-memcached
+	gox -osarch="linux/386" -output build/mackerel-plugin-nginx github.com/mackerelio/mackerel-agent-plugins/mackerel-plugin-nginx
 	cp build/mackerel-plugin-* packaging/deb/debian/
 
 rpm:

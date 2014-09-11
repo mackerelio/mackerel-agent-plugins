@@ -3,7 +3,8 @@
 %define _binaries_in_noarch_packages_terminate_build   0
 
 %define __buildroot %{_builddir}/%{name}
-%define __targetdir %{_libexecdir}/mackerel/plugins
+#%define __targetdir %{_libexecdir}/mackerel/plugins
+%define __targetdir /usr/local/bin
 
 Summary: Monitoring program plugins for Mackerel
 Name: mackerel-agent-plugins
@@ -32,6 +33,7 @@ go get github.com/mitchellh/gox
 gox -build-toolchain -osarch="linux/386"
 gox -osarch="linux/386" github.com/mackerelio/mackerel-agent-plugins/mackerel-plugin-mysql
 gox -osarch="linux/386" github.com/mackerelio/mackerel-agent-plugins/mackerel-plugin-memcached
+gox -osarch="linux/386" github.com/mackerelio/mackerel-agent-plugins/mackerel-plugin-nginx
 
 %install
 %{__rm} -rf %{buildroot}
@@ -39,6 +41,7 @@ gox -osarch="linux/386" github.com/mackerelio/mackerel-agent-plugins/mackerel-pl
 %{__mkdir} -p %{buildroot}%{__targetdir}
 %{__install} -m0755 %{__buildroot}/mackerel-plugin-mysql_linux_386 %{buildroot}%{__targetdir}/mackerel-plugin-mysql
 %{__install} -m0755 %{__buildroot}/mackerel-plugin-memcached_linux_386 %{buildroot}%{__targetdir}/mackerel-plugin-memcached
+%{__install} -m0755 %{__buildroot}/mackerel-plugin-memcached_linux_386 %{buildroot}%{__targetdir}/mackerel-plugin-nginx
 
 %post
 
