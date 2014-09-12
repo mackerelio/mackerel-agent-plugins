@@ -3,6 +3,11 @@ package main
 import (
     "github.com/stretchr/testify/assert"
     "testing"
+    "fmt"
+    "net/http"
+    "net/http/httptest"
+    "regexp"
+    "strconv"
 )
 
 func TestParseApache2Scoreboard( t *testing.T ){
@@ -47,9 +52,34 @@ IdleWorkers: 4
 }
 
 func TestGetApache2Metrics_1( t *testing.T ){
-    ret, err := getApache2Metrics( "127.0.0.1", 1080, "/server-status?auto" )
-    assert.Nil( t, err, "Please start-up your httpd (127.0.0.1:1080) or unable to connect httpd." )
-    assert.NotNil( t, ret, )
+    stub := `Total Accesses: 668
+Total kBytes: 2789
+CPULoad: .000599374
+Uptime: 171846
+ReqPerSec: .0038872
+BytesPerSec: 16.6192
+BytesPerReq: 4275.35
+BusyWorkers: 1
+IdleWorkers: 3
+Scoreboard: W_.__...........................`
+
+    ts := httptest.NewServer(
+        http.HandlerFunc(
+            func( w http.ResponseWriter, r *http.Request ){
+                fmt.Fprintln( w, stub )
+            } ) )
+    defer ts.Close()
+    re, _   := regexp.Compile( "([a-z]+)://([A-Za-z0-9.]+):([0-9]+)(.*)" )
+    found   := re.FindStringSubmatch( ts.URL )
+    assert.Equal( t, len( found ), 5, fmt.Sprintf( "Test stub uri format is changed. %s", ts.URL ) )
+
+    host    := found[2]
+    port, _ := strconv.Atoi( found[3] )
+    path    := found[4]
+
+    ret, err := getApache2Metrics( host, uint16( port ), path )
+    assert.Nil( t, err )
+    assert.NotNil( t, ret )
     assert.NotEmpty( t, ret )
     assert.Contains( t, ret, "Total Accesses" )
     assert.Contains( t, ret, "Total kBytes" )
