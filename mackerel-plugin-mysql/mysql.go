@@ -167,11 +167,11 @@ func main() {
 	flag.Parse()
 
 	var mysql MySQLPlugin
-	helper := mp.NewMackerelPlugin(mysql)
 
 	mysql.Target = fmt.Sprintf("%s:%s", *optHost, *optPort)
 	mysql.Username = *optUser
 	mysql.Password = *optPass
+	helper := mp.NewMackerelPlugin(mysql)
 	if *optTempfile != "" {
 		helper.Tempfile = *optTempfile
 	} else {
