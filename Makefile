@@ -8,6 +8,8 @@ BUILD_FLAGS = -ldflags "\
 
 TARGET_OSARCH="linux/386"
 
+all: test build rpm deb
+
 build: deps
 	mkdir -p build
 	for i in mackerel-plugin-*; do \
@@ -42,4 +44,4 @@ clean:
 	  rmdir build; \
 	fi
 
-.PHONY: build test deps testdeps rpm deb gox clean
+.PHONY: all build test deps testdeps rpm deb gox clean
