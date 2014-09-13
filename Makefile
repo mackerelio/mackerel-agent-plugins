@@ -1,24 +1,45 @@
-all: build deb rpm
+VERBOSE_FLAG = $(if $(VERBOSE),-verbose)
 
-build: clean
-	mkdir build
-	go get -v ./...
+VERSION = $$(git describe --tags --always --dirty) ($$(git name-rev --name-only HEAD))
+
+BUILD_FLAGS = -ldflags "\
+	      -X main.Version \"$(VERSION)\" \
+	      "
+
+TARGET_OSARCH="linux/386"
+
+build: deps
+	mkdir -p build
 	for i in mackerel-plugin-*; do \
-	  echo gox -osarch="linux/386" -output build/$$i github.com/mackerelio/mackerel-agent-plugins/$$i; \
-	  gox -osarch="linux/386" -output build/$$i github.com/mackerelio/mackerel-agent-plugins/$$i; \
+	  gox $(VERBOSE_FLAG) $(BUILD_FLAGS) \
+	    -osarch=$(TARGET_OSARCH) -output build/$$i \
+	    github.com/mackerelio/mackerel-agent-plugins/$$i; \
 	done
-	cp build/mackerel-plugin-* packaging/deb/debian/
+
+test: testdeps
+	go test $(VERBOSE_FLAG) ./...
+
+deps:
+	go get -d $(VERBOSE_FLAG) ./...
+
+testdeps:
+	go get -d -t $(VERBOSE_FLAG) ./...
 
 rpm:
 	rpmbuild --define "_sourcedir `pwd`" -ba packaging/rpm/mackerel-agent-plugins.spec
 
 deb:
+	cp build/mackerel-plugin-* packaging/deb/debian/
 	cd packaging/deb && debuild --no-tgz-check -rfakeroot -uc -us
-
-clean:
-	rm -f build/mackerel-plugin-*
-	rmdir build
 
 gox:
 	go get github.com/mitchellh/gox
-	gox -build-toolchain -osarch="linux/386"
+	gox -build-toolchain -osarch=$(TARGET_OSARCH)
+
+clean:
+	if [ -d build ]; then \
+	  rm -f build/mackerel-plugin-*; \
+	  rmdir build; \
+	fi
+
+.PHONY: build test deps testdeps rpm deb gox clean
