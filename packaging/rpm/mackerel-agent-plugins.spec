@@ -25,25 +25,14 @@ This package provides plugins for Mackerel.
 
 %prep
 
-%build
-rm -rf %{__buildroot}
-mkdir -p %{__buildroot}
-cd %{__buildroot}
-go get github.com/mitchellh/gox
-gox -build-toolchain -osarch="linux/386"
-gox -osarch="linux/386" github.com/mackerelio/mackerel-agent-plugins/mackerel-plugin-mysql
-gox -osarch="linux/386" github.com/mackerelio/mackerel-agent-plugins/mackerel-plugin-memcached
-gox -osarch="linux/386" github.com/mackerelio/mackerel-agent-plugins/mackerel-plugin-nginx
-
 %install
 %{__rm} -rf %{buildroot}
 
 %{__mkdir} -p %{buildroot}%{__targetdir}
-%{__install} -m0755 %{__buildroot}/mackerel-plugin-mysql_linux_386 %{buildroot}%{__targetdir}/mackerel-plugin-mysql
-%{__install} -m0755 %{__buildroot}/mackerel-plugin-memcached_linux_386 %{buildroot}%{__targetdir}/mackerel-plugin-memcached
-%{__install} -m0755 %{__buildroot}/mackerel-plugin-memcached_linux_386 %{buildroot}%{__targetdir}/mackerel-plugin-nginx
 
-%post
+for i in apache2 mysql memcached nginx plack postgres;do \
+    %{__install} -m0755 %{_sourcedir}/build/mackerel-plugin-$i %{buildroot}%{__targetdir}/; \
+done
 
 %clean
 %{__rm} -rf %{buildroot}

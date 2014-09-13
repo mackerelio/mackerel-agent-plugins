@@ -1,17 +1,47 @@
-all: build deb rpm
+VERBOSE_FLAG = $(if $(VERBOSE),-verbose)
 
-build:
-	mkdir build
-	go get github.com/mitchellh/gox
-	gox -build-toolchain -osarch="linux/386"
-	gox -osarch="linux/386" -output build/mackerel-plugin-mysql github.com/mackerelio/mackerel-agent-plugins/mackerel-plugin-mysql
-	gox -osarch="linux/386" -output build/mackerel-plugin-memcached github.com/mackerelio/mackerel-agent-plugins/mackerel-plugin-memcached
-	gox -osarch="linux/386" -output build/mackerel-plugin-nginx github.com/mackerelio/mackerel-agent-plugins/mackerel-plugin-nginx
-	gox -osarch="linux/386" -output build/mackerel-plugin-postgres github.com/mackerelio/mackerel-agent-plugins/mackerel-plugin-postgres
-	cp build/mackerel-plugin-* packaging/deb/debian/
+VERSION = $$(git describe --tags --always --dirty) ($$(git name-rev --name-only HEAD))
 
-rpm:
+BUILD_FLAGS = -ldflags "\
+	      -X main.Version \"$(VERSION)\" \
+	      "
+
+TARGET_OSARCH="linux/386"
+
+all: test build rpm deb
+
+build: deps
+	mkdir -p build
+	for i in mackerel-plugin-*; do \
+	  gox $(VERBOSE_FLAG) $(BUILD_FLAGS) \
+	    -osarch=$(TARGET_OSARCH) -output build/$$i \
+	    github.com/mackerelio/mackerel-agent-plugins/$$i; \
+	done
+
+test: testdeps
+	go test $(VERBOSE_FLAG) ./...
+
+deps:
+	go get -d -v $(VERBOSE_FLAG) ./...
+
+testdeps:
+	go get -d -v -t $(VERBOSE_FLAG) ./...
+
+rpm: build
 	rpmbuild --define "_sourcedir `pwd`" -ba packaging/rpm/mackerel-agent-plugins.spec
 
-deb:
+deb: build
+	cp build/mackerel-plugin-* packaging/deb/debian/
 	cd packaging/deb && debuild --no-tgz-check -rfakeroot -uc -us
+
+gox:
+	go get github.com/mitchellh/gox
+	gox -build-toolchain -osarch=$(TARGET_OSARCH)
+
+clean:
+	if [ -d build ]; then \
+	  rm -f build/mackerel-plugin-*; \
+	  rmdir build; \
+	fi
+
+.PHONY: all build test deps testdeps rpm deb gox clean
