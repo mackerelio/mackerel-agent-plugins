@@ -104,6 +104,7 @@ func (p PlackPlugin) FetchMetrics() (map[string]float64, error) {
     if err != nil {
         return nil, err
     }
+	defer resp.Body.Close()
 
 	stat := make(map[string]float64)
 	decoder := json.NewDecoder(resp.Body)
