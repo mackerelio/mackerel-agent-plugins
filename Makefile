@@ -27,10 +27,10 @@ deps:
 testdeps:
 	go get -d -v -t $(VERBOSE_FLAG) ./...
 
-rpm:
+rpm: build
 	rpmbuild --define "_sourcedir `pwd`" -ba packaging/rpm/mackerel-agent-plugins.spec
 
-deb:
+deb: build
 	cp build/mackerel-plugin-* packaging/deb/debian/
 	cd packaging/deb && debuild --no-tgz-check -rfakeroot -uc -us
 
