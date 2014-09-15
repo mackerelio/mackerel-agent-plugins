@@ -16,8 +16,8 @@ var graphdef map[string](mp.Graphs) = map[string](mp.Graphs){
 		Label: "Plack Workers",
 		Unit:  "integer",
 		Metrics: [](mp.Metrics){
-            mp.Metrics{ Name: "busy_workers", Label: "Busy Workers", Diff: false },
-            mp.Metrics{ Name: "idle_workers", Label: "Idle Workers", Diff: false },
+            mp.Metrics{ Name: "busy_workers", Label: "Busy Workers", Diff: false, Stacked: true },
+            mp.Metrics{ Name: "idle_workers", Label: "Idle Workers", Diff: false, Stacked: true },
 		},
 	},
     "plack.req": mp.Graphs{
