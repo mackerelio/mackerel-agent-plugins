@@ -80,16 +80,8 @@ type PlackPlugin struct {
 //   ]
 // }
 
-type PlackRequest struct {
-	Pid uint32           `json:"pid"`
-	Method string        `json:"method"`
-	Ss uint32            `json:"ss"`
-	Remote_addr string   `json:"remote_addr"`
-	Host string          `json:"host"`
-	Protocol string      `json:"protocol"`
-	Status string        `json:"status"`
-	Url string           `json:"url"`
-}
+// field types vary between versions
+type PlackRequest struct {}
 type PlackServerStatus struct {
 	Uptime string          `json:"Uptime"`
 	TotalAccesses string   `json:"TotalAccesses"`
