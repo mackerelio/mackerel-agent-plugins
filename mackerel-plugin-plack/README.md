@@ -11,7 +11,7 @@ mackerel-plugin-plack [-host=<host>] [-port=<port>] [-path=<path?json>] [-scheme
 
 ## Requirements
 
-This plugin requires [Plack::Middleware::ServerStatus::Lite](https://metacpan.org/release/Plack-Middleware-ServerStatus-Lite) > 0.21.
+This plugin requires [Plack::Middleware::ServerStatus::Lite](https://metacpan.org/release/Plack-Middleware-ServerStatus-Lite) > 0.07.
 Enable `ServerStatus::Lite` as below.
 
 ```perl
