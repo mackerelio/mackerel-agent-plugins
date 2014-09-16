@@ -1,4 +1,4 @@
-mackerel-pligin-redis
+mackerel-plugin-redis
 =====================
 
 Redis custom metrics plugin for mackerel.io agent.
