@@ -8,7 +8,7 @@
 
 Summary: Monitoring program plugins for Mackerel
 Name: mackerel-agent-plugins
-Version: 0.3.1
+Version: 0.4.0
 Release: %{revision}%{?dist}
 License: Apache-2
 Group: Applications/System
@@ -42,6 +42,9 @@ done
 %{__targetdir}
 
 %changelog
+* Tue Sep 16 2014 <stanaka@hatena.ne.jp> - 0.4.0
+- Add plugin for apache2, nginx, plack, postgres, redis
+
 * Tue Aug 27 2014 <stanaka@hatena.ne.jp> - 0.3.1
 - Update version string
 
