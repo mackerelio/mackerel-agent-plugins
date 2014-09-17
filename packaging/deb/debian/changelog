@@ -1,4 +1,4 @@
-mackerel-agent-plugins (0.4.1-1) stable; urgency=low
+mackerel-agent-plugins (0.4.2-1) stable; urgency=low
 
   * Fix memcached
 

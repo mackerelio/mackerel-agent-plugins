@@ -8,7 +8,7 @@
 
 Summary: Monitoring program plugins for Mackerel
 Name: mackerel-agent-plugins
-Version: 0.4.1
+Version: 0.4.2
 Release: %{revision}
 License: Apache-2
 Group: Applications/System
@@ -42,7 +42,7 @@ done
 %{__targetdir}
 
 %changelog
-* Wed Sep 17 2014 <stanaka@hatena.ne.jp> - 0.4.1
+* Wed Sep 17 2014 <stanaka@hatena.ne.jp> - 0.4.2
 - Fix memcached
 
 * Tue Sep 16 2014 <stanaka@hatena.ne.jp> - 0.4.0
