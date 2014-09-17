@@ -1,3 +1,9 @@
+mackerel-agent-plugins (0.4.1-1) stable; urgency=low
+
+  * Fix memcached
+
+ -- wtatsuru <wtatsuru@hatena.ne.jp>  Wed, 17 Sep 2014 02:25:56 +0900
+
 mackerel-agent-plugins (0.4.0-1) stable; urgency=low
 
   * Add plugin for apache2, nginx, plack, postgres, redis
