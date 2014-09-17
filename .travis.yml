@@ -22,4 +22,6 @@ deploy:
     repo: mackerelio/mackerel-agent-plugins
     all_branches: true
     tags: true
-
+notifications:
+  slack:
+    secure: cPeJRg+ouTlemEV5UM4muhDwtIM0dktcs3mnfB73oZ2MGOimv/DFpL+VTRLlkWau8l0dT4ngLlGPcveLrXQXwps2LsJMr+gS6Az/CAQCIl21oj4bnjs5uGYTG8hM8ymVzGINPNnj5Fnn5DUMunA2sow30qxfuCnSUMGot2nFRKw=
