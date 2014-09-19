@@ -1,12 +1,9 @@
 package main
 
 import (
-	"errors"
-	"fmt"
-	"io/ioutil"
-	"net/http"
+	"bytes"
 	"os"
-	"regexp"
+	"os/exec"
 	"strconv"
 	"strings"
 
@@ -39,11 +36,11 @@ func (c LinuxPlugin) GraphDefinition() map[string](mp.Graphs) {
 // main function
 func doMain(c *cli.Context) {
 
-	var apache2 LinuxPlugin
+	var linux LinuxPlugin
 
-	apache2.Tempfile = c.String("tempfile")
+	linux.Tempfile = c.String("tempfile")
 
-	helper := mp.NewMackerelPlugin(apache2)
+	helper := mp.NewMackerelPlugin(linux)
 
 	if os.Getenv("MACKEREL_AGENT_PLUGIN_META") != "" {
 		helper.OutputDefinitions()
@@ -53,28 +50,34 @@ func doMain(c *cli.Context) {
 }
 
 // fetch metrics
-func (c Plugin) FetchMetrics() (map[string]float64, error) {
+func (c LinuxPlugin) FetchMetrics() (map[string]float64, error) {
+	const PathVmstat = "/proc/vmstat"
+	var err error
+
 	stat := make(map[string]float64)
 
-	data, err := getProcVmstat()
+	var data string
+	data, err = getProcVmstat(PathVmstat)
 	if err != nil {
 		return nil, err
 	}
-	err_stat := parseProcVmstat(data, &stat)
-	if err_stat != nil {
-		return nil, err_stat
+	err = parseProcVmstat(data, &stat)
+	if err != nil {
+		return nil, err
 	}
 
 	return stat, nil
 }
 
-
-// parsing metrics from server-status?auto
+// parsing metrics from /proc/vmstat
 func parseProcVmstat(str string, p *map[string]float64) error {
 	for _, line := range strings.Split(str, "\n") {
 		record := strings.Split(line, " ")
+		if len(record) != 2 {
+			continue
+		}
 		var err_parse error
-		(*p)[Params[record[0]]], err_parse = strconv.ParseFloat(strings.Trim(record[1], " "), 64)
+		(*p)[record[0]], err_parse = strconv.ParseFloat(strings.Trim(record[1], " "), 64)
 		if err_parse != nil {
 			return err_parse
 		}
@@ -83,8 +86,16 @@ func parseProcVmstat(str string, p *map[string]float64) error {
 	return nil
 }
 
-// Getting apache2 status from server-status module data.
-func getProcVmstat( path string ) ( string, error ) {
+// Getting /proc/vmstat.
+func getProcVmstat(path string) (string, error) {
+	cmd := exec.Command("cat", "/proc/vmstat")
+	var out bytes.Buffer
+	cmd.Stdout = &out
+	err := cmd.Run()
+	if err != nil {
+		return "", err
+	}
+	return out.String(), nil
 }
 
 // main
