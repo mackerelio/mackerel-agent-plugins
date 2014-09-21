@@ -31,7 +31,7 @@ var graphdef map[string](mp.Graphs) = map[string](mp.Graphs){
         Label: "Plack Bytes",
         Unit: "integer",
         Metrics: [](mp.Metrics){
-            mp.Metrics{ Name: "bytes_sent", Label: "Bytes Sent", Diff: false },
+            mp.Metrics{ Name: "bytes_sent", Label: "Bytes Sent", Diff: true },
         },
     },
 }
