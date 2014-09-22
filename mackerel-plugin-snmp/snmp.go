@@ -3,8 +3,8 @@ package main
 import (
 	"flag"
 	"fmt"
-	mp "github.com/mackerelio/go-mackerel-plugin"
 	"github.com/alouca/gosnmp"
+	mp "github.com/mackerelio/go-mackerel-plugin"
 	"os"
 	"strconv"
 	"strings"
@@ -102,7 +102,7 @@ func main() {
 	if *optTempfile != "" {
 		helper.Tempfile = *optTempfile
 	} else {
-		helper.Tempfile = fmt.Sprintf("/tmp/mackerel-plugin-snmp-%s-%s", *optHost, *optCommunity)
+		helper.Tempfile = fmt.Sprintf("/tmp/mackerel-plugin-snmp-%s-%s", *optHost, *optGraphName)
 	}
 
 	if os.Getenv("MACKEREL_AGENT_PLUGIN_META") != "" {
