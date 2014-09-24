@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"github.com/alouca/gosnmp"
 	mp "github.com/mackerelio/go-mackerel-plugin"
+	"log"
 	"os"
 	"strconv"
 	"strings"
@@ -35,13 +36,17 @@ func (m SNMPPlugin) FetchMetrics() (map[string]float64, error) {
 	for _, sm := range m.SNMPMetricsSlice {
 		resp, err := s.Get(sm.OID)
 		if err != nil {
+			log.Println("SNMP get failed: ", err)
 			continue
 		}
 
-		stat[sm.Metrics.Name], err = strconv.ParseFloat(fmt.Sprint(resp.Variables[0].Value), 64)
+		ret, err := strconv.ParseFloat(fmt.Sprint(resp.Variables[0].Value), 64)
 		if err != nil {
+			log.Println(err)
 			continue
 		}
+
+		stat[sm.Metrics.Name] = ret
 	}
 
 	return stat, err
