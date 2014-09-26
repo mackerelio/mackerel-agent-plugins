@@ -21,6 +21,24 @@ var graphdef map[string](mp.Graphs) = map[string](mp.Graphs){
 			mp.Metrics{Name: "pswpout", Label: "Swap Out", Diff: false},
 		},
 	},
+	"linux.ss": mp.Graphs{
+		Label: "Network Connection States",
+		Unit:  "integer",
+		Metrics: [](mp.Metrics){
+			mp.Metrics{Name: "ESTAB", Label: "Established", Diff: false},
+			mp.Metrics{Name: "SYN-SENT", Label: "Syn Sent", Diff: false},
+			mp.Metrics{Name: "SYN-RECV", Label: "Syn Received", Diff: false},
+			mp.Metrics{Name: "FIN-WAIT-1", Label: "Fin Wait 1", Diff: false},
+			mp.Metrics{Name: "FIN-WAIT-2", Label: "Fin Wait 2", Diff: false},
+			mp.Metrics{Name: "TIME-WAIT", Label: "Time Wait", Diff: false},
+			mp.Metrics{Name: "UNCONN", Label: "Close", Diff: false},
+			mp.Metrics{Name: "CLOSE-WAIT", Label: "Close Wait", Diff: false},
+			mp.Metrics{Name: "LAST-ACK", Label: "Last Ack", Diff: false},
+			mp.Metrics{Name: "LISTEN", Label: "Listen", Diff: false},
+			mp.Metrics{Name: "CLOSING", Label: "Closing", Diff: false},
+			mp.Metrics{Name: "UNKNOWN", Label: "Unknown", Diff: false},
+		},
+	},
 }
 
 // for fetching metrics
@@ -53,10 +71,10 @@ func doMain(c *cli.Context) {
 func (c LinuxPlugin) FetchMetrics() (map[string]float64, error) {
 	const PathVmstat = "/proc/vmstat"
 	var err error
+	var data string
 
 	stat := make(map[string]float64)
 
-	var data string
 	data, err = getProcVmstat(PathVmstat)
 	if err != nil {
 		return nil, err
@@ -66,7 +84,44 @@ func (c LinuxPlugin) FetchMetrics() (map[string]float64, error) {
 		return nil, err
 	}
 
+	data, err = getSs()
+	if err != nil {
+		return nil, err
+	}
+	err = parseSs(data, &stat)
+	if err != nil {
+		return nil, err
+	}
+
 	return stat, nil
+}
+
+// parsing metrics from ss
+func parseSs(str string, p *map[string]float64) error {
+	for i, line := range strings.Split(str, "\n") {
+		if i < 1 {
+			continue
+		}
+		record := strings.Fields(line)
+		if len(record) != 5 {
+			continue
+		}
+		(*p)[record[0]] = (*p)[record[0]] + 1
+	}
+
+	return nil
+}
+
+// Getting ss
+func getSs() (string, error) {
+	cmd := exec.Command("ss", "-na")
+	var out bytes.Buffer
+	cmd.Stdout = &out
+	err := cmd.Run()
+	if err != nil {
+		return "", err
+	}
+	return out.String(), nil
 }
 
 // parsing metrics from /proc/vmstat
