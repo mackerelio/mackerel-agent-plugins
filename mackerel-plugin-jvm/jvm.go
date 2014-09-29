@@ -17,89 +17,48 @@ var logger = logging.GetLogger("metrics.plugin.jvm")
 
 var graphdef map[string](mp.Graphs) = map[string](mp.Graphs){
 	"jvm.gc_events": mp.Graphs{
-		Label: "Number of GC events",
+		Label: "GC events",
 		Unit:  "integer",
 		Metrics: [](mp.Metrics){
-			mp.Metrics{Name: "YGC", Label: "Number of young generation GC events", Diff: true},
-			mp.Metrics{Name: "FGC", Label: "Number of stop the world events", Diff: true},
+			mp.Metrics{Name: "YGC", Label: "Young GC event", Diff: true},
+			mp.Metrics{Name: "FGC", Label: "Full GC event", Diff: true},
 		},
 	},
 	"jvm.gc_time": mp.Graphs{
-		Label: "Garbage collection time",
-		Unit:  "integer",
+		Label: "GC time (msec)",
+		Unit:  "float",
 		Metrics: [](mp.Metrics){
-			mp.Metrics{Name: "YGCT", Label: "Young generation garbage collection time", Diff: true},
-			mp.Metrics{Name: "FGCT", Label: "Full garbage collection time", Diff: true},
+			mp.Metrics{Name: "YGCT", Label: "Young GC time", Diff: true},
+			mp.Metrics{Name: "FGCT", Label: "Full GC time", Diff: true},
 		},
 	},
-	"jvm.survivor_space": mp.Graphs{
-		Label: "Survivor Space (KB)",
-		Unit:  "integer",
+	"jvm.new_space": mp.Graphs{
+		Label: "New Space memory (KB)",
+		Unit:  "float",
 		Metrics: [](mp.Metrics){
-			mp.Metrics{Name: "S0C", Label: "Survivor space 0 capacity", Diff: false},
-			mp.Metrics{Name: "S1C", Label: "Survivor space 1 capacity", Diff: false},
-			mp.Metrics{Name: "S0U", Label: "Survivor space 0 utilization", Diff: false},
-			mp.Metrics{Name: "S1C", Label: "Survivor space 1 utilization", Diff: false},
-			mp.Metrics{Name: "DSS", Label: "Adequate size of survivor", Diff: false},
-		},
-	},
-	"jvm.eden_space": mp.Graphs{
-		Label: "Eden Space (KB)",
-		Unit:  "integer",
-		Metrics: [](mp.Metrics){
-			mp.Metrics{Name: "EC", Label: "Eden space capacity", Diff: false},
-			mp.Metrics{Name: "EU", Label: "Eden space utilication", Diff: false},
+			mp.Metrics{Name: "NGCMX", Label: "New max", Diff: false},
+			mp.Metrics{Name: "NGC", Label: "New current", Diff: false},
+			mp.Metrics{Name: "EU", Label: "Eden used", Diff: false},
+			mp.Metrics{Name: "S0U", Label: "Survivor0 used", Diff: false},
+			mp.Metrics{Name: "S1U", Label: "Survivor1 used", Diff: false},
 		},
 	},
 	"jvm.old_space": mp.Graphs{
-		Label: "Old Space (KB)",
-		Unit:  "integer",
+		Label: "Old Space memory (KB)",
+		Unit:  "float",
 		Metrics: [](mp.Metrics){
-			mp.Metrics{Name: "OC", Label: "Old space capacity", Diff: false},
-			mp.Metrics{Name: "OU", Label: "Old space utilication", Diff: false},
+			mp.Metrics{Name: "OGCMX", Label: "Old max", Diff: false},
+			mp.Metrics{Name: "OGC", Label: "Old current", Diff: false},
+			mp.Metrics{Name: "OU", Label: "Old used", Diff: false},
 		},
 	},
-	"jvm.permanent_space": mp.Graphs{
+	"jvm.perm_space": mp.Graphs{
 		Label: "Permanent Space (KB)",
-		Unit:  "integer",
+		Unit:  "float",
 		Metrics: [](mp.Metrics){
-			mp.Metrics{Name: "PC", Label: "Permanent space capacity", Diff: false},
-			mp.Metrics{Name: "PU", Label: "Permanent space utilication", Diff: false},
-		},
-	},
-	"jvm.new_area": mp.Graphs{
-		Label: "New area",
-		Unit:  "integer",
-		Metrics: [](mp.Metrics){
-			mp.Metrics{Name: "NGCMN", Label: "Minimum size", Diff: false},
-			mp.Metrics{Name: "NGCMX", Label: "Maximum size", Diff: false},
-			mp.Metrics{Name: "NGC", Label: "Current size", Diff: false},
-		},
-	},
-	"jvm.old_area": mp.Graphs{
-		Label: "Old area",
-		Unit:  "integer",
-		Metrics: [](mp.Metrics){
-			mp.Metrics{Name: "OGCMN", Label: "Minimum size", Diff: false},
-			mp.Metrics{Name: "OGCMX", Label: "Maximum size", Diff: false},
-			mp.Metrics{Name: "OGC", Label: "Current size", Diff: false},
-		},
-	},
-	"jvm.permanent_area": mp.Graphs{
-		Label: "Permanent area",
-		Unit:  "integer",
-		Metrics: [](mp.Metrics){
-			mp.Metrics{Name: "PGCMN", Label: "Minimum size", Diff: false},
-			mp.Metrics{Name: "PGCMX", Label: "Maximum size", Diff: false},
-			mp.Metrics{Name: "PGC", Label: "Current size", Diff: false},
-		},
-	},
-	"jvm.tenuring_threshold": mp.Graphs{
-		Label: "Tenuring threshold",
-		Unit:  "integer",
-		Metrics: [](mp.Metrics){
-			mp.Metrics{Name: "TT", Label: "Tenuring threhold", Diff: false},
-			mp.Metrics{Name: "PGCMX", Label: "Maximum tenuring threshold", Diff: false},
+			mp.Metrics{Name: "PGCMX", Label: "Perm max", Diff: false},
+			mp.Metrics{Name: "PGC", Label: "Perm current", Diff: false},
+			mp.Metrics{Name: "PU", Label: "Perm used", Diff: false},
 		},
 	},
 }
@@ -187,11 +146,16 @@ func (m JVMPlugin) FetchMetrics() (map[string]float64, error) {
 	if err != nil {
 		return nil, err
 	}
+	gcOldStat, err := fetchJstatMetrics(m.Lvmid, "-gcold", m.JstatPath)
+	if err != nil {
+		return nil, err
+	}
 
 	stat := make(map[string]float64)
 	mergeStat(stat, gcStat)
 	mergeStat(stat, gcCapacityStat)
 	mergeStat(stat, gcNewStat)
+	mergeStat(stat, gcOldStat)
 
 	return stat, nil
 }

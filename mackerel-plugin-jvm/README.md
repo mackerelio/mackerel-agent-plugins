@@ -24,3 +24,4 @@ command = "/path/to/mackerel-plugin-jvm -javaname=NettyServer -jstatpath=/usr/bi
 
 - https://github.com/sensu/sensu-community-plugins/blob/master/plugins/java/jstat-metrics.py
 - http://docs.oracle.com/javase/7/docs/technotes/tools/share/jstat.html
+- https://github.com/kazeburo/jstat2gf
