@@ -2,8 +2,10 @@ package main
 
 import (
 	"bytes"
+	"fmt"
 	"os"
 	"os/exec"
+	"regexp"
 	"strconv"
 	"strings"
 
@@ -70,6 +72,7 @@ func doMain(c *cli.Context) {
 // fetch metrics
 func (c LinuxPlugin) FetchMetrics() (map[string]float64, error) {
 	const PathVmstat = "/proc/vmstat"
+	const PathDiskstats = "/proc/diskstats"
 	var err error
 	var data string
 
@@ -93,7 +96,68 @@ func (c LinuxPlugin) FetchMetrics() (map[string]float64, error) {
 		return nil, err
 	}
 
+	data, err = getProcDiskstats(PathDiskstats)
+	if err != nil {
+		return nil, err
+	}
+	err = parseProcDiskstats(data, &stat)
+	if err != nil {
+		return nil, err
+	}
+
 	return stat, nil
+}
+
+// parsing metrics from diskstats
+func parseProcDiskstats(str string, p *map[string]float64) error {
+	for _, line := range strings.Split(str, "\n") {
+		// See also: https://www.kernel.org/doc/Documentation/ABI/testing/procfs-diskstats
+		record := strings.Fields(line)
+		if len(record) < 14 {
+			continue
+		}
+		device := record[2]
+		matched, err := regexp.MatchString("[0-9]$", device)
+		if matched || err != nil {
+			continue
+		}
+
+		(*p)[fmt.Sprintf("iotime_%s", device)], _ = _atof(record[12])
+		(*p)[fmt.Sprintf("iotime_weighted_%s", device)], _ = _atof(record[13])
+		graphdef[fmt.Sprintf("linux.disk.elapsed.%s", device)] = mp.Graphs{
+			Label: fmt.Sprintf("Disk Elapsed IO Time %s", device),
+			Unit:  "integer",
+			Metrics: [](mp.Metrics){
+				mp.Metrics{Name: fmt.Sprintf("iotime_%s", device), Label: "IO Time", Diff: true},
+				mp.Metrics{Name: fmt.Sprintf("iotime_weighted_%s", device), Label: "IO Time Weighted", Diff: true},
+			},
+		}
+
+		(*p)[fmt.Sprintf("tsreading_%s", device)], _ = _atof(record[6])
+		(*p)[fmt.Sprintf("tswriting_%s", device)], _ = _atof(record[10])
+		graphdef[fmt.Sprintf("linux.disk.rwtime.%s", device)] = mp.Graphs{
+			Label: fmt.Sprintf("Disk Read/Write Time %s", device),
+			Unit:  "integer",
+			Metrics: [](mp.Metrics){
+				mp.Metrics{Name: fmt.Sprintf("tsreading_%s", device), Label: "Read", Diff: true},
+				mp.Metrics{Name: fmt.Sprintf("tswriting_%s", device), Label: "Write", Diff: true},
+			},
+		}
+	}
+
+	return nil
+}
+
+// Getting diskstats
+func getProcDiskstats(path string) (string, error) {
+	cmd := exec.Command("cat", path)
+	var out bytes.Buffer
+	cmd.Stdout = &out
+	err := cmd.Run()
+	if err != nil {
+		return "", err
+	}
+	return out.String(), nil
 }
 
 // parsing metrics from ss
@@ -132,7 +196,7 @@ func parseProcVmstat(str string, p *map[string]float64) error {
 			continue
 		}
 		var err_parse error
-		(*p)[record[0]], err_parse = strconv.ParseFloat(strings.Trim(record[1], " "), 64)
+		(*p)[record[0]], err_parse = _atof(record[1])
 		if err_parse != nil {
 			return err_parse
 		}
@@ -143,7 +207,7 @@ func parseProcVmstat(str string, p *map[string]float64) error {
 
 // Getting /proc/vmstat.
 func getProcVmstat(path string) (string, error) {
-	cmd := exec.Command("cat", "/proc/vmstat")
+	cmd := exec.Command("cat", path)
 	var out bytes.Buffer
 	cmd.Stdout = &out
 	err := cmd.Run()
@@ -151,6 +215,11 @@ func getProcVmstat(path string) (string, error) {
 		return "", err
 	}
 	return out.String(), nil
+}
+
+// atof
+func _atof(str string) (float64, error) {
+	return strconv.ParseFloat(strings.Trim(str, " "), 64)
 }
 
 // main
