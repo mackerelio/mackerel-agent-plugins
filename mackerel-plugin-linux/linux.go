@@ -15,59 +15,12 @@ import (
 
 // metric value structure
 // note: diskstats are add dynamic at parseProcDiskstats().
-var graphdef map[string](mp.Graphs) = map[string](mp.Graphs){
-	"linux.swap": mp.Graphs{
-		Label: "Linux Swap Usage",
-		Unit:  "integer",
-		Metrics: [](mp.Metrics){
-			mp.Metrics{Name: "pswpin", Label: "Swap In", Diff: false},
-			mp.Metrics{Name: "pswpout", Label: "Swap Out", Diff: false},
-		},
-	},
-	"linux.ss": mp.Graphs{
-		Label: "Linux Network Connection States",
-		Unit:  "integer",
-		Metrics: [](mp.Metrics){
-			mp.Metrics{Name: "ESTAB", Label: "Established", Diff: false},
-			mp.Metrics{Name: "SYN-SENT", Label: "Syn Sent", Diff: false},
-			mp.Metrics{Name: "SYN-RECV", Label: "Syn Received", Diff: false},
-			mp.Metrics{Name: "FIN-WAIT-1", Label: "Fin Wait 1", Diff: false},
-			mp.Metrics{Name: "FIN-WAIT-2", Label: "Fin Wait 2", Diff: false},
-			mp.Metrics{Name: "TIME-WAIT", Label: "Time Wait", Diff: false},
-			mp.Metrics{Name: "UNCONN", Label: "Close", Diff: false},
-			mp.Metrics{Name: "CLOSE-WAIT", Label: "Close Wait", Diff: false},
-			mp.Metrics{Name: "LAST-ACK", Label: "Last Ack", Diff: false},
-			mp.Metrics{Name: "LISTEN", Label: "Listen", Diff: false},
-			mp.Metrics{Name: "CLOSING", Label: "Closing", Diff: false},
-			mp.Metrics{Name: "UNKNOWN", Label: "Unknown", Diff: false},
-		},
-	},
-	"linux.interrupts": mp.Graphs{
-		Label: "Linux Interrupts",
-		Unit:  "integer",
-		Metrics: [](mp.Metrics){
-			mp.Metrics{Name: "interrupts", Label: "Interrupts", Diff: true},
-		},
-	},
-	"linux.context_switches": mp.Graphs{
-		Label: "Linux Context Switches",
-		Unit:  "integer",
-		Metrics: [](mp.Metrics){
-			mp.Metrics{Name: "context_switches", Label: "Context Switches", Diff: true},
-		},
-	},
-	"linux.forks": mp.Graphs{
-		Label: "Linux Forks",
-		Unit:  "integer",
-		Metrics: [](mp.Metrics){
-			mp.Metrics{Name: "forks", Label: "Forks", Diff: true},
-		},
-	},
-}
+var graphdef map[string](mp.Graphs) = map[string](mp.Graphs){}
 
 // for fetching metrics
 type LinuxPlugin struct {
 	Tempfile string
+	Type     string
 }
 
 // Graph definition
@@ -77,10 +30,10 @@ func (c LinuxPlugin) GraphDefinition() map[string](mp.Graphs) {
 
 // main function
 func doMain(c *cli.Context) {
-
 	var linux LinuxPlugin
 
 	linux.Tempfile = c.String("tempfile")
+	linux.Type = c.String("type")
 
 	helper := mp.NewMackerelPlugin(linux)
 
@@ -97,47 +50,77 @@ func (c LinuxPlugin) FetchMetrics() (map[string]float64, error) {
 	const PathDiskstats = "/proc/diskstats"
 	const PathStat = "/proc/stat"
 	var err error
+
+	p := make(map[string]float64)
+
+	if c.Type == "all" || c.Type == "swap" {
+		err = collectProcVmstat(PathVmstat, &p)
+		if err != nil {
+			return nil, err
+		}
+	}
+
+	if c.Type == "all" || c.Type == "netstat" {
+		err = collectSs(&p)
+		if err != nil {
+			return nil, err
+		}
+	}
+
+	if c.Type == "all" || c.Type == "diskstats" {
+		err = collectDiskstats(PathDiskstats, &p)
+		if err != nil {
+			return nil, err
+		}
+	}
+
+	if c.Type == "all" || c.Type == "proc_stat" {
+		err = collectProcStat(PathStat, &p)
+		if err != nil {
+			return nil, err
+		}
+	}
+
+	return p, nil
+}
+
+// collect /proc/stat
+func collectProcStat(path string, p *map[string]float64) error {
+	var err error
 	var data string
 
-	stat := make(map[string]float64)
-
-	data, err = getProc(PathVmstat)
-	if err != nil {
-		return nil, err
+	graphdef["linux.interrupts"] = mp.Graphs{
+		Label: "Linux Interrupts",
+		Unit:  "integer",
+		Metrics: [](mp.Metrics){
+			mp.Metrics{Name: "interrupts", Label: "Interrupts", Diff: true},
+		},
 	}
-	err = parseProcVmstat(data, &stat)
-	if err != nil {
-		return nil, err
+	graphdef["linux.context_switches"] = mp.Graphs{
+		Label: "Linux Context Switches",
+		Unit:  "integer",
+		Metrics: [](mp.Metrics){
+			mp.Metrics{Name: "context_switches", Label: "Context Switches", Diff: true},
+		},
 	}
-
-	data, err = getSs()
-	if err != nil {
-		return nil, err
-	}
-	err = parseSs(data, &stat)
-	if err != nil {
-		return nil, err
-	}
-
-	data, err = getProc(PathDiskstats)
-	if err != nil {
-		return nil, err
-	}
-	err = parseProcDiskstats(data, &stat)
-	if err != nil {
-		return nil, err
+	graphdef["linux.forks"] = mp.Graphs{
+		Label: "Linux Forks",
+		Unit:  "integer",
+		Metrics: [](mp.Metrics){
+			mp.Metrics{Name: "forks", Label: "Forks", Diff: true},
+		},
 	}
 
-	data, err = getProc(PathStat)
+	data, err = getProc(path)
 	if err != nil {
-		return nil, err
+		return err
 	}
-	err = parseProcStat(data, &stat)
+	err = parseProcStat(data, p)
 	if err != nil {
-		return nil, err
+		return err
 	}
 
-	return stat, nil
+	return nil
 }
 
 // parsing metrics from /proc/stat
@@ -165,16 +148,21 @@ func parseProcStat(str string, p *map[string]float64) error {
 	return nil
 }
 
-// Getting /proc/*
-func getProc(path string) (string, error) {
-	cmd := exec.Command("cat", path)
-	var out bytes.Buffer
-	cmd.Stdout = &out
-	err := cmd.Run()
+// collect /proc/diskstats
+func collectDiskstats(path string, p *map[string]float64) error {
+	var err error
+	var data string
+
+	data, err = getProc(path)
 	if err != nil {
-		return "", err
+		return err
 	}
-	return out.String(), nil
+	err = parseProcDiskstats(data, p)
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
 
 // parsing metrics from diskstats
@@ -217,6 +205,41 @@ func parseProcDiskstats(str string, p *map[string]float64) error {
 	return nil
 }
 
+// collect ss
+func collectSs(p *map[string]float64) error {
+	var err error
+	var data string
+
+	graphdef["linux.ss"] = mp.Graphs{
+		Label: "Linux Network Connection States",
+		Unit:  "integer",
+		Metrics: [](mp.Metrics){
+			mp.Metrics{Name: "ESTAB", Label: "Established", Diff: false},
+			mp.Metrics{Name: "SYN-SENT", Label: "Syn Sent", Diff: false},
+			mp.Metrics{Name: "SYN-RECV", Label: "Syn Received", Diff: false},
+			mp.Metrics{Name: "FIN-WAIT-1", Label: "Fin Wait 1", Diff: false},
+			mp.Metrics{Name: "FIN-WAIT-2", Label: "Fin Wait 2", Diff: false},
+			mp.Metrics{Name: "TIME-WAIT", Label: "Time Wait", Diff: false},
+			mp.Metrics{Name: "UNCONN", Label: "Close", Diff: false},
+			mp.Metrics{Name: "CLOSE-WAIT", Label: "Close Wait", Diff: false},
+			mp.Metrics{Name: "LAST-ACK", Label: "Last Ack", Diff: false},
+			mp.Metrics{Name: "LISTEN", Label: "Listen", Diff: false},
+			mp.Metrics{Name: "CLOSING", Label: "Closing", Diff: false},
+			mp.Metrics{Name: "UNKNOWN", Label: "Unknown", Diff: false},
+		},
+	}
+	data, err = getSs()
+	if err != nil {
+		return err
+	}
+	err = parseSs(data, p)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
 // parsing metrics from ss
 func parseSs(str string, p *map[string]float64) error {
 	for i, line := range strings.Split(str, "\n") {
@@ -245,6 +268,32 @@ func getSs() (string, error) {
 	return out.String(), nil
 }
 
+// collect /proc/vmstat
+func collectProcVmstat(path string, p *map[string]float64) error {
+	var err error
+	var data string
+
+	graphdef["linux.swap"] = mp.Graphs{
+		Label: "Linux Swap Usage",
+		Unit:  "integer",
+		Metrics: [](mp.Metrics){
+			mp.Metrics{Name: "pswpin", Label: "Swap In", Diff: false},
+			mp.Metrics{Name: "pswpout", Label: "Swap Out", Diff: false},
+		},
+	}
+
+	data, err = getProc(path)
+	if err != nil {
+		return err
+	}
+	err = parseProcVmstat(data, p)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
 // parsing metrics from /proc/vmstat
 func parseProcVmstat(str string, p *map[string]float64) error {
 	for _, line := range strings.Split(str, "\n") {
@@ -260,6 +309,18 @@ func parseProcVmstat(str string, p *map[string]float64) error {
 	}
 
 	return nil
+}
+
+// Getting /proc/*
+func getProc(path string) (string, error) {
+	cmd := exec.Command("cat", path)
+	var out bytes.Buffer
+	cmd.Stdout = &out
+	err := cmd.Run()
+	if err != nil {
+		return "", err
+	}
+	return out.String(), nil
 }
 
 // atof
