@@ -68,7 +68,7 @@ func (c LinuxPlugin) FetchMetrics() (map[string]float64, error) {
 	}
 
 	if c.Type == "all" || c.Type == "diskstats" {
-		err = collectDiskstats(PathDiskstats, &p)
+		err = collectProcDiskstats(PathDiskstats, &p)
 		if err != nil {
 			return nil, err
 		}
@@ -149,7 +149,7 @@ func parseProcStat(str string, p *map[string]float64) error {
 }
 
 // collect /proc/diskstats
-func collectDiskstats(path string, p *map[string]float64) error {
+func collectProcDiskstats(path string, p *map[string]float64) error {
 	var err error
 	var data string
 

@@ -7,6 +7,17 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
+func TestCollectStat(t *testing.T) {
+	path := "/proc/stat"
+	_, err := os.Stat(path)
+	if err == nil {
+		return
+	}
+	p := make(map[string]float64)
+
+	assert.Nil(t, collectProcStat(path, &p))
+}
+
 func TestParseProcStat(t *testing.T) {
 	stub := `intr 614818624 122 8 0 0 1 0 0 0 1 0 0 0 123 0 0 0 0 0 0 0 0 0 0 0 4846888 0 44650320 253 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
  ctxt 879305394
@@ -19,6 +30,17 @@ func TestParseProcStat(t *testing.T) {
 	assert.Equal(t, stat["interrupts"], 614818624)
 	assert.Equal(t, stat["context_switches"], 879305394)
 	assert.Equal(t, stat["forks"], 1959410)
+}
+
+func TestCollectProcDiskstats(t *testing.T) {
+	path := "/proc/diskstats"
+	_, err := os.Stat(path)
+	if err == nil {
+		return
+	}
+	p := make(map[string]float64)
+
+	assert.Nil(t, collectProcDiskstats(path, &p))
 }
 
 func TestParseProcDiskstats(t *testing.T) {
@@ -36,17 +58,14 @@ func TestParseProcDiskstats(t *testing.T) {
 	assert.Equal(t, stat["tswriting_sda"], 423711425)
 }
 
-func TestGetProc(t *testing.T) {
-	stub := "/proc/diskstats"
-	_, err := os.Stat(stub)
+func TestCollectSs(t *testing.T) {
+	_, err := os.Stat("/usr/sbin/ss")
 	if err == nil {
 		return
 	}
+	p := make(map[string]float64)
 
-	ret, err := getProc(stub)
-	assert.Nil(t, err)
-	assert.NotNil(t, ret)
-	assert.Contains(t, ret, "ram0")
+	assert.Nil(t, collectSs(&p))
 }
 
 func TestParseSs(t *testing.T) {
@@ -76,6 +95,17 @@ func TestGetSs(t *testing.T) {
 	assert.Contains(t, ret, "Stats")
 }
 
+func TestCollectProcVmstat(t *testing.T) {
+	path := "/proc/vmstat"
+	_, err := os.Stat(path)
+	if err == nil {
+		return
+	}
+	p := make(map[string]float64)
+
+	assert.Nil(t, collectProcVmstat(path, &p))
+}
+
 func TestParseProcVmstat(t *testing.T) {
 	stub := `pgpgin 770294
 pgpgout 31351354
@@ -89,4 +119,17 @@ pswpout 113`
 	assert.Equal(t, stat["pgpgout"], 31351354)
 	assert.Equal(t, stat["pswpin"], 0)
 	assert.Equal(t, stat["pswpout"], 113)
+}
+
+func TestGetProc(t *testing.T) {
+	stub := "/proc/diskstats"
+	_, err := os.Stat(stub)
+	if err == nil {
+		return
+	}
+
+	ret, err := getProc(stub)
+	assert.Nil(t, err)
+	assert.NotNil(t, ret)
+	assert.Contains(t, ret, "ram0")
 }
