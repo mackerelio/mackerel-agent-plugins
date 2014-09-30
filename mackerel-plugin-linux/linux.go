@@ -81,7 +81,59 @@ func (c LinuxPlugin) FetchMetrics() (map[string]float64, error) {
 		}
 	}
 
+	if c.Type == "all" || c.Type == "users" {
+		err = collectWho(&p)
+		if err != nil {
+			return nil, err
+		}
+	}
+
 	return p, nil
+}
+
+// collect who
+func collectWho(p *map[string]float64) error {
+	var err error
+	var data string
+
+	graphdef["linux.users"] = mp.Graphs{
+		Label: "Linux Users",
+		Unit:  "integer",
+		Metrics: [](mp.Metrics){
+			mp.Metrics{Name: "users", Label: "Interrupts", Diff: false},
+		},
+	}
+
+	data, err = getWho()
+	if err != nil {
+		return err
+	}
+	err = parseWho(data, p)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+// parsing metrics from /proc/stat
+func parseWho(str string, p *map[string]float64) error {
+	line := strings.Split(str, "\n")
+	(*p)["users"] = float64(len(line))
+
+	return nil
+}
+
+// Getting who
+func getWho() (string, error) {
+	cmd := exec.Command("who", "")
+	var out bytes.Buffer
+	cmd.Stdout = &out
+	err := cmd.Run()
+	if err != nil {
+		return "", err
+	}
+	return out.String(), nil
 }
 
 // collect /proc/stat

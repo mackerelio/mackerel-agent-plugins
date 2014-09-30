@@ -7,6 +7,38 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
+func TestCollectWho(t *testing.T) {
+	_, err := os.Stat("/usr/bin/who")
+	if err == nil {
+		return
+	}
+	p := make(map[string]float64)
+
+	assert.Nil(t, collectWho(&p))
+}
+
+func TestParseWho(t *testing.T) {
+	stub := `test0  pts/48       2014-09-30 08:00 (192.168.24.123)
+test1  pts/48       2014-09-30 08:59 (192.168.24.123)
+test2  pts/48       2014-09-30 09:00 (192.168.24.123)`
+	stat := make(map[string]float64)
+
+	err := parseWho(stub, &stat)
+	assert.Nil(t, err)
+	assert.Equal(t, stat["users"], 3)
+}
+
+func TestGetWho(t *testing.T) {
+	_, err := os.Stat("/usr/sbin/who")
+	if err == nil {
+		return
+	}
+
+	ret, err := getWho()
+	assert.Nil(t, err)
+	assert.NotNil(t, ret)
+}
+
 func TestCollectStat(t *testing.T) {
 	path := "/proc/stat"
 	_, err := os.Stat(path)
