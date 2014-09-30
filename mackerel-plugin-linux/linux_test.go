@@ -7,6 +7,20 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
+func TestParseProcStat(t *testing.T) {
+	stub := `intr 614818624 122 8 0 0 1 0 0 0 1 0 0 0 123 0 0 0 0 0 0 0 0 0 0 0 4846888 0 44650320 253 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+ ctxt 879305394
+ btime 1409212617
+ processes 1959410`
+	stat := make(map[string]float64)
+
+	err := parseProcStat(stub, &stat)
+	assert.Nil(t, err)
+	assert.Equal(t, stat["interrupts"], 614818624)
+	assert.Equal(t, stat["context_switches"], 879305394)
+	assert.Equal(t, stat["forks"], 1959410)
+}
+
 func TestParseProcDiskstats(t *testing.T) {
 	stub := `   1       0 ram0 0 0 0 0 0 0 0 0 0 0 0
    8       0 sda 324351 303093 35032074 12441261 4456146 5387174 68639686 423711425 0 23865772 436201338
@@ -22,14 +36,14 @@ func TestParseProcDiskstats(t *testing.T) {
 	assert.Equal(t, stat["tswriting_sda"], 423711425)
 }
 
-func TestGetProcDiskstats(t *testing.T) {
+func TestGetProc(t *testing.T) {
 	stub := "/proc/diskstats"
 	_, err := os.Stat(stub)
 	if err == nil {
 		return
 	}
 
-	ret, err := getProcDiskstats(stub)
+	ret, err := getProc(stub)
 	assert.Nil(t, err)
 	assert.NotNil(t, ret)
 	assert.Contains(t, ret, "ram0")
@@ -75,17 +89,4 @@ pswpout 113`
 	assert.Equal(t, stat["pgpgout"], 31351354)
 	assert.Equal(t, stat["pswpin"], 0)
 	assert.Equal(t, stat["pswpout"], 113)
-}
-
-func TestGetProcVmstat(t *testing.T) {
-	stub := "/proc/vmstat"
-	_, err := os.Stat(stub)
-	if err == nil {
-		return
-	}
-
-	ret, err := getProcVmstat(stub)
-	assert.Nil(t, err)
-	assert.NotNil(t, ret)
-	assert.Contains(t, ret, "pgpgout")
 }

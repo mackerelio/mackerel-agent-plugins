@@ -14,6 +14,7 @@ import (
 )
 
 // metric value structure
+// note: diskstats are add dynamic at parseProcDiskstats().
 var graphdef map[string](mp.Graphs) = map[string](mp.Graphs){
 	"linux.swap": mp.Graphs{
 		Label: "Linux Swap Usage",
@@ -24,7 +25,7 @@ var graphdef map[string](mp.Graphs) = map[string](mp.Graphs){
 		},
 	},
 	"linux.ss": mp.Graphs{
-		Label: "Network Connection States",
+		Label: "Linux Network Connection States",
 		Unit:  "integer",
 		Metrics: [](mp.Metrics){
 			mp.Metrics{Name: "ESTAB", Label: "Established", Diff: false},
@@ -39,6 +40,27 @@ var graphdef map[string](mp.Graphs) = map[string](mp.Graphs){
 			mp.Metrics{Name: "LISTEN", Label: "Listen", Diff: false},
 			mp.Metrics{Name: "CLOSING", Label: "Closing", Diff: false},
 			mp.Metrics{Name: "UNKNOWN", Label: "Unknown", Diff: false},
+		},
+	},
+	"linux.interrupts": mp.Graphs{
+		Label: "Linux Interrupts",
+		Unit:  "integer",
+		Metrics: [](mp.Metrics){
+			mp.Metrics{Name: "interrupts", Label: "Interrupts", Diff: true},
+		},
+	},
+	"linux.context_switches": mp.Graphs{
+		Label: "Linux Context Switches",
+		Unit:  "integer",
+		Metrics: [](mp.Metrics){
+			mp.Metrics{Name: "context_switches", Label: "Context Switches", Diff: true},
+		},
+	},
+	"linux.forks": mp.Graphs{
+		Label: "Linux Forks",
+		Unit:  "integer",
+		Metrics: [](mp.Metrics){
+			mp.Metrics{Name: "forks", Label: "Forks", Diff: true},
 		},
 	},
 }
@@ -73,12 +95,13 @@ func doMain(c *cli.Context) {
 func (c LinuxPlugin) FetchMetrics() (map[string]float64, error) {
 	const PathVmstat = "/proc/vmstat"
 	const PathDiskstats = "/proc/diskstats"
+	const PathStat = "/proc/stat"
 	var err error
 	var data string
 
 	stat := make(map[string]float64)
 
-	data, err = getProcVmstat(PathVmstat)
+	data, err = getProc(PathVmstat)
 	if err != nil {
 		return nil, err
 	}
@@ -96,7 +119,7 @@ func (c LinuxPlugin) FetchMetrics() (map[string]float64, error) {
 		return nil, err
 	}
 
-	data, err = getProcDiskstats(PathDiskstats)
+	data, err = getProc(PathDiskstats)
 	if err != nil {
 		return nil, err
 	}
@@ -105,7 +128,53 @@ func (c LinuxPlugin) FetchMetrics() (map[string]float64, error) {
 		return nil, err
 	}
 
+	data, err = getProc(PathStat)
+	if err != nil {
+		return nil, err
+	}
+	err = parseProcStat(data, &stat)
+	if err != nil {
+		return nil, err
+	}
+
 	return stat, nil
+}
+
+// parsing metrics from /proc/stat
+func parseProcStat(str string, p *map[string]float64) error {
+	for _, line := range strings.Split(str, "\n") {
+		record := strings.Fields(line)
+		if len(record) < 2 {
+			continue
+		}
+		name := record[0]
+		value, err_parse := _atof(record[1])
+		if err_parse != nil {
+			return err_parse
+		}
+
+		if name == "intr" {
+			(*p)["interrupts"] = value
+		} else if name == "ctxt" {
+			(*p)["context_switches"] = value
+		} else if name == "processes" {
+			(*p)["forks"] = value
+		}
+	}
+
+	return nil
+}
+
+// Getting /proc/*
+func getProc(path string) (string, error) {
+	cmd := exec.Command("cat", path)
+	var out bytes.Buffer
+	cmd.Stdout = &out
+	err := cmd.Run()
+	if err != nil {
+		return "", err
+	}
+	return out.String(), nil
 }
 
 // parsing metrics from diskstats
@@ -148,18 +217,6 @@ func parseProcDiskstats(str string, p *map[string]float64) error {
 	return nil
 }
 
-// Getting diskstats
-func getProcDiskstats(path string) (string, error) {
-	cmd := exec.Command("cat", path)
-	var out bytes.Buffer
-	cmd.Stdout = &out
-	err := cmd.Run()
-	if err != nil {
-		return "", err
-	}
-	return out.String(), nil
-}
-
 // parsing metrics from ss
 func parseSs(str string, p *map[string]float64) error {
 	for i, line := range strings.Split(str, "\n") {
@@ -191,7 +248,7 @@ func getSs() (string, error) {
 // parsing metrics from /proc/vmstat
 func parseProcVmstat(str string, p *map[string]float64) error {
 	for _, line := range strings.Split(str, "\n") {
-		record := strings.Split(line, " ")
+		record := strings.Fields(line)
 		if len(record) != 2 {
 			continue
 		}
@@ -203,18 +260,6 @@ func parseProcVmstat(str string, p *map[string]float64) error {
 	}
 
 	return nil
-}
-
-// Getting /proc/vmstat.
-func getProcVmstat(path string) (string, error) {
-	cmd := exec.Command("cat", path)
-	var out bytes.Buffer
-	cmd.Stdout = &out
-	err := cmd.Run()
-	if err != nil {
-		return "", err
-	}
-	return out.String(), nil
 }
 
 // atof
