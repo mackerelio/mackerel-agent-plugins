@@ -43,6 +43,14 @@ var graphdef map[string](mp.Graphs) = map[string](mp.Graphs){
 			mp.Metrics{Name: "docs_deleted", Label: "Deleted"},
 		},
 	},
+	"elasticsearch.indices.memory_size": mp.Graphs{
+		Label: "Elasticsearch Indices Memory Size",
+		Unit:  "bytes",
+		Metrics: [](mp.Metrics){
+			mp.Metrics{Name: "fielddata_size", Label: "Fielddata"},
+			mp.Metrics{Name: "filter_cache_size", Label: "Filter Cache"},
+		},
+	},
 	"elasticsearch.jvm.heap": mp.Graphs{
 		Label: "Elasticsearch JVM Heap Mem",
 		Unit:  "bytes",
@@ -98,6 +106,8 @@ var metricPlace map[string][]string = map[string][]string{
 	"total_suggest":         []string{"indices", "suggest", "total"},
 	"docs_count":            []string{"indices", "docs", "count"},
 	"docs_deleted":          []string{"indices", "docs", "deleted"},
+	"fielddata_size":        []string{"indices", "fielddata", "memory_size_in_bytes"},
+	"filter_cache_size":     []string{"indices", "filter_cache", "memory_size_in_bytes"},
 	"heap_used":             []string{"jvm", "mem", "heap_used_in_bytes"},
 	"heap_max":              []string{"jvm", "mem", "heap_max_in_bytes"},
 	"threads_generic":       []string{"thread_pool", "generic", "threads"},
