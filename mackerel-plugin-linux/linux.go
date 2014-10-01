@@ -140,7 +140,7 @@ func collectWho(p *map[string]float64) error {
 		Label: "Linux Users",
 		Unit:  "integer",
 		Metrics: [](mp.Metrics){
-			mp.Metrics{Name: "users", Label: "Interrupts", Diff: false},
+			mp.Metrics{Name: "users", Label: "Users", Diff: false},
 		},
 	}
 
