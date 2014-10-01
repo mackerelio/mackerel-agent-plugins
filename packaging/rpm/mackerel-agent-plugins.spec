@@ -8,8 +8,8 @@
 
 Summary: Monitoring program plugins for Mackerel
 Name: mackerel-agent-plugins
-Version: 0.3.1
-Release: %{revision}%{?dist}
+Version: 0.4.2
+Release: %{revision}
 License: Apache-2
 Group: Applications/System
 URL: https://mackerel.io/
@@ -25,25 +25,14 @@ This package provides plugins for Mackerel.
 
 %prep
 
-%build
-rm -rf %{__buildroot}
-mkdir -p %{__buildroot}
-cd %{__buildroot}
-go get github.com/mitchellh/gox
-gox -build-toolchain -osarch="linux/386"
-gox -osarch="linux/386" github.com/mackerelio/mackerel-agent-plugins/mackerel-plugin-mysql
-gox -osarch="linux/386" github.com/mackerelio/mackerel-agent-plugins/mackerel-plugin-memcached
-gox -osarch="linux/386" github.com/mackerelio/mackerel-agent-plugins/mackerel-plugin-nginx
-
 %install
 %{__rm} -rf %{buildroot}
 
 %{__mkdir} -p %{buildroot}%{__targetdir}
-%{__install} -m0755 %{__buildroot}/mackerel-plugin-mysql_linux_386 %{buildroot}%{__targetdir}/mackerel-plugin-mysql
-%{__install} -m0755 %{__buildroot}/mackerel-plugin-memcached_linux_386 %{buildroot}%{__targetdir}/mackerel-plugin-memcached
-%{__install} -m0755 %{__buildroot}/mackerel-plugin-memcached_linux_386 %{buildroot}%{__targetdir}/mackerel-plugin-nginx
 
-%post
+for i in apache2 mysql memcached nginx plack postgres redis;do \
+    %{__install} -m0755 %{_sourcedir}/build/mackerel-plugin-$i %{buildroot}%{__targetdir}/; \
+done
 
 %clean
 %{__rm} -rf %{buildroot}
@@ -53,6 +42,12 @@ gox -osarch="linux/386" github.com/mackerelio/mackerel-agent-plugins/mackerel-pl
 %{__targetdir}
 
 %changelog
+* Wed Sep 17 2014 <stanaka@hatena.ne.jp> - 0.4.2
+- Fix memcached
+
+* Tue Sep 16 2014 <stanaka@hatena.ne.jp> - 0.4.0
+- Add plugin for apache2, nginx, plack, postgres, redis
+
 * Tue Aug 27 2014 <stanaka@hatena.ne.jp> - 0.3.1
 - Update version string
 

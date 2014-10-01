@@ -5,24 +5,23 @@ env: PATH=/home/travis/gopath/bin:$PATH
 install:
 - go get github.com/mitchellh/gox
 - gox -build-toolchain -osarch=linux/386
-- go get github.com/stretchr/testify/assert
-- go get -d -v ./... && go build -v ./...
 - sudo apt-get update
 - DEBIAN_FRONTEND=noninteractive sudo apt-get install -y rpm devscripts debhelper
 - mkdir -p ~/rpmbuild/{BUILD,BUILDROOT,RPMS,SOURCES,SPECS,SRPMS}
 script:
-- go test -v ./...
-- make
+- make all
 deploy:
   provider: releases
   api_key:
     secure: c2pLKkM2leWMIzakVisNf3kAK6TBYslDM8SFEVrTTHpHnTI/6jUFnDLuL9cKuq9c76QcgYfqdLDn/hP+uFHf5WdtdJR00R+bX8cCx6NfOe7Kk9GlqGinUcXKAVs0kQHaYtQrN/rCOIG92kYFdbRHMD8uMrADJVRySePTMMhMX9o=
   file:
-  - "/home/travis/rpmbuild/RPMS/noarch/mackerel-agent-plugins-0.3.1-1.noarch.rpm"
-  - "/home/travis/gopath/src/github.com/mackerelio/mackerel-agent-plugins/packaging/mackerel-agent-plugins_0.3.1-1_all.deb"
+  - "/home/travis/rpmbuild/RPMS/noarch/mackerel-agent-plugins-0.4.2-1.noarch.rpm"
+  - "/home/travis/gopath/src/github.com/mackerelio/mackerel-agent-plugins/packaging/mackerel-agent-plugins_0.4.2-1_all.deb"
   skip_cleanup: true
   on:
     repo: mackerelio/mackerel-agent-plugins
     all_branches: true
     tags: true
-
+notifications:
+  slack:
+    secure: cPeJRg+ouTlemEV5UM4muhDwtIM0dktcs3mnfB73oZ2MGOimv/DFpL+VTRLlkWau8l0dT4ngLlGPcveLrXQXwps2LsJMr+gS6Az/CAQCIl21oj4bnjs5uGYTG8hM8ymVzGINPNnj5Fnn5DUMunA2sow30qxfuCnSUMGot2nFRKw=
