@@ -14,7 +14,7 @@ import (
 )
 
 // metric value structure
-// note: diskstats are add dynamic at parseProcDiskstats().
+// note: all metrics are add dynamic at collect*().
 var graphdef map[string](mp.Graphs) = map[string](mp.Graphs){}
 
 // for fetching metrics
