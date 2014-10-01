@@ -24,8 +24,8 @@ First, you should enabled mod_status module, and configure apache config file. F
 Next, build this program.
 
 ```
-go get github.com/mackerelio/mackerel-agent-plugins
-cd $GO_HOME/src/github.com/mackerelio/mackerel-agent-plugins
+go get github.com/mackerelio/mackerel-agent-plugins/mackerel-plugin-apache2
+cd $GO_HOME/src/github.com/mackerelio/mackerel-agent-plugins/mackerel-plugin-apache2
 go test
 go build
 ```
