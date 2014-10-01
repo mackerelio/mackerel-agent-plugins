@@ -13,6 +13,10 @@ import (
 	mp "github.com/mackerelio/go-mackerel-plugin"
 )
 
+const PathVmstat = "/proc/vmstat"
+const PathDiskstats = "/proc/diskstats"
+const PathStat = "/proc/stat"
+
 // metric value structure
 // note: all metrics are add dynamic at collect*().
 var graphdef map[string](mp.Graphs) = map[string](mp.Graphs){}
@@ -25,6 +29,45 @@ type LinuxPlugin struct {
 
 // Graph definition
 func (c LinuxPlugin) GraphDefinition() map[string](mp.Graphs) {
+	var err error
+
+	p := make(map[string]float64)
+
+	if c.Type == "all" || c.Type == "swap" {
+		err = collectProcVmstat(PathVmstat, &p)
+		if err != nil {
+			return nil
+		}
+	}
+
+	if c.Type == "all" || c.Type == "netstat" {
+		err = collectSs(&p)
+		if err != nil {
+			return nil
+		}
+	}
+
+	if c.Type == "all" || c.Type == "diskstats" {
+		err = collectProcDiskstats(PathDiskstats, &p)
+		if err != nil {
+			return nil
+		}
+	}
+
+	if c.Type == "all" || c.Type == "proc_stat" {
+		err = collectProcStat(PathStat, &p)
+		if err != nil {
+			return nil
+		}
+	}
+
+	if c.Type == "all" || c.Type == "users" {
+		err = collectWho(&p)
+		if err != nil {
+			return nil
+		}
+	}
+
 	return graphdef
 }
 
@@ -46,9 +89,6 @@ func doMain(c *cli.Context) {
 
 // fetch metrics
 func (c LinuxPlugin) FetchMetrics() (map[string]float64, error) {
-	const PathVmstat = "/proc/vmstat"
-	const PathDiskstats = "/proc/diskstats"
-	const PathStat = "/proc/stat"
 	var err error
 
 	p := make(map[string]float64)
@@ -266,18 +306,18 @@ func collectSs(p *map[string]float64) error {
 		Label: "Linux Network Connection States",
 		Unit:  "integer",
 		Metrics: [](mp.Metrics){
-			mp.Metrics{Name: "ESTAB", Label: "Established", Diff: false},
-			mp.Metrics{Name: "SYN-SENT", Label: "Syn Sent", Diff: false},
-			mp.Metrics{Name: "SYN-RECV", Label: "Syn Received", Diff: false},
-			mp.Metrics{Name: "FIN-WAIT-1", Label: "Fin Wait 1", Diff: false},
-			mp.Metrics{Name: "FIN-WAIT-2", Label: "Fin Wait 2", Diff: false},
-			mp.Metrics{Name: "TIME-WAIT", Label: "Time Wait", Diff: false},
-			mp.Metrics{Name: "UNCONN", Label: "Close", Diff: false},
-			mp.Metrics{Name: "CLOSE-WAIT", Label: "Close Wait", Diff: false},
-			mp.Metrics{Name: "LAST-ACK", Label: "Last Ack", Diff: false},
-			mp.Metrics{Name: "LISTEN", Label: "Listen", Diff: false},
-			mp.Metrics{Name: "CLOSING", Label: "Closing", Diff: false},
-			mp.Metrics{Name: "UNKNOWN", Label: "Unknown", Diff: false},
+			mp.Metrics{Name: "ESTAB", Label: "Established", Diff: false, Stacked: true},
+			mp.Metrics{Name: "SYN-SENT", Label: "Syn Sent", Diff: false, Stacked: true},
+			mp.Metrics{Name: "SYN-RECV", Label: "Syn Received", Diff: false, Stacked: true},
+			mp.Metrics{Name: "FIN-WAIT-1", Label: "Fin Wait 1", Diff: false, Stacked: true},
+			mp.Metrics{Name: "FIN-WAIT-2", Label: "Fin Wait 2", Diff: false, Stacked: true},
+			mp.Metrics{Name: "TIME-WAIT", Label: "Time Wait", Diff: false, Stacked: true},
+			mp.Metrics{Name: "UNCONN", Label: "Close", Diff: false, Stacked: true},
+			mp.Metrics{Name: "CLOSE-WAIT", Label: "Close Wait", Diff: false, Stacked: true},
+			mp.Metrics{Name: "LAST-ACK", Label: "Last Ack", Diff: false, Stacked: true},
+			mp.Metrics{Name: "LISTEN", Label: "Listen", Diff: false, Stacked: true},
+			mp.Metrics{Name: "CLOSING", Label: "Closing", Diff: false, Stacked: true},
+			mp.Metrics{Name: "UNKNOWN", Label: "Unknown", Diff: false, Stacked: true},
 		},
 	}
 	data, err = getSs()
