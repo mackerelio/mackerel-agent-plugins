@@ -369,8 +369,8 @@ func collectProcVmstat(path string, p *map[string]float64) error {
 		Label: "Linux Swap Usage",
 		Unit:  "integer",
 		Metrics: [](mp.Metrics){
-			mp.Metrics{Name: "pswpin", Label: "Swap In", Diff: false},
-			mp.Metrics{Name: "pswpout", Label: "Swap Out", Diff: false},
+			mp.Metrics{Name: "pswpin", Label: "Swap In", Diff: true},
+			mp.Metrics{Name: "pswpout", Label: "Swap Out", Diff: true},
 		},
 	}
 
