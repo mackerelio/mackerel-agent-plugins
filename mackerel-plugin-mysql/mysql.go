@@ -116,7 +116,7 @@ type MySQLPlugin struct {
 }
 
 func (m MySQLPlugin) FetchMetrics() (map[string]float64, error) {
-	db := mysql.New("tcp", "", m.Target, m.Username, m.Password, "mysql")
+	db := mysql.New("tcp", "", m.Target, m.Username, m.Password, "")
 	err := db.Connect()
 	if err != nil {
 		log.Fatalln("FetchMetrics: ", err)
@@ -167,11 +167,11 @@ func main() {
 	flag.Parse()
 
 	var mysql MySQLPlugin
-	helper := mp.NewMackerelPlugin(mysql)
 
 	mysql.Target = fmt.Sprintf("%s:%s", *optHost, *optPort)
 	mysql.Username = *optUser
 	mysql.Password = *optPass
+	helper := mp.NewMackerelPlugin(mysql)
 	if *optTempfile != "" {
 		helper.Tempfile = *optTempfile
 	} else {
