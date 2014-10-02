@@ -425,7 +425,7 @@ func main() {
 	app := cli.NewApp()
 	app.Name = "mackerel-plugin-linux"
 	app.Version = Version
-	app.Usage = "Get metrics from apache2."
+	app.Usage = "Get metrics from Linux."
 	app.Author = "Yuichiro Saito"
 	app.Email = "saito@heartbeats.jp"
 	app.Flags = Flags
