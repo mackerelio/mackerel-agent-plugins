@@ -75,10 +75,9 @@ func (c LinuxPlugin) GraphDefinition() map[string](mp.Graphs) {
 func doMain(c *cli.Context) {
 	var linux LinuxPlugin
 
-	linux.Tempfile = c.String("tempfile")
 	linux.Type = c.String("type")
-
 	helper := mp.NewMackerelPlugin(linux)
+	helper.Tempfile = c.String("tempfile")
 
 	if os.Getenv("MACKEREL_AGENT_PLUGIN_META") != "" {
 		helper.OutputDefinitions()
