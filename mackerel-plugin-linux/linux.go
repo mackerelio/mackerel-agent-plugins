@@ -157,6 +157,10 @@ func collectWho(p *map[string]float64) error {
 
 // parsing metrics from /proc/stat
 func parseWho(str string, p *map[string]float64) error {
+	if strings.TrimSpace(str) == "" {
+		(*p)["users"] = 0
+		return nil
+	}
 	line := strings.Split(str, "\n")
 	(*p)["users"] = float64(len(line))
 
@@ -165,7 +169,7 @@ func parseWho(str string, p *map[string]float64) error {
 
 // Getting who
 func getWho() (string, error) {
-	cmd := exec.Command("who", "")
+	cmd := exec.Command("who")
 	var out bytes.Buffer
 	cmd.Stdout = &out
 	err := cmd.Run()

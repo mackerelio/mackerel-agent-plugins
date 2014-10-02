@@ -28,6 +28,15 @@ test2  pts/48       2014-09-30 09:00 (192.168.24.123)`
 	assert.Equal(t, stat["users"], 3)
 }
 
+func TestParseWho2(t *testing.T) {
+	stub := ""
+	stat := make(map[string]float64)
+
+	err := parseWho(stub, &stat)
+	assert.Nil(t, err)
+	assert.Equal(t, stat["users"], 0)
+}
+
 func TestGetWho(t *testing.T) {
 	_, err := os.Stat("/usr/sbin/who")
 	if err == nil {
