@@ -9,7 +9,7 @@ import (
 
 func TestCollectWho(t *testing.T) {
 	_, err := os.Stat("/usr/bin/who")
-	if err == nil {
+	if err != nil {
 		return
 	}
 	p := make(map[string]float64)
@@ -39,7 +39,7 @@ func TestParseWho2(t *testing.T) {
 
 func TestGetWho(t *testing.T) {
 	_, err := os.Stat("/usr/sbin/who")
-	if err == nil {
+	if err != nil {
 		return
 	}
 
@@ -51,7 +51,7 @@ func TestGetWho(t *testing.T) {
 func TestCollectStat(t *testing.T) {
 	path := "/proc/stat"
 	_, err := os.Stat(path)
-	if err == nil {
+	if err != nil {
 		return
 	}
 	p := make(map[string]float64)
@@ -76,7 +76,7 @@ func TestParseProcStat(t *testing.T) {
 func TestCollectProcDiskstats(t *testing.T) {
 	path := "/proc/diskstats"
 	_, err := os.Stat(path)
-	if err == nil {
+	if err != nil {
 		return
 	}
 	p := make(map[string]float64)
@@ -101,7 +101,7 @@ func TestParseProcDiskstats(t *testing.T) {
 
 func TestCollectSs(t *testing.T) {
 	_, err := os.Stat("/usr/sbin/ss")
-	if err == nil {
+	if err != nil {
 		return
 	}
 	p := make(map[string]float64)
@@ -126,20 +126,20 @@ ESTAB      0      0                              10.0.25.101:60826              
 
 func TestGetSs(t *testing.T) {
 	_, err := os.Stat("/usr/sbin/ss")
-	if err == nil {
+	if err != nil {
 		return
 	}
 
 	ret, err := getSs()
 	assert.Nil(t, err)
 	assert.NotNil(t, ret)
-	assert.Contains(t, ret, "Stats")
+	assert.Contains(t, ret, "State")
 }
 
 func TestCollectProcVmstat(t *testing.T) {
 	path := "/proc/vmstat"
 	_, err := os.Stat(path)
-	if err == nil {
+	if err != nil {
 		return
 	}
 	p := make(map[string]float64)
@@ -165,7 +165,7 @@ pswpout 113`
 func TestGetProc(t *testing.T) {
 	stub := "/proc/diskstats"
 	_, err := os.Stat(stub)
-	if err == nil {
+	if err != nil {
 		return
 	}
 
