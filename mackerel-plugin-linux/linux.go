@@ -337,15 +337,22 @@ func collectSs(p *map[string]float64) error {
 
 // parsing metrics from ss
 func parseSs(str string, p *map[string]float64) error {
+	status := 0
 	for i, line := range strings.Split(str, "\n") {
-		if i < 1 {
-			continue
-		}
 		record := strings.Fields(line)
-		if len(record) != 5 {
+		if len(record) < 5 {
 			continue
 		}
-		(*p)[record[0]] = (*p)[record[0]] + 1
+		if i == 0 {
+			if record[0] == "State" {
+				// for RHEL6
+				status = 0
+			} else if record[1] == "State" {
+				// for RHEL7
+				status = 1
+			}
+		}
+		(*p)[record[status]] = (*p)[record[status]] + 1
 	}
 
 	return nil

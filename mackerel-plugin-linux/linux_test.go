@@ -124,6 +124,23 @@ ESTAB      0      0                              10.0.25.101:60826              
 	assert.Equal(t, stat["ESTAB"], 1)
 }
 
+func TestParseSs2(t *testing.T) {
+	stub := `Netid State      Recv-Q Send-Q                                      Local Address:Port                                        Peer Address:Port
+nl    UNCONN     0      0                                                      18:0                                                       *
+p_raw UNCONN     0      0                                                       *:em2                                                     *
+u_dgr UNCONN     0      0                                                /dev/log 10549                                                  * 0
+u_dgr LISTEN     0      0                                       /run/udev/control 8552                                                   * 0
+u_str LISTEN     0      10                                  /var/run/acpid.socket 9649                                                   * 0
+u_str ESTAB      0      0                                    @/com/ubuntu/upstart 10582                                                  * 1887`
+	stat := make(map[string]float64)
+
+	err := parseSs(stub, &stat)
+	assert.Nil(t, err)
+	assert.Equal(t, stat["LISTEN"], 2)
+	assert.Equal(t, stat["UNCONN"], 3)
+	assert.Equal(t, stat["ESTAB"], 1)
+}
+
 func TestGetSs(t *testing.T) {
 	_, err := os.Stat("/usr/sbin/ss")
 	if err != nil {
