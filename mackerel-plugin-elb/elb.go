@@ -37,7 +37,6 @@ type ELBPlugin struct {
 	Region          string
 	AccessKeyId     string
 	SecretAccessKey string
-	InstanceId      string
 	AZs             []string
 	CloudWatch      *cloudwatch.CloudWatch
 }
@@ -188,7 +187,6 @@ func (p ELBPlugin) GraphDefinition() map[string](mp.Graphs) {
 
 func main() {
 	optRegion := flag.String("region", "", "AWS Region")
-	optInstanceId := flag.String("instance-id", "", "Instance ID")
 	optAccessKeyId := flag.String("access-key-id", "", "AWS Access Key ID")
 	optSecretAccessKey := flag.String("secret-access-key", "", "AWS Secret Access Key")
 	optTempfile := flag.String("tempfile", "", "Temp file name")
@@ -200,7 +198,6 @@ func main() {
 		elb.Region = aws.InstanceRegion()
 	} else {
 		elb.Region = *optRegion
-		elb.InstanceId = *optInstanceId
 	}
 
 	elb.AccessKeyId = *optAccessKeyId
