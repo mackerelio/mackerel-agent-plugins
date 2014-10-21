@@ -33,6 +33,23 @@ var graphdef map[string](mp.Graphs) = map[string](mp.Graphs){
 	// "elb.healthy_host_count", "elb.unhealthy_host_count" will be generated dynamically
 }
 
+type StatType int
+
+const (
+	Average StatType = iota
+	Sum
+)
+
+func (s StatType) String() string {
+	switch s {
+	case Average:
+		return "Average"
+	case Sum:
+		return "Sum"
+	}
+	return ""
+}
+
 type ELBPlugin struct {
 	Region          string
 	AccessKeyId     string
@@ -80,7 +97,7 @@ func (p *ELBPlugin) Prepare() error {
 	return nil
 }
 
-func (p ELBPlugin) GetLastPoint(dimension *cloudwatch.Dimension, metricName string, statType string) (float64, error) {
+func (p ELBPlugin) GetLastPoint(dimension *cloudwatch.Dimension, metricName string, statType StatType) (float64, error) {
 	now := time.Now()
 
 	response, err := p.CloudWatch.GetMetricStatistics(&cloudwatch.GetMetricStatisticsRequest{
@@ -89,7 +106,7 @@ func (p ELBPlugin) GetLastPoint(dimension *cloudwatch.Dimension, metricName stri
 		EndTime:    now,
 		MetricName: metricName,
 		Period:     60,
-		Statistics: []string{statType},
+		Statistics: []string{statType.String()},
 		Namespace:  "AWS/ELB",
 	})
 	if err != nil {
@@ -110,9 +127,9 @@ func (p ELBPlugin) GetLastPoint(dimension *cloudwatch.Dimension, metricName stri
 
 		latest = dp.Timestamp
 		switch statType {
-		case "Average":
+		case Average:
 			latestVal = dp.Average
-		case "Sum":
+		case Sum:
 			latestVal = dp.Sum
 		}
 	}
@@ -131,7 +148,7 @@ func (p ELBPlugin) FetchMetrics() (map[string]float64, error) {
 		}
 
 		for _, met := range []string{"HealthyHostCount", "UnHealthyHostCount"} {
-			v, err := p.GetLastPoint(d, met, "Average")
+			v, err := p.GetLastPoint(d, met, Average)
 			if err == nil {
 				stat[met+"_"+az] = v
 			}
@@ -143,13 +160,13 @@ func (p ELBPlugin) FetchMetrics() (map[string]float64, error) {
 		Value: "ELB",
 	}
 
-	v, err := p.GetLastPoint(glb, "Latency", "Average")
+	v, err := p.GetLastPoint(glb, "Latency", Average)
 	if err == nil {
 		stat["Latency"] = v
 	}
 
 	for _, met := range [...]string{"HTTPCode_Backend_2XX", "HTTPCode_Backend_3XX", "HTTPCode_Backend_4XX", "HTTPCode_Backend_5XX"} {
-		v, err := p.GetLastPoint(glb, met, "Sum")
+		v, err := p.GetLastPoint(glb, met, Sum)
 		if err == nil {
 			stat[met] = v
 		}
