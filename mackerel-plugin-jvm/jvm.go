@@ -162,25 +162,27 @@ func (m JVMPlugin) FetchMetrics() (map[string]float64, error) {
 }
 
 func (m JVMPlugin) GraphDefinition() map[string](mp.Graphs) {
+	rawJavaName := m.JavaName
+	lowerJavaName := strings.ToLower(m.JavaName)
 	return map[string](mp.Graphs){
-		fmt.Sprintf("jvm.%s.gc_events", m.JavaName): mp.Graphs{
-			Label: "JVM GC events",
+		fmt.Sprintf("jvm.%s.gc_events", lowerJavaName): mp.Graphs{
+			Label: fmt.Sprintf("JVM %s GC events", rawJavaName),
 			Unit:  "integer",
 			Metrics: [](mp.Metrics){
 				mp.Metrics{Name: "YGC", Label: "Young GC event", Diff: true},
 				mp.Metrics{Name: "FGC", Label: "Full GC event", Diff: true},
 			},
 		},
-		fmt.Sprintf("jvm.%s.gc_time", m.JavaName): mp.Graphs{
-			Label: "JVM GC time (msec)",
+		fmt.Sprintf("jvm.%s.gc_time", lowerJavaName): mp.Graphs{
+			Label: fmt.Sprintf("JVM %s GC time (msec)", rawJavaName),
 			Unit:  "float",
 			Metrics: [](mp.Metrics){
 				mp.Metrics{Name: "YGCT", Label: "Young GC time", Diff: true},
 				mp.Metrics{Name: "FGCT", Label: "Full GC time", Diff: true},
 			},
 		},
-		fmt.Sprintf("jvm.%s.new_space", m.JavaName): mp.Graphs{
-			Label: "JVM New Space memory (KB)",
+		fmt.Sprintf("jvm.%s.new_space", lowerJavaName): mp.Graphs{
+			Label: fmt.Sprintf("JVM %s New Space memory (KB)", rawJavaName),
 			Unit:  "float",
 			Metrics: [](mp.Metrics){
 				mp.Metrics{Name: "NGCMX", Label: "New max", Diff: false},
@@ -190,8 +192,8 @@ func (m JVMPlugin) GraphDefinition() map[string](mp.Graphs) {
 				mp.Metrics{Name: "S1U", Label: "Survivor1 used", Diff: false},
 			},
 		},
-		fmt.Sprintf("jvm.%s.old_space", m.JavaName): mp.Graphs{
-			Label: "JVM Old Space memory (KB)",
+		fmt.Sprintf("jvm.%s.old_space", lowerJavaName): mp.Graphs{
+			Label: fmt.Sprintf("JVM %s Old Space memory (KB)", rawJavaName),
 			Unit:  "float",
 			Metrics: [](mp.Metrics){
 				mp.Metrics{Name: "OGCMX", Label: "Old max", Diff: false},
@@ -199,8 +201,8 @@ func (m JVMPlugin) GraphDefinition() map[string](mp.Graphs) {
 				mp.Metrics{Name: "OU", Label: "Old used", Diff: false},
 			},
 		},
-		fmt.Sprintf("jvm.%s.perm_space", m.JavaName): mp.Graphs{
-			Label: "JVM Permanent Space (KB)",
+		fmt.Sprintf("jvm.%s.perm_space", lowerJavaName): mp.Graphs{
+			Label: fmt.Sprintf("JVM %s Permanent Space (KB)", rawJavaName),
 			Unit:  "float",
 			Metrics: [](mp.Metrics){
 				mp.Metrics{Name: "PGCMX", Label: "Perm max", Diff: false},
@@ -235,7 +237,7 @@ func main() {
 	}
 	jvm.Lvmid = lvmid
 	jvm.JstatPath = *optJstatPath
-	jvm.JavaName = strings.ToLower(*optJavaName)
+	jvm.JavaName = *optJavaName
 
 	helper := mp.NewMackerelPlugin(jvm)
 	if *optTempfile != "" {
