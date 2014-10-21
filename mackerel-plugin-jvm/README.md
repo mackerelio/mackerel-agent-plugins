@@ -20,6 +20,16 @@ mackerel-plugin-jvm -javaname=<javaname> [-jstatpath=</path/to/jstat] [-jpspath=
 command = "/path/to/mackerel-plugin-jvm -javaname=NettyServer -jstatpath=/usr/bin/jstat -jpspath=/usr/bin/jps"
 ```
 
+## About javaname
+
+You can check javaname by jps command.
+
+```shell
+# jps
+14203 NettyServer
+14822 Jps
+```
+
 ## References
 
 - https://github.com/sensu/sensu-community-plugins/blob/master/plugins/java/jstat-metrics.py
