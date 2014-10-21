@@ -1,0 +1,19 @@
+mackerel-plugin-rds
+=====================
+
+AWS RDS custom metrics plugin for mackerel.io agent.
+
+## Synopsis
+
+```shell
+mackerel-plugin-rds -identifier=<db-instance-identifer> [-region=<aws-region>] [-access-key-id=<id>] [-secret-access-key==<key>] [-tempfile=<tempfile>]
+```
+* if you run on an ec2-instance, you probably don't have to specify `-region`
+* if you run on an ec2-instance and the instance is associated with an appropriate IAM Role, you probably don't have to specify `-access-key-id` & `-secret-access-key`
+
+## Example of mackerel-agent.conf
+
+```
+[plugin.metrics.rds]
+command = "/path/to/mackerel-plugin-rds -identifier=mysql01"
+```
