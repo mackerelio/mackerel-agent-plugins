@@ -11,58 +11,54 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestParseApache2Scoreboard(t *testing.T) {
-	stub := "Scoreboard: W._SRWKDCLGI...."
+func TestGetPhpApcStatus_1(t *testing.T) {
+	stub := `memory_segments:1
+segment_size:134217592
+total_memory:134217592
+cached_files_count:392
+cached_files_size:54266016
+cache_hits:606130
+cache_misses:392
+cache_full_count:0
+user_cache_vars_count:770
+user_cache_vars_size:45835056
+user_cache_hits:8334
+user_cache_misses:10997
+user_cache_full_count:0`
+
 	stat := make(map[string]float64)
 
-	err := parseApache2Scoreboard(stub, &stat)
+	err := parsePhpApcStatus(stub, &stat)
 	assert.Nil(t, err)
-	assert.Equal(t, stat["score-_"], 1)
-	assert.Equal(t, stat["score-S"], 1)
-	assert.Equal(t, stat["score-R"], 1)
-	assert.Equal(t, stat["score-W"], 2)
-	assert.Equal(t, stat["score-K"], 1)
-	assert.Equal(t, stat["score-D"], 1)
-	assert.Equal(t, stat["score-C"], 1)
-	assert.Equal(t, stat["score-L"], 1)
-	assert.Equal(t, stat["score-G"], 1)
-	assert.Equal(t, stat["score-I"], 1)
-	assert.Equal(t, stat["score-."], 5)
+	assert.Equal(t, stat["memory_segments"], 1)
+	assert.Equal(t, stat["segment_size"], 134217592)
+	assert.Equal(t, stat["total_memory"], 134217592)
+	assert.Equal(t, stat["cached_files_count"], 392)
+	assert.Equal(t, stat["cached_files_size"], 54266016)
+	assert.Equal(t, stat["cache_hits"], 606130)
+	assert.Equal(t, stat["cache_misses"], 392)
+	assert.Equal(t, stat["cache_full_count"], 0)
+	assert.Equal(t, stat["user_cache_vars_count"], 770)
+	assert.Equal(t, stat["user_cache_vars_size"], 45835056)
+	assert.Equal(t, stat["user_cache_hits"], 8334)
+	assert.Equal(t, stat["user_cache_misses"], 10997)
+	assert.Equal(t, stat["user_cache_full_count"], 0)
 }
 
-func TestParseApache2Status(t *testing.T) {
-	stub := `Total Accesses: 358
-Total kBytes: 20
-CPULoad: .00117358
-Uptime: 102251
-ReqPerSec: .00350119
-BytesPerSec: .200291
-BytesPerReq: 57.2067
-BusyWorkers: 1
-IdleWorkers: 4
-`
-	stat := make(map[string]float64)
-
-	err := parseApache2Status(stub, &stat)
-	assert.Nil(t, err)
-	assert.Equal(t, stat["requests"], 358)
-	assert.Equal(t, stat["bytes_sent"], 20)
-	assert.Equal(t, stat["cpu_load"], 0.00117358)
-	assert.Equal(t, stat["busy_workers"], 1)
-	assert.Equal(t, stat["idle_workers"], 4)
-}
-
-func TestGetApache2Metrics_1(t *testing.T) {
-	stub := `Total Accesses: 668
-Total kBytes: 2789
-CPULoad: .000599374
-Uptime: 171846
-ReqPerSec: .0038872
-BytesPerSec: 16.6192
-BytesPerReq: 4275.35
-BusyWorkers: 1
-IdleWorkers: 3
-Scoreboard: W_.__...........................`
+func TestGetPhpApcMetrics_1(t *testing.T) {
+	stub := `memory_segments:1
+segment_size:134217592
+total_memory:134217592
+cached_files_count:392
+cached_files_size:54266016
+cache_hits:606130
+cache_misses:392
+cache_full_count:0
+user_cache_vars_count:770
+user_cache_vars_size:45835056
+user_cache_hits:8334
+user_cache_misses:10997
+user_cache_full_count:0`
 
 	ts := httptest.NewServer(
 		http.HandlerFunc(
@@ -78,14 +74,21 @@ Scoreboard: W_.__...........................`
 	port, _ := strconv.Atoi(found[3])
 	path := found[4]
 
-	ret, err := getApache2Metrics(host, uint16(port), path)
+	ret, err := getPhpApcMetrics(host, uint16(port), path)
 	assert.Nil(t, err)
 	assert.NotNil(t, ret)
 	assert.NotEmpty(t, ret)
-	assert.Contains(t, ret, "Total Accesses")
-	assert.Contains(t, ret, "Total kBytes")
-	assert.Contains(t, ret, "Uptime")
-	assert.Contains(t, ret, "BusyWorkers")
-	assert.Contains(t, ret, "IdleWorkers")
-	assert.Contains(t, ret, "Scoreboard")
+	assert.Contains(t, ret, "memory_segments")
+	assert.Contains(t, ret, "segment_size")
+	assert.Contains(t, ret, "total_memory")
+	assert.Contains(t, ret, "cached_files_count")
+	assert.Contains(t, ret, "cached_files_size")
+	assert.Contains(t, ret, "cache_hits")
+	assert.Contains(t, ret, "cache_misses")
+	assert.Contains(t, ret, "cache_full_count")
+	assert.Contains(t, ret, "user_cache_vars_count")
+	assert.Contains(t, ret, "user_cache_vars_size")
+	assert.Contains(t, ret, "user_cache_hits")
+	assert.Contains(t, ret, "user_cache_misses")
+	assert.Contains(t, ret, "user_cache_full_count")
 }

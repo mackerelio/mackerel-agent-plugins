@@ -6,7 +6,6 @@ import (
 	"io/ioutil"
 	"net/http"
 	"os"
-	"regexp"
 	"strconv"
 	"strings"
 
@@ -16,56 +15,43 @@ import (
 
 // metric value structure
 var graphdef map[string](mp.Graphs) = map[string](mp.Graphs){
-	"php-apc.workers": mp.Graphs{
-		Label: "Apache Workers",
+	"php-apc.purges": mp.Graphs{
+		Label: "APC purge count",
 		Unit:  "integer",
 		Metrics: [](mp.Metrics){
-			mp.Metrics{Name: "busy_workers", Label: "Busy Workers", Diff: false, Stacked: true},
-			mp.Metrics{Name: "idle_workers", Label: "Idle Workers", Diff: false, Stacked: true},
+			mp.Metrics{Name: "cache_full_count", Label: "File Cache", Diff: true, Stacked: false},
+			mp.Metrics{Name: "user_cache_full_count", Label: "User Cache", Diff: true, Stacked: false},
 		},
 	},
-	"php-apc.bytes": mp.Graphs{
-		Label: "Apache Bytes",
+	"php-apc.stats": mp.Graphs{
+		Label: "APC file cache statistics",
 		Unit:  "integer",
 		Metrics: [](mp.Metrics){
-			mp.Metrics{Name: "bytes_sent", Label: "Bytes Sent", Diff: false},
+			mp.Metrics{Name: "cache_hits", Label: "Hits", Diff: true, Stacked: false},
+			mp.Metrics{Name: "cache_misses", Label: "Misses", Diff: true, Stacked: false},
 		},
 	},
-	"php-apc.cpu": mp.Graphs{
-		Label: "Apache CPU Load",
+	"php-apc.cache_size": mp.Graphs{
+		Label: "APC cache size",
 		Unit:  "float",
 		Metrics: [](mp.Metrics){
-			mp.Metrics{Name: "cpu_load", Label: "CPU Load", Diff: false},
+			mp.Metrics{Name: "Code Cache", Label: "cached_files_size", Diff: false, Stacked: true},
+			mp.Metrics{Name: "User Items Cache", Label: "user_cache_vars_size", Diff: false, Stacked: true},
+			mp.Metrics{Name: "Limit", Label: "total_memory", Diff: false, Stacked: false},
 		},
 	},
-	"php-apc.req": mp.Graphs{
-		Label: "Apache Requests",
+	"php-apc.user_stats": mp.Graphs{
+		Label: "APC user cache statistics",
 		Unit:  "integer",
 		Metrics: [](mp.Metrics){
-			mp.Metrics{Name: "requests", Label: "Requests", Diff: false},
-		},
-	},
-	"php-apc.scoreboard": mp.Graphs{
-		Label: "Apache Scoreboard",
-		Unit:  "integer",
-		Metrics: [](mp.Metrics){
-			mp.Metrics{Name: "score-_", Label: "Waiting for connection", Diff: false, Stacked: true},
-			mp.Metrics{Name: "score-S", Label: "Starting up", Diff: false, Stacked: true},
-			mp.Metrics{Name: "score-R", Label: "Reading request", Diff: false, Stacked: true},
-			mp.Metrics{Name: "scpre-W", Label: "Sending reply", Diff: false, Stacked: true},
-			mp.Metrics{Name: "score-K", Label: "Keepalive", Diff: false, Stacked: true},
-			mp.Metrics{Name: "score-D", Label: "DNS lookup", Diff: false, Stacked: true},
-			mp.Metrics{Name: "score-C", Label: "Closing connection", Diff: false, Stacked: true},
-			mp.Metrics{Name: "score-L", Label: "Logging", Diff: false, Stacked: true},
-			mp.Metrics{Name: "score-G", Label: "Gracefully finishing", Diff: false, Stacked: true},
-			mp.Metrics{Name: "score-I", Label: "Idle cleanup", Diff: false, Stacked: true},
-			mp.Metrics{Name: "score-.", Label: "Open slot", Diff: false, Stacked: true},
+			mp.Metrics{Name: "user_cache_hits", Label: "Hits", Diff: true, Stacked: false},
+			mp.Metrics{Name: "user_cache_misses", Label: "Misses", Diff: true, Stacked: false},
 		},
 	},
 }
 
 // for fetching metrics
-type Apache2Plugin struct {
+type PhpApcPlugin struct {
 	Host     string
 	Port     uint16
 	Path     string
@@ -73,21 +59,21 @@ type Apache2Plugin struct {
 }
 
 // Graph definition
-func (c Apache2Plugin) GraphDefinition() map[string](mp.Graphs) {
+func (c PhpApcPlugin) GraphDefinition() map[string](mp.Graphs) {
 	return graphdef
 }
 
 // main function
 func doMain(c *cli.Context) {
 
-	var php-apc Apache2Plugin
+	var phpapc PhpApcPlugin
 
-	php-apc.Host = c.String("http_host")
-	php-apc.Port = uint16(c.Int("http_port"))
-	php-apc.Path = c.String("status_page")
-	php-apc.Tempfile = c.String("tempfile")
+	phpapc.Host = c.String("http_host")
+	phpapc.Port = uint16(c.Int("http_port"))
+	phpapc.Path = c.String("status_page")
+	phpapc.Tempfile = c.String("tempfile")
 
-	helper := mp.NewMackerelPlugin(php-apc)
+	helper := mp.NewMackerelPlugin(phpapc)
 
 	if os.Getenv("MACKEREL_AGENT_PLUGIN_META") != "" {
 		helper.OutputDefinitions()
@@ -97,67 +83,27 @@ func doMain(c *cli.Context) {
 }
 
 // fetch metrics
-func (c Apache2Plugin) FetchMetrics() (map[string]float64, error) {
-	data, err := getApache2Metrics(c.Host, c.Port, c.Path)
+func (c PhpApcPlugin) FetchMetrics() (map[string]float64, error) {
+	data, err := getPhpApcMetrics(c.Host, c.Port, c.Path)
 	if err != nil {
 		return nil, err
 	}
 
 	stat := make(map[string]float64)
-	err_stat := parseApache2Status(data, &stat)
+	err_stat := parsePhpApcStatus(data, &stat)
 	if err_stat != nil {
 		return nil, err_stat
-	}
-	err_score := parseApache2Scoreboard(data, &stat)
-	if err_score != nil {
-		return nil, err_score
 	}
 
 	return stat, nil
 }
 
-// parsing scoreboard from server-status?auto
-func parseApache2Scoreboard(str string, p *map[string]float64) error {
-	for _, line := range strings.Split(str, "\n") {
-		matched, err := regexp.MatchString("Scoreboard(.*)", line)
-		if err != nil {
-			return err
-		}
-		if !matched {
-			continue
-		}
-		record := strings.Split(line, ":")
-		for _, sb := range strings.Split(strings.Trim(record[1], " "), "") {
-			name := fmt.Sprintf("score-%s", sb)
-			c, assert := (*p)[name]
-			if !assert {
-				c = 0
-			}
-			(*p)[name] = c + 1
-		}
-		return nil
-	}
-
-	return errors.New("Scoreboard data is not found.")
-}
-
 // parsing metrics from server-status?auto
-func parseApache2Status(str string, p *map[string]float64) error {
-	Params := map[string]string{
-		"Total Accesses": "requests",
-		"Total kBytes":   "bytes_sent",
-		"CPULoad":        "cpu_load",
-		"BusyWorkers":    "busy_workers",
-		"IdleWorkers":    "idle_workers"}
-
+func parsePhpApcStatus(str string, p *map[string]float64) error {
 	for _, line := range strings.Split(str, "\n") {
 		record := strings.Split(line, ":")
-		_, assert := Params[record[0]]
-		if !assert {
-			continue
-		}
 		var err_parse error
-		(*p)[Params[record[0]]], err_parse = strconv.ParseFloat(strings.Trim(record[1], " "), 64)
+		(*p)[record[0]], err_parse = strconv.ParseFloat(strings.Trim(record[1], " "), 64)
 		if err_parse != nil {
 			return err_parse
 		}
@@ -171,7 +117,7 @@ func parseApache2Status(str string, p *map[string]float64) error {
 }
 
 // Getting php-apc status from server-status module data.
-func getApache2Metrics(host string, port uint16, path string) (string, error) {
+func getPhpApcMetrics(host string, port uint16, path string) (string, error) {
 	uri := "http://" + host + ":" + strconv.FormatUint(uint64(port), 10) + path
 	resp, err := http.Get(uri)
 	if err != nil {
