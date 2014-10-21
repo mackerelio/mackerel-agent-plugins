@@ -67,6 +67,7 @@ type JVMPlugin struct {
 	Target    string
 	Lvmid     string
 	JstatPath string
+	JavaName  string
 	Tempfile  string
 }
 
@@ -161,7 +162,53 @@ func (m JVMPlugin) FetchMetrics() (map[string]float64, error) {
 }
 
 func (m JVMPlugin) GraphDefinition() map[string](mp.Graphs) {
-	return graphdef
+	return map[string](mp.Graphs){
+		fmt.Sprintf("jvm.%s.gc_events", m.JavaName): mp.Graphs{
+			Label: "JVM GC events",
+			Unit:  "integer",
+			Metrics: [](mp.Metrics){
+				mp.Metrics{Name: "YGC", Label: "Young GC event", Diff: true},
+				mp.Metrics{Name: "FGC", Label: "Full GC event", Diff: true},
+			},
+		},
+		fmt.Sprintf("jvm.%s.gc_time", m.JavaName): mp.Graphs{
+			Label: "JVM GC time (msec)",
+			Unit:  "float",
+			Metrics: [](mp.Metrics){
+				mp.Metrics{Name: "YGCT", Label: "Young GC time", Diff: true},
+				mp.Metrics{Name: "FGCT", Label: "Full GC time", Diff: true},
+			},
+		},
+		fmt.Sprintf("jvm.%s.new_space", m.JavaName): mp.Graphs{
+			Label: "JVM New Space memory (KB)",
+			Unit:  "float",
+			Metrics: [](mp.Metrics){
+				mp.Metrics{Name: "NGCMX", Label: "New max", Diff: false},
+				mp.Metrics{Name: "NGC", Label: "New current", Diff: false},
+				mp.Metrics{Name: "EU", Label: "Eden used", Diff: false},
+				mp.Metrics{Name: "S0U", Label: "Survivor0 used", Diff: false},
+				mp.Metrics{Name: "S1U", Label: "Survivor1 used", Diff: false},
+			},
+		},
+		fmt.Sprintf("jvm.%s.old_space", m.JavaName): mp.Graphs{
+			Label: "JVM Old Space memory (KB)",
+			Unit:  "float",
+			Metrics: [](mp.Metrics){
+				mp.Metrics{Name: "OGCMX", Label: "Old max", Diff: false},
+				mp.Metrics{Name: "OGC", Label: "Old current", Diff: false},
+				mp.Metrics{Name: "OU", Label: "Old used", Diff: false},
+			},
+		},
+		fmt.Sprintf("jvm.%s.perm_space", m.JavaName): mp.Graphs{
+			Label: "JVM Permanent Space (KB)",
+			Unit:  "float",
+			Metrics: [](mp.Metrics){
+				mp.Metrics{Name: "PGCMX", Label: "Perm max", Diff: false},
+				mp.Metrics{Name: "PGC", Label: "Perm current", Diff: false},
+				mp.Metrics{Name: "PU", Label: "Perm used", Diff: false},
+			},
+		},
+	}
 }
 
 func main() {
@@ -188,6 +235,7 @@ func main() {
 	}
 	jvm.Lvmid = lvmid
 	jvm.JstatPath = *optJstatPath
+	jvm.JavaName = strings.ToLower(*optJavaName)
 
 	helper := mp.NewMackerelPlugin(jvm)
 	if *optTempfile != "" {
