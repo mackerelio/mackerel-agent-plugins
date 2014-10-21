@@ -42,6 +42,12 @@ apt-get install mackerel-agent-plugins
 
 mackerel-agent-plugins are installed to ```/usr/local/bin/mackerel-plugin-*```.
 
+Caution
+=======
+
+Some plugins may not work on CentOS/RedHat 5 because golang compiler (gc) doesn't support old kernel.
+(https://golang.org/doc/install)
+
 Contribution
 ============
 
