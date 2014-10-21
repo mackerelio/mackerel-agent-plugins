@@ -15,54 +15,6 @@ import (
 
 var logger = logging.GetLogger("metrics.plugin.jvm")
 
-var graphdef map[string](mp.Graphs) = map[string](mp.Graphs){
-	"jvm.gc_events": mp.Graphs{
-		Label: "JVM GC events",
-		Unit:  "integer",
-		Metrics: [](mp.Metrics){
-			mp.Metrics{Name: "YGC", Label: "Young GC event", Diff: true},
-			mp.Metrics{Name: "FGC", Label: "Full GC event", Diff: true},
-		},
-	},
-	"jvm.gc_time": mp.Graphs{
-		Label: "JVM GC time (msec)",
-		Unit:  "float",
-		Metrics: [](mp.Metrics){
-			mp.Metrics{Name: "YGCT", Label: "Young GC time", Diff: true},
-			mp.Metrics{Name: "FGCT", Label: "Full GC time", Diff: true},
-		},
-	},
-	"jvm.new_space": mp.Graphs{
-		Label: "JVM New Space memory (KB)",
-		Unit:  "float",
-		Metrics: [](mp.Metrics){
-			mp.Metrics{Name: "NGCMX", Label: "New max", Diff: false},
-			mp.Metrics{Name: "NGC", Label: "New current", Diff: false},
-			mp.Metrics{Name: "EU", Label: "Eden used", Diff: false},
-			mp.Metrics{Name: "S0U", Label: "Survivor0 used", Diff: false},
-			mp.Metrics{Name: "S1U", Label: "Survivor1 used", Diff: false},
-		},
-	},
-	"jvm.old_space": mp.Graphs{
-		Label: "JVM Old Space memory (KB)",
-		Unit:  "float",
-		Metrics: [](mp.Metrics){
-			mp.Metrics{Name: "OGCMX", Label: "Old max", Diff: false},
-			mp.Metrics{Name: "OGC", Label: "Old current", Diff: false},
-			mp.Metrics{Name: "OU", Label: "Old used", Diff: false},
-		},
-	},
-	"jvm.perm_space": mp.Graphs{
-		Label: "JVM Permanent Space (KB)",
-		Unit:  "float",
-		Metrics: [](mp.Metrics){
-			mp.Metrics{Name: "PGCMX", Label: "Perm max", Diff: false},
-			mp.Metrics{Name: "PGC", Label: "Perm current", Diff: false},
-			mp.Metrics{Name: "PU", Label: "Perm used", Diff: false},
-		},
-	},
-}
-
 type JVMPlugin struct {
 	Target    string
 	Lvmid     string
