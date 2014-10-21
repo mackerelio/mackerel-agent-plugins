@@ -17,7 +17,7 @@ var logger = logging.GetLogger("metrics.plugin.jvm")
 
 var graphdef map[string](mp.Graphs) = map[string](mp.Graphs){
 	"jvm.gc_events": mp.Graphs{
-		Label: "GC events",
+		Label: "JVM GC events",
 		Unit:  "integer",
 		Metrics: [](mp.Metrics){
 			mp.Metrics{Name: "YGC", Label: "Young GC event", Diff: true},
@@ -25,7 +25,7 @@ var graphdef map[string](mp.Graphs) = map[string](mp.Graphs){
 		},
 	},
 	"jvm.gc_time": mp.Graphs{
-		Label: "GC time (msec)",
+		Label: "JVM GC time (msec)",
 		Unit:  "float",
 		Metrics: [](mp.Metrics){
 			mp.Metrics{Name: "YGCT", Label: "Young GC time", Diff: true},
@@ -33,7 +33,7 @@ var graphdef map[string](mp.Graphs) = map[string](mp.Graphs){
 		},
 	},
 	"jvm.new_space": mp.Graphs{
-		Label: "New Space memory (KB)",
+		Label: "JVM New Space memory (KB)",
 		Unit:  "float",
 		Metrics: [](mp.Metrics){
 			mp.Metrics{Name: "NGCMX", Label: "New max", Diff: false},
@@ -44,7 +44,7 @@ var graphdef map[string](mp.Graphs) = map[string](mp.Graphs){
 		},
 	},
 	"jvm.old_space": mp.Graphs{
-		Label: "Old Space memory (KB)",
+		Label: "JVM Old Space memory (KB)",
 		Unit:  "float",
 		Metrics: [](mp.Metrics){
 			mp.Metrics{Name: "OGCMX", Label: "Old max", Diff: false},
@@ -53,7 +53,7 @@ var graphdef map[string](mp.Graphs) = map[string](mp.Graphs){
 		},
 	},
 	"jvm.perm_space": mp.Graphs{
-		Label: "Permanent Space (KB)",
+		Label: "JVM Permanent Space (KB)",
 		Unit:  "float",
 		Metrics: [](mp.Metrics){
 			mp.Metrics{Name: "PGCMX", Label: "Perm max", Diff: false},
