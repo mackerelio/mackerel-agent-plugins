@@ -16,7 +16,7 @@ import (
 // metric value structure
 var graphdef map[string](mp.Graphs) = map[string](mp.Graphs){
 	"php-apc.purges": mp.Graphs{
-		Label: "PHP APC purge count",
+		Label: "PHP APC Purge Count",
 		Unit:  "integer",
 		Metrics: [](mp.Metrics){
 			mp.Metrics{Name: "cache_full_count", Label: "File Cache", Diff: true, Stacked: false},
@@ -24,7 +24,7 @@ var graphdef map[string](mp.Graphs) = map[string](mp.Graphs){
 		},
 	},
 	"php-apc.stats": mp.Graphs{
-		Label: "PHP APC file cache statistics",
+		Label: "PHP APC File Cache Statistics",
 		Unit:  "integer",
 		Metrics: [](mp.Metrics){
 			mp.Metrics{Name: "cache_hits", Label: "Hits", Diff: true, Stacked: false},
@@ -32,7 +32,7 @@ var graphdef map[string](mp.Graphs) = map[string](mp.Graphs){
 		},
 	},
 	"php-apc.cache_size": mp.Graphs{
-		Label: "PHP APC cache size",
+		Label: "PHP APC Cache Size",
 		Unit:  "float",
 		Metrics: [](mp.Metrics){
 			mp.Metrics{Name: "cached_files_size", Label: "File Cache", Diff: false, Stacked: true},
@@ -41,7 +41,7 @@ var graphdef map[string](mp.Graphs) = map[string](mp.Graphs){
 		},
 	},
 	"php-apc.user_stats": mp.Graphs{
-		Label: "PHP APC user cache statistics",
+		Label: "PHP APC User Cache Statistics",
 		Unit:  "integer",
 		Metrics: [](mp.Metrics){
 			mp.Metrics{Name: "user_cache_hits", Label: "Hits", Diff: true, Stacked: false},
