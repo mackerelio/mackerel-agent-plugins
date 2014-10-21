@@ -27,7 +27,7 @@ var cliHttpPort = cli.IntFlag{
 
 var cliStatusPage = cli.StringFlag{
 	Name:   "status_page, s",
-	Value:  "/mackerel-php-apc.php",
+	Value:  "/mackerel/php-apc.php",
 	Usage:  "Set httpd mod_status page address.",
 	EnvVar: "ENVVAR_STATUS_PAGE",
 }

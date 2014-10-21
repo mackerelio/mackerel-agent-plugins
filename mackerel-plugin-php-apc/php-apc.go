@@ -71,9 +71,9 @@ func doMain(c *cli.Context) {
 	phpapc.Host = c.String("http_host")
 	phpapc.Port = uint16(c.Int("http_port"))
 	phpapc.Path = c.String("status_page")
-	phpapc.Tempfile = c.String("tempfile")
 
 	helper := mp.NewMackerelPlugin(phpapc)
+	helper.Tempfile = c.String("tempfile")
 
 	if os.Getenv("MACKEREL_AGENT_PLUGIN_META") != "" {
 		helper.OutputDefinitions()
@@ -102,6 +102,9 @@ func (c PhpApcPlugin) FetchMetrics() (map[string]float64, error) {
 func parsePhpApcStatus(str string, p *map[string]float64) error {
 	for _, line := range strings.Split(str, "\n") {
 		record := strings.Split(line, ":")
+		if len(record) != 2 {
+			continue
+		}
 		var err_parse error
 		(*p)[record[0]], err_parse = strconv.ParseFloat(strings.Trim(record[1], " "), 64)
 		if err_parse != nil {
