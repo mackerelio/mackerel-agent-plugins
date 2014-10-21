@@ -33,7 +33,7 @@ var graphdef map[string](mp.Graphs) = map[string](mp.Graphs){
 	},
 	"php-apc.cache_size": mp.Graphs{
 		Label: "PHP APC Cache Size",
-		Unit:  "float",
+		Unit:  "bytes",
 		Metrics: [](mp.Metrics){
 			mp.Metrics{Name: "cached_files_size", Label: "File Cache", Diff: false, Stacked: true},
 			mp.Metrics{Name: "user_cache_vars_size", Label: "User Cache", Diff: false, Stacked: true},
