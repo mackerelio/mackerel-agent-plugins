@@ -1,3 +1,10 @@
+mackerel-agent-plugins (0.5.0-1) stable; urgency=low
+
+  * Add plugin for HAProxy, Varnish, Squid, SNMP, EC2 CPU Credit, Elasticsearch, JVM, Linux procs, MongoDB, ELB, RDS
+  * Fix Plack, Apache2
+
+ -- y_uuki <y_uuki@hatena.ne.jp>  Tue, 21 Oct 2014 18:17:22 +0900
+
 mackerel-agent-plugins (0.4.2-1) stable; urgency=low
 
   * Fix memcached

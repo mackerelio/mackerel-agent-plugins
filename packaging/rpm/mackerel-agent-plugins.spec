@@ -8,12 +8,12 @@
 
 Summary: Monitoring program plugins for Mackerel
 Name: mackerel-agent-plugins
-Version: 0.4.2
+Version: 0.5.0
 Release: %{revision}
 License: Apache-2
 Group: Applications/System
 URL: https://mackerel.io/
-Requires: mackerel-agent >= 0.12.1
+Requires: mackerel-agent >= 0.12.3
 
 Source0: README.md
 Packager:  Hatena
@@ -30,7 +30,7 @@ This package provides plugins for Mackerel.
 
 %{__mkdir} -p %{buildroot}%{__targetdir}
 
-for i in apache2 mysql memcached nginx plack postgres redis;do \
+for i in apache2 mysql memcached nginx plack postgres redis aws-ec2-cpucredit elasticsearch aws-elb haproxy jvm linux mongodb aws-rds snmp squid varnish php-apc;do \
     %{__install} -m0755 %{_sourcedir}/build/mackerel-plugin-$i %{buildroot}%{__targetdir}/; \
 done
 
@@ -42,6 +42,10 @@ done
 %{__targetdir}
 
 %changelog
+* Tue Oct 21 2014 <y_uuki@hatena.ne.jp> - 0.5.0
+- Add plugin for HAProxy, Varnish, Squid, SNMP, EC2 CPU Credit, Elasticsearch, JVM, Linux procs, MongoDB, ELB, RDS
+- Fix Plack, Apache2
+
 * Wed Sep 17 2014 <stanaka@hatena.ne.jp> - 0.4.2
 - Fix memcached
 
