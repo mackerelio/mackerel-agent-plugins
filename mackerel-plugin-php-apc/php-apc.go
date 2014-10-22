@@ -16,7 +16,7 @@ import (
 // metric value structure
 var graphdef map[string](mp.Graphs) = map[string](mp.Graphs){
 	"php-apc.purges": mp.Graphs{
-		Label: "PHP APC Purge Count",
+		Label: "PHP APC Cache Purge Count",
 		Unit:  "integer",
 		Metrics: [](mp.Metrics){
 			mp.Metrics{Name: "cache_full_count", Label: "File Cache", Diff: true, Stacked: false},
