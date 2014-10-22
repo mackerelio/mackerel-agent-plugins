@@ -26,7 +26,7 @@ var graphdef map[string](mp.Graphs) = map[string](mp.Graphs){
 	},
 	"apache2.bytes": mp.Graphs{
 		Label: "Apache Bytes",
-		Unit:  "integer",
+		Unit:  "bytes",
 		Metrics: [](mp.Metrics){
 			mp.Metrics{Name: "bytes_sent", Label: "Bytes Sent", Diff: true},
 		},
@@ -40,7 +40,7 @@ var graphdef map[string](mp.Graphs) = map[string](mp.Graphs){
 	},
 	"apache2.req": mp.Graphs{
 		Label: "Apache Requests",
-		Unit:  "integer",
+		Unit:  "float",
 		Metrics: [](mp.Metrics){
 			mp.Metrics{Name: "requests", Label: "Requests", Diff: true},
 		},
