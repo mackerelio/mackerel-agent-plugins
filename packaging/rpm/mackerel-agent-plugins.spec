@@ -30,7 +30,7 @@ This package provides plugins for Mackerel.
 
 %{__mkdir} -p %{buildroot}%{__targetdir}
 
-for i in apache2 mysql memcached nginx plack postgres redis ec2-cpucredit elasticsearch elb haproxy jvm linux mongodb rds snmp squid varnish php-apc;do \
+for i in apache2 mysql memcached nginx plack postgres redis aws-ec2-cpucredit elasticsearch aws-elb haproxy jvm linux mongodb aws-rds snmp squid varnish php-apc;do \
     %{__install} -m0755 %{_sourcedir}/build/mackerel-plugin-$i %{buildroot}%{__targetdir}/; \
 done
 
