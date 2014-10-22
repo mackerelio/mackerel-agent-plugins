@@ -43,7 +43,7 @@ done
 
 %changelog
 * Tue Oct 21 2014 <y_uuki@hatena.ne.jp> - 0.5.0
-- Add plugin for HAProxy, Varnish, Squid, SNMP, EC2 CPU Credit, Elasticsearch, JVM, Linux procs, MongoDB, ELB, RDS
+- Add plugin for HAProxy, Varnish, Squid, SNMP, EC2 CPU Credit, Elasticsearch, JVM, Linux procs, MongoDB, ELB, RDS and PHP-APC
 - Fix Plack, Apache2
 
 * Wed Sep 17 2014 <stanaka@hatena.ne.jp> - 0.4.2
