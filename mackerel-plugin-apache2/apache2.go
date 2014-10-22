@@ -28,7 +28,7 @@ var graphdef map[string](mp.Graphs) = map[string](mp.Graphs){
 		Label: "Apache Bytes",
 		Unit:  "integer",
 		Metrics: [](mp.Metrics){
-			mp.Metrics{Name: "bytes_sent", Label: "Bytes Sent", Diff: false},
+			mp.Metrics{Name: "bytes_sent", Label: "Bytes Sent", Diff: true},
 		},
 	},
 	"apache2.cpu": mp.Graphs{
@@ -42,7 +42,7 @@ var graphdef map[string](mp.Graphs) = map[string](mp.Graphs){
 		Label: "Apache Requests",
 		Unit:  "integer",
 		Metrics: [](mp.Metrics){
-			mp.Metrics{Name: "requests", Label: "Requests", Diff: false},
+			mp.Metrics{Name: "requests", Label: "Requests", Diff: true},
 		},
 	},
 	"apache2.scoreboard": mp.Graphs{
@@ -85,9 +85,9 @@ func doMain(c *cli.Context) {
 	apache2.Host = c.String("http_host")
 	apache2.Port = uint16(c.Int("http_port"))
 	apache2.Path = c.String("status_page")
-	apache2.Tempfile = c.String("tempfile")
 
 	helper := mp.NewMackerelPlugin(apache2)
+	helper.Tempfile = c.String("tempfile")
 
 	if os.Getenv("MACKEREL_AGENT_PLUGIN_META") != "" {
 		helper.OutputDefinitions()
