@@ -40,7 +40,7 @@ var graphdef map[string](mp.Graphs) = map[string](mp.Graphs){
 	},
 	"apache2.req": mp.Graphs{
 		Label: "Apache Requests",
-		Unit:  "float",
+		Unit:  "integer",
 		Metrics: [](mp.Metrics){
 			mp.Metrics{Name: "requests", Label: "Requests", Diff: true},
 		},
