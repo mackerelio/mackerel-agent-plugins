@@ -1,7 +1,9 @@
 package main
 
 import (
+	"errors"
 	"flag"
+	"fmt"
 	mp "github.com/mackerelio/go-mackerel-plugin"
 	"os"
 	"os/exec"
@@ -23,13 +25,21 @@ var graphdef map[string](mp.Graphs) = map[string](mp.Graphs){
 
 type VarnishPlugin struct {
 	VarnishStatPath string
+	VarnishName     string
 	Tempfile        string
 }
 
 func (m VarnishPlugin) FetchMetrics() (map[string]float64, error) {
-	out, err := exec.Command(m.VarnishStatPath, "-1").Output()
+	var out []byte
+	var err error
+
+	if m.VarnishName == "" {
+		out, err = exec.Command(m.VarnishStatPath, "-1").CombinedOutput()
+	} else {
+		out, err = exec.Command(m.VarnishStatPath, "-1", "-n", m.VarnishName).CombinedOutput()
+	}
 	if err != nil {
-		return nil, err
+		return nil, errors.New(fmt.Sprintf("%s: %s", err, out))
 	}
 
 	lineexp, err := regexp.Compile("^([^ ]+) +(\\d+)")
@@ -58,11 +68,13 @@ func (m VarnishPlugin) GraphDefinition() map[string](mp.Graphs) {
 
 func main() {
 	optVarnishStatPath := flag.String("varnishstat", "/usr/bin/varnishstat", "Path of varnishstat")
+	optVarnishName := flag.String("varnish-name", "", "Varnish name")
 	optTempfile := flag.String("tempfile", "", "Temp file name")
 	flag.Parse()
 
 	var varnish VarnishPlugin
 	varnish.VarnishStatPath = *optVarnishStatPath
+	varnish.VarnishName = *optVarnishName
 	helper := mp.NewMackerelPlugin(varnish)
 
 	if *optTempfile != "" {
