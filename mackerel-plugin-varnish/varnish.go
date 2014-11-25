@@ -1,14 +1,15 @@
 package main
 
 import (
-	"bufio"
+	"errors"
 	"flag"
 	"fmt"
 	mp "github.com/mackerelio/go-mackerel-plugin"
-	"net"
 	"os"
-	"strconv"
+	"os/exec"
 	"regexp"
+	"strconv"
+	"strings"
 )
 
 var graphdef map[string](mp.Graphs) = map[string](mp.Graphs){
@@ -23,41 +24,38 @@ var graphdef map[string](mp.Graphs) = map[string](mp.Graphs){
 }
 
 type VarnishPlugin struct {
-	Target   string
-	Tempfile string
+	VarnishStatPath string
+	VarnishName     string
+	Tempfile        string
 }
 
 func (m VarnishPlugin) FetchMetrics() (map[string]float64, error) {
-	conn, err := net.Dial("tcp", m.Target)
-	if err != nil {
-		return nil, err
+	var out []byte
+	var err error
+
+	if m.VarnishName == "" {
+		out, err = exec.Command(m.VarnishStatPath, "-1").CombinedOutput()
+	} else {
+		out, err = exec.Command(m.VarnishStatPath, "-1", "-n", m.VarnishName).CombinedOutput()
 	}
-	fmt.Fprintln(conn, "stats")
-	scanner := bufio.NewScanner(conn)
+	if err != nil {
+		return nil, errors.New(fmt.Sprintf("%s: %s", err, out))
+	}
+
+	lineexp, err := regexp.Compile("^([^ ]+) +(\\d+)")
+
 	stat := make(map[string]float64)
-
-	metricexp, err := regexp.Compile("^ *([0-9]+)  (.*)$")
-	fetched := false
-	for scanner.Scan() {
-		line := scanner.Text()
-		s := string(line)
-
-		match := metricexp.FindStringSubmatch(s)
+	for _, line := range strings.Split(string(out), "\n") {
+		match := lineexp.FindStringSubmatch(line)
 		if match == nil {
-		    // after metric rows
-		    if fetched {
-			break
-		    }
-		    continue
+			continue
 		}
 
-		fetched = true
-
-		switch match[2] {
-		case "Client requests received":
-		    stat["requests"], err = strconv.ParseFloat(match[1], 64)
-		case "Cache hits":
-		    stat["cache_hits"], err = strconv.ParseFloat(match[1], 64)
+		switch match[1] {
+		case "client_req", "MAIN.client_req":
+			stat["requests"], err = strconv.ParseFloat(match[2], 64)
+		case "cache_hit", "MAIN.cache_hit":
+			stat["cache_hits"], err = strconv.ParseFloat(match[2], 64)
 		}
 	}
 
@@ -69,19 +67,20 @@ func (m VarnishPlugin) GraphDefinition() map[string](mp.Graphs) {
 }
 
 func main() {
-	optHost := flag.String("host", "localhost", "Hostname")
-	optPort := flag.String("port", "6082", "Port")
+	optVarnishStatPath := flag.String("varnishstat", "/usr/bin/varnishstat", "Path of varnishstat")
+	optVarnishName := flag.String("varnish-name", "", "Varnish name")
 	optTempfile := flag.String("tempfile", "", "Temp file name")
 	flag.Parse()
 
 	var varnish VarnishPlugin
-	varnish.Target = fmt.Sprintf("%s:%s", *optHost, *optPort)
+	varnish.VarnishStatPath = *optVarnishStatPath
+	varnish.VarnishName = *optVarnishName
 	helper := mp.NewMackerelPlugin(varnish)
 
 	if *optTempfile != "" {
 		helper.Tempfile = *optTempfile
 	} else {
-		helper.Tempfile = fmt.Sprintf("/tmp/mackerel-plugin-varnish-%s-%s", *optHost, *optPort)
+		helper.Tempfile = "/tmp/mackerel-plugin-varnish"
 	}
 
 	if os.Getenv("MACKEREL_AGENT_PLUGIN_META") != "" {
