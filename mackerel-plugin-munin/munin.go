@@ -254,7 +254,9 @@ func (p MuninPlugin) GraphDefinition() map[string](mp.Graphs) {
 	metrics := make([](mp.Metrics), 0, len(p.MuninMetrics))
 	for name, mmet := range p.MuninMetrics {
 		met := mp.Metrics{Name: name}
-		if mmet.Label != "" {
+		if mmet.Label == "" {
+			met.Label = name
+		} else {
 			met.Label = mmet.Label
 		}
 		if mmet.Draw == "STACK" {
