@@ -201,6 +201,15 @@ func parsePluginVals(str string, m *map[string](*MuninMetric)) {
 	}
 }
 
+func removeUselessMetrics(m *map[string](*MuninMetric)) {
+	// remove metrics which have an empty Value
+	for name, mmet := range *m {
+		if mmet.Value == "" {
+			delete(*m, name)
+		}
+	}
+}
+
 func (p *MuninPlugin) Prepare() error {
 	var err error
 
@@ -221,6 +230,7 @@ func (p *MuninPlugin) Prepare() error {
 	p.MuninMetrics = make(map[string](*MuninMetric))
 	parsePluginConfig(string(out_config), &p.MuninMetrics, &p.GraphTitle)
 	parsePluginVals(string(out_vals), &p.MuninMetrics)
+	removeUselessMetrics(&p.MuninMetrics)
 
 	return nil
 }

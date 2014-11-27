@@ -7,6 +7,7 @@ import (
 )
 
 var plg string = "swap"
+var muninms map[string](*MuninMetric) = map[string](*MuninMetric){}
 var ss Services = Services{}
 
 func TestParsePluginConfig(t *testing.T) {
@@ -26,8 +27,9 @@ swap_out.type DERIVE
 swap_out.max 100000
 swap_out.min 0
 swap_out.negative swap_in
+hoge.label ho GE
+hoge.type DERIVE
 `
-	muninms := make(map[string](*MuninMetric))
 	var title string
 
 	parsePluginConfig(stub, &muninms, &title)
@@ -49,14 +51,19 @@ swap_out.negative swap_in
 	assert.Equal(t, met.Type, "DERIVE")
 	assert.Equal(t, met.Draw, "")
 	assert.Equal(t, met.Value, "")
+
+	assert.NotNil(t, muninms["hoge"])
+	met = muninms["hoge"]
+	assert.Equal(t, met.Label, "ho GE")
+	assert.Equal(t, met.Type, "DERIVE")
+	assert.Equal(t, met.Draw, "")
+	assert.Equal(t, met.Value, "")
 }
 
 func TestParsePluginVals(t *testing.T) {
 	stub := `swap_out.value 2833950519
 swap_in.value 2833950530
 `
-	muninms := make(map[string](*MuninMetric))
-
 	parsePluginVals(stub, &muninms)
 
 	var met *MuninMetric
@@ -68,6 +75,12 @@ swap_in.value 2833950530
 	assert.NotNil(t, muninms["swap_out"])
 	met = muninms["swap_out"]
 	assert.Equal(t, met.Value, "2833950519")
+}
+
+func TestRemoveUselessMetrics(t *testing.T) {
+	removeUselessMetrics(&muninms)
+
+	assert.Nil(t, muninms["hoge"])
 }
 
 func TestGetEnvSettingsReader(t *testing.T) {
