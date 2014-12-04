@@ -1,0 +1,103 @@
+#!/usr/bin/env perl
+use 5.010;
+use strict;
+use warnings;
+use utf8;
+use Carp;
+
+use HTTP::Tiny;
+use JSON::PP;
+use ExtUtils::MakeMaker qw/prompt/;
+
+sub command {say('+ '. join ' ', @_); !system(@_) or croak $!}
+sub git {unshift  @_, 'git'; goto \&command}
+sub slurp {
+    my $file = shift;
+    do {
+        local $/;
+        open my $fh, '<:encoding(UTF-8)', $file or die $!;
+        <$fh>
+    };
+}
+sub spew {
+    my ($file, $data) = @_;
+    open my $fh, '>:encoding(UTF-8)', $file or die $!;
+    print $fh $data;
+}
+
+sub last_release {
+    my @out = `git tag`;
+
+    my ($tag) =
+        reverse sort
+        map {/^v([0-9]+(?:\.[0-9]+)+)$/; $1 || ()}
+        map {chomp; $_} @out;
+    $tag;
+}
+
+sub merged_prs {
+    my $current_tag = last_release;
+    my @pull_nums = map {m/Merge pull request #([0-9]+) /; $1 || ()  } `git log v$current_tag... --merges --oneline`;
+
+    my $ret;
+    my $ua = HTTP::Tiny->new;
+    for my $pull_num (@pull_nums) {
+        my $url = sprintf "https://api.github.com/repos/mackerelio/mackerel-agent-plugins/pulls/%d?state=closed", $pull_num;
+        my $res = $ua->get($url);
+        unless ($res->{success}) {
+            warn "request to $url failed\n";
+            next;
+        }
+        my $data = eval { decode_json $res->{content} };
+        if ($@) {
+            warn "parse json failed. url: $url\n";
+            next;
+        }
+        my $title = $data->{title};
+        $ret->{$pull_num} = {
+            title => $data->{title},
+            user  => $data->{user}{login},
+        };
+    }
+    $ret;
+}
+
+sub parse_version {
+    my $ver = shift;
+    my ($major, $minor, $patch) = $ver =~ /^([0-9]+)\.([0-9]+)\.([0-9]+)$/;
+    ($major, $minor, $patch)
+}
+
+sub guess_next_version {
+    my $ver = shift;
+    my ($major, $minor, $patch) = parse_version($ver);
+    join '.', $major, ++$minor, 0;
+}
+
+sub is_valid_version {
+    my $ver = shift;
+    my ($major) = parse_version($ver);
+    defined $major;
+}
+
+#git qw/co master/;
+#git qw/pull/;
+
+my $current_version = last_release;
+my $next_version = guess_next_version($current_version);
+$next_version = prompt("next version", $next_version);
+
+if (!is_valid_version($next_version)) {
+    die qq{"$next_version" is invalid version string\n};
+}
+if ($next_version lt $current_version) {
+    die qq{"$next_version" is smaller than current version "$current_version"\n};
+}
+
+# my $merged_prs      = merged_prs;
+
+# TODO
+# - checktout new branch
+# - bump versions
+# - README.md更新
+
