@@ -120,7 +120,20 @@ sub retrieve_plugins {
             warn "$readme is misssing!!!!\n";
         }
     }
-    map {s/^mackerel-plugin-//; $_} @plugin_dirs;
+    sort map {s/^mackerel-plugin-//; $_} @plugin_dirs;
+}
+
+sub update_readme {
+    my @plugins = @_;
+    my $readme = slurp('README.md');
+
+    my $doc_links = '';
+    for my $plug (@plugins) {
+        $doc_links .= "* [mackerel-plugin-$plug](./mackerel-plugin-$plug/README.md)\n"
+    }
+    my $plu_reg = qr/mackerel-plugin-[-0-9a-zA-Z_]+/;
+    $readme =~ s!(?:\* \[$plu_reg\]\(\./$plu_reg/README\.md\)\n)+!$doc_links!ms;
+    spew('README.md', $readme);
 }
 
 main();
@@ -133,7 +146,7 @@ sub main {
     my $next_version    = decide_next_version($current_version);
     update_versions($current_version, $next_version);
     my @plugins = retrieve_plugins;
-
+    update_readme(@plugins);
 }
 
 # my $merged_prs      = merged_prs;
