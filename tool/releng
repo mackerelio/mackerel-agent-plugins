@@ -1,4 +1,15 @@
 #!/usr/bin/env perl
+
+=head DESCRIPTION
+
+releng script for mackerel-agent-plugins
+
+=head SYNOPSIS
+
+    % tool/releng
+
+=cut
+
 use 5.012;
 use strict;
 use warnings;
@@ -8,11 +19,36 @@ use Carp;
 use HTTP::Tiny;
 use JSON::PP;
 use ExtUtils::MakeMaker qw/prompt/;
+use Time::Piece;
+use POSIX qw(setlocale LC_TIME);
 
 sub DEBUG() { $ENV{MC_RELENG_DEBUG} }
 
 sub command {say('+ '. join ' ', @_); !system(@_) or croak $!}
-sub git {unshift  @_, 'git'; goto \&command}
+sub _git {
+     state $com = do {
+        chomp(my $c = `which git`);
+        die "git command is required\n" unless $c;
+        $c;
+    };
+}
+sub git {
+    unshift  @_, _git; goto \&command
+}
+
+sub _hub {
+    state $com = do {
+        chomp(my $c = `which hub`);
+        unless ($c) {
+            chomp($c = `which gh`);
+        }
+        die "hub or gh command is required\n" unless $c;
+        $c;
+    };
+}
+sub hub {
+    unshift @_, _hub; goto \&command;
+}
 
 # logger. steal from minilla
 use Term::ANSIColor qw(colored);
@@ -65,6 +101,23 @@ sub replace {
     spew($file, $content);
 }
 
+# scope_guard
+package __g {
+    sub new {
+        my ($class, $code) = @_;
+        bless $code, $class;
+    }
+    sub DESTROY {
+        my $self = shift;
+        $self->();
+    }
+}
+sub scope_guard(&) {
+    my $code = shift;
+    __g->new($code);
+}
+
+###
 sub last_release {
     my @out = `git tag`;
 
@@ -77,9 +130,9 @@ sub last_release {
 
 sub merged_prs {
     my $current_tag = last_release;
-    my @pull_nums = map {m/Merge pull request #([0-9]+) /; $1 || ()  } `git log v$current_tag... --merges --oneline`;
+    my @pull_nums = sort {$a <=> $b} map {m/Merge pull request #([0-9]+) /; $1 || ()  } `git log v$current_tag... --merges --oneline`;
 
-    my $ret;
+    my @releases;
     my $ua = HTTP::Tiny->new;
     for my $pull_num (@pull_nums) {
         my $url = sprintf "https://api.github.com/repos/mackerelio/mackerel-agent-plugins/pulls/%d?state=closed", $pull_num;
@@ -93,13 +146,15 @@ sub merged_prs {
             warnf "parse json failed. url: $url\n";
             next;
         }
-        my $title = $data->{title};
-        $ret->{$pull_num} = {
+
+        push @releases, {
+            num   => $pull_num,
             title => $data->{title},
             user  => $data->{user}{login},
+            url   => $data->{html_url},
         };
     }
-    $ret;
+    @releases;
 }
 
 sub parse_version {
@@ -193,30 +248,78 @@ sub update_packaging_specs {
     replace $_, $replace_sub for qw!packaging/rpm/mackerel-agent-plugins.spec packaging/deb/debian/rules!;
 }
 
+sub update_changelog {
+    my ($next_version, @releases) = @_;
+
+    chomp(my $email = `git config user.email`);
+    chomp(my $name  = `git config user.name`);
+
+    my $old_locale = setlocale(LC_TIME);
+    setlocale(LC_TIME, "C");
+    my $g = scope_guard {
+        setlocale(LC_TIME, $old_locale);
+    };
+
+    my $now = localtime;
+
+    replace 'packaging/deb/debian/changelog' => sub {
+        my $content = shift;
+
+        my $update = "mackerel-agent-plugins ($next_version-1) stable; urgency=low\n\n";
+        for my $rel (@releases) {
+            $update .= sprintf "  * %s (by %s)\n    <%s>\n", $rel->{title}, $rel->{user}, $rel->{url};
+        }
+        $update .= sprintf "\n -- %s <%s>  %s\n\n", $name, $email, $now->strftime("%a, %d %b %Y %H:%M:%S %z");
+        $update . $content;
+    };
+
+    replace 'packaging/rpm/mackerel-agent-plugins.spec' => sub {
+        my $content = shift;
+
+        my $update = sprintf "* %s <%s> - %s\n", $now->strftime('%a %b %d %Y'), $email, $next_version;
+        for my $rel (@releases) {
+            $update .= sprintf "- %s (by %s)\n", $rel->{title}, $rel->{user};
+        }
+        $content =~ s/%changelog/%changelog\n$update/;
+        $content;
+    };
+}
+
+sub build_pull_request_body {
+    my @releases = @_;
+    my $body = '';
+    for my $rel (@releases) {
+        $body .= sprintf "- %s #%s\n", $rel->{title}, $rel->{num};
+    }
+    $body;
+}
+
 main();
 
 sub main {
-    #git qw/co master/;
-    #git qw/pull/;
+    # check command
+    _git;_hub;
+
+    git qw/co master/;
+    git qw/pull/;
+    my $state = 0;
 
     my $current_version = last_release;
     my $next_version    = decide_next_version($current_version);
     update_versions($current_version, $next_version);
-
     my @plugins = retrieve_plugins;
     update_readme(@plugins);
     update_packaging_specs(@plugins);
 
-    # my $branch_name = "bump-version-$next_version";
-    # git qw/checkout -b/, $branch_name;
+    my $branch_name = "bump-version-$next_version";
+    git qw/checkout -b/, $branch_name;
+    git qw/commit -am/, "ready for next release. version: $next_version";
+    git qw/push --set-upstream origin/, $branch_name;
 
+    my @releases = merged_prs;
+    update_changelog($next_version, @releases);
+    git qw/commit -am/, "update changelogs";
 
-
+    my $pr_body = build_pull_request_body(@releases);
+    hub qw/pull-request -m/, $pr_body;
 }
-
-# my $merged_prs      = merged_prs;
-
-# TODO
-# update changelog without commit
-
-
