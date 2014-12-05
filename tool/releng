@@ -314,11 +314,11 @@ sub main {
     my $branch_name = "bump-version-$next_version";
     git qw/checkout -b/, $branch_name;
     git qw/commit -am/, "ready for next release. version: $next_version";
-    git qw/push --set-upstream origin/, $branch_name;
 
     my @releases = merged_prs;
     update_changelog($next_version, @releases);
     git qw/commit -am/, "update changelogs";
+    git qw/push --set-upstream origin/, $branch_name;
 
     my $pr_body = build_pull_request_body(@releases);
     hub qw/pull-request -m/, $pr_body;
