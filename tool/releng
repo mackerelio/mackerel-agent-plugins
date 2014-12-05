@@ -68,7 +68,7 @@ sub parse_version {
     ($major, $minor, $patch)
 }
 
-sub guess_next_version {
+sub suggest_next_version {
     my $ver = shift;
     my ($major, $minor, $patch) = parse_version($ver);
     join '.', $major, ++$minor, 0;
@@ -80,18 +80,48 @@ sub is_valid_version {
     defined $major;
 }
 
-#git qw/co master/;
-#git qw/pull/;
+sub decide_next_version {
+    my $current_version = shift;
+    my $next_version = suggest_next_version($current_version);
+    $next_version = prompt("next version", $next_version);
 
-my $current_version = last_release;
-my $next_version = guess_next_version($current_version);
-$next_version = prompt("next version", $next_version);
-
-if (!is_valid_version($next_version)) {
-    die qq{"$next_version" is invalid version string\n};
+    if (!is_valid_version($next_version)) {
+        die qq{"$next_version" is invalid version string\n};
+    }
+    if ($next_version lt $current_version) {
+        die qq{"$next_version" is smaller than current version "$current_version"\n};
+    }
+    $next_version;
 }
-if ($next_version lt $current_version) {
-    die qq{"$next_version" is smaller than current version "$current_version"\n};
+
+sub update_versions {
+    my ($current_version, $next_version) = @_;
+
+    ### update versions
+    my $cur_ver_reg = quotemeta $current_version;
+    # update .travis.yml
+    my $travis = slurp '.travis.yml';
+       $travis =~ s/$cur_ver_reg/$next_version/msg;
+    spew '.travis.yml', $travis;
+
+    # update rpm spec
+    my $rpm_spec_file = 'packaging/rpm/mackerel-agent-plugins.spec';
+    my $rpm_spec = slurp $rpm_spec_file;
+       $rpm_spec =~ s/^Version: $cur_ver_reg/Version: $next_version/ms;
+    spew $rpm_spec_file, $rpm_spec;
+}
+
+main();
+
+sub main {
+    #git qw/co master/;
+    #git qw/pull/;
+
+    my $current_version = last_release;
+    my $next_version    = decide_next_version($current_version);
+    update_versions($current_version, $next_version);
+
+
 }
 
 # my $merged_prs      = merged_prs;
