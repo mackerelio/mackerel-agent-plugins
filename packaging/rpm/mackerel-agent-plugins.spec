@@ -8,7 +8,7 @@
 
 Summary: Monitoring program plugins for Mackerel
 Name: mackerel-agent-plugins
-Version: 0.5.0
+Version: 0.6.0
 Release: %{revision}
 License: Apache-2
 Group: Applications/System
@@ -30,7 +30,7 @@ This package provides plugins for Mackerel.
 
 %{__mkdir} -p %{buildroot}%{__targetdir}
 
-for i in apache2 mysql memcached nginx plack postgres redis aws-ec2-cpucredit elasticsearch aws-elb haproxy jvm linux mongodb aws-rds snmp squid varnish php-apc;do \
+for i in apache2 aws-ec2-cpucredit aws-elb aws-rds elasticsearch haproxy jvm linux memcached mongodb munin mysql nginx php-apc plack postgres redis snmp squid varnish;do \
     %{__install} -m0755 %{_sourcedir}/build/mackerel-plugin-$i %{buildroot}%{__targetdir}/; \
 done
 
