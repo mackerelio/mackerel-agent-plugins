@@ -290,8 +290,8 @@ sub update_changelog {
 }
 
 sub build_pull_request_body {
-    my @releases = @_;
-    my $body = '';
+    my ($next_version, @releases) = @_;
+    my $body = "Release version $next_version\n\n";
     for my $rel (@releases) {
         $body .= sprintf "- %s #%s\n", $rel->{title}, $rel->{num};
     }
@@ -328,7 +328,7 @@ sub main {
 
     infof "push changes\n";
     git qw/push --set-upstream origin/, $branch_name;
-    my $pr_body = build_pull_request_body(@releases);
+    my $pr_body = build_pull_request_body($next_version, @releases);
     hub qw/pull-request -m/, $pr_body;
 
     infof "Releasing pull request is created. Review and merge it. You can update changelogs and commit more in this branch before merging.\n";
