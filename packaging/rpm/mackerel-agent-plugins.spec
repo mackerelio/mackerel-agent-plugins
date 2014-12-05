@@ -42,6 +42,12 @@ done
 %{__targetdir}
 
 %changelog
+* Fri Dec 05 2014 <y.songmu@gmail.com> - 0.6.0
+- Changed some parameter unit at Apache2 plugin.  (by koemu)
+- add IAM Policy requirement (by naokibtn)
+- Use `varnishstat` command (by naokibtn)
+- plugin for munin (by naokibtn)
+
 * Tue Oct 21 2014 <y_uuki@hatena.ne.jp> - 0.5.0
 - Add plugin for HAProxy, Varnish, Squid, SNMP, EC2 CPU Credit, Elasticsearch, JVM, Linux procs, MongoDB, ELB, RDS and PHP-APC
 - Fix Plack, Apache2
