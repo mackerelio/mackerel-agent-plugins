@@ -22,7 +22,14 @@ sub slurp {
 sub spew {
     my ($file, $data) = @_;
     open my $fh, '>:encoding(UTF-8)', $file or die $!;
+    $data .= "\n" if $data !~ /\n\z/ms;
     print $fh $data;
+}
+
+sub replace {
+    my ($file, $code) = @_;
+    my $content = $code->(slurp($file));
+    spew($file, $content);
 }
 
 sub last_release {
@@ -100,15 +107,19 @@ sub update_versions {
     ### update versions
     my $cur_ver_reg = quotemeta $current_version;
     # update .travis.yml
-    my $travis = slurp '.travis.yml';
-       $travis =~ s/$cur_ver_reg/$next_version/msg;
-    spew '.travis.yml', $travis;
+    replace '.travis.yml' => sub {
+        my $content = shift;
+        $content =~ s/$cur_ver_reg/$next_version/msg;
+        $content;
+    };
 
     # update rpm spec
-    my $rpm_spec_file = 'packaging/rpm/mackerel-agent-plugins.spec';
-    my $rpm_spec = slurp $rpm_spec_file;
-       $rpm_spec =~ s/^Version: $cur_ver_reg/Version: $next_version/ms;
-    spew $rpm_spec_file, $rpm_spec;
+    replace 'packaging/rpm/mackerel-agent-plugins.spec' => sub {
+        my $content = shift;
+        $content =~ s/^Version: $cur_ver_reg/Version: $next_version/ms;
+        $content;
+    };
+
 }
 
 
@@ -125,15 +136,17 @@ sub retrieve_plugins {
 
 sub update_readme {
     my @plugins = @_;
-    my $readme = slurp('README.md');
 
     my $doc_links = '';
     for my $plug (@plugins) {
         $doc_links .= "* [mackerel-plugin-$plug](./mackerel-plugin-$plug/README.md)\n"
     }
-    my $plu_reg = qr/mackerel-plugin-[-0-9a-zA-Z_]+/;
-    $readme =~ s!(?:\* \[$plu_reg\]\(\./$plu_reg/README\.md\)\n)+!$doc_links!ms;
-    spew('README.md', $readme);
+    replace 'README.md' => sub {
+        my $readme = shift;
+        my $plu_reg = qr/mackerel-plugin-[-0-9a-zA-Z_]+/;
+        $readme =~ s!(?:\* \[$plu_reg\]\(\./$plu_reg/README\.md\)\n)+!$doc_links!ms;
+        $readme;
+    };
 }
 
 main();
