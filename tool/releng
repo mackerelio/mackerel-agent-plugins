@@ -8,6 +8,10 @@ releng script for mackerel-agent-plugins
 
     % tool/releng
 
+=head DEPENDENCY
+
+`git` command and `hub` or `gh` command are required.
+
 =cut
 
 use 5.012;
@@ -24,7 +28,7 @@ use POSIX qw(setlocale LC_TIME);
 
 sub DEBUG() { $ENV{MC_RELENG_DEBUG} }
 
-sub command {say('+ '. join ' ', @_); !system(@_) or croak $!}
+sub command {say('+ '. join ' ', @_) if DEBUG; !system(@_) or croak $!}
 sub _git {
      state $com = do {
         chomp(my $c = `which git`);
@@ -302,24 +306,30 @@ sub main {
 
     git qw/co master/;
     git qw/pull/;
-    my $state = 0;
 
     my $current_version = last_release;
     my $next_version    = decide_next_version($current_version);
+
+    my $branch_name = "bump-version-$next_version";
+    infof "checkout new releasing branch [$branch_name]\n";
+    git qw/checkout -b/, $branch_name;
+
+    infof "bump versions and update readme\n";
     update_versions($current_version, $next_version);
     my @plugins = retrieve_plugins;
     update_readme(@plugins);
     update_packaging_specs(@plugins);
-
-    my $branch_name = "bump-version-$next_version";
-    git qw/checkout -b/, $branch_name;
     git qw/commit -am/, "ready for next release. version: $next_version";
 
+    infof "update changelogs\n";
     my @releases = merged_prs;
     update_changelog($next_version, @releases);
     git qw/commit -am/, "update changelogs";
-    git qw/push --set-upstream origin/, $branch_name;
 
+    infof "push changes\n";
+    git qw/push --set-upstream origin/, $branch_name;
     my $pr_body = build_pull_request_body(@releases);
     hub qw/pull-request -m/, $pr_body;
+
+    infof "Releasing pull request is created. Review and merge it. You can update changelogs and commit more in this branch before merging.\n";
 }
