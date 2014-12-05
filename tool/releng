@@ -122,13 +122,12 @@ sub update_versions {
 
 }
 
-
 sub retrieve_plugins {
     my @plugin_dirs = <mackerel-plugin-*>;
     for my $plugin_dir (@plugin_dirs) {
         my $readme = "$plugin_dir/README.md";
         unless (-f $readme) {
-            warn "$readme is misssing!!!!\n";
+            warn "[$readme] is misssing!!! You must locate it.\n";
         }
     }
     sort map {s/^mackerel-plugin-//; $_} @plugin_dirs;
@@ -149,6 +148,18 @@ sub update_readme {
     };
 }
 
+sub update_packaging_specs {
+    my @plugins = @_;
+    my $for_in = 'for i in ' . join(' ', @plugins) . ';do';
+
+    my $replace_sub = sub {
+        my $content = shift;
+        $content =~ s/for i in.*?;do/$for_in/ms;
+        $content;
+    };
+    replace $_, $replace_sub for qw!packaging/rpm/mackerel-agent-plugins.spec packaging/deb/debian/rules!;
+}
+
 main();
 
 sub main {
@@ -158,8 +169,11 @@ sub main {
     my $current_version = last_release;
     my $next_version    = decide_next_version($current_version);
     update_versions($current_version, $next_version);
+
     my @plugins = retrieve_plugins;
     update_readme(@plugins);
+    update_packaging_specs(@plugins);
+
 }
 
 # my $merged_prs      = merged_prs;
