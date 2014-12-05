@@ -9,15 +9,49 @@ use HTTP::Tiny;
 use JSON::PP;
 use ExtUtils::MakeMaker qw/prompt/;
 
+sub DEBUG() { $ENV{MC_RELENG_DEBUG} }
+
 sub command {say('+ '. join ' ', @_); !system(@_) or croak $!}
 sub git {unshift  @_, 'git'; goto \&command}
+
+# logger. steal from minilla
+use Term::ANSIColor qw(colored);
+use constant { LOG_DEBUG => 1, LOG_INFO => 2, LOG_WARN => 3, LOG_ERROR => 4 };
+
+my $Colors = {
+    LOG_DEBUG,   => 'green',
+    LOG_WARN,    => 'yellow',
+    LOG_INFO,    => 'cyan',
+    LOG_ERROR,   => 'red',
+};
+
+sub _printf {
+    my $type = pop;
+    return if $type == LOG_DEBUG && !DEBUG;
+    my ($temp, @args) = @_;
+    my $msg = sprintf($temp, map { defined($_) ? $_ : '-' } @args);
+    $msg = colored $msg, $Colors->{$type} if defined $type;
+    my $fh = $type && $type >= LOG_WARN ? *STDERR : *STDOUT;
+    print $fh $msg;
+}
+
+sub infof  {_printf(@_, LOG_INFO)}
+sub warnf  {_printf(@_, LOG_WARN)}
+sub debugf {_printf(@_, LOG_DEBUG)}
+sub errorf {
+    my(@msg) = @_;
+    _printf(@msg, LOG_ERROR);
+
+    my $fmt = shift @msg;
+    die sprintf($fmt, @msg);
+}
+
+# file utils
 sub slurp {
     my $file = shift;
-    do {
-        local $/;
-        open my $fh, '<:encoding(UTF-8)', $file or die $!;
-        <$fh>
-    };
+    local $/;
+    open my $fh, '<:encoding(UTF-8)', $file or die $!;
+    <$fh>
 }
 sub spew {
     my ($file, $data) = @_;
@@ -25,7 +59,6 @@ sub spew {
     $data .= "\n" if $data !~ /\n\z/ms;
     print $fh $data;
 }
-
 sub replace {
     my ($file, $code) = @_;
     my $content = $code->(slurp($file));
@@ -52,12 +85,12 @@ sub merged_prs {
         my $url = sprintf "https://api.github.com/repos/mackerelio/mackerel-agent-plugins/pulls/%d?state=closed", $pull_num;
         my $res = $ua->get($url);
         unless ($res->{success}) {
-            warn "request to $url failed\n";
+            warnf "request to $url failed\n";
             next;
         }
         my $data = eval { decode_json $res->{content} };
         if ($@) {
-            warn "parse json failed. url: $url\n";
+            warnf "parse json failed. url: $url\n";
             next;
         }
         my $title = $data->{title};
@@ -127,7 +160,7 @@ sub retrieve_plugins {
     for my $plugin_dir (@plugin_dirs) {
         my $readme = "$plugin_dir/README.md";
         unless (-f $readme) {
-            warn "[$readme] is misssing!!! You must locate it.\n";
+            warnf "[$readme] is misssing!!! You must locate it.\n";
         }
     }
     sort map {s/^mackerel-plugin-//; $_} @plugin_dirs;
@@ -174,12 +207,16 @@ sub main {
     update_readme(@plugins);
     update_packaging_specs(@plugins);
 
+    # my $branch_name = "bump-version-$next_version";
+    # git qw/checkout -b/, $branch_name;
+
+
+
 }
 
 # my $merged_prs      = merged_prs;
 
 # TODO
-# - checktout new branch
-# - bump versions
-# - README.md更新
+# update changelog without commit
+
 
