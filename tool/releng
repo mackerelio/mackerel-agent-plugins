@@ -1,5 +1,5 @@
 #!/usr/bin/env perl
-use 5.010;
+use 5.012;
 use strict;
 use warnings;
 use utf8;
@@ -111,6 +111,18 @@ sub update_versions {
     spew $rpm_spec_file, $rpm_spec;
 }
 
+
+sub retrieve_plugins {
+    my @plugin_dirs = <mackerel-plugin-*>;
+    for my $plugin_dir (@plugin_dirs) {
+        my $readme = "$plugin_dir/README.md";
+        unless (-f $readme) {
+            warn "$readme is misssing!!!!\n";
+        }
+    }
+    map {s/^mackerel-plugin-//; $_} @plugin_dirs;
+}
+
 main();
 
 sub main {
@@ -120,7 +132,7 @@ sub main {
     my $current_version = last_release;
     my $next_version    = decide_next_version($current_version);
     update_versions($current_version, $next_version);
-
+    my @plugins = retrieve_plugins;
 
 }
 
