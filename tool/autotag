@@ -1,0 +1,63 @@
+#!/usr/bin/env perl
+use 5.014;
+use warnings;
+
+use HTTP::Tiny;
+use JSON::PP;
+
+my $OWNER = 'mackerelio';
+my $REPO  = 'mackerel-agent-plugins';
+
+sub get_pr_num_and_branch {
+    chomp(my $msg = `git log HEAD~.. --merges --oneline`);
+    # e.g. 492764e Merge pull request #3 from Songmu/fix/remote
+    return unless $msg;
+
+    my ($pr_num, $branch) = $msg =~ /^[a-f0-9]{7} Merge pull request #([0-9]+) from (.*)$/;
+    return unless $pr_num;
+
+    my $res = HTTP::Tiny->new->get(
+        sprintf 'https://api.github.com/repos/%s/%s/pulls/%d?state=closed', $OWNER, $REPO, $pr_num
+    );
+    unless ($res->{success}) {
+        warn 'API request failed'; return;
+    }
+    my $data = decode_json $res->{content};
+    my $label = $data->{head}{label};
+    $label =~ s!:!/!; # $user:branch/name -> $user/branch/name
+
+    if ($label ne $branch) {
+        return;
+    }
+    my $reg = quotemeta $OWNER;
+    $branch =~ s!^$reg/!!;
+
+    $data->{head}{ref};
+}
+
+sub tag_name_from_branch {
+    my $branch = shift;
+
+    my ($tag) = $branch =~ m!^bump-version-([0-9]+(?:\.[0-9]+){2})$!;
+    $tag;
+}
+
+main();
+
+sub main {
+    my $branch = get_pr_num_and_branch;
+    unless ($branch) {
+        say 'not a merged commit'; return;
+    }
+    my $tag = tag_name_from_branch($branch);
+    unless ($tag) {
+        say 'not a tagify target'; return;
+    }
+
+    my %tags = map { chomp; ($_ => 1) } `git tag`;
+    if ($tags{$tag}) {
+        say "tag: $tag already tagged"; return;
+    }
+    system(qw/git tag/, $tag);
+    system(qw/git push --tags/);
+}
