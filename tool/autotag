@@ -22,10 +22,8 @@ use JSON::PP;
 my $OWNER = 'mackerelio';
 my $REPO  = 'mackerel-agent-plugins';
 
-sub get_pr_num_and_branch {
-    chomp(my $msg = `git log HEAD~.. --merges --oneline`);
-    # e.g. 492764e Merge pull request #3 from Songmu/fix/remote
-    return unless $msg;
+sub get_branch_from_msg {
+    my $msg = shift;
 
     my ($pr_num, $branch) = $msg =~ /^[a-f0-9]{7} Merge pull request #([0-9]+) from (.*)$/;
     return unless $pr_num;
@@ -43,9 +41,6 @@ sub get_pr_num_and_branch {
     if ($label ne $branch) {
         return;
     }
-    my $reg = quotemeta $OWNER;
-    $branch =~ s!^$reg/!!;
-
     $data->{head}{ref};
 }
 
@@ -53,19 +48,31 @@ sub tag_name_from_branch {
     my $branch = shift;
 
     my ($tag) = $branch =~ m!^bump-version-([0-9]+(?:\.[0-9]+){2})$!;
-    $tag;
+    $tag && "v$tag";
 }
 
-main();
+### main
+if (!$ENV{HARNESS_ACTIVE}) {
+    main();
+} else {
+    # When called via `prove`, tests will run.
+    run_tests();
+}
 
 sub main {
-    my $branch = get_pr_num_and_branch;
-    unless ($branch) {
+    # e.g. 492764e Merge pull request #3 from Songmu/fix/remote
+    chomp(my $msg = `git log HEAD~.. --merges --oneline`);
+    unless ($msg) {
         say 'not a merged commit'; return;
+    }
+
+    my $branch = get_branch_from_msg($msg);
+    unless ($branch) {
+        say 'not a pull request'; return;
     }
     my $tag = tag_name_from_branch($branch);
     unless ($tag) {
-        say 'not a tagify target'; return;
+        say 'not a autotag target'; return;
     }
 
     my %tags = map { chomp; ($_ => 1) } `git tag`;
@@ -74,4 +81,17 @@ sub main {
     }
     system(qw/git tag/, $tag);
     system(qw/git push --tags/);
+}
+
+sub run_tests {
+    require Test::More;
+    Test::More->import;
+
+    is(get_branch_from_msg('58a535b Merge pull request #44 from naokibtn/feature-munin'), 'feature-munin');
+    is(get_branch_from_msg('86b6a58 Merge pull request #36 from mackerelio/bump-version-0.5.0'), 'bump-version-0.5.0');
+
+    is(tag_name_from_branch('bump-version-0.5.0'), 'v0.5.0');
+    ok(!tag_name_from_branch('feature-hoge'));
+
+    done_testing();
 }
