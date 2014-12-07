@@ -1,4 +1,18 @@
 #!/usr/bin/env perl
+
+=head DESCRIPTION
+
+Automatically `git tag` by travisCI.
+
+When the pull request is merged and the branch name is like "bump-version-N.N.N",
+the merge commit is automatically tagged as `vN.N.N`.
+
+=head SYNOPSIS
+
+    % tool/autotag
+
+=cut
+
 use 5.014;
 use warnings;
 
