@@ -16,6 +16,7 @@ after_success:
 - cp ../deploy.key ~/.ssh/
 - chmod 600 ~/.ssh/deploy.key
 - git remote set-url origin git@github.com:mackerelio/mackerel-agent-plugins.git
+- git pull
 - tool/autotag
 deploy:
   provider: releases
