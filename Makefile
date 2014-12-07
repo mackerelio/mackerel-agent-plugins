@@ -44,4 +44,7 @@ clean:
 	  rmdir build; \
 	fi
 
-.PHONY: all build test deps testdeps rpm deb gox clean
+release:
+	tool/releng
+
+.PHONY: all build test deps testdeps rpm deb gox clean release
