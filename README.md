@@ -17,6 +17,7 @@ Document of each plugin is located under each sub directory.
 * [mackerel-plugin-linux](./mackerel-plugin-linux/README.md)
 * [mackerel-plugin-memcached](./mackerel-plugin-memcached/README.md)
 * [mackerel-plugin-mongodb](./mackerel-plugin-mongodb/README.md)
+* [mackerel-plugin-munin](./mackerel-plugin-munin/README.md)
 * [mackerel-plugin-mysql](./mackerel-plugin-mysql/README.md)
 * [mackerel-plugin-nginx](./mackerel-plugin-nginx/README.md)
 * [mackerel-plugin-php-apc](./mackerel-plugin-php-apc/README.md)
