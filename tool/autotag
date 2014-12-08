@@ -41,7 +41,7 @@ sub get_branch_from_msg {
     if ($label ne $branch) {
         return;
     }
-    $data->{head}{ref};
+    ($data->{head}{ref}, $data->{title}, $data->{body});
 }
 
 sub tag_name_from_branch {
@@ -66,7 +66,7 @@ sub main {
         say 'not a merged commit'; return;
     }
 
-    my $branch = get_branch_from_msg($msg);
+    my ($branch, $title, $body) = get_branch_from_msg($msg);
     unless ($branch) {
         say 'not a pull request'; return;
     }
@@ -79,7 +79,7 @@ sub main {
     if ($tags{$tag}) {
         say "tag: $tag already tagged"; return;
     }
-    system(qw/git tag/, $tag);
+    system(qw/git tag/, $tag, '-a', $title, '-m', $body);
     system(qw/git push --tags/);
 }
 
@@ -87,8 +87,10 @@ sub run_tests {
     require Test::More;
     Test::More->import;
 
-    is(get_branch_from_msg('58a535b Merge pull request #44 from naokibtn/feature-munin'), 'feature-munin');
-    is(get_branch_from_msg('86b6a58 Merge pull request #36 from mackerelio/bump-version-0.5.0'), 'bump-version-0.5.0');
+    my ($branch) = get_branch_from_msg('58a535b Merge pull request #44 from naokibtn/feature-munin');
+    is($branch, 'feature-munin');
+    ($branch) = get_branch_from_msg('86b6a58 Merge pull request #36 from mackerelio/bump-version-0.5.0');
+    is($branch, 'bump-version-0.5.0');
 
     is(tag_name_from_branch('bump-version-0.5.0'), 'v0.5.0');
     ok(!tag_name_from_branch('feature-hoge'));
