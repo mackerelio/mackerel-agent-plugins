@@ -9,7 +9,7 @@ mackerel-agent-plugins (0.6.0-1) stable; urgency=low
   * plugin for munin (by naokibtn)
     <https://github.com/mackerelio/mackerel-agent-plugins/pull/44>
 
- -- Songmu <y.songmu@gmail.com>  Fri, 05 Dec 2014 19:02:40 +0900
+ -- Songmu <songmu@hatena.ne.jp>  Fri, 05 Dec 2014 19:02:40 +0900
 
 mackerel-agent-plugins (0.5.0-1) stable; urgency=low
 

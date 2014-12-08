@@ -42,7 +42,7 @@ done
 %{__targetdir}
 
 %changelog
-* Fri Dec 05 2014 <y.songmu@gmail.com> - 0.6.0
+* Fri Dec 05 2014 <songmu@hatena.ne.jp> - 0.6.0
 - Changed some parameter unit at Apache2 plugin.  (by koemu)
 - add IAM Policy requirement (by naokibtn)
 - Use `varnishstat` command (by naokibtn)
