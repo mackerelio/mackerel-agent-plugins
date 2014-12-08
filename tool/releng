@@ -14,7 +14,7 @@ releng script for mackerel-agent-plugins
 
 =cut
 
-use 5.012;
+use 5.014;
 use strict;
 use warnings;
 use utf8;
@@ -133,7 +133,7 @@ sub last_release {
 }
 
 sub merged_prs {
-    my $current_tag = last_release;
+    my $current_tag = shift;
     my @pull_nums = sort {$a <=> $b} map {m/Merge pull request #([0-9]+) /; $1 || ()  } `git log v$current_tag... --merges --oneline`;
 
     my @releases;
@@ -298,7 +298,14 @@ sub build_pull_request_body {
     $body;
 }
 
-main();
+
+### main process
+if (!$ENV{HARNESS_ACTIVE}) {
+    main();
+} else {
+    # When called via `prove`, tests will run.
+    run_tests();
+}
 
 sub main {
     # check command
@@ -322,7 +329,7 @@ sub main {
     git qw/commit -am/, "ready for next release. version: $next_version";
 
     infof "update changelogs\n";
-    my @releases = merged_prs;
+    my @releases = merged_prs $current_version;
     update_changelog($next_version, @releases);
     git qw/commit -am/, "update changelogs";
 
@@ -332,4 +339,18 @@ sub main {
     hub qw/pull-request -m/, $pr_body;
 
     infof "Releasing pull request is created. Review and merge it. You can update changelogs and commit more in this branch before merging.\n";
+}
+
+sub run_tests {
+    require Test::More;
+    Test::More->import;
+
+    my $version = '0.1.2';
+    my ($major, $minor, $patch) = parse_version($version);
+    is($major, 0);
+    is($minor, 1);
+    is($patch, 2);
+    is( suggest_next_version($version), '0.2.0' );
+
+    done_testing();
 }

@@ -18,7 +18,10 @@ build: deps
 	    github.com/mackerelio/mackerel-agent-plugins/$$i; \
 	done
 
-test: testdeps
+test: testgo
+	prove tool/releng tool/autotag
+
+testgo: testdeps
 	go test $(VERBOSE_FLAG) ./...
 
 deps:
@@ -47,4 +50,4 @@ clean:
 release:
 	tool/releng
 
-.PHONY: all build test deps testdeps rpm deb gox clean release
+.PHONY: all build test testgo deps testdeps rpm deb gox clean release
