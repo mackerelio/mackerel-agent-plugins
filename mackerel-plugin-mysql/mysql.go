@@ -3,12 +3,13 @@ package main
 import (
 	"flag"
 	"fmt"
-	mp "github.com/mackerelio/go-mackerel-plugin"
-	"github.com/ziutek/mymysql/mysql"
-	_ "github.com/ziutek/mymysql/native"
 	"log"
 	"os"
 	"strconv"
+
+	mp "github.com/mackerelio/go-mackerel-plugin"
+	"github.com/ziutek/mymysql/mysql"
+	_ "github.com/ziutek/mymysql/native"
 )
 
 var graphdef map[string](mp.Graphs) = map[string](mp.Graphs){
@@ -71,7 +72,7 @@ var graphdef map[string](mp.Graphs) = map[string](mp.Graphs){
 		Metrics: [](mp.Metrics){
 			mp.Metrics{Name: "Table_locks_immediate", Label: "Table Locks Immediate", Diff: true, Stacked: false},
 			mp.Metrics{Name: "Table_locks_waited", Label: "Table Locks Waited", Diff: true, Stacked: false},
-			mp.Metrics{Name: "Slow Queries", Label: "Slow Queries", Diff: true, Stacked: false},
+			mp.Metrics{Name: "Slow_queries", Label: "Slow Queries", Diff: true, Stacked: false},
 		},
 	},
 	"mysql.traffic": mp.Graphs{
