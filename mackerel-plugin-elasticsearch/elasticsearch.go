@@ -11,7 +11,7 @@ import (
 	"os"
 )
 
-var logger = logging.GetLogger("metrics.plugin.postgres")
+var logger = logging.GetLogger("metrics.plugin.elasticsearch")
 
 var graphdef map[string](mp.Graphs) = map[string](mp.Graphs){
 	"elasticsearch.http": mp.Graphs{
