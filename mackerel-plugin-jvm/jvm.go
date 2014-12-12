@@ -181,6 +181,12 @@ func main() {
 	jvm.JstatPath = *optJstatPath
 
 	if *optJavaName == "" {
+		logger.Errorf("javaname is required (if you use 'pidfile' option, 'javaname' is used as just a prefix of graph label)")
+		flag.PrintDefaults()
+		os.Exit(1)
+	}
+
+	if *optPidFile == "" {
 		// https://docs.oracle.com/javase/7/docs/technotes/tools/share/jps.html
 		// `The lvmid is typically, but not necessarily, the operating system's process identifier for the JVM process.`
 		pid, err := ioutil.ReadFile(*optPidFile)
