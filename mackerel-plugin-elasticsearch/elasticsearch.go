@@ -6,9 +6,12 @@ import (
 	"flag"
 	"fmt"
 	mp "github.com/mackerelio/go-mackerel-plugin"
+	"github.com/mackerelio/mackerel-agent/logging"
 	"net/http"
 	"os"
 )
+
+var logger = logging.GetLogger("metrics.plugin.postgres")
 
 var graphdef map[string](mp.Graphs) = map[string](mp.Graphs){
 	"elasticsearch.http": mp.Graphs{
@@ -187,7 +190,8 @@ func (p ElasticsearchPlugin) FetchMetrics() (map[string]float64, error) {
 	for k, v := range metricPlace {
 		val, err := GetFloatValue(node, v)
 		if err != nil {
-			return nil, err
+			logger.Errorf("Failed to find '%s': %s", k, err)
+			continue
 		}
 
 		stat[k] = val
