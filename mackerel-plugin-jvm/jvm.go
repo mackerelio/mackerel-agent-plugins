@@ -4,6 +4,7 @@ import (
 	"errors"
 	"flag"
 	"fmt"
+	"io/ioutil"
 	"os"
 	"os/exec"
 	"strconv"
@@ -171,24 +172,38 @@ func main() {
 	optJstatPath := flag.String("jstatpath", "/usr/bin/jstat", "jstat path")
 	optJpsPath := flag.String("jpspath", "/usr/bin/jps", "jps path")
 	optJavaName := flag.String("javaname", "", "Java app name")
+	optPidFile := flag.String("pidfile", "", "pidfile path")
 	optTempfile := flag.String("tempfile", "", "Temp file name")
 	flag.Parse()
 
+	var jvm JVMPlugin
+	jvm.Target = fmt.Sprintf("%s:%s", *optHost, *optPort)
+	jvm.JstatPath = *optJstatPath
+
 	if *optJavaName == "" {
-		logger.Errorf("javaname is required")
+		logger.Errorf("javaname is required (if you use 'pidfile' option, 'javaname' is used as just a prefix of graph label)")
 		flag.PrintDefaults()
 		os.Exit(1)
 	}
 
-	var jvm JVMPlugin
-	jvm.Target = fmt.Sprintf("%s:%s", *optHost, *optPort)
-	lvmid, err := FetchLvmidByAppname(*optJavaName, jvm.Target, *optJpsPath)
-	if err != nil {
-		logger.Errorf("Failed to fetch lvmid. %s", err)
-		os.Exit(1)
+	if *optPidFile == "" {
+		// https://docs.oracle.com/javase/7/docs/technotes/tools/share/jps.html
+		// `The lvmid is typically, but not necessarily, the operating system's process identifier for the JVM process.`
+		pid, err := ioutil.ReadFile(*optPidFile)
+		if err != nil {
+			logger.Errorf("Failed to load pid. %s", err)
+			os.Exit(1)
+		}
+		jvm.Lvmid = string(pid)
+	} else {
+		lvmid, err := FetchLvmidByAppname(*optJavaName, jvm.Target, *optJpsPath)
+		if err != nil {
+			logger.Errorf("Failed to fetch lvmid. %s", err)
+			os.Exit(1)
+		}
+		jvm.Lvmid = lvmid
 	}
-	jvm.Lvmid = lvmid
-	jvm.JstatPath = *optJstatPath
+
 	jvm.JavaName = *optJavaName
 
 	helper := mp.NewMackerelPlugin(jvm)
