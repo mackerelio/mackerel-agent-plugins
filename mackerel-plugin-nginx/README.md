@@ -11,7 +11,7 @@ mackerel-plugin-nginx [-host=<host>] [-port=<port>] [-path=<path>] [-tempfile=<t
 
 ## Requirements
 
-- [ngx_http_status_module](http://nginx.org/en/docs/http/ngx_http_status_module.html)
+- [ngx_http_stub_status_module](http://nginx.org/en/docs/http/ngx_http_stub_status_module.html)
 
 ## Example of mackerel-agent.conf
 
