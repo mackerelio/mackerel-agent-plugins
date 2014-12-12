@@ -6,7 +6,7 @@ JVM(jstat) custom metrics plugin for mackerel.io agent.
 ## Synopsis
 
 ```shell
-mackerel-plugin-jvm -javaname=<javaname> [-jstatpath=</path/to/jstat] [-jpspath=/path/to/jps] [-host=<host>] [-port=<port>]
+mackerel-plugin-jvm -javaname=<javaname> [-pidfile=</path/to/pidfile>] [-jstatpath=</path/to/jstat] [-jpspath=/path/to/jps] [-host=<host>] [-port=<port>]
 ```
 
 ## Requirements
@@ -29,6 +29,9 @@ You can check javaname by jps command.
 14203 NettyServer
 14822 Jps
 ```
+
+Please choose an arbitrary name as `javaname` when you use `pidfile` option.
+It is just used as a prefix of graph label.
 
 ## References
 
