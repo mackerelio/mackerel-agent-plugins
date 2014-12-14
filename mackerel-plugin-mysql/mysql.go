@@ -134,7 +134,7 @@ func (m MySQLPlugin) FetchMetrics() (map[string]float64, error) {
 	}
 	for _, row := range rows {
 		Variable_name := string(row[0].([]byte))
-		Value, err := strconv.Atoi(string(row[1].([]byte)))
+		Value, err := strconv.ParseFloat(string(row[1].([]byte)), 64)
 		if err != nil {
 			log.Println("FetchMetrics: ", err)
 		}
