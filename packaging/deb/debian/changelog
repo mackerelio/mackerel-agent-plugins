@@ -15,7 +15,7 @@ mackerel-agent-plugins (0.6.1-1) stable; urgency=low
   * Fix MySQL int32 overflow (by y-uuki)
     <https://github.com/mackerelio/mackerel-agent-plugins/pull/54>
 
- -- daiksy <ksydisk780921@gmail.com>  Fri, 19 Dec 2014 12:06:58 +0900
+ -- daiksy <daiksy@hatena.ne.jp>  Fri, 19 Dec 2014 12:06:58 +0900
 
 mackerel-agent-plugins (0.6.0-1) stable; urgency=low
 
