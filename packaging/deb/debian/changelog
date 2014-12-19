@@ -1,3 +1,22 @@
+mackerel-agent-plugins (0.6.1-1) stable; urgency=low
+
+  * Fix spelling at MySQL Plugin (by koemu)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/47>
+  * Fix requirement module name (by y-uuki)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/49>
+  * Change scale KB into Byte about JVM memory usgae (by y-uuki)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/50>
+  * JVM pidfile option (by y-uuki)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/51>
+  * Add GC time percentage graph (by y-uuki)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/52>
+  * Elasticsearch: not exit but warn when some values cannot be fetched (by naokibtn)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/53>
+  * Fix MySQL int32 overflow (by y-uuki)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/54>
+
+ -- daiksy <ksydisk780921@gmail.com>  Fri, 19 Dec 2014 12:06:58 +0900
+
 mackerel-agent-plugins (0.6.0-1) stable; urgency=low
 
   * Changed some parameter unit at Apache2 plugin.  (by koemu)
