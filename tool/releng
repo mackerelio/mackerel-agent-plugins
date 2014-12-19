@@ -333,6 +333,11 @@ sub main {
     update_changelog($next_version, @releases);
     git qw/commit -am/, "update changelogs";
 
+    if (prompt('push changes?', 'y') !~ /^y(?:es)?$/i ) {
+        warnf('releng is aborted. remove the branch [%s] before next releng', $branch_name);
+        return;
+    }
+
     infof "push changes\n";
     git qw/push --set-upstream origin/, $branch_name;
     my $pr_body = build_pull_request_body($next_version, @releases);
