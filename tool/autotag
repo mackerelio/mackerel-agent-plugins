@@ -79,7 +79,7 @@ sub main {
     if ($tags{$tag}) {
         say "tag: $tag already tagged"; return;
     }
-    system(qw/git tag/, $tag, '-a', $title, '-m', $body);
+    system(qw/git tag -a/, $tag, '-m', "$title\n\n$body");
     system(qw/git push --tags/);
 }
 
