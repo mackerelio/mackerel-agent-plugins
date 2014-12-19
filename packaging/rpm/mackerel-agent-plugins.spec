@@ -42,7 +42,7 @@ done
 %{__targetdir}
 
 %changelog
-* Fri Dec 19 2014 <ksydisk780921@gmail.com> - 0.6.1
+* Fri Dec 19 2014 <daiksy@hatena.ne.jp> - 0.6.1
 - Fix spelling at MySQL Plugin (by koemu)
 - Fix requirement module name (by y-uuki)
 - Change scale KB into Byte about JVM memory usgae (by y-uuki)
