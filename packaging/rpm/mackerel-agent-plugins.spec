@@ -8,7 +8,7 @@
 
 Summary: Monitoring program plugins for Mackerel
 Name: mackerel-agent-plugins
-Version: 0.6.0
+Version: 0.6.1
 Release: %{revision}
 License: Apache-2
 Group: Applications/System
@@ -42,6 +42,15 @@ done
 %{__targetdir}
 
 %changelog
+* Fri Dec 19 2014 <daiksy@hatena.ne.jp> - 0.6.1
+- Fix spelling at MySQL Plugin (by koemu)
+- Fix requirement module name (by y-uuki)
+- Change scale KB into Byte about JVM memory usgae (by y-uuki)
+- JVM pidfile option (by y-uuki)
+- Add GC time percentage graph (by y-uuki)
+- Elasticsearch: not exit but warn when some values cannot be fetched (by naokibtn)
+- Fix MySQL int32 overflow (by y-uuki)
+
 * Fri Dec 05 2014 <songmu@hatena.ne.jp> - 0.6.0
 - Changed some parameter unit at Apache2 plugin.  (by koemu)
 - add IAM Policy requirement (by naokibtn)
