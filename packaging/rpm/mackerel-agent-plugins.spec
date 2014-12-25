@@ -42,6 +42,9 @@ done
 %{__targetdir}
 
 %changelog
+* Thu Dec 25 2014 <yuki.tsubo@gmail.com> - 0.6.2
+- Fix the problem jvm plugin does'nt run (by y-uuki)
+
 * Fri Dec 19 2014 <daiksy@hatena.ne.jp> - 0.6.1
 - Fix spelling at MySQL Plugin (by koemu)
 - Fix requirement module name (by y-uuki)
