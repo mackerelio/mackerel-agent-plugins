@@ -196,6 +196,13 @@ func main() {
 	}
 
 	if *optPidFile == "" {
+		lvmid, err := FetchLvmidByAppname(*optJavaName, jvm.Target, *optJpsPath)
+		if err != nil {
+			logger.Errorf("Failed to fetch lvmid. %s", err)
+			os.Exit(1)
+		}
+		jvm.Lvmid = lvmid
+	} else {
 		// https://docs.oracle.com/javase/7/docs/technotes/tools/share/jps.html
 		// `The lvmid is typically, but not necessarily, the operating system's process identifier for the JVM process.`
 		pid, err := ioutil.ReadFile(*optPidFile)
@@ -204,13 +211,6 @@ func main() {
 			os.Exit(1)
 		}
 		jvm.Lvmid = string(pid)
-	} else {
-		lvmid, err := FetchLvmidByAppname(*optJavaName, jvm.Target, *optJpsPath)
-		if err != nil {
-			logger.Errorf("Failed to fetch lvmid. %s", err)
-			os.Exit(1)
-		}
-		jvm.Lvmid = lvmid
 	}
 
 	jvm.JavaName = *optJavaName
