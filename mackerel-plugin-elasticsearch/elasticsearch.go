@@ -50,9 +50,9 @@ var graphdef map[string](mp.Graphs) = map[string](mp.Graphs){
 		Label: "Elasticsearch Indices Memory Size",
 		Unit:  "bytes",
 		Metrics: [](mp.Metrics){
-			mp.Metrics{Name: "fielddata_size", Label: "Fielddata"},
-			mp.Metrics{Name: "filter_cache_size", Label: "Filter Cache"},
-			mp.Metrics{Name: "segments_size", Label: "Lucene Segments"},
+			mp.Metrics{Name: "fielddata_size", Label: "Fielddata", Stacked: true},
+			mp.Metrics{Name: "filter_cache_size", Label: "Filter Cache", Stacked: true},
+			mp.Metrics{Name: "segments_size", Label: "Lucene Segments", Stacked: true},
 		},
 	},
 	"elasticsearch.indices.evictions": mp.Graphs{
