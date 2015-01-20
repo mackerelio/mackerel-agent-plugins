@@ -56,6 +56,7 @@ type ELBPlugin struct {
 	SecretAccessKey string
 	AZs             []string
 	CloudWatch      *cloudwatch.CloudWatch
+	Lbname          string
 }
 
 func (p *ELBPlugin) Prepare() error {
@@ -97,11 +98,11 @@ func (p *ELBPlugin) Prepare() error {
 	return nil
 }
 
-func (p ELBPlugin) GetLastPoint(dimension *cloudwatch.Dimension, metricName string, statType StatType) (float64, error) {
+func (p ELBPlugin) GetLastPoint(dimensions *[]cloudwatch.Dimension, metricName string, statType StatType) (float64, error) {
 	now := time.Now()
 
 	response, err := p.CloudWatch.GetMetricStatistics(&cloudwatch.GetMetricStatisticsRequest{
-		Dimensions: []cloudwatch.Dimension{*dimension},
+		Dimensions: *dimensions,
 		StartTime:  now.Add(time.Duration(120) * time.Second * -1), // 2 min (to fetch at least 1 data-point)
 		EndTime:    now,
 		MetricName: metricName,
@@ -142,31 +143,48 @@ func (p ELBPlugin) FetchMetrics() (map[string]float64, error) {
 
 	// HostCount per AZ
 	for _, az := range p.AZs {
-		d := &cloudwatch.Dimension{
-			Name:  "AvailabilityZone",
-			Value: az,
+		d := []cloudwatch.Dimension{
+			cloudwatch.Dimension{
+				Name:  "AvailabilityZone",
+				Value: az,
+			},
 		}
-
+		if p.Lbname != "" {
+			d2 := cloudwatch.Dimension{
+				Name:  "LoadBalancerName",
+				Value: p.Lbname,
+			}
+			d = append(d, d2)
+		}
 		for _, met := range []string{"HealthyHostCount", "UnHealthyHostCount"} {
-			v, err := p.GetLastPoint(d, met, Average)
+			v, err := p.GetLastPoint(&d, met, Average)
 			if err == nil {
 				stat[met+"_"+az] = v
 			}
 		}
 	}
 
-	glb := &cloudwatch.Dimension{
-		Name:  "Service",
-		Value: "ELB",
+	glb := []cloudwatch.Dimension{
+		cloudwatch.Dimension{
+			Name:  "Service",
+			Value: "ELB",
+		},
+	}
+	if p.Lbname != "" {
+		g2 := cloudwatch.Dimension{
+			Name:  "LoadBalancerName",
+			Value: p.Lbname,
+		}
+		glb = append(glb, g2)
 	}
 
-	v, err := p.GetLastPoint(glb, "Latency", Average)
+	v, err := p.GetLastPoint(&glb, "Latency", Average)
 	if err == nil {
 		stat["Latency"] = v
 	}
 
 	for _, met := range [...]string{"HTTPCode_Backend_2XX", "HTTPCode_Backend_3XX", "HTTPCode_Backend_4XX", "HTTPCode_Backend_5XX"} {
-		v, err := p.GetLastPoint(glb, met, Sum)
+		v, err := p.GetLastPoint(&glb, met, Sum)
 		if err == nil {
 			stat[met] = v
 		}
@@ -204,6 +222,7 @@ func (p ELBPlugin) GraphDefinition() map[string](mp.Graphs) {
 
 func main() {
 	optRegion := flag.String("region", "", "AWS Region")
+	optLbname := flag.String("lbname", "", "ELB Name")
 	optAccessKeyId := flag.String("access-key-id", "", "AWS Access Key ID")
 	optSecretAccessKey := flag.String("secret-access-key", "", "AWS Secret Access Key")
 	optTempfile := flag.String("tempfile", "", "Temp file name")
@@ -219,6 +238,7 @@ func main() {
 
 	elb.AccessKeyId = *optAccessKeyId
 	elb.SecretAccessKey = *optSecretAccessKey
+	elb.Lbname = *optLbname
 
 	err := elb.Prepare()
 	if err != nil {
