@@ -50,9 +50,19 @@ var graphdef map[string](mp.Graphs) = map[string](mp.Graphs){
 		Label: "Elasticsearch Indices Memory Size",
 		Unit:  "bytes",
 		Metrics: [](mp.Metrics){
-			mp.Metrics{Name: "fielddata_size", Label: "Fielddata"},
-			mp.Metrics{Name: "filter_cache_size", Label: "Filter Cache"},
+			mp.Metrics{Name: "fielddata_size", Label: "Fielddata", Stacked: true},
+			mp.Metrics{Name: "filter_cache_size", Label: "Filter Cache", Stacked: true},
+			mp.Metrics{Name: "segments_size", Label: "Lucene Segments", Stacked: true},
 		},
+	},
+	"elasticsearch.indices.evictions": mp.Graphs{
+		Label: "Elasticsearch Indices Evictions",
+		Unit: "integer",
+		Metrics: [](mp.Metrics){
+			mp.Metrics{Name: "evictions_fielddata", Label: "Fielddata", Diff: true},
+			mp.Metrics{Name: "evictions_filter_cache", Label: "Filter Cache", Diff: true},
+		},
+
 	},
 	"elasticsearch.jvm.heap": mp.Graphs{
 		Label: "Elasticsearch JVM Heap Mem",
@@ -111,6 +121,9 @@ var metricPlace map[string][]string = map[string][]string{
 	"docs_deleted":          []string{"indices", "docs", "deleted"},
 	"fielddata_size":        []string{"indices", "fielddata", "memory_size_in_bytes"},
 	"filter_cache_size":     []string{"indices", "filter_cache", "memory_size_in_bytes"},
+	"segments_size":         []string{"indices", "segments", "memory_in_bytes"},
+	"evictions_fielddata":   []string{"indices", "fielddata", "evictions"},
+	"evictions_filter_cache":[]string{"indices", "filter_cache", "evictions"},
 	"heap_used":             []string{"jvm", "mem", "heap_used_in_bytes"},
 	"heap_max":              []string{"jvm", "mem", "heap_max_in_bytes"},
 	"threads_generic":       []string{"thread_pool", "generic", "threads"},
