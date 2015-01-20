@@ -8,7 +8,7 @@
 
 Summary: Monitoring program plugins for Mackerel
 Name: mackerel-agent-plugins
-Version: 0.6.2
+Version: 0.6.3
 Release: %{revision}
 License: Apache-2
 Group: Applications/System
@@ -42,6 +42,10 @@ done
 %{__targetdir}
 
 %changelog
+* Tue Jan 20 2015 <y.songmu@gmail.com> - 0.6.3
+- Elasticsearch: add evictions, lucene segments memory size (by yshh)
+- Filter invalid float values (by krrrr38)
+
 * Thu Dec 25 2014 <yuki.tsubo@gmail.com> - 0.6.2
 - Fix the problem jvm plugin does'nt run (by y-uuki)
 
