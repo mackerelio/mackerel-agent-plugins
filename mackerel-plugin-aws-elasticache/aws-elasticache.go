@@ -310,10 +310,14 @@ func (p ECachePlugin) FetchMetrics() (map[string]float64, error) {
 }
 
 func (p ECachePlugin) GraphDefinition() map[string](mp.Graphs) {
-	if p.ElastiCacheType == "memcached" {
+	switch p.ElastiCacheType {
+	case "memcached":
 		return graphdefMemcached
-	} else {
+	case "redis":
 		return graphdefRedis
+	default:
+		log.Printf("elasticache-type is 'memcached' or 'redis'.")
+		return nil
 	}
 }
 
@@ -340,10 +344,14 @@ func main() {
 	ecache.CacheClusterId = *optCacheClusterId
 	ecache.CacheNodeId = *optCacheNodeId
 	ecache.ElastiCacheType = *optElastiCacheType
-	if ecache.ElastiCacheType == "memcached" {
+	switch ecache.ElastiCacheType {
+	case "memcached":
 		ecache.CacheMetrics = metricsdefMemcached
-	} else {
+	case "redis":
 		ecache.CacheMetrics = metricsdefRedis
+	default:
+		log.Printf("elasticache-type is 'memcached' or 'redis'.")
+		os.Exit(1)
 	}
 
 	helper := mp.NewMackerelPlugin(ecache)
