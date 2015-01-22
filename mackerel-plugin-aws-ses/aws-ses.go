@@ -3,8 +3,8 @@ package main
 import (
 	"flag"
 	"github.com/crowdmob/goamz/aws"
-	ses "github.com/naokibtn/go-ses"
 	mp "github.com/mackerelio/go-mackerel-plugin"
+	ses "github.com/naokibtn/go-ses"
 	"os"
 	"time"
 )
@@ -29,10 +29,10 @@ var graphdef map[string](mp.Graphs) = map[string](mp.Graphs){
 		Label: "SES Stats",
 		Unit:  "int",
 		Metrics: [](mp.Metrics){
-			mp.Metrics{Name: "Complaints"                          , Label: "Complaints"},
-			mp.Metrics{Name: "DeliveryAttempts"                    , Label: "DeliveryAttempts"},
-			mp.Metrics{Name: "Bounces int"                         , Label: "Bounces"},
-			mp.Metrics{Name: "Rejects int"                         , Label: "Rejects"},
+			mp.Metrics{Name: "Complaints", Label: "Complaints"},
+			mp.Metrics{Name: "DeliveryAttempts", Label: "DeliveryAttempts"},
+			mp.Metrics{Name: "Bounces int", Label: "Bounces"},
+			mp.Metrics{Name: "Rejects int", Label: "Rejects"},
 		},
 	},
 }
@@ -50,35 +50,35 @@ func (p SESPlugin) FetchMetrics() (map[string]float64, error) {
 	}
 
 	sescfg := ses.Config{
-	    AccessKeyID: auth.AccessKey,
-	    SecretAccessKey: auth.SecretKey,
-	    Endpoint: p.Endpoint,
+		AccessKeyID:     auth.AccessKey,
+		SecretAccessKey: auth.SecretKey,
+		Endpoint:        p.Endpoint,
 	}
 
 	stat := make(map[string]float64)
 	quota, err := sescfg.GetSendQuota()
 	if err == nil {
 		stat["SentLast24Hours"] = quota.SentLast24Hours
-		stat["Max24HourSend"] =   quota.Max24HourSend
-		stat["MaxSendRate"] =     quota.MaxSendRate
+		stat["Max24HourSend"] = quota.Max24HourSend
+		stat["MaxSendRate"] = quota.MaxSendRate
 	}
 
 	datapoints, err := sescfg.GetSendStatistics()
 	if err == nil {
-	    latest := ses.SendDataPoint{
-		Timestamp: time.Unix(0, 0),
-	    }
+		latest := ses.SendDataPoint{
+			Timestamp: time.Unix(0, 0),
+		}
 
-	    for _, dp := range datapoints {
-		    if latest.Timestamp.Before(dp.Timestamp) {
-			    latest = dp
-		    }
-	    }
+		for _, dp := range datapoints {
+			if latest.Timestamp.Before(dp.Timestamp) {
+				latest = dp
+			}
+		}
 
-	    stat["Complaints"]         = float64(latest.           Complaints  )  
-	    stat["DeliveryAttempts"]   = float64(latest.     DeliveryAttempts  )
-	    stat["Bounces"]            = float64(latest.          Bounces      ) 
-	    stat["Rejects"]            = float64(latest.         Rejects       )
+		stat["Complaints"] = float64(latest.Complaints)
+		stat["DeliveryAttempts"] = float64(latest.DeliveryAttempts)
+		stat["Bounces"] = float64(latest.Bounces)
+		stat["Rejects"] = float64(latest.Rejects)
 	}
 
 	return stat, nil
