@@ -57,6 +57,7 @@ func (p SESPlugin) FetchMetrics() (map[string]float64, error) {
 	sescfg := ses.Config{
 		AccessKeyID:     auth.AccessKey,
 		SecretAccessKey: auth.SecretKey,
+		SecurityToken:   auth.Token(),
 		Endpoint:        p.Endpoint,
 	}
 
