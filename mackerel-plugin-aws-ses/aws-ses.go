@@ -1,6 +1,7 @@
 package main
 
 import (
+	"errors"
 	"flag"
 	"github.com/crowdmob/goamz/aws"
 	mp "github.com/mackerelio/go-mackerel-plugin"
@@ -44,6 +45,10 @@ type SESPlugin struct {
 }
 
 func (p SESPlugin) FetchMetrics() (map[string]float64, error) {
+	if p.Endpoint == "" {
+		return nil, errors.New("no endpoint")
+	}
+
 	auth, err := aws.GetAuth(p.AccessKeyId, p.SecretAccessKey, "", time.Now())
 	if err != nil {
 		return nil, err
