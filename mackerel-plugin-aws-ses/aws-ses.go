@@ -1,81 +1,53 @@
 package main
 
 import (
-//	"errors"
 	"flag"
-	"fmt"
 	"github.com/crowdmob/goamz/aws"
-	//"github.com/crowdmob/goamz/cloudwatch"
 	ses "github.com/naokibtn/go-ses"
-	//"github.com/mackerelio/mackerel-agent-plugins/mackerel-plugin-aws-ses/ses"
 	mp "github.com/mackerelio/go-mackerel-plugin"
-//	"log"
 	"os"
 	"time"
 )
 
 var graphdef map[string](mp.Graphs) = map[string](mp.Graphs){
-//	"ses.CPUUtilization": mp.Graphs{
-//		Label: "SES CPU Utilization",
-//		Unit:  "percentage",
-//		Metrics: [](mp.Metrics){
-//			mp.Metrics{Name: "CPUUtilization", Label: "CPUUtilization"},
-//		},
-//	},
+	"ses.send24h": mp.Graphs{
+		Label: "SES Send (last 24h)",
+		Unit:  "float",
+		Metrics: [](mp.Metrics){
+			mp.Metrics{Name: "Max24HourSend", Label: "Max"},
+			mp.Metrics{Name: "SentLast24Hours", Label: "Sent"},
+		},
+	},
+	"ses.max_send_rate": mp.Graphs{
+		Label: "SES Max Send Rate",
+		Unit:  "float",
+		Metrics: [](mp.Metrics){
+			mp.Metrics{Name: "MaxSendRate", Label: "MaxRate"},
+		},
+	},
+	"ses.stats": mp.Graphs{
+		Label: "SES Stats",
+		Unit:  "int",
+		Metrics: [](mp.Metrics){
+			mp.Metrics{Name: "Complaints"                          , Label: "Complaints"},
+			mp.Metrics{Name: "DeliveryAttempts"                    , Label: "DeliveryAttempts"},
+			mp.Metrics{Name: "Bounces int"                         , Label: "Bounces"},
+			mp.Metrics{Name: "Rejects int"                         , Label: "Rejects"},
+		},
+	},
 }
 
 type SESPlugin struct {
-	Region          string
 	Endpoint        string
 	AccessKeyId     string
 	SecretAccessKey string
 }
-
-//func GetLastPoint(cloudWatch *cloudwatch.CloudWatch, dimension *cloudwatch.Dimension, metricName string) (float64, error) {
-//	now := time.Now()
-//
-//	response, err := cloudWatch.GetMetricStatistics(&cloudwatch.GetMetricStatisticsRequest{
-//		Dimensions: []cloudwatch.Dimension{*dimension},
-//		StartTime:  now.Add(time.Duration(180) * time.Second * -1), // 3 min (to fetch at least 1 data-point)
-//		EndTime:    now,
-//		MetricName: metricName,
-//		Period:     60,
-//		Statistics: []string{"Average"},
-//		Namespace:  "AWS/SES",
-//	})
-//	if err != nil {
-//		return 0, err
-//	}
-//
-//	datapoints := response.GetMetricStatisticsResult.Datapoints
-//	if len(datapoints) == 0 {
-//		return 0, errors.New("fetched no datapoints")
-//	}
-//
-//	latest := time.Unix(0, 0)
-//	var latestVal float64
-//	for _, dp := range datapoints {
-//		if dp.Timestamp.Before(latest) {
-//			continue
-//		}
-//
-//		latest = dp.Timestamp
-//		latestVal = dp.Average
-//	}
-//
-//	return latestVal, nil
-//}
 
 func (p SESPlugin) FetchMetrics() (map[string]float64, error) {
 	auth, err := aws.GetAuth(p.AccessKeyId, p.SecretAccessKey, "", time.Now())
 	if err != nil {
 		return nil, err
 	}
-
-	//region := aws.ServiceInfo{
-	//    p.Endpoint,
-	//    aws.V2Signature,
-	//}
 
 	sescfg := ses.Config{
 	    AccessKeyID: auth.AccessKey,
@@ -85,22 +57,29 @@ func (p SESPlugin) FetchMetrics() (map[string]float64, error) {
 
 	stat := make(map[string]float64)
 	quota, err := sescfg.GetSendQuota()
-	fmt.Printf("%+v\n", quota)
-	fmt.Printf("%+v\n", err)
-	stat["hoge"] = 1
+	if err == nil {
+		stat["SentLast24Hours"] = quota.SentLast24Hours
+		stat["Max24HourSend"] =   quota.Max24HourSend
+		stat["MaxSendRate"] =     quota.MaxSendRate
+	}
 
-	//for _, met := range [...]string{
-	//	"BinLogDiskUsage", "CPUUtilization", "DatabaseConnections", "DiskQueueDepth", "FreeableMemory",
-	//	"FreeStorageSpace", "ReplicaLag", "SwapUsage", "ReadIOPS", "WriteIOPS", "ReadLatency",
-	//	"WriteLatency",
-	//} {
-	//	v, err := GetLastPoint(ses, perInstance, met)
-	//	if err == nil {
-	//		stat[met] = v
-	//	} else {
-	//		log.Printf("%s: %s", met, err)
-	//	}
-	//}
+	datapoints, err := sescfg.GetSendStatistics()
+	if err == nil {
+	    latest := ses.SendDataPoint{
+		Timestamp: time.Unix(0, 0),
+	    }
+
+	    for _, dp := range datapoints {
+		    if latest.Timestamp.Before(dp.Timestamp) {
+			    latest = dp
+		    }
+	    }
+
+	    stat["Complaints"]         = float64(latest.           Complaints  )  
+	    stat["DeliveryAttempts"]   = float64(latest.     DeliveryAttempts  )
+	    stat["Bounces"]            = float64(latest.          Bounces      ) 
+	    stat["Rejects"]            = float64(latest.         Rejects       )
+	}
 
 	return stat, nil
 }
@@ -110,7 +89,6 @@ func (p SESPlugin) GraphDefinition() map[string](mp.Graphs) {
 }
 
 func main() {
-	optRegion := flag.String("region", "", "AWS Region")
 	optEndpoint := flag.String("endpoint", "", "AWS Endpoint")
 	optAccessKeyId := flag.String("access-key-id", "", "AWS Access Key ID")
 	optSecretAccessKey := flag.String("secret-access-key", "", "AWS Secret Access Key")
@@ -118,12 +96,6 @@ func main() {
 	flag.Parse()
 
 	var ses SESPlugin
-
-	if *optRegion == "" {
-		//ses.Region = aws.InstanceRegion()
-	} else {
-		ses.Region = *optRegion
-	}
 
 	ses.Endpoint = *optEndpoint
 	ses.AccessKeyId = *optAccessKeyId
