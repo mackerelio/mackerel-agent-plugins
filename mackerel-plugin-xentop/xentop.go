@@ -7,9 +7,10 @@ import (
 	"log"
 	"os"
 	"os/exec"
+	"regexp"
 )
 
-// これは多分必要なくなる
+// GraphDefinitionで動的に定義するので，これは多分必要なくなる
 var graphdef map[string](mp.Graphs) = map[string](mp.Graphs){
 	"xentop.cpu": mp.Graphs{
 		Label:   "Xentop CPU",
@@ -34,7 +35,6 @@ type XentopMetrics struct {
 	Metrics  mp.Metrics
 }
 
-// ここに何を入れようか
 type XentopPlugin struct {
 	GraphName          string
 	GraphUnit          string
@@ -42,16 +42,14 @@ type XentopPlugin struct {
 }
 
 func (m XentopPlugin) FetchMetrics() (map[string]float64, error) {
-	// ここの中で何とかしてmetricsの配列に値を入れないとならない
-	// statに値を入れながら，graphdefにキーを追加していく
-	stat := make(map[string]float64)
-
 	cmd := exec.Command("/bin/sh", "-c", "sudo xentop --batch -i 1 -f")
 	//TODO 出力を標準出力に出さないようにする
 	s, err := cmd.Run()
 	if err != nil {
 		return nil, err
 	}
+
+	stat := make(map[string]float64)
 
 	//TODO 正規表現で必要な情報を抜き出す
 
