@@ -42,8 +42,8 @@ var graphdef map[string](mp.Graphs) = map[string](mp.Graphs){
 		Label: "Elasticsearch Indices Docs",
 		Unit:  "integer",
 		Metrics: [](mp.Metrics){
-			mp.Metrics{Name: "docs_count", Label: "Count"},
-			mp.Metrics{Name: "docs_deleted", Label: "Deleted"},
+			mp.Metrics{Name: "docs_count", Label: "Count", Stacked: true},
+			mp.Metrics{Name: "docs_deleted", Label: "Deleted", Stacked: true},
 		},
 	},
 	"elasticsearch.indices.memory_size": mp.Graphs{
