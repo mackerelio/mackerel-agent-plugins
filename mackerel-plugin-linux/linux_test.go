@@ -68,9 +68,9 @@ func TestParseProcStat(t *testing.T) {
 
 	err := parseProcStat(stub, &stat)
 	assert.Nil(t, err)
-	assert.Equal(t, stat["interrupts"], 614818624)
-	assert.Equal(t, stat["context_switches"], 879305394)
-	assert.Equal(t, stat["forks"], 1959410)
+	assert.EqualValues(t, stat["interrupts"], 614818624)
+	assert.EqualValues(t, stat["context_switches"], 879305394)
+	assert.EqualValues(t, stat["forks"], 1959410)
 }
 
 func TestCollectProcDiskstats(t *testing.T) {
@@ -93,10 +93,10 @@ func TestParseProcDiskstats(t *testing.T) {
 
 	err := parseProcDiskstats(stub, &stat)
 	assert.Nil(t, err)
-	assert.Equal(t, stat["iotime_sda"], 23865772)
-	assert.Equal(t, stat["iotime_weighted_sda"], 436201338)
-	assert.Equal(t, stat["tsreading_sda"], 12441261)
-	assert.Equal(t, stat["tswriting_sda"], 423711425)
+	assert.EqualValues(t, stat["iotime_sda"], 23865772)
+	assert.EqualValues(t, stat["iotime_weighted_sda"], 436201338)
+	assert.EqualValues(t, stat["tsreading_sda"], 12441261)
+	assert.EqualValues(t, stat["tswriting_sda"], 423711425)
 }
 
 func TestCollectSs(t *testing.T) {
@@ -174,7 +174,7 @@ pswpout 113`
 	err := parseProcVmstat(stub, &stat)
 	assert.Nil(t, err)
 	assert.Equal(t, stat["pgpgin"], 770294)
-	assert.Equal(t, stat["pgpgout"], 31351354)
+	assert.EqualValues(t, stat["pgpgout"], 31351354)
 	assert.Equal(t, stat["pswpin"], 0)
 	assert.Equal(t, stat["pswpout"], 113)
 }
