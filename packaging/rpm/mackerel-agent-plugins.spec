@@ -42,6 +42,15 @@ done
 %{__targetdir}
 
 %changelog
+* Wed Feb 25 2015 <y.songmu@gmail.com> - 0.7.0
+- A plugin for PHP OPcache (by yucchiy)
+- Add a parameter to specify the LoadBalancerName (by ki38sato)
+- A plugin for elasticache (by ki38sato)
+- A plugin for AWS SES (Quota, Send Statistics) (by naokibtn)
+- Elasticsearch: change "Indices Docs" to stacked graph (by yshh)
+- jvm plugin -pidfile option jstat failed (by ta9to)
+- Fix some failed unit tests (by ariarijp)
+
 * Tue Jan 20 2015 <y.songmu@gmail.com> - 0.6.3
 - Elasticsearch: add evictions, lucene segments memory size (by yshh)
 - Filter invalid float values (by krrrr38)
