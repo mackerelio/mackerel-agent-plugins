@@ -210,7 +210,7 @@ func main() {
 			logger.Errorf("Failed to load pid. %s", err)
 			os.Exit(1)
 		}
-		jvm.Lvmid = string(pid)
+		jvm.Lvmid = strings.Replace(string(pid), "\n", "", 1)
 	}
 
 	jvm.JavaName = *optJavaName
