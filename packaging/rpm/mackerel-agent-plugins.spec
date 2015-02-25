@@ -8,7 +8,7 @@
 
 Summary: Monitoring program plugins for Mackerel
 Name: mackerel-agent-plugins
-Version: 0.6.3
+Version: 0.7.0
 Release: %{revision}
 License: Apache-2
 Group: Applications/System
@@ -30,7 +30,7 @@ This package provides plugins for Mackerel.
 
 %{__mkdir} -p %{buildroot}%{__targetdir}
 
-for i in apache2 aws-ec2-cpucredit aws-elb aws-rds elasticsearch haproxy jvm linux memcached mongodb munin mysql nginx php-apc plack postgres redis snmp squid varnish;do \
+for i in apache2 aws-ec2-cpucredit aws-elasticache aws-elb aws-rds aws-ses elasticsearch haproxy jvm linux memcached mongodb munin mysql nginx php-apc php-opcache plack postgres redis snmp squid varnish;do \
     %{__install} -m0755 %{_sourcedir}/build/mackerel-plugin-$i %{buildroot}%{__targetdir}/; \
 done
 
@@ -42,6 +42,15 @@ done
 %{__targetdir}
 
 %changelog
+* Wed Feb 25 2015 <y.songmu@gmail.com> - 0.7.0
+- A plugin for PHP OPcache (by yucchiy)
+- Add a parameter to specify the LoadBalancerName (by ki38sato)
+- A plugin for elasticache (by ki38sato)
+- A plugin for AWS SES (Quota, Send Statistics) (by naokibtn)
+- Elasticsearch: change "Indices Docs" to stacked graph (by yshh)
+- jvm plugin -pidfile option jstat failed (by ta9to)
+- Fix some failed unit tests (by ariarijp)
+
 * Tue Jan 20 2015 <y.songmu@gmail.com> - 0.6.3
 - Elasticsearch: add evictions, lucene segments memory size (by yshh)
 - Filter invalid float values (by krrrr38)
