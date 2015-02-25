@@ -32,8 +32,8 @@ opcache_hit_rate:15`
 
 	err := parsePhpOpcacheStatus(stub, &stat)
 	assert.Nil(t, err)
-	assert.Equal(t, stat["used_memory"], 10941328)
-	assert.Equal(t, stat["free_memory"], 123276400)
+	assert.EqualValues(t, stat["used_memory"], 10941328)
+	assert.EqualValues(t, stat["free_memory"], 123276400)
 	assert.Equal(t, stat["wasted_memory"], 0)
 	assert.Equal(t, stat["current_wasted_percentage"], 0)
 	assert.Equal(t, stat["num_cached_scripts"], 1)
