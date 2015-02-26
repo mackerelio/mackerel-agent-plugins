@@ -1,14 +1,38 @@
 package main
 
 import (
+	"bufio"
 	"flag"
 	"fmt"
 	mp "github.com/mackerelio/go-mackerel-plugin"
 	"log"
 	"os"
 	"os/exec"
-	"regexp"
+	"strconv"
+	"strings"
 )
+
+var index map[string](int) = map[string](int){
+	"NAME":       0,
+	"STATE":      1,
+	"CPU_SEC":    2,
+	"CPU_PER":    3,
+	"MEM_K":      4,
+	"MEM_PER":    5,
+	"MAXMEM_K":   6,
+	"MAXMEM_PER": 7,
+	"VCPUS":      8,
+	"NETS":       9,
+	"NETTX":      10,
+	"NETRX":      11,
+	"VBDS":       12,
+	"VBD_OO":     13,
+	"VBD_RD":     14,
+	"VBD_WR":     15,
+	"VBD_RSECT":  16,
+	"VBD_WSECT":  17,
+	"SSID":       18,
+}
 
 // GraphDefinitionで動的に定義するので，これは多分必要なくなる
 var graphdef map[string](mp.Graphs) = map[string](mp.Graphs){
@@ -41,17 +65,42 @@ type XentopPlugin struct {
 	XentopMetricsSlice []XentopMetrics
 }
 
-func (m XentopPlugin) FetchMetrics() (map[string]float64, error) {
+func parseXentop() error {
 	cmd := exec.Command("/bin/sh", "-c", "sudo xentop --batch -i 1 -f")
-	//TODO 出力を標準出力に出さないようにする
 	s, err := cmd.Run()
 	if err != nil {
 		return nil, err
 	}
+	return nil
+}
 
+func (m XentopPlugin) FetchMetrics() (map[string]float64, error) {
 	stat := make(map[string]float64)
+	cmd := exec.Command("/bin/sh", "-c", "sudo xentop --batch -i 1 -f")
+	stdout, err := cmd.StdoutPipe()
 
-	//TODO 正規表現で必要な情報を抜き出す
+	if err != nil {
+		fmt.Println(err)
+		os.Exit(1)
+	}
+
+	cmd.Start()
+
+	scanner := bufio.NewScanner(stdout)
+	scanner.Scan()
+	for scanner.Scan() {
+		sf := strings.Fields(string(scanner.Text()))
+		name := sf[index["NAME"]]
+		// TODO: みにくいのでなんとかしたい
+		stat[fmt.Sprintf("cpu_%s", name)] = strconv.Atof(sf[index["CPU_PER"]])
+		stat[fmt.Sprintf("memory_%s", name)] = strconv.Atof(sf[index["MEM_PER"]])
+		stat[fmt.Sprintf("vbd_read_%s", name)] = strconv.Atof(sf[index["VBD_RD"]])
+		stat[fmt.Sprintf("vbd_write_%s", name)] = strconv.Atof(sf[index["VBD_WR"]])
+		fmt.Println(sf[index["NAME"]])
+	}
+	if err := scanner.Err(); err != nil {
+		panic(err)
+	}
 
 }
 
