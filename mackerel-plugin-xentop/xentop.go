@@ -102,6 +102,7 @@ func (m XentopPlugin) FetchMetrics() (map[string]float64, error) {
 		panic(err)
 	}
 
+	return stat
 }
 
 // ここでグラフを定義する
