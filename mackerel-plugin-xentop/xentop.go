@@ -2,10 +2,8 @@ package main
 
 import (
 	"bufio"
-	"flag"
 	"fmt"
 	mp "github.com/mackerelio/go-mackerel-plugin"
-	"log"
 	"os"
 	"os/exec"
 	"strconv"
@@ -34,25 +32,8 @@ var index map[string](int) = map[string](int){
 	"SSID":       18,
 }
 
-// GraphDefinitionで動的に定義するので，これは多分必要なくなる
-var graphdef map[string](mp.Graphs) = map[string](mp.Graphs){
-	"xentop.cpu": mp.Graphs{
-		Label:   "Xentop CPU",
-		Unit:    "float",
-		Metrics: [](mp.Metrics){},
-	},
-	"xentop.memory": mp.Graphs{
-		Label:   "Xentop Memory",
-		Unit:    "float",
-		Metrics: [](mp.Metrics){},
-	},
-	"xentop.network": mp.Graphs{
-		Label:   "Xentop Network",
-		Unit:    "float",
-		Metrics: [](mp.Metrics){},
-	},
-	"xentop.io": mp.Graphs{},
-}
+// All metrics are added dinamically at GraphDefinition
+var graphdef map[string](mp.Graphs) = map[string](mp.Graphs){}
 
 type XentopMetrics struct {
 	HostName string
@@ -63,15 +44,6 @@ type XentopPlugin struct {
 	GraphName          string
 	GraphUnit          string
 	XentopMetricsSlice []XentopMetrics
-}
-
-func parseXentop() error {
-	cmd := exec.Command("/bin/sh", "-c", "sudo xentop --batch -i 1 -f")
-	s, err := cmd.Run()
-	if err != nil {
-		return nil, err
-	}
-	return nil
 }
 
 func (m XentopPlugin) FetchMetrics() (map[string]float64, error) {
@@ -91,31 +63,125 @@ func (m XentopPlugin) FetchMetrics() (map[string]float64, error) {
 	for scanner.Scan() {
 		sf := strings.Fields(string(scanner.Text()))
 		name := sf[index["NAME"]]
-		// TODO: みにくいのでなんとかしたい
-		stat[fmt.Sprintf("cpu_%s", name)] = strconv.Atof(sf[index["CPU_PER"]])
-		stat[fmt.Sprintf("memory_%s", name)] = strconv.Atof(sf[index["MEM_PER"]])
-		stat[fmt.Sprintf("vbd_read_%s", name)] = strconv.Atof(sf[index["VBD_RD"]])
-		stat[fmt.Sprintf("vbd_write_%s", name)] = strconv.Atof(sf[index["VBD_WR"]])
-		fmt.Println(sf[index["NAME"]])
+
+		var err_parse error
+		stat[fmt.Sprintf("cpu_%s", name)], err_parse = strconv.ParseFloat(sf[index["CPU_PER"]], 64)
+		if err_parse != nil {
+			return nil, err_parse
+		}
+		stat[fmt.Sprintf("memory_%s", name)], err_parse = strconv.ParseFloat(sf[index["MEM_PER"]], 64)
+		if err_parse != nil {
+			return nil, err_parse
+		}
+		stat[fmt.Sprintf("network_%s", name)], err_parse = strconv.ParseFloat(sf[index["VBD_RD"]], 64)
+		if err_parse != nil {
+			return nil, err_parse
+		}
+		stat[fmt.Sprintf("io_%s", name)], err_parse = strconv.ParseFloat(sf[index["VBD_WR"]], 64)
+		if err_parse != nil {
+			return nil, err_parse
+		}
 	}
 	if err := scanner.Err(); err != nil {
 		panic(err)
 	}
 
-	return stat
+	return stat, nil
+}
+
+func DefineCpuMetrics(names []string) []mp.Metrics {
+	cpu_metrics := make([]mp.Metrics, 0)
+	for _, name := range names {
+		cpu_metrics = append(cpu_metrics, mp.Metrics{Name: fmt.Sprintf("cpu_%s", name), Label: name, Stacked: true})
+	}
+	return cpu_metrics
+}
+
+func DefineMemoryMetrics(names []string) []mp.Metrics {
+	memory_metrics := make([]mp.Metrics, 0)
+	for _, name := range names {
+		memory_metrics = append(memory_metrics, mp.Metrics{Name: fmt.Sprintf("memory_%s", name), Label: name, Stacked: true})
+	}
+	return memory_metrics
+}
+
+func DefineNetworkMetrics(names []string) []mp.Metrics {
+	network_metrics := make([]mp.Metrics, 0)
+	for _, name := range names {
+		network_metrics = append(network_metrics, mp.Metrics{Name: fmt.Sprintf("network_%s", name), Label: name, Stacked: true})
+	}
+	return network_metrics
+}
+
+func DefineIoMetrics(names []string) []mp.Metrics {
+	io_metrics := make([]mp.Metrics, 0)
+	for _, name := range names {
+		io_metrics = append(io_metrics, mp.Metrics{Name: fmt.Sprintf("io_%s", name), Label: name, Stacked: true})
+	}
+	return io_metrics
+}
+
+func DefineGraphs(names []string) {
+	graphdef["xentop.cpu"] = mp.Graphs{
+		Label:   "Xentop CPU",
+		Unit:    "float",
+		Metrics: DefineCpuMetrics(names),
+	}
+	graphdef["xentop.memory"] = mp.Graphs{
+		Label:   "Xentop Memory",
+		Unit:    "float",
+		Metrics: DefineMemoryMetrics(names),
+	}
+	graphdef["xentop.network"] = mp.Graphs{
+		Label:   "Xentop Network",
+		Unit:    "float",
+		Metrics: DefineNetworkMetrics(names),
+	}
+	graphdef["xentop.io"] = mp.Graphs{
+		Label:   "Xentop IO",
+		Unit:    "float",
+		Metrics: DefineIoMetrics(names),
+	}
 }
 
 // ここでグラフを定義する
 func (m XentopPlugin) GraphDefinition() map[string](mp.Graphs) {
-	metrics := []mp.Metrics{}
+	cmd := exec.Command("/bin/sh", "-c", "sudo xentop --batch -i 1 -f")
+	stdout, err := cmd.StdoutPipe()
+
+	if err != nil {
+		fmt.Println(err)
+		os.Exit(1)
+	}
+
+	cmd.Start()
+
+	names := make([]string, 0)
+	scanner := bufio.NewScanner(stdout)
+	for scanner.Scan() {
+		sf := strings.Fields(string(scanner.Text()))
+		if sf[index["NAME"]] != "NAME" {
+			name := sf[index["NAME"]]
+			names = append(names, name)
+		}
+	}
+	if err := scanner.Err(); err != nil {
+		panic(err)
+	}
+
+	DefineGraphs(names)
+
+	return graphdef
+
 }
 
 func main() {
-	// flagの取得
+	// TODO: flagの取得
 
 	var xentop XentopPlugin
 
 	helper := mp.NewMackerelPlugin(xentop)
+	helper.Tempfile = fmt.Sprintf("/tmp/mackerel-plugin-xentop")
 
 	if os.Getenv("MACKEREL_AGENT_PLUGIN_META") != "" {
 		helper.OutputDefinitions()
