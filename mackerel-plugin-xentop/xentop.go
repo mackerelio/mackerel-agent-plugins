@@ -69,15 +69,23 @@ func (m XentopPlugin) FetchMetrics() (map[string]float64, error) {
 		if err_parse != nil {
 			return nil, err_parse
 		}
-		stat[fmt.Sprintf("memory_%s", name)], err_parse = strconv.ParseFloat(sf[index["MEM_PER"]], 64)
+		stat[fmt.Sprintf("memory_%s", name)], err_parse = strconv.ParseFloat(sf[index["MEM_K"]], 64)
 		if err_parse != nil {
 			return nil, err_parse
 		}
-		stat[fmt.Sprintf("network_%s", name)], err_parse = strconv.ParseFloat(sf[index["VBD_RD"]], 64)
+		stat[fmt.Sprintf("nettx_%s", name)], err_parse = strconv.ParseFloat(sf[index["NETTX"]], 64)
 		if err_parse != nil {
 			return nil, err_parse
 		}
-		stat[fmt.Sprintf("io_%s", name)], err_parse = strconv.ParseFloat(sf[index["VBD_WR"]], 64)
+		stat[fmt.Sprintf("netrx_%s", name)], err_parse = strconv.ParseFloat(sf[index["NETRX"]], 64)
+		if err_parse != nil {
+			return nil, err_parse
+		}
+		stat[fmt.Sprintf("vbdrd_%s", name)], err_parse = strconv.ParseFloat(sf[index["VBD_RD"]], 64)
+		if err_parse != nil {
+			return nil, err_parse
+		}
+		stat[fmt.Sprintf("vbdwr_%s", name)], err_parse = strconv.ParseFloat(sf[index["VBD_WR"]], 64)
 		if err_parse != nil {
 			return nil, err_parse
 		}
@@ -105,20 +113,36 @@ func DefineMemoryMetrics(names []string) []mp.Metrics {
 	return memory_metrics
 }
 
-func DefineNetworkMetrics(names []string) []mp.Metrics {
-	network_metrics := make([]mp.Metrics, 0)
+func DefineNettxMetrics(names []string) []mp.Metrics {
+	nettx_metrics := make([]mp.Metrics, 0)
 	for _, name := range names {
-		network_metrics = append(network_metrics, mp.Metrics{Name: fmt.Sprintf("network_%s", name), Label: name, Stacked: true})
+		nettx_metrics = append(nettx_metrics, mp.Metrics{Name: fmt.Sprintf("nettx_%s", name), Label: name, Stacked: true})
 	}
-	return network_metrics
+	return nettx_metrics
 }
 
-func DefineIoMetrics(names []string) []mp.Metrics {
-	io_metrics := make([]mp.Metrics, 0)
+func DefineNetrxMetrics(names []string) []mp.Metrics {
+	netrx_metrics := make([]mp.Metrics, 0)
 	for _, name := range names {
-		io_metrics = append(io_metrics, mp.Metrics{Name: fmt.Sprintf("io_%s", name), Label: name, Stacked: true})
+		netrx_metrics = append(netrx_metrics, mp.Metrics{Name: fmt.Sprintf("netrx_%s", name), Label: name, Stacked: true})
 	}
-	return io_metrics
+	return netrx_metrics
+}
+
+func DefineVbdrdMetrics(names []string) []mp.Metrics {
+	vbdrd_metrics := make([]mp.Metrics, 0)
+	for _, name := range names {
+		vbdrd_metrics = append(vbdrd_metrics, mp.Metrics{Name: fmt.Sprintf("vbdrd_%s", name), Label: name, Stacked: true})
+	}
+	return vbdrd_metrics
+}
+
+func DefineVbdwrMetrics(names []string) []mp.Metrics {
+	vbdwr_metrics := make([]mp.Metrics, 0)
+	for _, name := range names {
+		vbdwr_metrics = append(vbdwr_metrics, mp.Metrics{Name: fmt.Sprintf("vbdwr_%s", name), Label: name, Stacked: true})
+	}
+	return vbdwr_metrics
 }
 
 func DefineGraphs(names []string) {
@@ -132,15 +156,25 @@ func DefineGraphs(names []string) {
 		Unit:    "float",
 		Metrics: DefineMemoryMetrics(names),
 	}
-	graphdef["xentop.network"] = mp.Graphs{
-		Label:   "Xentop Network",
+	graphdef["xentop.nettx"] = mp.Graphs{
+		Label:   "Xentop Nettx",
 		Unit:    "float",
-		Metrics: DefineNetworkMetrics(names),
+		Metrics: DefineNettxMetrics(names),
 	}
-	graphdef["xentop.io"] = mp.Graphs{
-		Label:   "Xentop IO",
+	graphdef["xentop.netrx"] = mp.Graphs{
+		Label:   "Xentop Netrx",
 		Unit:    "float",
-		Metrics: DefineIoMetrics(names),
+		Metrics: DefineNetrxMetrics(names),
+	}
+	graphdef["xentop.vbdrd"] = mp.Graphs{
+		Label:   "Xentop VBD_RD",
+		Unit:    "float",
+		Metrics: DefineVbdrdMetrics(names),
+	}
+	graphdef["xentop.vbdwr"] = mp.Graphs{
+		Label:   "Xentop VBD_WR",
+		Unit:    "float",
+		Metrics: DefineVbdwrMetrics(names),
 	}
 }
 
