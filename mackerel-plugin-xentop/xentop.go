@@ -69,15 +69,15 @@ func (m XentopPlugin) FetchMetrics() (map[string]float64, error) {
 		if err_parse != nil {
 			return nil, err_parse
 		}
-		stat[fmt.Sprintf("memory_%s", name)], err_parse = strconv.ParseFloat(sf[index["MEM_K"]], 64)
+		stat[fmt.Sprintf("memory_%s", name)], err_parse = strconv.ParseFloat(sf[index["MEM_PER"]], 64)
 		if err_parse != nil {
 			return nil, err_parse
 		}
-		stat[fmt.Sprintf("nettx_%s", name)], err_parse = strconv.ParseFloat(sf[index["NETTX"]], 64)
+		stat[fmt.Sprintf("nettx_%s", name)], err_parse = strconv.ParseFloat(sf[index["NETTX"]], 64) * 1000
 		if err_parse != nil {
 			return nil, err_parse
 		}
-		stat[fmt.Sprintf("netrx_%s", name)], err_parse = strconv.ParseFloat(sf[index["NETRX"]], 64)
+		stat[fmt.Sprintf("netrx_%s", name)], err_parse = strconv.ParseFloat(sf[index["NETRX"]], 64) * 1000
 		if err_parse != nil {
 			return nil, err_parse
 		}
@@ -153,17 +153,17 @@ func DefineGraphs(names []string) {
 	}
 	graphdef["xentop.memory"] = mp.Graphs{
 		Label:   "Xentop Memory",
-		Unit:    "float",
+		Unit:    "percentage",
 		Metrics: DefineMemoryMetrics(names),
 	}
 	graphdef["xentop.nettx"] = mp.Graphs{
 		Label:   "Xentop Nettx",
-		Unit:    "float",
+		Unit:    "bytes",
 		Metrics: DefineNettxMetrics(names),
 	}
 	graphdef["xentop.netrx"] = mp.Graphs{
 		Label:   "Xentop Netrx",
-		Unit:    "float",
+		Unit:    "bytes",
 		Metrics: DefineNetrxMetrics(names),
 	}
 	graphdef["xentop.vbdrd"] = mp.Graphs{
@@ -178,7 +178,6 @@ func DefineGraphs(names []string) {
 	}
 }
 
-// ここでグラフを定義する
 func (m XentopPlugin) GraphDefinition() map[string](mp.Graphs) {
 	cmd := exec.Command("/bin/sh", "-c", "xentop --batch -i 1 -f")
 	stdout, err := cmd.StdoutPipe()
