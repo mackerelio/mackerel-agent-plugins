@@ -73,14 +73,16 @@ func (m XentopPlugin) FetchMetrics() (map[string]float64, error) {
 		if err_parse != nil {
 			return nil, err_parse
 		}
-		stat[fmt.Sprintf("nettx_%s", name)], err_parse = strconv.ParseFloat(sf[index["NETTX"]], 64) * 1000
+		stat[fmt.Sprintf("nettx_%s", name)], err_parse = strconv.ParseFloat(sf[index["NETTX"]], 64)
 		if err_parse != nil {
 			return nil, err_parse
 		}
-		stat[fmt.Sprintf("netrx_%s", name)], err_parse = strconv.ParseFloat(sf[index["NETRX"]], 64) * 1000
+		stat[fmt.Sprintf("nettx_%s", name)] *= 1000
+		stat[fmt.Sprintf("netrx_%s", name)], err_parse = strconv.ParseFloat(sf[index["NETRX"]], 64)
 		if err_parse != nil {
 			return nil, err_parse
 		}
+		stat[fmt.Sprintf("netrx_%s", name)] *= 1000
 		stat[fmt.Sprintf("vbdrd_%s", name)], err_parse = strconv.ParseFloat(sf[index["VBD_RD"]], 64)
 		if err_parse != nil {
 			return nil, err_parse
