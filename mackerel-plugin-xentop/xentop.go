@@ -148,7 +148,7 @@ func DefineVbdwrMetrics(names []string) []mp.Metrics {
 func DefineGraphs(names []string) {
 	graphdef["xentop.cpu"] = mp.Graphs{
 		Label:   "Xentop CPU",
-		Unit:    "float",
+		Unit:    "percentage",
 		Metrics: DefineCpuMetrics(names),
 	}
 	graphdef["xentop.memory"] = mp.Graphs{
@@ -168,19 +168,19 @@ func DefineGraphs(names []string) {
 	}
 	graphdef["xentop.vbdrd"] = mp.Graphs{
 		Label:   "Xentop VBD_RD",
-		Unit:    "float",
+		Unit:    "iops",
 		Metrics: DefineVbdrdMetrics(names),
 	}
 	graphdef["xentop.vbdwr"] = mp.Graphs{
 		Label:   "Xentop VBD_WR",
-		Unit:    "float",
+		Unit:    "iops",
 		Metrics: DefineVbdwrMetrics(names),
 	}
 }
 
 // ここでグラフを定義する
 func (m XentopPlugin) GraphDefinition() map[string](mp.Graphs) {
-	cmd := exec.Command("/bin/sh", "-c", "sudo xentop --batch -i 1 -f")
+	cmd := exec.Command("/bin/sh", "-c", "xentop --batch -i 1 -f")
 	stdout, err := cmd.StdoutPipe()
 
 	if err != nil {
