@@ -10,27 +10,9 @@ import (
 	"strings"
 )
 
-var index map[string](int) = map[string](int){
-	"NAME":       0,
-	"STATE":      1,
-	"CPU_SEC":    2,
-	"CPU_PER":    3,
-	"MEM_K":      4,
-	"MEM_PER":    5,
-	"MAXMEM_K":   6,
-	"MAXMEM_PER": 7,
-	"VCPUS":      8,
-	"NETS":       9,
-	"NETTX":      10,
-	"NETRX":      11,
-	"VBDS":       12,
-	"VBD_OO":     13,
-	"VBD_RD":     14,
-	"VBD_WR":     15,
-	"VBD_RSECT":  16,
-	"VBD_WSECT":  17,
-	"SSID":       18,
-}
+// index from table headers to array index
+// This is generated dynamically at GenerateIndex
+var index map[string](int) = map[string](int){}
 
 // All metrics are added dinamically at GraphDefinition
 var graphdef map[string](mp.Graphs) = map[string](mp.Graphs){}
@@ -58,27 +40,43 @@ func (m XentopPlugin) FetchMetrics() (map[string]float64, error) {
 
 	cmd.Start()
 
+	dom0 := false
 	scanner := bufio.NewScanner(stdout)
-	scanner.Scan()
 	for scanner.Scan() {
 		sf := strings.Fields(string(scanner.Text()))
+		if sf[0] == "NAME" {
+			GenerateIndex(sf, index)
+			continue
+		}
+		if StringInSlice("n/a", sf) {
+			ChangeIndex(&index)
+			dom0 = true
+		}
 		name := sf[index["NAME"]]
 
 		var err_parse error
-		stat[fmt.Sprintf("cpu_%s", name)], err_parse = strconv.ParseFloat(sf[index["CPU_PER"]], 64)
+		var vcpus float64
+		var cputime float64
+
+		vcpus, err_parse = strconv.ParseFloat(sf[index["VCPUS"]], 64)
 		if err_parse != nil {
 			return nil, err_parse
 		}
-		stat[fmt.Sprintf("memory_%s", name)], err_parse = strconv.ParseFloat(sf[index["MEM_PER"]], 64)
+		cputime, err_parse = strconv.ParseFloat(sf[index["CPU(sec)"]], 64)
 		if err_parse != nil {
 			return nil, err_parse
 		}
-		stat[fmt.Sprintf("nettx_%s", name)], err_parse = strconv.ParseFloat(sf[index["NETTX"]], 64)
+		stat[fmt.Sprintf("cpu_%s", name)] = cputime / (vcpus * 100)
+		stat[fmt.Sprintf("memory_%s", name)], err_parse = strconv.ParseFloat(sf[index["MEM(%)"]], 64)
+		if err_parse != nil {
+			return nil, err_parse
+		}
+		stat[fmt.Sprintf("nettx_%s", name)], err_parse = strconv.ParseFloat(sf[index["NETTX(k)"]], 64)
 		if err_parse != nil {
 			return nil, err_parse
 		}
 		stat[fmt.Sprintf("nettx_%s", name)] *= 1000
-		stat[fmt.Sprintf("netrx_%s", name)], err_parse = strconv.ParseFloat(sf[index["NETRX"]], 64)
+		stat[fmt.Sprintf("netrx_%s", name)], err_parse = strconv.ParseFloat(sf[index["NETRX(k)"]], 64)
 		if err_parse != nil {
 			return nil, err_parse
 		}
@@ -91,6 +89,10 @@ func (m XentopPlugin) FetchMetrics() (map[string]float64, error) {
 		if err_parse != nil {
 			return nil, err_parse
 		}
+		if dom0 {
+			RevertIndex(&index)
+			dom0 = false
+		}
 	}
 	if err := scanner.Err(); err != nil {
 		panic(err)
@@ -102,7 +104,7 @@ func (m XentopPlugin) FetchMetrics() (map[string]float64, error) {
 func DefineCpuMetrics(names []string) []mp.Metrics {
 	cpu_metrics := make([]mp.Metrics, 0)
 	for _, name := range names {
-		cpu_metrics = append(cpu_metrics, mp.Metrics{Name: fmt.Sprintf("cpu_%s", name), Label: name, Stacked: true})
+		cpu_metrics = append(cpu_metrics, mp.Metrics{Name: fmt.Sprintf("cpu_%s", name), Label: name, Stacked: true, Diff: true})
 	}
 	return cpu_metrics
 }
@@ -195,9 +197,11 @@ func (m XentopPlugin) GraphDefinition() map[string](mp.Graphs) {
 	scanner := bufio.NewScanner(stdout)
 	for scanner.Scan() {
 		sf := strings.Fields(string(scanner.Text()))
-		if sf[index["NAME"]] != "NAME" {
+		if sf[0] != "NAME" {
 			name := sf[index["NAME"]]
 			names = append(names, name)
+		} else {
+			GenerateIndex(sf, index)
 		}
 	}
 	if err := scanner.Err(); err != nil {
@@ -222,5 +226,40 @@ func main() {
 		helper.OutputDefinitions()
 	} else {
 		helper.OutputValues()
+	}
+}
+
+func StringInSlice(a string, list []string) bool {
+	for _, b := range list {
+		if b == a {
+			return true
+		}
+	}
+	return false
+}
+
+func GenerateIndex(sf []string, index map[string]int) {
+	i := 0
+	for _, column := range sf {
+		index[column] = i
+		i++
+	}
+}
+
+func ChangeIndex(p *map[string]int) {
+	maxmem_per := (*p)["MAXMEM(%)"]
+	for key, value := range *p {
+		if value >= maxmem_per {
+			(*p)[key] += 1
+		}
+	}
+}
+
+func RevertIndex(p *map[string]int) {
+	maxmem_per := (*p)["MAXMEM(%)"]
+	for key, value := range *p {
+		if value >= maxmem_per {
+			(*p)[key] -= 1
+		}
 	}
 }
