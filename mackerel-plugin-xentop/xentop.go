@@ -55,18 +55,11 @@ func (m XentopPlugin) FetchMetrics() (map[string]float64, error) {
 		name := sf[index["NAME"]]
 
 		var err_parse error
-		var vcpus float64
-		var cputime float64
 
-		vcpus, err_parse = strconv.ParseFloat(sf[index["VCPUS"]], 64)
+		stat[fmt.Sprintf("cpu_%s", name)], err_parse = strconv.ParseFloat(sf[index["CPU(sec)"]], 64)
 		if err_parse != nil {
 			return nil, err_parse
 		}
-		cputime, err_parse = strconv.ParseFloat(sf[index["CPU(sec)"]], 64)
-		if err_parse != nil {
-			return nil, err_parse
-		}
-		stat[fmt.Sprintf("cpu_%s", name)] = cputime / (vcpus * 100)
 		stat[fmt.Sprintf("memory_%s", name)], err_parse = strconv.ParseFloat(sf[index["MEM(%)"]], 64)
 		if err_parse != nil {
 			return nil, err_parse
