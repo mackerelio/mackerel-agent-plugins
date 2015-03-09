@@ -6,6 +6,7 @@ import (
 	"log"
 	"os"
 	"strconv"
+	"strings"
 
 	mp "github.com/mackerelio/go-mackerel-plugin"
 	"github.com/ziutek/mymysql/mysql"
@@ -134,29 +135,56 @@ func (m MySQLPlugin) FetchMetrics() (map[string]float64, error) {
 	}
 	for _, row := range rows {
 		Variable_name := string(row[0].([]byte))
-		Value, err := strconv.ParseFloat(string(row[1].([]byte)), 64)
 		if err != nil {
 			log.Println("FetchMetrics: ", err)
 		}
 		//fmt.Println(Variable_name, Value)
-		stat[Variable_name] = float64(Value)
+		stat[Variable_name], _ = _atof(string(row[1].([]byte)))
 	}
+
+	row, _, err := db.QueryFirst("SHOW /*!50000 ENGINE*/ INNODB STATUS")
+	if err != nil {
+		log.Fatalln("FetchMetrics: ", err)
+		return nil, err
+	}
+	err = parseInnodbStatus(string(row[2].([]byte)), &stat)
 
 	rows, res, err := db.Query("show slave status")
 	if err != nil {
 		log.Fatalln("FetchMetrics: ", err)
 		return nil, err
 	}
-	for _, row := range rows {
+	for _, row = range rows {
 		idx := res.Map("Seconds_Behind_Master")
-		Value := row.Int(idx)
-		stat["Seconds_Behind_Master"] = float64(Value)
+		stat["Seconds_Behind_Master"], _ = _atof(string(idx))
 	}
 	return stat, err
 }
 
 func (m MySQLPlugin) GraphDefinition() map[string](mp.Graphs) {
 	return graphdef
+}
+
+func parseInnodbStatus(str string, p *map[string]float64) error {
+	for _, line := range strings.Split(str, "\n") {
+		record := strings.Fields(line)
+		fmt.Printf("%q\n", record)
+
+		// Innodb Semaphores
+		if strings.Index(line, "Mutex spin waits") == 0 {
+			(*p)["spin_waits"], _ = _atof(record[3])
+			(*p)["spin_rounds"], _ = _atof(record[5])
+			(*p)["os_waits"], _ = _atof(record[8])
+		}
+	}
+
+	return nil
+}
+
+// atof
+func _atof(str string) (float64, error) {
+	converted := strings.Replace(str, ",", "", -1)
+	return strconv.ParseFloat(strings.Trim(converted, " "), 64)
 }
 
 func main() {
