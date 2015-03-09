@@ -126,7 +126,7 @@ END OF INNODB MONITOR OUTPUT`
 	err := parseInnodbStatus(stub, &stat)
 	fmt.Println(stat)
 	assert.Nil(t, err)
-	assert.Equal(t, stat["spin_waits"], 923)
+	assert.Equal(t, stat["spin_waits"], 947)
 	assert.Equal(t, stat["spin_rounds"], 9442)
-	assert.Equal(t, stat["os_waits"], 193)
+	assert.Equal(t, stat["os_waits"], 222)
 }

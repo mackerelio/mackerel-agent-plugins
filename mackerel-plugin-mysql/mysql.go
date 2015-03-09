@@ -166,15 +166,32 @@ func (m MySQLPlugin) GraphDefinition() map[string](mp.Graphs) {
 }
 
 func parseInnodbStatus(str string, p *map[string]float64) error {
+
 	for _, line := range strings.Split(str, "\n") {
 		record := strings.Fields(line)
 		fmt.Printf("%q\n", record)
 
 		// Innodb Semaphores
 		if strings.Index(line, "Mutex spin waits") == 0 {
-			(*p)["spin_waits"], _ = _atof(record[3])
-			(*p)["spin_rounds"], _ = _atof(record[5])
-			(*p)["os_waits"], _ = _atof(record[8])
+			_increase_map(p, "spin_waits", record[3])
+			_increase_map(p, "spin_rounds", record[5])
+			_increase_map(p, "os_waits", record[8])
+		} else if strings.Index(line, "RW-shared spins") == 0 && strings.Index(line, ";") > 0 {
+			_increase_map(p, "spin_waits", record[2])
+			_increase_map(p, "os_waits", record[5])
+			_increase_map(p, "spin_waits", record[8])
+			_increase_map(p, "os_waits", record[11])
+		} else if strings.Index(line, "RW-shared spins") == 0 && strings.Index(line, "; RW-excl spins") < 0 {
+			_increase_map(p, "spin_waits", record[2])
+			_increase_map(p, "os_waits", record[7])
+		} else if strings.Index(line, "RW-excl spins") == 0 {
+			_increase_map(p, "spin_waits", record[2])
+			_increase_map(p, "os_waits", record[7])
+		} else if strings.Index(line, "seconds the semaphore:") > 0 {
+			_increase_map(p, "innodb_sem_waits", "1")
+			wait, _ := _atof(record[9])
+			wait = wait * 1000
+			_increase_map(p, "innodb_sem_wait_time_ms", fmt.Sprintf("%.f", wait))
 		}
 	}
 
@@ -185,6 +202,23 @@ func parseInnodbStatus(str string, p *map[string]float64) error {
 func _atof(str string) (float64, error) {
 	converted := strings.Replace(str, ",", "", -1)
 	return strconv.ParseFloat(strings.Trim(converted, " "), 64)
+}
+
+func _increase_map(p *map[string]float64, key string, src string) {
+	val, err := _atof(src)
+	if err != nil {
+		val = 0
+	}
+	_, exists := (*p)[key]
+	if !exists {
+		(*p)[key] = val
+		return
+	}
+	(*p)[key] = (*p)[key] + val
+}
+
+func _increase(src *float64, data float64) {
+	*src = *src + data
 }
 
 func main() {
