@@ -167,6 +167,8 @@ func (m MySQLPlugin) GraphDefinition() map[string](mp.Graphs) {
 
 func parseInnodbStatus(str string, p *map[string]float64) error {
 
+	is_transaction := false
+
 	for _, line := range strings.Split(str, "\n") {
 		record := strings.Fields(line)
 
@@ -175,26 +177,90 @@ func parseInnodbStatus(str string, p *map[string]float64) error {
 			_increase_map(p, "spin_waits", record[3])
 			_increase_map(p, "spin_rounds", record[5])
 			_increase_map(p, "os_waits", record[8])
-		} else if strings.Index(line, "RW-shared spins") == 0 && strings.Index(line, ";") > 0 {
-			// 5.1
+			continue
+		}
+		if strings.Index(line, "RW-shared spins") == 0 && strings.Index(line, ";") > 0 {
+			// 5.5, 5.6
 			_increase_map(p, "spin_waits", record[2])
 			_increase_map(p, "os_waits", record[5])
 			_increase_map(p, "spin_waits", record[8])
 			_increase_map(p, "os_waits", record[11])
-		} else if strings.Index(line, "RW-shared spins") == 0 && strings.Index(line, "; RW-excl spins") < 0 {
+			continue
+		}
+		if strings.Index(line, "RW-shared spins") == 0 && strings.Index(line, "; RW-excl spins") < 0 {
+			// 5.1
+			_increase_map(p, "spin_waits", record[2])
+			_increase_map(p, "os_waits", record[7])
+			continue
+		}
+		if strings.Index(line, "RW-excl spins") == 0 {
 			// 5.5, 5.6
 			_increase_map(p, "spin_waits", record[2])
 			_increase_map(p, "os_waits", record[7])
-		} else if strings.Index(line, "RW-excl spins") == 0 {
-			// 5.5, 5.6
-			_increase_map(p, "spin_waits", record[2])
-			_increase_map(p, "os_waits", record[7])
-		} else if strings.Index(line, "seconds the semaphore:") > 0 {
+			continue
+		}
+		if strings.Index(line, "seconds the semaphore:") > 0 {
 			_increase_map(p, "innodb_sem_waits", "1")
 			wait, _ := _atof(record[9])
 			wait = wait * 1000
 			_increase_map(p, "innodb_sem_wait_time_ms", fmt.Sprintf("%.f", wait))
+			continue
 		}
+
+		// Innodb Transactions
+		if strings.Index(line, "Trx id counter") == 0 {
+			lo_val := ""
+			if len(record) >= 5 {
+				lo_val = record[4]
+			}
+			val := _make_bigint(record[3], lo_val)
+			_increase_map(p, "innodb_transactions", fmt.Sprintf("%d", val))
+			is_transaction = true
+			continue
+		}
+		if strings.Index(line, "Purge done for trx") == 0 {
+			if record[7] == "undo" {
+				record[7] = ""
+			}
+			val := _make_bigint(record[6], record[7])
+			trx := (*p)["innodb_transactions"] - float64(val)
+			_increase_map(p, "unpurged_txns", fmt.Sprintf("%.f", trx))
+			continue
+		}
+		if strings.Index(line, "History list length") == 0 {
+			_increase_map(p, "history_list", record[3])
+			continue
+		}
+		if is_transaction && strings.Index(line, "---TRANSACTION") == 0 {
+			_increase_map(p, "current_transactions", "1")
+			if strings.Index(line, "ACTIVE") > 0 {
+				_increase_map(p, "active_transactions", "1")
+			}
+			continue
+		}
+		if is_transaction && strings.Index(line, "------- TRX HAS BEEN") == 0 {
+			_increase_map(p, "innodb_lock_wait_secs", "1")
+			continue
+		}
+		if strings.Index(line, "read views open inside InnoDB") > 0 {
+			(*p)["read_views"], _ = _atof(record[0])
+			continue
+		}
+		if strings.Index(line, "------- TRX HAS BEEN") == 0 {
+			_increase_map(p, "innodb_tables_in_use", record[4])
+			_increase_map(p, "innodb_locked_tables", record[6])
+			continue
+		}
+		if is_transaction && strings.Index(line, "lock struct(s)") == 0 {
+			if strings.Index(line, "LOCK WAIT") > 0 {
+				_increase_map(p, "innodb_lock_structs", record[2])
+				_increase_map(p, "locked_transactions", "1")
+			} else {
+				_increase_map(p, "innodb_lock_structs", record[0])
+			}
+			continue
+		}
+
 	}
 
 	return nil
@@ -204,7 +270,8 @@ func parseInnodbStatus(str string, p *map[string]float64) error {
 func _atof(str string) (float64, error) {
 	str = strings.Replace(str, ",", "", -1)
 	str = strings.Replace(str, ";", "", -1)
-	return strconv.ParseFloat(strings.Trim(str, " "), 64)
+	str = strings.Trim(str, " ")
+	return strconv.ParseFloat(str, 64)
 }
 
 func _increase_map(p *map[string]float64, key string, src string) {
@@ -222,6 +289,26 @@ func _increase_map(p *map[string]float64, key string, src string) {
 
 func _increase(src *float64, data float64) {
 	*src = *src + data
+}
+
+func _make_bigint(hi string, lo string) int64 {
+	if lo == "" {
+		val, _ := strconv.ParseInt(hi, 16, 64)
+		return val
+	}
+
+	var hi_val int64 = 0
+	var lo_val int64 = 0
+	if hi != "" {
+		hi_val, _ = strconv.ParseInt(hi, 10, 64)
+	}
+	if lo != "" {
+		lo_val, _ = strconv.ParseInt(lo, 10, 64)
+	}
+
+	val := hi_val * lo_val
+
+	return val
 }
 
 func main() {

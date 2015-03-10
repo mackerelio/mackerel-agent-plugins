@@ -2,6 +2,7 @@ package main
 
 import (
 	"testing"
+
 	"github.com/stretchr/testify/assert"
 )
 
@@ -125,11 +126,25 @@ END OF INNODB MONITOR OUTPUT`
 	err := parseInnodbStatus(stub, &stat)
 	// fmt.Println(stat)
 	assert.Nil(t, err)
+	// Innodb Semaphores
 	assert.Equal(t, stat["spin_waits"], 947)
 	assert.Equal(t, stat["spin_rounds"], 9442)
 	assert.Equal(t, stat["os_waits"], 222)
+	// Innodb Transactions
+	assert.Equal(t, stat["innodb_transactions"], 71194252676)
+	assert.Equal(t, stat["unpurged_txns"], 49185)
+	assert.Equal(t, stat["history_list"], 649)
+	assert.Equal(t, stat["current_transactions"], 6)
+	assert.Equal(t, stat["active_transactions"], 0)
+	assert.Equal(t, stat["innodb_lock_wait_secs"], 0)
+	assert.Equal(t, stat["read_views"], 0)
+	assert.Equal(t, stat["innodb_tables_in_use"], 0)
+	assert.Equal(t, stat["innodb_locked_tables"], 0)
+	assert.Equal(t, stat["innodb_lock_structs"], 0)
+	assert.Equal(t, stat["locked_transactions"], 0)
+	assert.Equal(t, stat["innodb_lock_structs"], 0)
+	//assert.Equal(t, stat[""], )
 }
-
 
 func TestParseProcStat55(t *testing.T) {
 
@@ -150,6 +165,20 @@ Mutex spin waits 4968902217, rounds 3687067031, OS waits 18668882
 RW-shared spins 28966474, rounds 745089322, OS waits 23123092
 RW-excl spins 22696709, rounds 329125903, OS waits 7388425
 Spin rounds per wait: 0.74 mutex, 25.72 RW-shared, 14.50 RW-excl
+------------------------
+LATEST FOREIGN KEY ERROR
+------------------------
+140804 16:06:30 Transaction:
+TRANSACTION 74D88599, ACTIVE 58 sec inserting, thread declared inside InnoDB 500
+mysql tables in use 1, locked 1
+14 lock struct(s), heap size 3112, 21 row lock(s), undo log entries 8
+MySQL thread id 3244964, OS thread handle 0x7f7bcaecb700, query id 258109451 172.19.66.170 core update
+------------
+TRANSACTIONS
+------------
+Trx id counter C76C862D
+Purge done for trx's n:o < C76C856A undo n:o < 0
+History list length 3102
 --------
 FILE I/O
 --------
@@ -230,11 +259,11 @@ END OF INNODB MONITOR OUTPUT
 	err := parseInnodbStatus(stub, &stat)
 	// fmt.Println(stat)
 	assert.Nil(t, err)
+	// Innodb Semaphores
 	assert.Equal(t, stat["spin_waits"], 5020565400)
 	assert.Equal(t, stat["spin_rounds"], 3687067031)
 	assert.Equal(t, stat["os_waits"], 49180399)
 }
-
 
 func TestParseProcStat51(t *testing.T) {
 
@@ -323,6 +352,7 @@ END OF INNODB MONITOR OUTPUT
 	err := parseInnodbStatus(stub, &stat)
 	// fmt.Println(stat)
 	assert.Nil(t, err)
+	// Innodb Semaphores
 	assert.Equal(t, stat["spin_waits"], 180466733)
 	assert.Equal(t, stat["spin_rounds"], 142931556)
 	assert.Equal(t, stat["os_waits"], 2927308)
