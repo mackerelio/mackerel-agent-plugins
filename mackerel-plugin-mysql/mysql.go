@@ -168,6 +168,7 @@ func (m MySQLPlugin) GraphDefinition() map[string](mp.Graphs) {
 func parseInnodbStatus(str string, p *map[string]float64) error {
 
 	is_transaction := false
+	prev_line := ""
 
 	for _, line := range strings.Split(str, "\n") {
 		record := strings.Fields(line)
@@ -268,22 +269,55 @@ func parseInnodbStatus(str string, p *map[string]float64) error {
 			(*p)["file_fsyncs"], _ = _atof(record[8])
 			continue
 		}
-		if strings.Index(line, "Pending normal aio reads:") > 0 {
+		if strings.Index(line, "Pending normal aio reads:") == 0 {
 			(*p)["pending_normal_aio_reads"], _ = _atof(record[4])
 			(*p)["pending_normal_aio_writes"], _ = _atof(record[7])
 			continue
 		}
-		if strings.Index(line, "ibuf aio reads") > 0 {
+		if strings.Index(line, "ibuf aio reads") == 0 {
 			(*p)["pending_ibuf_aio_reads"], _ = _atof(record[3])
 			(*p)["pending_aio_log_ios"], _ = _atof(record[6])
 			(*p)["pending_aio_sync_ios"], _ = _atof(record[9])
 			continue
 		}
-		if strings.Index(line, "Pending flushes (fsync)") > 0 {
+		if strings.Index(line, "Pending flushes (fsync)") == 0 {
 			(*p)["pending_log_flushes"], _ = _atof(record[4])
 			(*p)["pending_buf_pool_flushes"], _ = _atof(record[7])
 			continue
 		}
+
+		// Insert Buffer and Adaptive Hash Index
+		if strings.Index(line, "Ibuf for space 0: size ") == 0 {
+			(*p)["ibuf_used_cells"], _ = _atof(record[5])
+			(*p)["ibuf_free_cells"], _ = _atof(record[9])
+			(*p)["ibuf_cell_count"], _ = _atof(record[12])
+			continue
+		}
+		if strings.Index(line, "Ibuf: size ") == 0 {
+			(*p)["ibuf_used_cells"], _ = _atof(record[2])
+			(*p)["ibuf_free_cells"], _ = _atof(record[6])
+			(*p)["ibuf_cell_count"], _ = _atof(record[9])
+			if strings.Index(line, "merges") > 0 {
+				(*p)["ibuf_merges"], _ = _atof(record[10])
+			}
+			continue
+		}
+		if strings.Index(line, ", delete mark ") > 0 && strings.Index(prev_line, "merged operations:") == 0 {
+			(*p)["ibuf_inserts"], _ = _atof(record[1])
+			v1, _ := _atof(record[1])
+			v2, _ := _atof(record[4])
+			v3, _ := _atof(record[6])
+			(*p)["ibuf_merged"] = v1 + v2 + v3
+			continue
+		}
+		if strings.Index(line, " merged recs, ") == 0 {
+			(*p)["ibuf_inserts"], _ = _atof(record[0])
+			(*p)["ibuf_merged"], _ = _atof(record[2])
+			(*p)["ibuf_merges"], _ = _atof(record[5])
+			continue
+		}
+
+		prev_line = line
 	}
 
 	return nil

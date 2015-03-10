@@ -154,6 +154,13 @@ END OF INNODB MONITOR OUTPUT`
 	assert.Equal(t, stat["pending_aio_sync_ios"], 0)
 	assert.Equal(t, stat["pending_log_flushes"], 0)
 	assert.Equal(t, stat["pending_buf_pool_flushes"], 0)
+	// Insert Buffer and Adaptive Hash Index
+	assert.Equal(t, stat["ibuf_used_cells"], 1)
+	assert.Equal(t, stat["ibuf_free_cells"], 63)
+	assert.Equal(t, stat["ibuf_cell_count"], 65)
+	assert.Equal(t, stat["ibuf_merges"], 2)
+	assert.Equal(t, stat["ibuf_inserts"], 48)
+	assert.Equal(t, stat["ibuf_merged"], 48)
 	//assert.Equal(t, stat[""], )
 
 }
