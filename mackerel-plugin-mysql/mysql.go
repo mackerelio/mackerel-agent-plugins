@@ -118,7 +118,7 @@ var graphdef map[string](mp.Graphs) = map[string](mp.Graphs){
 	},
 	"mysql.innodb_buffer_pool_read": mp.Graphs{
 		Label: "InnoDB Buffer Pool Read (/sec)",
-		Unit:  "integer",
+		Unit:  "float",
 		Metrics: [](mp.Metrics){
 			mp.Metrics{Name: "read_ahead", Label: "Pages Read Ahead", Diff: false, Stacked: false},
 			mp.Metrics{Name: "read_evicted", Label: "Evicted Without Access", Diff: false, Stacked: false},
@@ -152,8 +152,8 @@ var graphdef map[string](mp.Graphs) = map[string](mp.Graphs){
 		},
 	},
 	"mysql.innodb_checkpoint_age": mp.Graphs{
-		Label: "InnoDB Checkpoint Age (Bytes)",
-		Unit:  "integer",
+		Label: "InnoDB Checkpoint Age",
+		Unit:  "bytes",
 		Metrics: [](mp.Metrics){
 			mp.Metrics{Name: "uncheckpointed_bytes", Label: "Uncheckpointed", Diff: false, Stacked: false},
 		},
@@ -216,8 +216,8 @@ var graphdef map[string](mp.Graphs) = map[string](mp.Graphs){
 		},
 	},
 	"mysql.innodb_log": mp.Graphs{
-		Label: "InnoDB Log (Bytes)",
-		Unit:  "integer",
+		Label: "InnoDB Log",
+		Unit:  "bytes",
 		Metrics: [](mp.Metrics){
 			mp.Metrics{Name: "log_bytes_written", Label: "Written", Diff: true, Stacked: false},
 			mp.Metrics{Name: "log_bytes_flushed", Label: "Flushed", Diff: true, Stacked: false},
