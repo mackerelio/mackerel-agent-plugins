@@ -110,7 +110,7 @@ var graphdef map[string](mp.Graphs) = map[string](mp.Graphs){
 	},
 	"mysql.innodb_adaptive_hash_index": mp.Graphs{
 		Label: "InnoDB Adaptive Hash Index",
-		Unit:  "int",
+		Unit:  "integer",
 		Metrics: [](mp.Metrics){
 			mp.Metrics{Name: "hash_index_cells_total", Label: "Hash Index Cells Total", Diff: false, Stacked: false},
 			mp.Metrics{Name: "hash_index_cells_used", Label: "Hash Index Cells Used", Diff: false, Stacked: false},
@@ -118,7 +118,7 @@ var graphdef map[string](mp.Graphs) = map[string](mp.Graphs){
 	},
 	"mysql.innodb_buffer_pool_read": mp.Graphs{
 		Label: "InnoDB Buffer Pool Read (/sec)",
-		Unit:  "int",
+		Unit:  "integer",
 		Metrics: [](mp.Metrics){
 			mp.Metrics{Name: "read_ahead", Label: "Pages Read Ahead", Diff: false, Stacked: false},
 			mp.Metrics{Name: "read_evicted", Label: "Evicted Without Access", Diff: false, Stacked: false},
@@ -127,7 +127,7 @@ var graphdef map[string](mp.Graphs) = map[string](mp.Graphs){
 	},
 	"mysql.innodb_buffer_pool_activity": mp.Graphs{
 		Label: "InnoDB Buffer Pool Activity (Pages)",
-		Unit:  "int",
+		Unit:  "integer",
 		Metrics: [](mp.Metrics){
 			mp.Metrics{Name: "pages_created", Label: "Created", Diff: true, Stacked: false},
 			mp.Metrics{Name: "pages_read", Label: "Read", Diff: true, Stacked: false},
@@ -136,7 +136,7 @@ var graphdef map[string](mp.Graphs) = map[string](mp.Graphs){
 	},
 	"mysql.innodb_buffer_pool_efficiency": mp.Graphs{
 		Label: "InnoDB Buffer Pool Efficiency",
-		Unit:  "int",
+		Unit:  "integer",
 		Metrics: [](mp.Metrics){
 			mp.Metrics{Name: "Innodb_buffer_pool_reads", Label: "Reads", Diff: true, Stacked: false},
 			mp.Metrics{Name: "Innodb_buffer_pool_read_requests", Label: "Read Requests", Diff: true, Stacked: false},
@@ -144,7 +144,7 @@ var graphdef map[string](mp.Graphs) = map[string](mp.Graphs){
 	},
 	"mysql.innodb_buffer_pool": mp.Graphs{
 		Label: "InnoDB Buffer Pool (Pages)",
-		Unit:  "int",
+		Unit:  "integer",
 		Metrics: [](mp.Metrics){
 			mp.Metrics{Name: "pool_size", Label: "Total", Diff: false, Stacked: false},
 			mp.Metrics{Name: "database_pages", Label: "Used", Diff: false, Stacked: true},
@@ -153,21 +153,21 @@ var graphdef map[string](mp.Graphs) = map[string](mp.Graphs){
 	},
 	"mysql.innodb_checkpoint_age": mp.Graphs{
 		Label: "InnoDB Checkpoint Age (Bytes)",
-		Unit:  "int",
+		Unit:  "integer",
 		Metrics: [](mp.Metrics){
 			mp.Metrics{Name: "uncheckpointed_bytes", Label: "Uncheckpointed", Diff: false, Stacked: false},
 		},
 	},
 	"mysql.innodb_current_lock_waits": mp.Graphs{
 		Label: "InnoDB Current Lock Waits (secs)",
-		Unit:  "int",
+		Unit:  "integer",
 		Metrics: [](mp.Metrics){
 			mp.Metrics{Name: "innodb_lock_wait_secs", Label: "Innodb Lock Wait", Diff: false, Stacked: false},
 		},
 	},
 	"mysql.innodb_io": mp.Graphs{
 		Label: "InnoDB I/O",
-		Unit:  "int",
+		Unit:  "integer",
 		Metrics: [](mp.Metrics){
 			mp.Metrics{Name: "file_reads", Label: "File Reads", Diff: true, Stacked: false},
 			mp.Metrics{Name: "file_writes", Label: "File Writes", Diff: true, Stacked: false},
@@ -177,7 +177,7 @@ var graphdef map[string](mp.Graphs) = map[string](mp.Graphs){
 	},
 	"mysql.innodb_io_pending": mp.Graphs{
 		Label: "InnoDB I/O Pending",
-		Unit:  "int",
+		Unit:  "integer",
 		Metrics: [](mp.Metrics){
 			mp.Metrics{Name: "pending_normal_aio_reads", Label: "Normal AIO Reads", Diff: false, Stacked: false},
 			mp.Metrics{Name: "pending_normal_aio_writes", Label: "Normal AIO Writes", Diff: false, Stacked: false},
@@ -192,7 +192,7 @@ var graphdef map[string](mp.Graphs) = map[string](mp.Graphs){
 	},
 	"mysql.innodb_insert_buffer": mp.Graphs{
 		Label: "InnoDB Insert Buffer",
-		Unit:  "int",
+		Unit:  "integer",
 		Metrics: [](mp.Metrics){
 			mp.Metrics{Name: "ibuf_inserts", Label: "Inserts", Diff: true, Stacked: false},
 			mp.Metrics{Name: "ibuf_merges", Label: "Merges", Diff: true, Stacked: false},
@@ -201,7 +201,7 @@ var graphdef map[string](mp.Graphs) = map[string](mp.Graphs){
 	},
 	"mysql.innodb_insert_buffer_usage": mp.Graphs{
 		Label: "InnoDB Insert Buffer Usage (Cells)",
-		Unit:  "int",
+		Unit:  "integer",
 		Metrics: [](mp.Metrics){
 			mp.Metrics{Name: "ibuf_cell_count", Label: "Cell Count", Diff: false, Stacked: false},
 			mp.Metrics{Name: "ibuf_used_cells", Label: "Used", Diff: false, Stacked: true},
@@ -210,14 +210,14 @@ var graphdef map[string](mp.Graphs) = map[string](mp.Graphs){
 	},
 	"mysql.innodb_lock_structures": mp.Graphs{
 		Label: "InnoDB Lock Structures",
-		Unit:  "int",
+		Unit:  "integer",
 		Metrics: [](mp.Metrics){
 			mp.Metrics{Name: "innodb_lock_structs", Label: "Structures", Diff: false, Stacked: false},
 		},
 	},
 	"mysql.innodb_log": mp.Graphs{
 		Label: "InnoDB Log (Bytes)",
-		Unit:  "int",
+		Unit:  "integer",
 		Metrics: [](mp.Metrics){
 			mp.Metrics{Name: "log_bytes_written", Label: "Written", Diff: true, Stacked: false},
 			mp.Metrics{Name: "log_bytes_flushed", Label: "Flushed", Diff: true, Stacked: false},
@@ -227,7 +227,7 @@ var graphdef map[string](mp.Graphs) = map[string](mp.Graphs){
 	},
 	"mysql.innodb_memory_allocation": mp.Graphs{
 		Label: "InnoDB Memory Allocation",
-		Unit:  "int",
+		Unit:  "integer",
 		Metrics: [](mp.Metrics){
 			mp.Metrics{Name: "additional_pool_alloc", Label: "Additional Pool Allocated", Diff: false, Stacked: false},
 			mp.Metrics{Name: "total_mem_alloc", Label: "Total Memory Allocated", Diff: false, Stacked: false},
@@ -235,7 +235,7 @@ var graphdef map[string](mp.Graphs) = map[string](mp.Graphs){
 	},
 	"mysql.innodb_semaphores": mp.Graphs{
 		Label: "InnoDB Semaphores",
-		Unit:  "int",
+		Unit:  "integer",
 		Metrics: [](mp.Metrics){
 			mp.Metrics{Name: "spin_waits", Label: "Spin Waits", Diff: true, Stacked: false},
 			mp.Metrics{Name: "spin_rounds", Label: "Spin Rounds", Diff: true, Stacked: false},
@@ -244,7 +244,7 @@ var graphdef map[string](mp.Graphs) = map[string](mp.Graphs){
 	},
 	"mysql.innodb_tables_in_use": mp.Graphs{
 		Label: "InnoDB Tables In Use",
-		Unit:  "int",
+		Unit:  "integer",
 		Metrics: [](mp.Metrics){
 			mp.Metrics{Name: "innodb_locked_tables", Label: "Table in Use", Diff: false, Stacked: false},
 			mp.Metrics{Name: "innodb_tables_in_use", Label: "Locked Tables", Diff: false, Stacked: false},
@@ -252,7 +252,7 @@ var graphdef map[string](mp.Graphs) = map[string](mp.Graphs){
 	},
 	"mysql.innodb_transactions_active_locked": mp.Graphs{
 		Label: "InnoDB Transactions Active/Locked",
-		Unit:  "int",
+		Unit:  "integer",
 		Metrics: [](mp.Metrics){
 			mp.Metrics{Name: "current_transactions", Label: "Current", Diff: false, Stacked: false},
 			mp.Metrics{Name: "active_transactions", Label: "Active", Diff: false, Stacked: false},
@@ -262,7 +262,7 @@ var graphdef map[string](mp.Graphs) = map[string](mp.Graphs){
 	},
 	"mysql.innodb_transactions": mp.Graphs{
 		Label: "InnoDB Transactions",
-		Unit:  "int",
+		Unit:  "integer",
 		Metrics: [](mp.Metrics){
 			mp.Metrics{Name: "history_list", Label: "History List", Diff: false, Stacked: false},
 			mp.Metrics{Name: "innodb_transactions", Label: "InnoDB Transactions", Diff: true, Stacked: false},
