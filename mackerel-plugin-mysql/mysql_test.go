@@ -136,13 +136,12 @@ END OF INNODB MONITOR OUTPUT`
 	assert.Equal(t, stat["history_list"], 649)
 	assert.Equal(t, stat["current_transactions"], 6)
 	assert.Equal(t, stat["active_transactions"], 0)
-	assert.Equal(t, stat["innodb_lock_wait_secs"], 0)
-	assert.Equal(t, stat["read_views"], 0)
-	assert.Equal(t, stat["innodb_tables_in_use"], 0)
-	assert.Equal(t, stat["innodb_locked_tables"], 0)
-	assert.Equal(t, stat["innodb_lock_structs"], 0)
-	assert.Equal(t, stat["locked_transactions"], 0)
-	assert.Equal(t, stat["innodb_lock_structs"], 0)
+	assert.Equal(t, stat["innodb_lock_wait_secs"], 0) // empty
+	assert.Equal(t, stat["read_views"], 0)            // empty
+	assert.Equal(t, stat["innodb_tables_in_use"], 0)  // empty
+	assert.Equal(t, stat["innodb_locked_tables"], 0)  // empty
+	assert.Equal(t, stat["locked_transactions"], 0)   // empty
+	assert.Equal(t, stat["innodb_lock_structs"], 0)   // empty
 	// File I/O
 	assert.Equal(t, stat["file_reads"], 124669)
 	assert.Equal(t, stat["file_writes"], 4457)
@@ -162,7 +161,7 @@ END OF INNODB MONITOR OUTPUT`
 	assert.Equal(t, stat["ibuf_inserts"], 48)
 	assert.Equal(t, stat["ibuf_merged"], 48)
 	assert.Equal(t, stat["hash_index_cells_total"], 34679)
-	assert.Equal(t, stat["hash_index_cells_used"], 0)
+	assert.Equal(t, stat["hash_index_cells_used"], 0) // emtpy
 	// Log
 	assert.Equal(t, stat["log_writes"], 3395)
 	assert.Equal(t, stat["pending_log_writes"], 0)
@@ -170,6 +169,27 @@ END OF INNODB MONITOR OUTPUT`
 	assert.Equal(t, stat["log_bytes_written"], 53339891261)
 	assert.Equal(t, stat["log_bytes_flushed"], 53339891261)
 	assert.Equal(t, stat["last_checkpoint"], 53339891261)
+	// Buffer Pool and Memory
+	assert.Equal(t, stat["total_mem_alloc"], 17170432)
+	assert.Equal(t, stat["additional_pool_alloc"], 0)
+	assert.Equal(t, stat["adaptive_hash_memory"], 0)     // empty
+	assert.Equal(t, stat["page_hash_memory"], 0)         // empty
+	assert.Equal(t, stat["dictionary_cache_memory"], 0)  // empty
+	assert.Equal(t, stat["file_system_memory"], 0)       // empty
+	assert.Equal(t, stat["lock_system_memory"], 0)       // empty
+	assert.Equal(t, stat["recovery_system_memory"], 0)   // empty
+	assert.Equal(t, stat["thread_hash_memory"], 0)       // empty
+	assert.Equal(t, stat["innodb_io_pattern_memory"], 0) // empty
+	assert.Equal(t, stat["pool_size"], 1024)
+	assert.Equal(t, stat["free_pages"], 755)
+	assert.Equal(t, stat["database_pages"], 256)
+	assert.Equal(t, stat["modified_pages"], 0)
+	assert.Equal(t, stat["read_ahead"], 0.00)
+	assert.Equal(t, stat["read_evicted"], 0.00)
+	assert.Equal(t, stat["read_random_ahead"], 0.00)
+	assert.Equal(t, stat["pages_read"], 124617)
+	assert.Equal(t, stat["pages_created"], 40)
+	assert.Equal(t, stat["pages_written"], 1020)
 	//assert.Equal(t, stat[""], )
 
 }

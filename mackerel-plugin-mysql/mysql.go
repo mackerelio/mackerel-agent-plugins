@@ -342,6 +342,7 @@ func parseInnodbStatus(str string, p *map[string]float64) error {
 				val = float64(_make_bigint(record[3], record[4]))
 			}
 			(*p)["log_bytes_written"] = val
+			continue
 		}
 		if strings.Index(line, "Log flushed up to") == 0 {
 			val, _ := _atof(record[4])
@@ -349,6 +350,7 @@ func parseInnodbStatus(str string, p *map[string]float64) error {
 				val = float64(_make_bigint(record[4], record[5]))
 			}
 			(*p)["log_bytes_flushed"] = val
+			continue
 		}
 		if strings.Index(line, "Last checkpoint at") == 0 {
 			val, _ := _atof(record[3])
@@ -356,6 +358,74 @@ func parseInnodbStatus(str string, p *map[string]float64) error {
 				val = float64(_make_bigint(record[3], record[4]))
 			}
 			(*p)["last_checkpoint"] = val
+			continue
+		}
+
+		// Buffer Pool and Memory
+		if strings.Index(line, "Total memory allocated") == 0 && strings.Index(line, "in additional pool allocated") > 0 {
+			(*p)["total_mem_alloc"], _ = _atof(record[3])
+			(*p)["additional_pool_alloc"], _ = _atof(record[8])
+			continue
+		}
+		if strings.Index(line, "Adaptive hash index ") == 0 {
+			(*p)["adaptive_hash_memory"], _ = _atof(record[3])
+			continue
+		}
+		if strings.Index(line, "Page hash           ") == 0 {
+			(*p)["page_hash_memory"], _ = _atof(record[2])
+			continue
+		}
+		if strings.Index(line, "Dictionary cache    ") == 0 {
+			(*p)["dictionary_cache_memory"], _ = _atof(record[2])
+			continue
+		}
+		if strings.Index(line, "File system         ") == 0 {
+			(*p)["file_system_memory"], _ = _atof(record[2])
+			continue
+		}
+		if strings.Index(line, "Lock system         ") == 0 {
+			(*p)["lock_system_memory"], _ = _atof(record[2])
+			continue
+		}
+		if strings.Index(line, "Recovery system     ") == 0 {
+			(*p)["recovery_system_memory"], _ = _atof(record[2])
+			continue
+		}
+		if strings.Index(line, "Threads             ") == 0 {
+			(*p)["thread_hash_memory"], _ = _atof(record[1])
+			continue
+		}
+		if strings.Index(line, "innodb_io_pattern   ") == 0 {
+			(*p)["innodb_io_pattern_memory"], _ = _atof(record[1])
+			continue
+		}
+		if strings.Index(line, "Buffer pool size ") == 0 {
+			(*p)["pool_size"], _ = _atof(record[3])
+			continue
+		}
+		if strings.Index(line, "Free buffers") == 0 {
+			(*p)["free_pages"], _ = _atof(record[2])
+			continue
+		}
+		if strings.Index(line, "Database pages") == 0 {
+			(*p)["database_pages"], _ = _atof(record[2])
+			continue
+		}
+		if strings.Index(line, "Modified db pages") == 0 {
+			(*p)["modified_pages"], _ = _atof(record[3])
+			continue
+		}
+		if strings.Index(line, "Pages read ahead") == 0 {
+			(*p)["read_ahead"], _ = _atof(record[3])
+			(*p)["read_evicted"], _ = _atof(record[7])
+			(*p)["read_random_ahead"], _ = _atof(record[11])
+			continue
+		}
+		if strings.Index(line, "Pages read") == 0 {
+			(*p)["pages_read"], _ = _atof(record[2])
+			(*p)["pages_created"], _ = _atof(record[4])
+			(*p)["pages_written"], _ = _atof(record[6])
+			continue
 		}
 
 		// Finalize
@@ -369,6 +439,7 @@ func parseInnodbStatus(str string, p *map[string]float64) error {
 func _atof(str string) (float64, error) {
 	str = strings.Replace(str, ",", "", -1)
 	str = strings.Replace(str, ";", "", -1)
+	str = strings.Replace(str, "/s", "", -1)
 	str = strings.Trim(str, " ")
 	return strconv.ParseFloat(str, 64)
 }
