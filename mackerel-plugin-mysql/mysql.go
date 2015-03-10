@@ -310,13 +310,55 @@ func parseInnodbStatus(str string, p *map[string]float64) error {
 			(*p)["ibuf_merged"] = v1 + v2 + v3
 			continue
 		}
-		if strings.Index(line, " merged recs, ") == 0 {
+		if strings.Index(line, " merged recs, ") > 0 {
 			(*p)["ibuf_inserts"], _ = _atof(record[0])
 			(*p)["ibuf_merged"], _ = _atof(record[2])
 			(*p)["ibuf_merges"], _ = _atof(record[5])
 			continue
 		}
+		if strings.Index(line, "Hash table size ") == 0 {
+			(*p)["hash_index_cells_total"], _ = _atof(record[3])
+			if strings.Index(line, "used cells") > 0 {
+				(*p)["hash_index_cells_used"], _ = _atof(record[6])
+			} else {
+				(*p)["hash_index_cells_used"] = 0
+			}
+			continue
+		}
 
+		// Log
+		if strings.Index(line, " log i/o's done, ") > 0 {
+			(*p)["log_writes"], _ = _atof(record[0])
+			continue
+		}
+		if strings.Index(line, " pending log writes, ") > 0 {
+			(*p)["pending_log_writes"], _ = _atof(record[0])
+			(*p)["pending_chkp_writes"], _ = _atof(record[4])
+			continue
+		}
+		if strings.Index(line, "Log sequence number") == 0 {
+			val, _ := _atof(record[3])
+			if len(record) >= 5 {
+				val = float64(_make_bigint(record[3], record[4]))
+			}
+			(*p)["log_bytes_written"] = val
+		}
+		if strings.Index(line, "Log flushed up to") == 0 {
+			val, _ := _atof(record[4])
+			if len(record) >= 6 {
+				val = float64(_make_bigint(record[4], record[5]))
+			}
+			(*p)["log_bytes_flushed"] = val
+		}
+		if strings.Index(line, "Last checkpoint at") == 0 {
+			val, _ := _atof(record[3])
+			if len(record) >= 5 {
+				val = float64(_make_bigint(record[3], record[4]))
+			}
+			(*p)["last_checkpoint"] = val
+		}
+
+		// Finalize
 		prev_line = line
 	}
 

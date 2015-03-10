@@ -161,6 +161,15 @@ END OF INNODB MONITOR OUTPUT`
 	assert.Equal(t, stat["ibuf_merges"], 2)
 	assert.Equal(t, stat["ibuf_inserts"], 48)
 	assert.Equal(t, stat["ibuf_merged"], 48)
+	assert.Equal(t, stat["hash_index_cells_total"], 34679)
+	assert.Equal(t, stat["hash_index_cells_used"], 0)
+	// Log
+	assert.Equal(t, stat["log_writes"], 3395)
+	assert.Equal(t, stat["pending_log_writes"], 0)
+	assert.Equal(t, stat["pending_chkp_writes"], 0)
+	assert.Equal(t, stat["log_bytes_written"], 53339891261)
+	assert.Equal(t, stat["log_bytes_flushed"], 53339891261)
+	assert.Equal(t, stat["last_checkpoint"], 53339891261)
 	//assert.Equal(t, stat[""], )
 
 }
