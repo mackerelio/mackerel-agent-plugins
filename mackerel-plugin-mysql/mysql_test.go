@@ -10,7 +10,7 @@ func TestGraphDefinition(t *testing.T) {
 	var mysql MySQLPlugin
 
 	graphdef := mysql.GraphDefinition()
-	if len(graphdef) != 10 {
+	if len(graphdef) != 28 {
 		t.Errorf("GetTempfilename: %d should be 10", len(graphdef))
 	}
 }
@@ -130,6 +130,8 @@ END OF INNODB MONITOR OUTPUT`
 	assert.Equal(t, stat["spin_waits"], 947)
 	assert.Equal(t, stat["spin_rounds"], 9442)
 	assert.Equal(t, stat["os_waits"], 222)
+	assert.Equal(t, stat["innodb_sem_wait"], 0)         // empty
+	assert.Equal(t, stat["innodb_sem_wait_time_ms"], 0) // empty
 	// Innodb Transactions
 	assert.Equal(t, stat["innodb_transactions"], 71194252676)
 	assert.Equal(t, stat["unpurged_txns"], 49185)
@@ -157,8 +159,8 @@ END OF INNODB MONITOR OUTPUT`
 	assert.Equal(t, stat["ibuf_used_cells"], 1)
 	assert.Equal(t, stat["ibuf_free_cells"], 63)
 	assert.Equal(t, stat["ibuf_cell_count"], 65)
-	assert.Equal(t, stat["ibuf_merges"], 2)
 	assert.Equal(t, stat["ibuf_inserts"], 48)
+	assert.Equal(t, stat["ibuf_merges"], 2)
 	assert.Equal(t, stat["ibuf_merged"], 48)
 	assert.Equal(t, stat["hash_index_cells_total"], 34679)
 	assert.Equal(t, stat["hash_index_cells_used"], 0) // emtpy
@@ -198,7 +200,7 @@ END OF INNODB MONITOR OUTPUT`
 	assert.Equal(t, stat["queries_inside"], 0)
 	assert.Equal(t, stat["queries_queued"], 0)
 	// etc
-	assert.Equal(t, stat["queries_queued"], 0)
+	assert.Equal(t, stat["unflushed_log"], 0)
 	assert.Equal(t, stat["uncheckpointed_bytes"], 0)
 
 }
