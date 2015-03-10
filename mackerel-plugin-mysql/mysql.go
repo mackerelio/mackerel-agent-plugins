@@ -169,7 +169,6 @@ func parseInnodbStatus(str string, p *map[string]float64) error {
 
 	for _, line := range strings.Split(str, "\n") {
 		record := strings.Fields(line)
-		fmt.Printf("%q\n", record)
 
 		// Innodb Semaphores
 		if strings.Index(line, "Mutex spin waits") == 0 {
@@ -177,14 +176,17 @@ func parseInnodbStatus(str string, p *map[string]float64) error {
 			_increase_map(p, "spin_rounds", record[5])
 			_increase_map(p, "os_waits", record[8])
 		} else if strings.Index(line, "RW-shared spins") == 0 && strings.Index(line, ";") > 0 {
+			// 5.1
 			_increase_map(p, "spin_waits", record[2])
 			_increase_map(p, "os_waits", record[5])
 			_increase_map(p, "spin_waits", record[8])
 			_increase_map(p, "os_waits", record[11])
 		} else if strings.Index(line, "RW-shared spins") == 0 && strings.Index(line, "; RW-excl spins") < 0 {
+			// 5.5, 5.6
 			_increase_map(p, "spin_waits", record[2])
 			_increase_map(p, "os_waits", record[7])
 		} else if strings.Index(line, "RW-excl spins") == 0 {
+			// 5.5, 5.6
 			_increase_map(p, "spin_waits", record[2])
 			_increase_map(p, "os_waits", record[7])
 		} else if strings.Index(line, "seconds the semaphore:") > 0 {
@@ -200,8 +202,9 @@ func parseInnodbStatus(str string, p *map[string]float64) error {
 
 // atof
 func _atof(str string) (float64, error) {
-	converted := strings.Replace(str, ",", "", -1)
-	return strconv.ParseFloat(strings.Trim(converted, " "), 64)
+	str = strings.Replace(str, ",", "", -1)
+	str = strings.Replace(str, ";", "", -1)
+	return strconv.ParseFloat(strings.Trim(str, " "), 64)
 }
 
 func _increase_map(p *map[string]float64, key string, src string) {

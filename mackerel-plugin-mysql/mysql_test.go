@@ -3,7 +3,6 @@ package main
 import (
 	"testing"
 	"github.com/stretchr/testify/assert"
-	"fmt"
 )
 
 func TestGraphDefinition(t *testing.T) {
@@ -15,7 +14,7 @@ func TestGraphDefinition(t *testing.T) {
 	}
 }
 
-func TestParseProcStat(t *testing.T) {
+func TestParseProcStat56(t *testing.T) {
 	stub := `=====================================
 2015-03-09 20:11:22 7f6c0c845700 INNODB MONITOR OUTPUT
 =====================================
@@ -124,9 +123,207 @@ END OF INNODB MONITOR OUTPUT`
 	stat := make(map[string]float64)
 
 	err := parseInnodbStatus(stub, &stat)
-	fmt.Println(stat)
+	// fmt.Println(stat)
 	assert.Nil(t, err)
 	assert.Equal(t, stat["spin_waits"], 947)
 	assert.Equal(t, stat["spin_rounds"], 9442)
 	assert.Equal(t, stat["os_waits"], 222)
+}
+
+
+func TestParseProcStat55(t *testing.T) {
+
+	stub := `=====================================
+150310 10:40:23 INNODB MONITOR OUTPUT
+=====================================
+Per second averages calculated from the last 19 seconds
+-----------------
+BACKGROUND THREAD
+-----------------
+srv_master_thread loops: 19237002 1_second, 19236988 sleeps, 1923209 10_second, 6607 background, 6605 flush
+srv_master_thread log flush and writes: 19327347
+----------
+SEMAPHORES
+----------
+OS WAIT ARRAY INFO: reservation count 51338456, signal count 76067518
+Mutex spin waits 4968902217, rounds 3687067031, OS waits 18668882
+RW-shared spins 28966474, rounds 745089322, OS waits 23123092
+RW-excl spins 22696709, rounds 329125903, OS waits 7388425
+Spin rounds per wait: 0.74 mutex, 25.72 RW-shared, 14.50 RW-excl
+--------
+FILE I/O
+--------
+I/O thread 0 state: waiting for completed aio requests (insert buffer thread)
+I/O thread 1 state: waiting for completed aio requests (log thread)
+I/O thread 2 state: waiting for completed aio requests (read thread)
+I/O thread 3 state: waiting for completed aio requests (read thread)
+I/O thread 4 state: waiting for completed aio requests (read thread)
+I/O thread 5 state: waiting for completed aio requests (read thread)
+I/O thread 6 state: waiting for completed aio requests (read thread)
+I/O thread 7 state: waiting for completed aio requests (read thread)
+I/O thread 8 state: waiting for completed aio requests (read thread)
+I/O thread 9 state: waiting for completed aio requests (read thread)
+I/O thread 10 state: waiting for completed aio requests (write thread)
+I/O thread 11 state: waiting for completed aio requests (write thread)
+I/O thread 12 state: waiting for completed aio requests (write thread)
+I/O thread 13 state: waiting for completed aio requests (write thread)
+I/O thread 14 state: waiting for completed aio requests (write thread)
+I/O thread 15 state: waiting for completed aio requests (write thread)
+I/O thread 16 state: waiting for completed aio requests (write thread)
+I/O thread 17 state: waiting for completed aio requests (write thread)
+Pending normal aio reads: 0 [0, 0, 0, 0, 0, 0, 0, 0] , aio writes: 0 [0, 0, 0, 0, 0, 0, 0, 0] ,
+ ibuf aio reads: 0, log i/o's: 0, sync i/o's: 0
+Pending flushes (fsync) log: 0; buffer pool: 0
+80654072 OS file reads, 816873637 OS file writes, 575117750 OS fsyncs
+3.58 reads/s, 16384 avg bytes/read, 20.74 writes/s, 9.53 fsyncs/s
+-------------------------------------
+INSERT BUFFER AND ADAPTIVE HASH INDEX
+-------------------------------------
+Ibuf: size 1, free list len 9714, seg size 9716, 6224456 merges
+merged operations:
+ insert 8206050, delete mark 156570, delete 1983
+discarded operations:
+ insert 0, delete mark 0, delete 0
+Hash table size 42499631, node heap has 103815 buffer(s)
+1329.14 hash searches/s, 338.14 non-hash searches/s
+---
+LOG
+---
+Log sequence number 1737766297992
+Log flushed up to   1737766297992
+Last checkpoint at  1737766159992
+0 pending log writes, 0 pending chkp writes
+532375066 log i/o's done, 7.79 log i/o's/second
+----------------------
+BUFFER POOL AND MEMORY
+----------------------
+Total memory allocated 21978152960; in additional pool allocated 0
+Dictionary memory allocated 1592986
+Buffer pool size   1310719
+Free buffers       1
+Database pages     1206903
+Old database pages 445496
+Modified db pages  180
+Pending reads 0
+Pending writes: LRU 0, flush list 0, single page 0
+Pages made young 222286179, not young 0
+8.21 youngs/s, 0.00 non-youngs/s
+Pages read 80651165, created 15602833, written 276352840
+3.58 reads/s, 0.21 creates/s, 12.63 writes/s
+Buffer pool hit rate 1000 / 1000, young-making rate 1 / 1000 not 0 / 1000
+Pages read ahead 0.00/s, evicted without access 0.00/s, Random read ahead 0.00/s
+LRU len: 1206903, unzip_LRU len: 0
+I/O sum[1126]:cur[0], unzip sum[0]:cur[0]
+--------------
+ROW OPERATIONS
+--------------
+0 queries inside InnoDB, 0 queries in queue
+12 read views open inside InnoDB
+Main thread process no. 2510, id 140169706182400, state: sleeping
+Number of rows inserted 686919123, updated 623703731, deleted 24439131, read 13570264742306
+6.05 inserts/s, 1.84 updates/s, 0.00 deletes/s, 1960.21 reads/s
+----------------------------
+END OF INNODB MONITOR OUTPUT
+============================`
+	stat := make(map[string]float64)
+
+	err := parseInnodbStatus(stub, &stat)
+	// fmt.Println(stat)
+	assert.Nil(t, err)
+	assert.Equal(t, stat["spin_waits"], 5020565400)
+	assert.Equal(t, stat["spin_rounds"], 3687067031)
+	assert.Equal(t, stat["os_waits"], 49180399)
+}
+
+
+func TestParseProcStat51(t *testing.T) {
+
+	stub := `=====================================
+150310 10:34:58 INNODB MONITOR OUTPUT
+=====================================
+Per second averages calculated from the last 21 seconds
+-----------------
+BACKGROUND THREAD
+-----------------
+srv_master_thread loops: 15513788 1_second, 15513624 sleeps, 1551102 10_second, 2807 background, 2807 flush
+srv_master_thread log flush and writes: 15526310
+----------
+SEMAPHORES
+----------
+OS WAIT ARRAY INFO: reservation count 2951389, signal count 41536793
+Mutex spin waits 158882785, rounds 142931556, OS waits 1214105
+RW-shared spins 9360396, OS waits 1636457; RW-excl spins 12223552, OS waits 76746
+Spin rounds per wait: 0.90 mutex, 6.38 RW-shared, 5.10 RW-excl
+--------
+FILE I/O
+--------
+I/O thread 0 state: waiting for i/o request (insert buffer thread)
+I/O thread 1 state: waiting for i/o request (log thread)
+I/O thread 2 state: waiting for i/o request (read thread)
+I/O thread 3 state: waiting for i/o request (read thread)
+I/O thread 4 state: waiting for i/o request (read thread)
+I/O thread 5 state: waiting for i/o request (read thread)
+I/O thread 6 state: waiting for i/o request (write thread)
+I/O thread 7 state: waiting for i/o request (write thread)
+I/O thread 8 state: waiting for i/o request (write thread)
+I/O thread 9 state: waiting for i/o request (write thread)
+Pending normal aio reads: 0, aio writes: 0,
+ ibuf aio reads: 0, log i/o's: 0, sync i/o's: 0
+Pending flushes (fsync) log: 0; buffer pool: 0
+613992 OS file reads, 134400134 OS file writes, 83130666 OS fsyncs
+0.00 reads/s, 0 avg bytes/read, 4.67 writes/s, 2.10 fsyncs/s
+-------------------------------------
+INSERT BUFFER AND ADAPTIVE HASH INDEX
+-------------------------------------
+Ibuf: size 1, free list len 5, seg size 7,
+18849 inserts, 18849 merged recs, 17834 merges
+Hash table size 14874907, node heap has 6180 buffer(s)
+171.90 hash searches/s, 328.17 non-hash searches/s
+---
+LOG
+---
+Log sequence number 7220257512009
+Log flushed up to   7220257512009
+Last checkpoint at  7220257512009
+0 pending log writes, 0 pending chkp writes
+78358216 log i/o's done, 1.81 log i/o's/second
+----------------------
+BUFFER POOL AND MEMORY
+----------------------
+Total memory allocated 7685013504; in additional pool allocated 0
+Dictionary memory allocated 5255181
+Buffer pool size   458751
+Free buffers       1
+Database pages     452570
+Old database pages 167041
+Modified db pages  0
+Pending reads 0
+Pending writes: LRU 0, flush list 0, single page 0
+Pages made young 1360770, not young 0
+0.00 youngs/s, 0.00 non-youngs/s
+Pages read 1203250, created 1230474, written 83593763
+0.00 reads/s, 0.38 creates/s, 4.29 writes/s
+Buffer pool hit rate 1000 / 1000, young-making rate 0 / 1000 not 0 / 1000
+Pages read ahead 0.00/s, evicted without access 0.00/s, Random read ahead 0.00/s
+LRU len: 452570, unzip_LRU len: 0
+I/O sum[130]:cur[25], unzip sum[0]:cur[0]
+--------------
+ROW OPERATIONS
+--------------
+0 queries inside InnoDB, 0 queries in queue
+1 read views open inside InnoDB
+Main thread process no. 3794, id 140154864322304, state: sleeping
+Number of rows inserted 24090641, updated 8332796, deleted 18513402, read 139771797310
+0.71 inserts/s, 0.00 updates/s, 0.10 deletes/s, 236.42 reads/s
+----------------------------
+END OF INNODB MONITOR OUTPUT
+============================`
+	stat := make(map[string]float64)
+
+	err := parseInnodbStatus(stub, &stat)
+	// fmt.Println(stat)
+	assert.Nil(t, err)
+	assert.Equal(t, stat["spin_waits"], 180466733)
+	assert.Equal(t, stat["spin_rounds"], 142931556)
+	assert.Equal(t, stat["os_waits"], 2927308)
 }
