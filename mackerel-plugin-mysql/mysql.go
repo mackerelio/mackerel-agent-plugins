@@ -428,9 +428,27 @@ func parseInnodbStatus(str string, p *map[string]float64) error {
 			continue
 		}
 
-		// Finalize
+		// Row Operations
+		if strings.Index(line, "Number of rows inserted") == 0 {
+			(*p)["rows_inserted"], _ = _atof(record[4])
+			(*p)["rows_updated"], _ = _atof(record[6])
+			(*p)["rows_deleted"], _ = _atof(record[8])
+			(*p)["rows_read"], _ = _atof(record[10])
+			continue
+		}
+		if strings.Index(line, " queries inside InnoDB, ") == 0 {
+			(*p)["queries_inside"], _ = _atof(record[0])
+			(*p)["queries_queued"], _ = _atof(record[4])
+			continue
+		}
+
+		// for next loop
 		prev_line = line
 	}
+
+	// finalize
+	(*p)["queries_queued"] = (*p)["log_bytes_written"] - (*p)["log_bytes_flushed"]
+	(*p)["uncheckpointed_bytes"] = (*p)["log_bytes_written"] - (*p)["last_checkpoint"]
 
 	return nil
 }

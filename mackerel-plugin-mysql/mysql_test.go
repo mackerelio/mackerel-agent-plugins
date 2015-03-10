@@ -190,7 +190,16 @@ END OF INNODB MONITOR OUTPUT`
 	assert.Equal(t, stat["pages_read"], 124617)
 	assert.Equal(t, stat["pages_created"], 40)
 	assert.Equal(t, stat["pages_written"], 1020)
-	//assert.Equal(t, stat[""], )
+	// Row Operations
+	assert.Equal(t, stat["rows_inserted"], 3089)
+	assert.Equal(t, stat["rows_updated"], 220)
+	assert.Equal(t, stat["rows_deleted"], 212)
+	assert.Equal(t, stat["rows_read"], 2099881)
+	assert.Equal(t, stat["queries_inside"], 0)
+	assert.Equal(t, stat["queries_queued"], 0)
+	// etc
+	assert.Equal(t, stat["queries_queued"], 0)
+	assert.Equal(t, stat["uncheckpointed_bytes"], 0)
 
 }
 
