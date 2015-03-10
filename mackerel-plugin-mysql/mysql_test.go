@@ -143,7 +143,19 @@ END OF INNODB MONITOR OUTPUT`
 	assert.Equal(t, stat["innodb_lock_structs"], 0)
 	assert.Equal(t, stat["locked_transactions"], 0)
 	assert.Equal(t, stat["innodb_lock_structs"], 0)
+	// File I/O
+	assert.Equal(t, stat["file_reads"], 124669)
+	assert.Equal(t, stat["file_writes"], 4457)
+	assert.Equal(t, stat["file_fsyncs"], 3498)
+	assert.Equal(t, stat["pending_normal_aio_reads"], 0)
+	assert.Equal(t, stat["pending_normal_aio_writes"], 0)
+	assert.Equal(t, stat["pending_ibuf_aio_reads"], 0)
+	assert.Equal(t, stat["pending_aio_log_ios"], 0)
+	assert.Equal(t, stat["pending_aio_sync_ios"], 0)
+	assert.Equal(t, stat["pending_log_flushes"], 0)
+	assert.Equal(t, stat["pending_buf_pool_flushes"], 0)
 	//assert.Equal(t, stat[""], )
+
 }
 
 func TestParseProcStat55(t *testing.T) {

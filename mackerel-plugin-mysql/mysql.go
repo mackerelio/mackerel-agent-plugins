@@ -261,6 +261,29 @@ func parseInnodbStatus(str string, p *map[string]float64) error {
 			continue
 		}
 
+		// File I/O
+		if strings.Index(line, " OS file reads, ") > 0 {
+			(*p)["file_reads"], _ = _atof(record[0])
+			(*p)["file_writes"], _ = _atof(record[4])
+			(*p)["file_fsyncs"], _ = _atof(record[8])
+			continue
+		}
+		if strings.Index(line, "Pending normal aio reads:") > 0 {
+			(*p)["pending_normal_aio_reads"], _ = _atof(record[4])
+			(*p)["pending_normal_aio_writes"], _ = _atof(record[7])
+			continue
+		}
+		if strings.Index(line, "ibuf aio reads") > 0 {
+			(*p)["pending_ibuf_aio_reads"], _ = _atof(record[3])
+			(*p)["pending_aio_log_ios"], _ = _atof(record[6])
+			(*p)["pending_aio_sync_ios"], _ = _atof(record[9])
+			continue
+		}
+		if strings.Index(line, "Pending flushes (fsync)") > 0 {
+			(*p)["pending_log_flushes"], _ = _atof(record[4])
+			(*p)["pending_buf_pool_flushes"], _ = _atof(record[7])
+			continue
+		}
 	}
 
 	return nil
