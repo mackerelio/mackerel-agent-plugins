@@ -414,6 +414,36 @@ OS WAIT ARRAY INFO: reservation count 2951389, signal count 41536793
 Mutex spin waits 158882785, rounds 142931556, OS waits 1214105
 RW-shared spins 9360396, OS waits 1636457; RW-excl spins 12223552, OS waits 76746
 Spin rounds per wait: 0.90 mutex, 6.38 RW-shared, 5.10 RW-excl
+------------
+TRANSACTIONS
+------------
+Trx id counter 39009CDC7
+Purge done for trx's n:o < 39009CD1B undo n:o < 0
+History list length 9
+LIST OF TRANSACTIONS FOR EACH SESSION:
+---TRANSACTION 0, not started, process no 3794, OS thread id 140154700429056
+MySQL thread id 125413339, query id 8845328767 localhost root
+SHOW /*!50000 ENGINE*/ INNODB STATUS
+---TRANSACTION 39009CD65, not started, process no 3794, OS thread id 140154778973952
+MySQL thread id 125412426, query id 8845326939 localhost test
+---TRANSACTION 39009CD35, not started, process no 3794, OS thread id 140154804532992
+MySQL thread id 125412424, query id 8845326190 localhost test
+---TRANSACTION 39009CD60, not started, process no 3794, OS thread id 140154746492672
+MySQL thread id 125412423, query id 8845326929 localhost test
+---TRANSACTION 39009CD30, not started, process no 3794, OS thread id 140154749953792
+MySQL thread id 125412420, query id 8845326179 localhost test
+---TRANSACTION 0, not started, process no 3794, OS thread id 140154784298752
+MySQL thread id 125412417, query id 8845326923 localhost test
+---TRANSACTION 0, not started, process no 3794, OS thread id 140154708150016
+MySQL thread id 125412415, query id 8845326548 localhost test
+---TRANSACTION 0, not started, process no 3794, OS thread id 140154680993536
+MySQL thread id 125412413, query id 8845326928 localhost test
+---TRANSACTION 0, not started, process no 3794, OS thread id 140154684188416
+MySQL thread id 125412412, query id 8845326893 localhost test
+---TRANSACTION 0, not started, process no 3794, OS thread id 140154674337536
+MySQL thread id 125412411, query id 8845326479 localhost test
+---TRANSACTION 0, not started, process no 3794, OS thread id 140154686318336
+MySQL thread id 125412410, query id 8845326477 localhost test
 --------
 FILE I/O
 --------
@@ -487,4 +517,76 @@ END OF INNODB MONITOR OUTPUT
 	assert.Equal(t, stat["spin_waits"], 180466733)
 	assert.Equal(t, stat["spin_rounds"], 142931556)
 	assert.Equal(t, stat["os_waits"], 2927308)
+	assert.Equal(t, stat["innodb_sem_wait"], 0)         // empty
+	assert.Equal(t, stat["innodb_sem_wait_time_ms"], 0) // empty
+	// Innodb Transactions
+	assert.Equal(t, stat["innodb_transactions"], 15301463495)
+	assert.Equal(t, stat["unpurged_txns"], 172)
+	assert.Equal(t, stat["history_list"], 9)
+	assert.Equal(t, stat["current_transactions"], 11)
+	assert.Equal(t, stat["active_transactions"], 0)
+	assert.Equal(t, stat["innodb_lock_wait_secs"], 0) // empty
+	assert.Equal(t, stat["read_views"], 1)
+	assert.Equal(t, stat["innodb_tables_in_use"], 0)  // empty
+	assert.Equal(t, stat["innodb_locked_tables"], 0)  // empty
+	assert.Equal(t, stat["locked_transactions"], 0)   // empty
+	assert.Equal(t, stat["innodb_lock_structs"], 0)   // empty
+	// File I/O
+	assert.Equal(t, stat["file_reads"], 613992)
+	assert.Equal(t, stat["file_writes"], 134400134)
+	assert.Equal(t, stat["file_fsyncs"], 83130666)
+	assert.Equal(t, stat["pending_normal_aio_reads"], 0)
+	assert.Equal(t, stat["pending_normal_aio_writes"], 0)
+	assert.Equal(t, stat["pending_ibuf_aio_reads"], 0)
+	assert.Equal(t, stat["pending_aio_log_ios"], 0)
+	assert.Equal(t, stat["pending_aio_sync_ios"], 0)
+	assert.Equal(t, stat["pending_log_flushes"], 0)
+	assert.Equal(t, stat["pending_buf_pool_flushes"], 0)
+	// Insert Buffer and Adaptive Hash Index
+	assert.Equal(t, stat["ibuf_used_cells"], 1)
+	assert.Equal(t, stat["ibuf_free_cells"], 5)
+	assert.Equal(t, stat["ibuf_cell_count"], 7)
+	assert.Equal(t, stat["ibuf_inserts"], 18849)
+	assert.Equal(t, stat["ibuf_merges"], 17834)
+	assert.Equal(t, stat["ibuf_merged"], 18849)
+	assert.Equal(t, stat["hash_index_cells_total"], 14874907)
+	assert.Equal(t, stat["hash_index_cells_used"], 0)
+	// Log
+	assert.Equal(t, stat["log_writes"], 78358216)
+	assert.Equal(t, stat["pending_log_writes"], 0)
+	assert.Equal(t, stat["pending_chkp_writes"], 0)
+	assert.Equal(t, stat["log_bytes_written"], 7220257512009)
+	assert.Equal(t, stat["log_bytes_flushed"], 7220257512009)
+	assert.Equal(t, stat["last_checkpoint"], 7220257512009)
+	// Buffer Pool and Memory
+	assert.Equal(t, stat["total_mem_alloc"], 7685013504)
+	assert.Equal(t, stat["additional_pool_alloc"], 0)
+	assert.Equal(t, stat["adaptive_hash_memory"], 0)     // empty
+	assert.Equal(t, stat["page_hash_memory"], 0)         // empty
+	assert.Equal(t, stat["dictionary_cache_memory"], 0)  // empty
+	assert.Equal(t, stat["file_system_memory"], 0)       // empty
+	assert.Equal(t, stat["lock_system_memory"], 0)       // empty
+	assert.Equal(t, stat["recovery_system_memory"], 0)   // empty
+	assert.Equal(t, stat["thread_hash_memory"], 0)       // empty
+	assert.Equal(t, stat["innodb_io_pattern_memory"], 0) // empty
+	assert.Equal(t, stat["pool_size"], 458751)
+	assert.Equal(t, stat["free_pages"], 1)
+	assert.Equal(t, stat["database_pages"], 452570)
+	assert.Equal(t, stat["modified_pages"], 0)
+	assert.Equal(t, stat["read_ahead"], 0.00)
+	assert.Equal(t, stat["read_evicted"], 0.00)
+	assert.Equal(t, stat["read_random_ahead"], 0.00)
+	assert.Equal(t, stat["pages_read"], 1203250)
+	assert.Equal(t, stat["pages_created"], 1230474)
+	assert.Equal(t, stat["pages_written"], 83593763)
+	// Row Operations
+	assert.Equal(t, stat["rows_inserted"], 24090641)
+	assert.Equal(t, stat["rows_updated"], 8332796)
+	assert.Equal(t, stat["rows_deleted"], 18513402)
+	assert.Equal(t, stat["rows_read"], 139771797310)
+	assert.Equal(t, stat["queries_inside"], 0)
+	assert.Equal(t, stat["queries_queued"], 0)
+	// etc
+	assert.Equal(t, stat["unflushed_log"], 0)
+	assert.Equal(t, stat["uncheckpointed_bytes"], 0)
 }
