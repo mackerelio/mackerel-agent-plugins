@@ -149,6 +149,7 @@ var graphdef map[string](mp.Graphs) = map[string](mp.Graphs){
 			mp.Metrics{Name: "pool_size", Label: "Total", Diff: false, Stacked: false},
 			mp.Metrics{Name: "database_pages", Label: "Used", Diff: false, Stacked: true},
 			mp.Metrics{Name: "free_pages", Label: "Free", Diff: false, Stacked: true},
+			mp.Metrics{Name: "modified_pages", Label: "Modified", Diff: false, Stacked: false},
 		},
 	},
 	"mysql.innodb_checkpoint_age": mp.Graphs{
