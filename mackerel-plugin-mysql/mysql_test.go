@@ -332,10 +332,10 @@ END OF INNODB MONITOR OUTPUT
 	assert.Equal(t, stat["active_transactions"], 0)
 	assert.Equal(t, stat["innodb_lock_wait_secs"], 0) // empty
 	assert.Equal(t, stat["read_views"], 12)
-	assert.Equal(t, stat["innodb_tables_in_use"], 0)  // empty
-	assert.Equal(t, stat["innodb_locked_tables"], 0)  // empty
-	assert.Equal(t, stat["locked_transactions"], 0)   // empty
-	assert.Equal(t, stat["innodb_lock_structs"], 0)   // empty
+	assert.Equal(t, stat["innodb_tables_in_use"], 0) // empty
+	assert.Equal(t, stat["innodb_locked_tables"], 0) // empty
+	assert.Equal(t, stat["locked_transactions"], 0)  // empty
+	assert.Equal(t, stat["innodb_lock_structs"], 0)  // empty
 	// File I/O
 	assert.Equal(t, stat["file_reads"], 80654072)
 	assert.Equal(t, stat["file_writes"], 816873637)
@@ -527,10 +527,10 @@ END OF INNODB MONITOR OUTPUT
 	assert.Equal(t, stat["active_transactions"], 0)
 	assert.Equal(t, stat["innodb_lock_wait_secs"], 0) // empty
 	assert.Equal(t, stat["read_views"], 1)
-	assert.Equal(t, stat["innodb_tables_in_use"], 0)  // empty
-	assert.Equal(t, stat["innodb_locked_tables"], 0)  // empty
-	assert.Equal(t, stat["locked_transactions"], 0)   // empty
-	assert.Equal(t, stat["innodb_lock_structs"], 0)   // empty
+	assert.Equal(t, stat["innodb_tables_in_use"], 0) // empty
+	assert.Equal(t, stat["innodb_locked_tables"], 0) // empty
+	assert.Equal(t, stat["locked_transactions"], 0)  // empty
+	assert.Equal(t, stat["innodb_lock_structs"], 0)  // empty
 	// File I/O
 	assert.Equal(t, stat["file_reads"], 613992)
 	assert.Equal(t, stat["file_writes"], 134400134)
