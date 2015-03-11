@@ -282,7 +282,7 @@ func (m MySQLPlugin) FetchMetrics() (map[string]float64, error) {
 	db := mysql.New("tcp", "", m.Target, m.Username, m.Password, "")
 	err := db.Connect()
 	if err != nil {
-		log.Fatalln("FetchMetrics: ", err)
+		log.Fatalln("FetchMetrics (DB Connect): ", err)
 		return nil, err
 	}
 	defer db.Close()
@@ -291,13 +291,13 @@ func (m MySQLPlugin) FetchMetrics() (map[string]float64, error) {
 
 	rows, _, err := db.Query("show /*!50002 global */ status")
 	if err != nil {
-		log.Fatalln("FetchMetrics: ", err)
+		log.Fatalln("FetchMetrics (Status): ", err)
 		return nil, err
 	}
 	for _, row := range rows {
 		Variable_name := string(row[0].([]byte))
 		if err != nil {
-			log.Println("FetchMetrics: ", err)
+			log.Println("FetchMetrics (Status Fetch): ", err)
 		}
 		//fmt.Println(Variable_name, Value)
 		stat[Variable_name], _ = _atof(string(row[1].([]byte)))
@@ -305,20 +305,20 @@ func (m MySQLPlugin) FetchMetrics() (map[string]float64, error) {
 
 	row, _, err := db.QueryFirst("SHOW /*!50000 ENGINE*/ INNODB STATUS")
 	if err != nil {
-		log.Fatalln("FetchMetrics: ", err)
+		log.Fatalln("FetchMetrics (InnoDB Status): ", err)
 		return nil, err
 	}
 	err = parseInnodbStatus(string(row[2].([]byte)), &stat)
 
 	rows, _, err = db.Query("SHOW VARIABLES")
 	if err != nil {
-		log.Fatalln("FetchMetrics: ", err)
+		log.Fatalln("FetchMetrics (Variables): ", err)
 		return nil, err
 	}
 	for _, row := range rows {
 		Variable_name := string(row[0].([]byte))
 		if err != nil {
-			log.Println("FetchMetrics: ", err)
+			log.Println("FetchMetrics (Fetch Variables): ", err)
 		}
 		//fmt.Println(Variable_name, Value)
 		stat[Variable_name], _ = _atof(string(row[1].([]byte)))
@@ -326,7 +326,7 @@ func (m MySQLPlugin) FetchMetrics() (map[string]float64, error) {
 
 	rows, res, err := db.Query("show slave status")
 	if err != nil {
-		log.Fatalln("FetchMetrics: ", err)
+		log.Fatalln("FetchMetrics (Slave Status): ", err)
 		return nil, err
 	}
 	for _, row = range rows {
