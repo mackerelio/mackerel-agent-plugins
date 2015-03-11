@@ -146,7 +146,7 @@ var graphdef map[string](mp.Graphs) = map[string](mp.Graphs){
 		Label: "MySQL InnoDB Buffer Pool (Pages)",
 		Unit:  "integer",
 		Metrics: [](mp.Metrics){
-			mp.Metrics{Name: "pool_size", Label: "Total", Diff: false, Stacked: false},
+			mp.Metrics{Name: "pool_size", Label: "Pool Size", Diff: false, Stacked: false},
 			mp.Metrics{Name: "database_pages", Label: "Used", Diff: false, Stacked: true},
 			mp.Metrics{Name: "free_pages", Label: "Free", Diff: false, Stacked: true},
 			mp.Metrics{Name: "modified_pages", Label: "Modified", Diff: false, Stacked: false},
