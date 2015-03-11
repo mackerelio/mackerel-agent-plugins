@@ -126,7 +126,7 @@ var graphdef map[string](mp.Graphs) = map[string](mp.Graphs){
 		},
 	},
 	"mysql.innodb_buffer_pool_activity": mp.Graphs{
-		Label: "MySQL InnoDB Buffer Pool Activity (Pages/sec)",
+		Label: "MySQL InnoDB Buffer Pool Activity (Pages)",
 		Unit:  "integer",
 		Metrics: [](mp.Metrics){
 			mp.Metrics{Name: "pages_created", Label: "Created", Diff: true, Stacked: false},
