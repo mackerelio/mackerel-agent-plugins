@@ -2,6 +2,7 @@ package main
 
 import (
 	"bufio"
+	"flag"
 	"fmt"
 	mp "github.com/mackerelio/go-mackerel-plugin"
 	"os"
@@ -208,12 +209,18 @@ func (m XentopPlugin) GraphDefinition() map[string](mp.Graphs) {
 }
 
 func main() {
-	// TODO: flagの取得
+	optTempfile := flag.String("tempfile", "", "Temp file name")
+	flag.Parse()
 
 	var xentop XentopPlugin
 
 	helper := mp.NewMackerelPlugin(xentop)
-	helper.Tempfile = fmt.Sprintf("/tmp/mackerel-plugin-xentop")
+
+	if *optTempfile != "" {
+		helper.Tempfile = *optTempfile
+	} else {
+		helper.Tempfile = fmt.Sprintf("/tmp/mackerel-plugin-xentop")
+	}
 
 	if os.Getenv("MACKEREL_AGENT_PLUGIN_META") != "" {
 		helper.OutputDefinitions()
