@@ -2,6 +2,7 @@ package main
 
 import (
 	"flag"
+	"fmt"
 	"os"
 	"strings"
 
@@ -72,13 +73,13 @@ func (m TDTablePlugin) GraphDefinition() map[string](mp.Graphs) {
 	}
 
 	graph := mp.Graphs{
-		Label:   "TD Number of rows",
+		Label:   fmt.Sprintf("TD %s Database Number of rows", m.Database),
 		Unit:    "integer",
 		Metrics: metrics,
 	}
 
 	graphdef := map[string](mp.Graphs){
-		"td.count": graph,
+		fmt.Sprintf("td.count_%s", m.Database): graph,
 	}
 
 	return graphdef
