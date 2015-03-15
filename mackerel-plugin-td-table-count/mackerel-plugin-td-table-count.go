@@ -21,14 +21,15 @@ type TDTablePlugin struct {
 	Tempfile         string
 }
 
-func (m TDTablePlugin) FetchMetrics() (map[string]float64, error) {
-	stat := make(map[string]float64)
+func GetTables(m TDTablePlugin) ([]td.Table, error) {
 	cli := td.NewClient(m.ApiKey)
 
 	tables, err := cli.TableList(m.Database)
 	if err != nil {
 		return nil, err
 	}
+
+	filteredTables := []td.Table{}
 
 	for _, table := range tables {
 		ignore := false
@@ -39,30 +40,48 @@ func (m TDTablePlugin) FetchMetrics() (map[string]float64, error) {
 		}
 
 		if ignore == false {
-			stat[table.Name] = float64(table.Count)
-			tableNames = append(tableNames, table.Name)
+			filteredTables = append(filteredTables, table)
 		}
+	}
+
+	return filteredTables, nil
+}
+
+func (m TDTablePlugin) FetchMetrics() (map[string]float64, error) {
+	stat := make(map[string]float64)
+
+	tables, _ := GetTables(m)
+	for _, table := range tables {
+		stat[table.Name] = float64(table.Count)
 	}
 
 	return stat, nil
 }
 
 func (m TDTablePlugin) GraphDefinition() map[string](mp.Graphs) {
-	metrics := []mp.Metrics{}
-	for _, tableName := range tableNames {
+	tables, _ := GetTables(m)
+
+	var metrics []mp.Metrics
+	for _, table := range tables {
 		metrics = append(metrics, mp.Metrics{
-			Name: tableName,
-			Diff: false,
+			Name:    table.Name,
+			Label:   table.Name,
+			Diff:    false,
+			Stacked: true,
 		})
 	}
 
-	return map[string](mp.Graphs){
-		"td.count": mp.Graphs{
-			Label:   "TD Number of rows",
-			Unit:    "float",
-			Metrics: metrics,
-		},
+	graph := mp.Graphs{
+		Label:   "TD Number of rows",
+		Unit:    "integer",
+		Metrics: metrics,
 	}
+
+	graphdef := map[string](mp.Graphs){
+		"td.count": graph,
+	}
+
+	return graphdef
 }
 
 func main() {
