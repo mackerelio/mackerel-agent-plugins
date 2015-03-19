@@ -24,14 +24,17 @@ type XentopMetrics struct {
 }
 
 type XentopPlugin struct {
-	GraphName          string
-	GraphUnit          string
-	XentopMetricsSlice []XentopMetrics
+	XenVersion string
 }
 
 func (m XentopPlugin) FetchMetrics() (map[string]float64, error) {
 	stat := make(map[string]float64)
-	cmd := exec.Command("/bin/sh", "-c", "sudo xentop --batch -i 1 -f")
+	var cmd *exec.Cmd
+	if m.XenVersion == "4" {
+		cmd = exec.Command("/bin/sh", "-c", "xentop --batch -i 1 -f")
+	} else {
+		cmd = exec.Command("/bin/sh", "-c", "xentop --batch -i 1")
+	}
 	stdout, err := cmd.StdoutPipe()
 
 	if err != nil {
@@ -177,7 +180,12 @@ func DefineGraphs(names []string) {
 }
 
 func (m XentopPlugin) GraphDefinition() map[string](mp.Graphs) {
-	cmd := exec.Command("/bin/sh", "-c", "xentop --batch -i 1 -f")
+	var cmd *exec.Cmd
+	if m.XenVersion == "4" {
+		cmd = exec.Command("/bin/sh", "-c", "xentop --batch -i 1 -f")
+	} else {
+		cmd = exec.Command("/bin/sh", "-c", "xentop --batch -i 1")
+	}
 	stdout, err := cmd.StdoutPipe()
 
 	if err != nil {
@@ -210,9 +218,12 @@ func (m XentopPlugin) GraphDefinition() map[string](mp.Graphs) {
 
 func main() {
 	optTempfile := flag.String("tempfile", "", "Temp file name")
+	optXenVersion := flag.String("xenversion", "4", "Xen Version")
 	flag.Parse()
 
 	var xentop XentopPlugin
+
+	xentop.XenVersion = *optXenVersion
 
 	helper := mp.NewMackerelPlugin(xentop)
 
