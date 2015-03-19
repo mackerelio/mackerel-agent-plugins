@@ -46,10 +46,16 @@ func (m XentopPlugin) FetchMetrics() (map[string]float64, error) {
 
 	dom0 := false
 	scanner := bufio.NewScanner(stdout)
+	hasIndex := false
 	for scanner.Scan() {
+		fmt.Println(string(scanner.Text()))
 		sf := strings.Fields(string(scanner.Text()))
 		if sf[0] == "NAME" {
 			GenerateIndex(sf, index)
+			hasIndex = true
+			continue
+		}
+		if !hasIndex {
 			continue
 		}
 		if StringInSlice("n/a", sf) {
@@ -197,14 +203,19 @@ func (m XentopPlugin) GraphDefinition() map[string](mp.Graphs) {
 
 	names := make([]string, 0)
 	scanner := bufio.NewScanner(stdout)
+	hasIndex := false
 	for scanner.Scan() {
 		sf := strings.Fields(string(scanner.Text()))
-		if sf[0] != "NAME" {
-			name := sf[index["NAME"]]
-			names = append(names, name)
-		} else {
+		if sf[0] == "NAME" {
 			GenerateIndex(sf, index)
+			hasIndex = true
+			continue
 		}
+		if !hasIndex {
+			continue
+		}
+		name := sf[index["NAME"]]
+		names = append(names, name)
 	}
 	if err := scanner.Err(); err != nil {
 		panic(err)
