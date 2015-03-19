@@ -24,13 +24,13 @@ type XentopMetrics struct {
 }
 
 type XentopPlugin struct {
-	XenVersion string
+	XenVersion int
 }
 
 func (m XentopPlugin) FetchMetrics() (map[string]float64, error) {
 	stat := make(map[string]float64)
 	var cmd *exec.Cmd
-	if m.XenVersion == "4" {
+	if m.XenVersion == 4 {
 		cmd = exec.Command("/bin/sh", "-c", "xentop --batch -i 1 -f")
 	} else {
 		cmd = exec.Command("/bin/sh", "-c", "xentop --batch -i 1")
@@ -187,7 +187,7 @@ func DefineGraphs(names []string) {
 
 func (m XentopPlugin) GraphDefinition() map[string](mp.Graphs) {
 	var cmd *exec.Cmd
-	if m.XenVersion == "4" {
+	if m.XenVersion == 4 {
 		cmd = exec.Command("/bin/sh", "-c", "xentop --batch -i 1 -f")
 	} else {
 		cmd = exec.Command("/bin/sh", "-c", "xentop --batch -i 1")
@@ -229,7 +229,7 @@ func (m XentopPlugin) GraphDefinition() map[string](mp.Graphs) {
 
 func main() {
 	optTempfile := flag.String("tempfile", "", "Temp file name")
-	optXenVersion := flag.String("xenversion", "4", "Xen Version")
+	optXenVersion := flag.Int("xenversion", 4, "Xen Version")
 	flag.Parse()
 
 	var xentop XentopPlugin
