@@ -42,13 +42,16 @@ func (m XentopPlugin) FetchMetrics() (map[string]float64, error) {
 		os.Exit(1)
 	}
 
-	cmd.Start()
+	exec_err := cmd.Start()
+	if exec_err != nil {
+		fmt.Println(exec_err)
+		os.Exit(1)
+	}
 
 	dom0 := false
 	scanner := bufio.NewScanner(stdout)
 	hasIndex := false
 	for scanner.Scan() {
-		fmt.Println(string(scanner.Text()))
 		sf := strings.Fields(string(scanner.Text()))
 		if sf[0] == "NAME" {
 			GenerateIndex(sf, index)
@@ -199,7 +202,11 @@ func (m XentopPlugin) GraphDefinition() map[string](mp.Graphs) {
 		os.Exit(1)
 	}
 
-	cmd.Start()
+	exec_err := cmd.Start()
+	if exec_err != nil {
+		fmt.Println(exec_err)
+		os.Exit(1)
+	}
 
 	names := make([]string, 0)
 	scanner := bufio.NewScanner(stdout)
