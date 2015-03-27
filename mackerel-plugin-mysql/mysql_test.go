@@ -6,12 +6,22 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
+func TestGraphDefinition_DisableInnoDB(t *testing.T) {
+	var mysql MySQLPlugin
+
+	mysql.DisableInnoDB = true
+	graphdef := mysql.GraphDefinition()
+	if len(graphdef) != 7 {
+		t.Errorf("GetTempfilename: %d should be 7", len(graphdef))
+	}
+}
+
 func TestGraphDefinition(t *testing.T) {
 	var mysql MySQLPlugin
 
 	graphdef := mysql.GraphDefinition()
 	if len(graphdef) != 28 {
-		t.Errorf("GetTempfilename: %d should be 10", len(graphdef))
+		t.Errorf("GetTempfilename: %d should be 28", len(graphdef))
 	}
 }
 
