@@ -157,7 +157,8 @@ func collectWho(p *map[string]float64) error {
 
 // parsing metrics from /proc/stat
 func parseWho(str string, p *map[string]float64) error {
-	if strings.TrimSpace(str) == "" {
+	str = strings.TrimSpace(str)
+	if str == "" {
 		(*p)["users"] = 0
 		return nil
 	}
