@@ -7,6 +7,7 @@ import (
 var Flags = []cli.Flag{
 	cliHttpHost,
 	cliHttpPort,
+	cliHeader,
 	cliStatusPage,
 	cliTempFile,
 }
@@ -23,6 +24,13 @@ var cliHttpPort = cli.IntFlag{
 	Value:  80,
 	Usage:  "Set apache2 listeing port.",
 	EnvVar: "ENVVAR_HTTP_PORT",
+}
+
+var cliHeader = cli.StringSliceFlag{
+	Name:  "header, H",
+	Value: &cli.StringSlice{},
+	Usage: "Set http header. (e.g. \"Host: servername\")",
+	EnvVar: "ENVVAR_HEADER",
 }
 
 var cliStatusPage = cli.StringFlag{
