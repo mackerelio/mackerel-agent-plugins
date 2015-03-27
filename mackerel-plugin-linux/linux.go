@@ -262,6 +262,10 @@ func collectProcDiskstats(path string, p *map[string]float64) error {
 
 // parsing metrics from diskstats
 func parseProcDiskstats(str string, p *map[string]float64) error {
+
+	var elapsed_data []mp.Metrics
+	var rwtime_data []mp.Metrics
+
 	for _, line := range strings.Split(str, "\n") {
 		// See also: https://www.kernel.org/doc/Documentation/ABI/testing/procfs-diskstats
 		record := strings.Fields(line)
@@ -276,25 +280,25 @@ func parseProcDiskstats(str string, p *map[string]float64) error {
 
 		(*p)[fmt.Sprintf("iotime_%s", device)], _ = _atof(record[12])
 		(*p)[fmt.Sprintf("iotime_weighted_%s", device)], _ = _atof(record[13])
-		graphdef[fmt.Sprintf("linux.disk.elapsed.%s", device)] = mp.Graphs{
-			Label: fmt.Sprintf("Disk Elapsed IO Time %s", device),
-			Unit:  "integer",
-			Metrics: [](mp.Metrics){
-				mp.Metrics{Name: fmt.Sprintf("iotime_%s", device), Label: "IO Time", Diff: true},
-				mp.Metrics{Name: fmt.Sprintf("iotime_weighted_%s", device), Label: "IO Time Weighted", Diff: true},
-			},
-		}
+		elapsed_data = append(elapsed_data, mp.Metrics{Name: fmt.Sprintf("iotime_%s", device), Label: "IO Time", Diff: true})
+		elapsed_data = append(elapsed_data, mp.Metrics{Name: fmt.Sprintf("iotime_weighted_%s", device), Label: "IO Time Weighted", Diff: true})
 
 		(*p)[fmt.Sprintf("tsreading_%s", device)], _ = _atof(record[6])
 		(*p)[fmt.Sprintf("tswriting_%s", device)], _ = _atof(record[10])
-		graphdef[fmt.Sprintf("linux.disk.rwtime.%s", device)] = mp.Graphs{
-			Label: fmt.Sprintf("Disk Read/Write Time %s", device),
-			Unit:  "integer",
-			Metrics: [](mp.Metrics){
-				mp.Metrics{Name: fmt.Sprintf("tsreading_%s", device), Label: "Read", Diff: true},
-				mp.Metrics{Name: fmt.Sprintf("tswriting_%s", device), Label: "Write", Diff: true},
-			},
-		}
+		rwtime_data = append(rwtime_data, mp.Metrics{Name: fmt.Sprintf("tsreading_%s", device), Label: "Read", Diff: true})
+		rwtime_data = append(rwtime_data, mp.Metrics{Name: fmt.Sprintf("tswriting_%s", device), Label: "Write", Diff: true})
+	}
+
+	graphdef["linux.disk.elapsed"] = mp.Graphs{
+		Label:   "Disk Elapsed IO Time",
+		Unit:    "integer",
+		Metrics: elapsed_data,
+	}
+
+	graphdef["linux.disk.rwtime"] = mp.Graphs{
+		Label:   "Disk Read/Write Time",
+		Unit:    "integer",
+		Metrics: rwtime_data,
 	}
 
 	return nil
