@@ -69,6 +69,7 @@ type Apache2Plugin struct {
 	Host     string
 	Port     uint16
 	Path     string
+	Header   []string
 	Tempfile string
 }
 
@@ -85,6 +86,7 @@ func doMain(c *cli.Context) {
 	apache2.Host = c.String("http_host")
 	apache2.Port = uint16(c.Int("http_port"))
 	apache2.Path = c.String("status_page")
+	apache2.Header = c.StringSlice("header")
 
 	helper := mp.NewMackerelPlugin(apache2)
 	helper.Tempfile = c.String("tempfile")
@@ -98,7 +100,7 @@ func doMain(c *cli.Context) {
 
 // fetch metrics
 func (c Apache2Plugin) FetchMetrics() (map[string]float64, error) {
-	data, err := getApache2Metrics(c.Host, c.Port, c.Path)
+	data, err := getApache2Metrics(c.Host, c.Port, c.Path, c.Header)
 	if err != nil {
 		return nil, err
 	}
@@ -171,9 +173,26 @@ func parseApache2Status(str string, p *map[string]float64) error {
 }
 
 // Getting apache2 status from server-status module data.
-func getApache2Metrics(host string, port uint16, path string) (string, error) {
+func getApache2Metrics(host string, port uint16, path string, header []string) (string, error) {
 	uri := "http://" + host + ":" + strconv.FormatUint(uint64(port), 10) + path
-	resp, err := http.Get(uri)
+	req, err := http.NewRequest("GET", uri, nil)
+	if err != nil {
+		return "", err
+	}
+	for _, h := range header {
+		kv := strings.SplitN(h, ":", 2)
+		var k, v string
+		k = strings.TrimSpace(kv[0])
+		if len(kv) == 2 {
+			v = strings.TrimSpace(kv[1])
+		}
+		if http.CanonicalHeaderKey(k) == "Host" {
+			req.Host = v
+		} else {
+			req.Header.Set(k, v)
+		}
+	}
+	resp, err := http.DefaultClient.Do(req)
 	if err != nil {
 		return "", err
 	}
