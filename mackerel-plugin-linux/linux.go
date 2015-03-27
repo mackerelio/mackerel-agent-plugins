@@ -281,13 +281,13 @@ func parseProcDiskstats(str string, p *map[string]float64) error {
 
 		(*p)[fmt.Sprintf("iotime_%s", device)], _ = _atof(record[12])
 		(*p)[fmt.Sprintf("iotime_weighted_%s", device)], _ = _atof(record[13])
-		elapsed_data = append(elapsed_data, mp.Metrics{Name: fmt.Sprintf("iotime_%s", device), Label: "IO Time", Diff: true})
-		elapsed_data = append(elapsed_data, mp.Metrics{Name: fmt.Sprintf("iotime_weighted_%s", device), Label: "IO Time Weighted", Diff: true})
+		elapsed_data = append(elapsed_data, mp.Metrics{Name: fmt.Sprintf("iotime_%s", device), Label: fmt.Sprintf("%s IO Time", device), Diff: true})
+		elapsed_data = append(elapsed_data, mp.Metrics{Name: fmt.Sprintf("iotime_weighted_%s", device), Label: fmt.Sprintf("%s IO Time Weighted", device), Diff: true})
 
 		(*p)[fmt.Sprintf("tsreading_%s", device)], _ = _atof(record[6])
 		(*p)[fmt.Sprintf("tswriting_%s", device)], _ = _atof(record[10])
-		rwtime_data = append(rwtime_data, mp.Metrics{Name: fmt.Sprintf("tsreading_%s", device), Label: "Read", Diff: true})
-		rwtime_data = append(rwtime_data, mp.Metrics{Name: fmt.Sprintf("tswriting_%s", device), Label: "Write", Diff: true})
+		rwtime_data = append(rwtime_data, mp.Metrics{Name: fmt.Sprintf("tsreading_%s", device), Label: fmt.Sprintf("%s Read", device), Diff: true})
+		rwtime_data = append(rwtime_data, mp.Metrics{Name: fmt.Sprintf("tswriting_%s", device), Label: fmt.Sprintf("%s Write", device), Diff: true})
 	}
 
 	graphdef["linux.disk.elapsed"] = mp.Graphs{
