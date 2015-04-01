@@ -126,7 +126,7 @@ func DefineMemoryMetrics(names []string) []mp.Metrics {
 func DefineNettxMetrics(names []string) []mp.Metrics {
 	nettx_metrics := make([]mp.Metrics, 0)
 	for _, name := range names {
-		nettx_metrics = append(nettx_metrics, mp.Metrics{Name: fmt.Sprintf("nettx_%s", name), Label: name, Stacked: true})
+		nettx_metrics = append(nettx_metrics, mp.Metrics{Name: fmt.Sprintf("nettx_%s", name), Label: name, Stacked: true, Diff: true})
 	}
 	return nettx_metrics
 }
@@ -134,7 +134,7 @@ func DefineNettxMetrics(names []string) []mp.Metrics {
 func DefineNetrxMetrics(names []string) []mp.Metrics {
 	netrx_metrics := make([]mp.Metrics, 0)
 	for _, name := range names {
-		netrx_metrics = append(netrx_metrics, mp.Metrics{Name: fmt.Sprintf("netrx_%s", name), Label: name, Stacked: true})
+		netrx_metrics = append(netrx_metrics, mp.Metrics{Name: fmt.Sprintf("netrx_%s", name), Label: name, Stacked: true, Diff: true})
 	}
 	return netrx_metrics
 }
@@ -142,7 +142,7 @@ func DefineNetrxMetrics(names []string) []mp.Metrics {
 func DefineVbdrdMetrics(names []string) []mp.Metrics {
 	vbdrd_metrics := make([]mp.Metrics, 0)
 	for _, name := range names {
-		vbdrd_metrics = append(vbdrd_metrics, mp.Metrics{Name: fmt.Sprintf("vbdrd_%s", name), Label: name, Stacked: true})
+		vbdrd_metrics = append(vbdrd_metrics, mp.Metrics{Name: fmt.Sprintf("vbdrd_%s", name), Label: name, Stacked: true, Diff: true})
 	}
 	return vbdrd_metrics
 }
@@ -150,7 +150,7 @@ func DefineVbdrdMetrics(names []string) []mp.Metrics {
 func DefineVbdwrMetrics(names []string) []mp.Metrics {
 	vbdwr_metrics := make([]mp.Metrics, 0)
 	for _, name := range names {
-		vbdwr_metrics = append(vbdwr_metrics, mp.Metrics{Name: fmt.Sprintf("vbdwr_%s", name), Label: name, Stacked: true})
+		vbdwr_metrics = append(vbdwr_metrics, mp.Metrics{Name: fmt.Sprintf("vbdwr_%s", name), Label: name, Stacked: true, Diff: true})
 	}
 	return vbdwr_metrics
 }
