@@ -42,6 +42,13 @@ done
 %{__targetdir}
 
 %changelog
+* Thu Apr 02 2015 <y.songmu@gmail.com> - 0.8.0
+- mackerel-plugin-xentop (by taketo957)
+- Add Metrics for MySQL InnoDB (by koemu)
+- apache2: Add a 'header' parameter to cli flags (by pandax381)
+- Fix linux users, disk time metrics (by koemu)
+- Add README for mackerel-plugin-xentop (by y-uuki)
+
 * Wed Feb 25 2015 <y.songmu@gmail.com> - 0.7.0
 - A plugin for PHP OPcache (by yucchiy)
 - Add a parameter to specify the LoadBalancerName (by ki38sato)
