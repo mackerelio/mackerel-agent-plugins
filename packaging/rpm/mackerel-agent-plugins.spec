@@ -8,7 +8,7 @@
 
 Summary: Monitoring program plugins for Mackerel
 Name: mackerel-agent-plugins
-Version: 0.7.0
+Version: 0.8.0
 Release: %{revision}
 License: Apache-2
 Group: Applications/System
@@ -30,7 +30,7 @@ This package provides plugins for Mackerel.
 
 %{__mkdir} -p %{buildroot}%{__targetdir}
 
-for i in apache2 aws-ec2-cpucredit aws-elasticache aws-elb aws-rds aws-ses elasticsearch haproxy jvm linux memcached mongodb munin mysql nginx php-apc php-opcache plack postgres redis snmp squid varnish;do \
+for i in apache2 aws-ec2-cpucredit aws-elasticache aws-elb aws-rds aws-ses elasticsearch haproxy jvm linux memcached mongodb munin mysql nginx php-apc php-opcache plack postgres redis snmp squid varnish xentop;do \
     %{__install} -m0755 %{_sourcedir}/build/mackerel-plugin-$i %{buildroot}%{__targetdir}/; \
 done
 
@@ -42,6 +42,13 @@ done
 %{__targetdir}
 
 %changelog
+* Thu Apr 02 2015 <y.songmu@gmail.com> - 0.8.0
+- mackerel-plugin-xentop (by taketo957)
+- Add Metrics for MySQL InnoDB (by koemu)
+- apache2: Add a 'header' parameter to cli flags (by pandax381)
+- Fix linux users, disk time metrics (by koemu)
+- Add README for mackerel-plugin-xentop (by y-uuki)
+
 * Wed Feb 25 2015 <y.songmu@gmail.com> - 0.7.0
 - A plugin for PHP OPcache (by yucchiy)
 - Add a parameter to specify the LoadBalancerName (by ki38sato)
