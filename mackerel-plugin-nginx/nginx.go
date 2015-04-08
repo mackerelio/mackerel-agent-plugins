@@ -11,7 +11,7 @@ import (
 	"os"
 	"regexp"
 	"strconv"
-	//"strings"
+	"strings"
 )
 
 var graphdef map[string](mp.Graphs) = map[string](mp.Graphs){
@@ -42,8 +42,20 @@ var graphdef map[string](mp.Graphs) = map[string](mp.Graphs){
 	},
 }
 
+type stringSlice []string
+
+func (s *stringSlice) Set(v string) error {
+	*s = append(*s, v)
+	return nil
+}
+
+func (s *stringSlice) String() string {
+	return fmt.Sprintf("%v", *s)
+}
+
 type NginxPlugin struct {
-	Uri string
+	Uri    string
+	Header stringSlice
 }
 
 // % wget -qO- http://localhost:8080/nginx_status
@@ -53,7 +65,24 @@ type NginxPlugin struct {
 // Reading: 66 Writing: 16 Waiting: 41
 
 func (n NginxPlugin) FetchMetrics() (map[string]float64, error) {
-	resp, err := http.Get(n.Uri)
+	req, err := http.NewRequest("GET", n.Uri, nil)
+	if err != nil {
+		return nil, err
+	}
+	for _, h := range n.Header {
+		kv := strings.SplitN(h, ":", 2)
+		var k, v string
+		k = strings.TrimSpace(kv[0])
+		if len(kv) == 2 {
+			v = strings.TrimSpace(kv[1])
+		}
+		if http.CanonicalHeaderKey(k) == "Host" {
+			req.Host = v
+		} else {
+			req.Header.Set(k, v)
+		}
+	}
+	resp, err := http.DefaultClient.Do(req)
 	if err != nil {
 		return nil, err
 	}
@@ -138,6 +167,8 @@ func main() {
 	optPort := flag.String("port", "8080", "Port")
 	optPath := flag.String("path", "/nginx_status", "Path")
 	optTempfile := flag.String("tempfile", "", "Temp file name")
+	optHeader := &stringSlice{}
+	flag.Var(optHeader, "header", "Set http header (e.g. \"Host: servername\")")
 	flag.Parse()
 
 	var nginx NginxPlugin
@@ -146,6 +177,7 @@ func main() {
 	} else {
 		nginx.Uri = fmt.Sprintf("%s://%s:%s%s", *optScheme, *optHost, *optPort, *optPath)
 	}
+	nginx.Header = *optHeader
 
 	helper := mp.NewMackerelPlugin(nginx)
 	if *optTempfile != "" {
