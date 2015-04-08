@@ -13,7 +13,6 @@ Release: %{revision}
 License: Apache-2
 Group: Applications/System
 URL: https://mackerel.io/
-Requires: mackerel-agent >= 0.12.3
 
 Source0: README.md
 Packager:  Hatena
