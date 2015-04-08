@@ -8,7 +8,7 @@
 
 Summary: Monitoring program plugins for Mackerel
 Name: mackerel-agent-plugins
-Version: 0.8.0
+Version: 0.8.1
 Release: %{revision}
 License: Apache-2
 Group: Applications/System
@@ -41,6 +41,10 @@ done
 %{__targetdir}
 
 %changelog
+* Wed Apr 08 2015 <y.songmu@gmail.com> - 0.8.1
+- nginx: Add a 'header' parameter to command-line flags (by pandax381)
+- remove mackerel-agent dependency (by Songmu)
+
 * Thu Apr 02 2015 <y.songmu@gmail.com> - 0.8.0
 - mackerel-plugin-xentop (by taketo957)
 - Add Metrics for MySQL InnoDB (by koemu)
