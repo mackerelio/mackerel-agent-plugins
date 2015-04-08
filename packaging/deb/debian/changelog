@@ -1,3 +1,12 @@
+mackerel-agent-plugins (0.8.1-1) stable; urgency=low
+
+  * nginx: Add a 'header' parameter to command-line flags (by pandax381)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/78>
+  * remove mackerel-agent dependency (by Songmu)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/79>
+
+ -- Songmu <y.songmu@gmail.com>  Wed, 08 Apr 2015 12:58:00 +0900
+
 mackerel-agent-plugins (0.8.0-1) stable; urgency=low
 
   * mackerel-plugin-xentop (by taketo957)
