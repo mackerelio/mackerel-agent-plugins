@@ -1,3 +1,27 @@
+mackerel-agent-plugins (0.8.1-1) stable; urgency=low
+
+  * nginx: Add a 'header' parameter to command-line flags (by pandax381)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/78>
+  * remove mackerel-agent dependency (by Songmu)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/79>
+
+ -- Songmu <y.songmu@gmail.com>  Wed, 08 Apr 2015 12:58:00 +0900
+
+mackerel-agent-plugins (0.8.0-1) stable; urgency=low
+
+  * mackerel-plugin-xentop (by taketo957)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/71>
+  * Add Metrics for MySQL InnoDB (by koemu)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/72>
+  * apache2: Add a 'header' parameter to cli flags (by pandax381)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/74>
+  * Fix linux users, disk time metrics (by koemu)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/75>
+  * Add README for mackerel-plugin-xentop (by y-uuki)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/76>
+
+ -- Songmu <y.songmu@gmail.com>  Thu, 02 Apr 2015 18:47:09 +0900
+
 mackerel-agent-plugins (0.7.0-1) stable; urgency=low
 
   * A plugin for PHP OPcache (by yucchiy)

@@ -77,8 +77,9 @@ Scoreboard: W_.__...........................`
 	host := found[2]
 	port, _ := strconv.Atoi(found[3])
 	path := found[4]
+	header := []string{fmt.Sprintf("Host: %s", found[2]), "X-Text-Header: test"}
 
-	ret, err := getApache2Metrics(host, uint16(port), path)
+	ret, err := getApache2Metrics(host, uint16(port), path, header)
 	assert.Nil(t, err)
 	assert.NotNil(t, ret)
 	assert.NotEmpty(t, ret)
