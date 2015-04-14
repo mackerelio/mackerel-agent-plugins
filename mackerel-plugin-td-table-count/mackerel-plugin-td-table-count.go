@@ -79,7 +79,7 @@ func (m TDTablePlugin) GraphDefinition() map[string](mp.Graphs) {
 	}
 
 	graphdef := map[string](mp.Graphs){
-		fmt.Sprintf("td.count_%s", m.Database): graph,
+		fmt.Sprintf("td-table.%s", m.Database): graph,
 	}
 
 	return graphdef
