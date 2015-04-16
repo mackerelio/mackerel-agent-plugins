@@ -9,6 +9,7 @@ import (
 	"log"
 	"os"
 	"time"
+	"fmt"
 )
 
 var metricsdefMemcached []string = []string{
@@ -358,7 +359,7 @@ func main() {
 	if *optTempfile != "" {
 		helper.Tempfile = *optTempfile
 	} else {
-		helper.Tempfile = "/tmp/mackerel-plugin-aws-elasticache"
+		helper.Tempfile = fmt.Sprintf("/tmp/mackerel-plugin-aws-elasticache-%s-%s", *optCacheClusterId, *optCacheNodeId)
 	}
 
 	if os.Getenv("MACKEREL_AGENT_PLUGIN_META") != "" {
