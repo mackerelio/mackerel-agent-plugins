@@ -34,30 +34,30 @@ hoge.type DERIVE
 
 	parsePluginConfig(stub, &muninms, &title)
 
-	assert.Equal(t, title, "Swap in/out")
+	assert.EqualValues(t, title, "Swap in/out")
 
 	var met *MuninMetric
 
 	assert.NotNil(t, muninms["swap_in"])
 	met = muninms["swap_in"]
-	assert.Equal(t, met.Label, "swapIn")
-	assert.Equal(t, met.Type, "DERIVE")
-	assert.Equal(t, met.Draw, "STACK")
-	assert.Equal(t, met.Value, "")
+	assert.EqualValues(t, met.Label, "swapIn")
+	assert.EqualValues(t, met.Type, "DERIVE")
+	assert.EqualValues(t, met.Draw, "STACK")
+	assert.EqualValues(t, met.Value, "")
 
 	assert.NotNil(t, muninms["swap_out"])
 	met = muninms["swap_out"]
-	assert.Equal(t, met.Label, "swapOut")
-	assert.Equal(t, met.Type, "DERIVE")
-	assert.Equal(t, met.Draw, "")
-	assert.Equal(t, met.Value, "")
+	assert.EqualValues(t, met.Label, "swapOut")
+	assert.EqualValues(t, met.Type, "DERIVE")
+	assert.EqualValues(t, met.Draw, "")
+	assert.EqualValues(t, met.Value, "")
 
 	assert.NotNil(t, muninms["hoge"])
 	met = muninms["hoge"]
-	assert.Equal(t, met.Label, "ho GE")
-	assert.Equal(t, met.Type, "DERIVE")
-	assert.Equal(t, met.Draw, "")
-	assert.Equal(t, met.Value, "")
+	assert.EqualValues(t, met.Label, "ho GE")
+	assert.EqualValues(t, met.Type, "DERIVE")
+	assert.EqualValues(t, met.Draw, "")
+	assert.EqualValues(t, met.Value, "")
 }
 
 func TestParsePluginVals(t *testing.T) {
@@ -70,11 +70,11 @@ swap_in.value 2833950530
 
 	assert.NotNil(t, muninms["swap_in"])
 	met = muninms["swap_in"]
-	assert.Equal(t, met.Value, "2833950530")
+	assert.EqualValues(t, met.Value, "2833950530")
 
 	assert.NotNil(t, muninms["swap_out"])
 	met = muninms["swap_out"]
-	assert.Equal(t, met.Value, "2833950519")
+	assert.EqualValues(t, met.Value, "2833950519")
 }
 
 func TestRemoveUselessMetrics(t *testing.T) {
@@ -117,22 +117,22 @@ env.foo2 bar2
 	var s ServiceEnvs
 
 	s = ss["*"]
-	assert.Equal(t, s["hoge"], "wwww")
-	assert.Equal(t, s["poyo"], "1 2 3")
-	assert.Equal(t, s["sharp"], "# #")
+	assert.EqualValues(t, s["hoge"], "wwww")
+	assert.EqualValues(t, s["poyo"], "1 2 3")
+	assert.EqualValues(t, s["sharp"], "# #")
 
 	s = ss["s*"]
-	assert.Equal(t, s["foo"], "bababa")
+	assert.EqualValues(t, s["foo"], "bababa")
 
 	s = ss["swap*"]
-	assert.Equal(t, s["OutOfService"], "")
-	assert.Equal(t, s["foo"], "bar")
-	assert.Equal(t, s["hoge"], "wild")
-	assert.Equal(t, s["foo2"], "bar2")
+	assert.EqualValues(t, s["OutOfService"], "")
+	assert.EqualValues(t, s["foo"], "bar")
+	assert.EqualValues(t, s["hoge"], "wild")
+	assert.EqualValues(t, s["foo2"], "bar2")
 
 	s = ss["swap"]
-	assert.Equal(t, s["hoge"], "abs")
-	assert.Equal(t, s["piyo"], "")
+	assert.EqualValues(t, s["hoge"], "abs")
+	assert.EqualValues(t, s["piyo"], "")
 
 	pluginconfstub2 := `
 [swap]
@@ -140,19 +140,19 @@ env.piyo piYO
 `
 	getEnvSettingsReader(&ss, plg, bytes.NewBufferString(pluginconfstub2))
 	s = ss["swap"]
-	assert.Equal(t, s["piyo"], "piYO")
+	assert.EqualValues(t, s["piyo"], "piYO")
 }
 
 func TestCompileEnvPairs(t *testing.T) {
 	envs := *compileEnvPairs(&ss, plg)
 
-	assert.Equal(t, envs["snap"], "")
-	assert.Equal(t, envs["OutOfService"], "")
+	assert.EqualValues(t, envs["snap"], "")
+	assert.EqualValues(t, envs["OutOfService"], "")
 
-	assert.Equal(t, envs["poyo"], "1 2 3")
-	assert.Equal(t, envs["sharp"], "# #")
-	assert.Equal(t, envs["foo"], "bar")
-	assert.Equal(t, envs["foo2"], "bar2")
-	assert.Equal(t, envs["hoge"], "abs")
-	assert.Equal(t, envs["piyo"], "piYO")
+	assert.EqualValues(t, envs["poyo"], "1 2 3")
+	assert.EqualValues(t, envs["sharp"], "# #")
+	assert.EqualValues(t, envs["foo"], "bar")
+	assert.EqualValues(t, envs["foo2"], "bar2")
+	assert.EqualValues(t, envs["hoge"], "abs")
+	assert.EqualValues(t, envs["piyo"], "piYO")
 }
