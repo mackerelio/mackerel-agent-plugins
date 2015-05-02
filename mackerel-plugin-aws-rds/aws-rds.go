@@ -3,12 +3,13 @@ package main
 import (
 	"errors"
 	"flag"
-	"github.com/crowdmob/goamz/aws"
-	"github.com/crowdmob/goamz/cloudwatch"
-	mp "github.com/mackerelio/go-mackerel-plugin"
 	"log"
 	"os"
 	"time"
+
+	"github.com/crowdmob/goamz/aws"
+	"github.com/crowdmob/goamz/cloudwatch"
+	mp "github.com/mackerelio/go-mackerel-plugin"
 )
 
 var graphdef map[string](mp.Graphs) = map[string](mp.Graphs){
@@ -68,6 +69,22 @@ var graphdef map[string](mp.Graphs) = map[string](mp.Graphs){
 		Metrics: [](mp.Metrics){
 			mp.Metrics{Name: "ReadLatency", Label: "Read"},
 			mp.Metrics{Name: "WriteLatency", Label: "Write"},
+		},
+	},
+	"rds.Throughput": mp.Graphs{
+		Label: "RDS Throughput",
+		Unit:  "bytes/sec",
+		Metrics: [](mp.Metrics){
+			mp.Metrics{Name: "ReadThroughput", Label: "Read"},
+			mp.Metrics{Name: "WriteThroughput", Label: "Write"},
+		},
+	},
+	"rds.NetworkThroughput": mp.Graphs{
+		Label: "RDS Network Throughput",
+		Unit:  "bytes/sec",
+		Metrics: [](mp.Metrics){
+			mp.Metrics{Name: "NetworkTransmitThroughput", Label: "Transmit"},
+			mp.Metrics{Name: "NetworkReceiveThroughput", Label: "Receive"},
 		},
 	},
 }
@@ -135,7 +152,7 @@ func (p RDSPlugin) FetchMetrics() (map[string]float64, error) {
 	for _, met := range [...]string{
 		"BinLogDiskUsage", "CPUUtilization", "DatabaseConnections", "DiskQueueDepth", "FreeableMemory",
 		"FreeStorageSpace", "ReplicaLag", "SwapUsage", "ReadIOPS", "WriteIOPS", "ReadLatency",
-		"WriteLatency",
+		"WriteLatency", "ReadThroughput", "WriteThroughput", "NetworkTransmitThroughput", "NetworkReceiveThroughput",
 	} {
 		v, err := GetLastPoint(cloudWatch, perInstance, met)
 		if err == nil {
