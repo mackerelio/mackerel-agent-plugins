@@ -68,8 +68,12 @@ func (p HAProxyPlugin) FetchMetrics() (map[string]float64, error) {
 		return nil, fmt.Errorf("Request failed. Status: %s, URI: %s", resp.Status, request_uri)
 	}
 
+	return p.ParseStats(resp.Body)
+}
+
+func (p HAProxyPlugin) ParseStats(statsBody io.Reader) (map[string]float64, error) {
 	stat := make(map[string]float64)
-	reader := csv.NewReader(resp.Body)
+	reader := csv.NewReader(statsBody)
 
 	for {
 		columns, err := reader.Read()
