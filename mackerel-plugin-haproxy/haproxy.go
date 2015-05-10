@@ -10,6 +10,7 @@ import (
 	"net/http"
 	"os"
 	"strconv"
+	"time"
 )
 
 var graphdef map[string](mp.Graphs) = map[string](mp.Graphs){
@@ -38,24 +39,46 @@ var graphdef map[string](mp.Graphs) = map[string](mp.Graphs){
 }
 
 type HAProxyPlugin struct {
-	Uri string
+	Uri      string
+	Username string
+	Password string
 }
 
 func (p HAProxyPlugin) FetchMetrics() (map[string]float64, error) {
-	resp, err := http.Get(p.Uri + ";csv;norefresh")
+	client := &http.Client{
+		Timeout: time.Duration(5) * time.Second,
+	}
+
+	request_uri := p.Uri + ";csv;norefresh"
+	req, err := http.NewRequest("GET", request_uri, nil)
+	if err != nil {
+		return nil, err
+	}
+	if p.Username != "" {
+		req.SetBasicAuth(p.Username, p.Password)
+	}
+
+	resp, err := client.Do(req)
 	if err != nil {
 		return nil, err
 	}
 	defer resp.Body.Close()
+
+	if resp.StatusCode != 200 {
+		return nil, fmt.Errorf("Request failed. Status: %s, URI: %s", resp.Status, request_uri)
+	}
 
 	stat := make(map[string]float64)
 	reader := csv.NewReader(resp.Body)
 
 	for {
 		columns, err := reader.Read()
-
 		if err == io.EOF {
 			break
+		}
+
+		if len(columns) < 60 {
+			return nil, errors.New("Length of stats csv is too short. Specifed uri may be wrong.")
 		}
 
 		if columns[1] != "BACKEND" {
@@ -102,6 +125,8 @@ func main() {
 	optHost := flag.String("host", "localhost", "Hostname")
 	optPort := flag.String("port", "80", "Port")
 	optPath := flag.String("path", "/", "Path")
+	optUsername := flag.String("username", "", "Username for Basic Auth")
+	optPassword := flag.String("password", "", "Password for Basic Auth")
 	optTempfile := flag.String("tempfile", "", "Temp file name")
 	flag.Parse()
 
@@ -110,6 +135,14 @@ func main() {
 		haproxy.Uri = *optUri
 	} else {
 		haproxy.Uri = fmt.Sprintf("%s://%s:%s%s", *optScheme, *optHost, *optPort, *optPath)
+	}
+
+	if *optUsername != "" {
+		haproxy.Username = *optUsername
+	}
+
+	if *optPassword != "" {
+		haproxy.Password = *optPassword
 	}
 
 	helper := mp.NewMackerelPlugin(haproxy)
