@@ -36,6 +36,8 @@ listen hastats *:8088
     stats show-legends
     stats uri /haproxy?hastats
 
-    # IDとパスワード
+    # basic auth
     stats auth admin:adminadmin
 ```
+
+See haproxy_test.go for example configuration.
