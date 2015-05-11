@@ -28,7 +28,7 @@ hastats,BACKEND,0,0,0,1,7,17,7061,15994,0,0,,17,0,0,0,UP,0,0,0,,0,1543,0,,1,1,0,
 	stat, err := haproxy.ParseStats(haproxyStats)
 	fmt.Println(stat)
 	assert.Nil(t, err)
-	// Innodb Semaphores
+	// HaProxy Stats 
 	assert.EqualValues(t, stat["sessions"], 17)
 	assert.EqualValues(t, stat["bytes_in"], 7061)
 	assert.EqualValues(t, stat["bytes_out"], 15994)
