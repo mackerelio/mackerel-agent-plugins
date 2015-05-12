@@ -1,3 +1,18 @@
+mackerel-agent-plugins (0.9.0-1) stable; urgency=low
+
+  * Fix elasticache plugin (by ki38sato)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/81>
+  * Add td-table-count plugin (by ariarijp)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/83>
+  * additional help for nginx SSL sites (by obaratch)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/84>
+  * Add Throughput and Network Throughput metrics to AWS RDS Plugin (by ariarijp)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/85>
+  * Feature/haproxy basicauth (by stanaka)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/86>
+
+ -- Songmu <y.songmu@gmail.com>  Tue, 12 May 2015 15:33:25 +0900
+
 mackerel-agent-plugins (0.8.1-1) stable; urgency=low
 
   * nginx: Add a 'header' parameter to command-line flags (by pandax381)

@@ -29,6 +29,7 @@ Document of each plugin is located under each sub directory.
 * [mackerel-plugin-redis](./mackerel-plugin-redis/README.md)
 * [mackerel-plugin-snmp](./mackerel-plugin-snmp/README.md)
 * [mackerel-plugin-squid](./mackerel-plugin-squid/README.md)
+* [mackerel-plugin-td-table-count](./mackerel-plugin-td-table-count/README.md)
 * [mackerel-plugin-varnish](./mackerel-plugin-varnish/README.md)
 * [mackerel-plugin-xentop](./mackerel-plugin-xentop/README.md)
 

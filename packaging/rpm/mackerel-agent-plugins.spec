@@ -8,7 +8,7 @@
 
 Summary: Monitoring program plugins for Mackerel
 Name: mackerel-agent-plugins
-Version: 0.8.1
+Version: 0.9.0
 Release: %{revision}
 License: Apache-2
 Group: Applications/System
@@ -29,7 +29,7 @@ This package provides plugins for Mackerel.
 
 %{__mkdir} -p %{buildroot}%{__targetdir}
 
-for i in apache2 aws-ec2-cpucredit aws-elasticache aws-elb aws-rds aws-ses elasticsearch haproxy jvm linux memcached mongodb munin mysql nginx php-apc php-opcache plack postgres redis snmp squid varnish xentop;do \
+for i in apache2 aws-ec2-cpucredit aws-elasticache aws-elb aws-rds aws-ses elasticsearch haproxy jvm linux memcached mongodb munin mysql nginx php-apc php-opcache plack postgres redis snmp squid td-table-count varnish xentop;do \
     %{__install} -m0755 %{_sourcedir}/build/mackerel-plugin-$i %{buildroot}%{__targetdir}/; \
 done
 
@@ -41,6 +41,13 @@ done
 %{__targetdir}
 
 %changelog
+* Tue May 12 2015 <y.songmu@gmail.com> - 0.9.0
+- Fix elasticache plugin (by ki38sato)
+- Add td-table-count plugin (by ariarijp)
+- additional help for nginx SSL sites (by obaratch)
+- Add Throughput and Network Throughput metrics to AWS RDS Plugin (by ariarijp)
+- Feature/haproxy basicauth (by stanaka)
+
 * Wed Apr 08 2015 <y.songmu@gmail.com> - 0.8.1
 - nginx: Add a 'header' parameter to command-line flags (by pandax381)
 - remove mackerel-agent dependency (by Songmu)
