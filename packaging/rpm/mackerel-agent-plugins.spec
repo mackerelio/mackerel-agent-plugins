@@ -41,6 +41,14 @@ done
 %{__targetdir}
 
 %changelog
+* Tue May 12 2015 <y.songmu@gmail.com> - 0.9.0
+- [WIP] Create apache2 plugin (by koemu)
+- Fix elasticache plugin (by ki38sato)
+- Add td-table-count plugin (by ariarijp)
+- additional help for nginx SSL sites (by obaratch)
+- Add Throughput and Network Throughput metrics to AWS RDS Plugin (by ariarijp)
+- Feature/haproxy basicauth (by stanaka)
+
 * Wed Apr 08 2015 <y.songmu@gmail.com> - 0.8.1
 - nginx: Add a 'header' parameter to command-line flags (by pandax381)
 - remove mackerel-agent dependency (by Songmu)
