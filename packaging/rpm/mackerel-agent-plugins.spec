@@ -42,7 +42,6 @@ done
 
 %changelog
 * Tue May 12 2015 <y.songmu@gmail.com> - 0.9.0
-- [WIP] Create apache2 plugin (by koemu)
 - Fix elasticache plugin (by ki38sato)
 - Add td-table-count plugin (by ariarijp)
 - additional help for nginx SSL sites (by obaratch)
