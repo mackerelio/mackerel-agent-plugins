@@ -44,7 +44,9 @@ func (m VarnishPlugin) FetchMetrics() (map[string]float64, error) {
 
 	lineexp, err := regexp.Compile("^([^ ]+) +(\\d+)")
 
-	stat := make(map[string]float64)
+	var cacheHits float64
+	var cacheMisses float64
+	var cacheHitsForPass float64
 	for _, line := range strings.Split(string(out), "\n") {
 		match := lineexp.FindStringSubmatch(line)
 		if match == nil {
@@ -52,13 +54,19 @@ func (m VarnishPlugin) FetchMetrics() (map[string]float64, error) {
 		}
 
 		switch match[1] {
-		case "client_req", "MAIN.client_req":
-			stat["requests"], err = strconv.ParseFloat(match[2], 64)
 		case "cache_hit", "MAIN.cache_hit":
-			stat["cache_hits"], err = strconv.ParseFloat(match[2], 64)
+			cacheHits, err = strconv.ParseFloat(match[2], 64)
+		case "cache_miss", "MAIN.cache_miss":
+			cacheMisses, err = strconv.ParseFloat(match[2], 64)
+		case "cache_hitpass", "MAIN.cache_hitpass":
+			cacheHitsForPass, err = strconv.ParseFloat(match[2], 64)
 		}
 	}
 
+	stat := map[string]float64{
+		"requests":   cacheHits + cacheMisses + cacheHitsForPass,
+		"cache_hits": cacheHits,
+	}
 	return stat, err
 }
 
