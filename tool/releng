@@ -299,10 +299,13 @@ sub build_pull_request_body {
     $body;
 }
 
+sub load_packaging_confg {
+    decode_json slurp 'packaging/config.json';
+}
 
 ### main process
 if (!$ENV{HARNESS_ACTIVE}) {
-    main();
+    main() unless caller;
 } else {
     # When called via `prove`, tests will run.
     run_tests();
@@ -315,6 +318,8 @@ sub main {
     git qw/checkout master/;
     git qw/pull/;
 
+    my $config = load_packaging_confg;
+
     my $current_version = last_release;
     my $next_version    = decide_next_version($current_version);
 
@@ -326,7 +331,7 @@ sub main {
     update_versions($current_version, $next_version);
     my @plugins = retrieve_plugins;
     update_readme(@plugins);
-    update_packaging_specs(@plugins);
+    update_packaging_specs(@{ $config->{plugins} });
     git qw/commit -am/, "ready for next release. version: $next_version";
 
     infof "update changelogs\n";
@@ -358,5 +363,15 @@ sub run_tests {
     is($patch, 2);
     is( suggest_next_version($version), '0.2.0' );
 
+    my $config = load_packaging_confg;
+    ok($config->{description});
+
+    my $plugins_to_be_packaged = $config->{plugins};
+    isa_ok($plugins_to_be_packaged, 'ARRAY');
+
+    my %plugins = map { $_ => 1, } retrieve_plugins;
+    for my $plug (@$plugins_to_be_packaged) {
+        ok($plugins{$plug}, "$plug ok");
+    }
     done_testing();
 }
