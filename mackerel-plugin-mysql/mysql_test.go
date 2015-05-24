@@ -600,3 +600,160 @@ END OF INNODB MONITOR OUTPUT
 	assert.EqualValues(t, stat["unflushed_log"], 0)
 	assert.EqualValues(t, stat["uncheckpointed_bytes"], 0)
 }
+
+func TestParseProcStat50(t *testing.T) {
+
+	stub := `=====================================
+150515 18:25:10 INNODB MONITOR OUTPUT
+=====================================
+Per second averages calculated from the last 3 seconds
+----------
+SEMAPHORES
+----------
+OS WAIT ARRAY INFO: reservation count 781, signal count 781
+Mutex spin waits 0, rounds 30300, OS waits 1
+RW-shared spins 1755, OS waits 778; RW-excl spins 7, OS waits 2
+------------
+TRANSACTIONS
+------------
+Trx id counter 0 2369392
+Purge done for trx's n:o < 0 2368227 undo n:o < 0 0
+History list length 1
+Total number of lock structs in row lock hash table 0
+LIST OF TRANSACTIONS FOR EACH SESSION:
+---TRANSACTION 0 0, not started, process no 28986, OS thread id 3032255376
+MySQL thread id 31989, query id 288360 localhost root
+SHOW /*!50000 ENGINE*/ INNODB STATUS
+--------
+FILE I/O
+--------
+I/O thread 0 state: waiting for i/o request (insert buffer thread)
+I/O thread 1 state: waiting for i/o request (log thread)
+I/O thread 2 state: waiting for i/o request (read thread)
+I/O thread 3 state: waiting for i/o request (write thread)
+Pending normal aio reads: 0, aio writes: 0,
+ ibuf aio reads: 0, log i/o's: 0, sync i/o's: 0
+Pending flushes (fsync) log: 0; buffer pool: 0
+332 OS file reads, 7564 OS file writes, 4398 OS fsyncs
+0.00 reads/s, 0 avg bytes/read, 0.00 writes/s, 0.00 fsyncs/s
+-------------------------------------
+INSERT BUFFER AND ADAPTIVE HASH INDEX
+-------------------------------------
+Ibuf: size 1, free list len 0, seg size 2,
+2 inserts, 2 merged recs, 2 merges
+Hash table size 34679, used cells 23275, node heap has 39 buffer(s)
+0.00 hash searches/s, 0.00 non-hash searches/s
+---
+LOG
+---
+Log sequence number 0 51296721
+Log flushed up to   0 51296721
+Last checkpoint at  0 51296721
+0 pending log writes, 0 pending chkp writes
+2158 log i/o's done, 0.00 log i/o's/second
+----------------------
+BUFFER POOL AND MEMORY
+----------------------
+Total memory allocated 17874468; in additional pool allocated 1048576
+Buffer pool size   512
+Free buffers       1
+Database pages     472
+Modified db pages  0
+Pending reads 0
+Pending writes: LRU 0, flush list 0, single page 0
+Pages read 467, created 9, written 5185
+0.00 reads/s, 0.00 creates/s, 0.00 writes/s
+No buffer pool page gets since the last printout
+--------------
+ROW OPERATIONS
+--------------
+0 queries inside InnoDB, 0 queries in queue
+1 read views open inside InnoDB
+Main thread process no. 28986, id 2996738960, state: waiting for server activity
+Number of rows inserted 835, updated 104, deleted 2, read 226461457
+0.00 inserts/s, 0.00 updates/s, 0.00 deletes/s, 0.00 reads/s
+----------------------------
+END OF INNODB MONITOR OUTPUT
+============================`
+	stat := make(map[string]float64)
+
+	err := parseInnodbStatus(stub, &stat)
+	// fmt.Println(stat)
+	assert.Nil(t, err)
+	// Innodb Semaphores
+	assert.EqualValues(t, stat["spin_waits"], 1762)
+	assert.EqualValues(t, stat["spin_rounds"], 30300)
+	assert.EqualValues(t, stat["os_waits"], 781)
+	assert.EqualValues(t, stat["innodb_sem_wait"], 0)         // empty
+	assert.EqualValues(t, stat["innodb_sem_wait_time_ms"], 0) // empty
+	// Innodb Transactions
+	assert.EqualValues(t, stat["innodb_transactions"], 0) // empty
+	assert.EqualValues(t, stat["unpurged_txns"], 0)
+	assert.EqualValues(t, stat["history_list"], 1)
+	assert.EqualValues(t, stat["current_transactions"], 1)
+	assert.EqualValues(t, stat["active_transactions"], 0)
+	assert.EqualValues(t, stat["innodb_lock_wait_secs"], 0) // empty
+	assert.EqualValues(t, stat["read_views"], 1)
+	assert.EqualValues(t, stat["innodb_tables_in_use"], 0) // empty
+	assert.EqualValues(t, stat["innodb_locked_tables"], 0) // empty
+	assert.EqualValues(t, stat["locked_transactions"], 0)  // empty
+	assert.EqualValues(t, stat["innodb_lock_structs"], 0)  // empty
+	// File I/O
+	assert.EqualValues(t, stat["file_reads"], 332)
+	assert.EqualValues(t, stat["file_writes"], 7564)
+	assert.EqualValues(t, stat["file_fsyncs"], 4398)
+	assert.EqualValues(t, stat["pending_normal_aio_reads"], 0)
+	assert.EqualValues(t, stat["pending_normal_aio_writes"], 0)
+	assert.EqualValues(t, stat["pending_ibuf_aio_reads"], 0)
+	assert.EqualValues(t, stat["pending_aio_log_ios"], 0)
+	assert.EqualValues(t, stat["pending_aio_sync_ios"], 0)
+	assert.EqualValues(t, stat["pending_log_flushes"], 0)
+	assert.EqualValues(t, stat["pending_buf_pool_flushes"], 0)
+	// Insert Buffer and Adaptive Hash Index
+	assert.EqualValues(t, stat["ibuf_used_cells"], 1)
+	assert.EqualValues(t, stat["ibuf_free_cells"], 0)
+	assert.EqualValues(t, stat["ibuf_cell_count"], 2)
+	assert.EqualValues(t, stat["ibuf_inserts"], 2)
+	assert.EqualValues(t, stat["ibuf_merges"], 2)
+	assert.EqualValues(t, stat["ibuf_merged"], 2)
+	assert.EqualValues(t, stat["hash_index_cells_total"], 34679)
+	assert.EqualValues(t, stat["hash_index_cells_used"], 23275)
+	// Log
+	assert.EqualValues(t, stat["log_writes"], 2158)
+	assert.EqualValues(t, stat["pending_log_writes"], 0)
+	assert.EqualValues(t, stat["pending_chkp_writes"], 0)
+	assert.EqualValues(t, stat["log_bytes_written"], 0)
+	assert.EqualValues(t, stat["log_bytes_flushed"], 0)
+	assert.EqualValues(t, stat["last_checkpoint"], 0)
+	// Buffer Pool and Memory
+	assert.EqualValues(t, stat["total_mem_alloc"], 17874468)
+	assert.EqualValues(t, stat["additional_pool_alloc"], 1048576)
+	assert.EqualValues(t, stat["adaptive_hash_memory"], 0)     // empty
+	assert.EqualValues(t, stat["page_hash_memory"], 0)         // empty
+	assert.EqualValues(t, stat["dictionary_cache_memory"], 0)  // empty
+	assert.EqualValues(t, stat["file_system_memory"], 0)       // empty
+	assert.EqualValues(t, stat["lock_system_memory"], 0)       // empty
+	assert.EqualValues(t, stat["recovery_system_memory"], 0)   // empty
+	assert.EqualValues(t, stat["thread_hash_memory"], 0)       // empty
+	assert.EqualValues(t, stat["innodb_io_pattern_memory"], 0) // empty
+	assert.EqualValues(t, stat["pool_size"], 512)
+	assert.EqualValues(t, stat["free_pages"], 1)
+	assert.EqualValues(t, stat["database_pages"], 472)
+	assert.EqualValues(t, stat["modified_pages"], 0)
+	assert.EqualValues(t, stat["read_ahead"], 0.00)
+	assert.EqualValues(t, stat["read_evicted"], 0.00)
+	assert.EqualValues(t, stat["read_random_ahead"], 0.00)
+	assert.EqualValues(t, stat["pages_read"], 467)
+	assert.EqualValues(t, stat["pages_created"], 9)
+	assert.EqualValues(t, stat["pages_written"], 5185)
+	// Row Operations
+	assert.EqualValues(t, stat["rows_inserted"], 835)
+	assert.EqualValues(t, stat["rows_updated"], 104)
+	assert.EqualValues(t, stat["rows_deleted"], 2)
+	assert.EqualValues(t, stat["rows_read"], 226461457)
+	assert.EqualValues(t, stat["queries_inside"], 0)
+	assert.EqualValues(t, stat["queries_queued"], 0)
+	// etc
+	assert.EqualValues(t, stat["unflushed_log"], 0)
+	assert.EqualValues(t, stat["uncheckpointed_bytes"], 0)
+}
