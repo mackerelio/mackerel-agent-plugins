@@ -111,7 +111,7 @@ func (m MySQLPlugin) FetchShowStatus(db mysql.Conn, stat map[string]float64) err
 			//fmt.Println(Variable_name, Value)
 			stat[Variable_name], _ = _atof(string(row[1].([]byte)))
 		} else {
-			log.Fatalln("FetchMetrics (InnoDB Status): row length is too small: ", len(row))
+			log.Fatalln("FetchMetrics (Status): row length is too small: ", len(row))
 		}
 	}
 	return nil
