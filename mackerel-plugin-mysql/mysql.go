@@ -124,8 +124,8 @@ func (m MySQLPlugin) FetchShowInnodbStatus(db mysql.Conn, stat map[string]float6
 		return err
 	}
 
-	if len(row) > 2 {
-		err = parseInnodbStatus(string(row[2].([]byte)), &stat)
+	if len(row) > 0 {
+		err = parseInnodbStatus(string(row[len(row)-1].([]byte)), &stat)
 	} else {
 		log.Fatalln("FetchMetrics (InnoDB Status): row length is too small: ", len(row))
 	}
