@@ -8,7 +8,7 @@
 
 Summary: Monitoring program plugins for Mackerel
 Name: mackerel-agent-plugins
-Version: 0.9.0
+Version: 0.9.1
 Release: %{revision}
 License: Apache-2
 Group: Applications/System
@@ -41,6 +41,9 @@ done
 %{__targetdir}
 
 %changelog
+* Wed Jun 10 2015 <tomohiro68@gmail.com> - 0.9.1
+- Fix an error in the number of requests of Varnish (by mono0x)
+
 * Tue May 12 2015 <y.songmu@gmail.com> - 0.9.0
 - Fix elasticache plugin (by ki38sato)
 - Add td-table-count plugin (by ariarijp)
