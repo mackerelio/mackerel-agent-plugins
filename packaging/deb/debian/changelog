@@ -1,7 +1,5 @@
 mackerel-agent-plugins (0.9.1-1) stable; urgency=low
 
-  * add CONTRIBUTING.md [int] (by stanaka)
-    <https://github.com/mackerelio/mackerel-agent-plugins/pull/89>
   * Fix an error in the number of requests of Varnish (by mono0x)
     <https://github.com/mackerelio/mackerel-agent-plugins/pull/90>
 
