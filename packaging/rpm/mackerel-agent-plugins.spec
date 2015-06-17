@@ -41,6 +41,10 @@ done
 %{__targetdir}
 
 %changelog
+* Wed Jun 17 2015 <tomohiro68@gmail.com> - 0.9.2
+- elasticsearch: add memory size used by lucene segments, which were exposed in Elasticsearch 1.4 (by yshh)
+- mysql: better error handling (by stanaka)
+
 * Wed Jun 10 2015 <tomohiro68@gmail.com> - 0.9.1
 - Fix an error in the number of requests of Varnish (by mono0x)
 
