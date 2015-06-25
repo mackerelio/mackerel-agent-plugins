@@ -88,6 +88,7 @@ type PostgresPlugin struct {
 	SSLmode  string
 	Timeout  int
 	Tempfile string
+        Option   string
 }
 
 func FetchStatDatabase(db *sql.DB) (map[string]float64, error) {
@@ -186,7 +187,7 @@ func mergeStat(dst, src map[string]float64) {
 }
 
 func (p PostgresPlugin) FetchMetrics() (map[string]float64, error) {
-	db, err := sql.Open("postgres", fmt.Sprintf("user=%s password=%s host=%s port=%s sslmode=%s connect_timeout=%d", p.Username, p.Password, p.Host, p.Port, p.SSLmode, p.Timeout))
+	db, err := sql.Open("postgres", fmt.Sprintf("user=%s password=%s host=%s port=%s sslmode=%s connect_timeout=%d %s", p.Username, p.Password, p.Host, p.Port, p.SSLmode, p.Timeout, p.Option))
 	if err != nil {
 		logger.Errorf("FetchMetrics: ", err)
 		return nil, err
@@ -222,6 +223,7 @@ func main() {
 	optHost := flag.String("hostname", "localhost", "Hostname to login to")
 	optPort := flag.String("port", "5432", "Database port")
 	optUser := flag.String("user", "", "Postgres User")
+        optDatabase := flag.String("database", "", "Database name")
 	optPass := flag.String("password", "", "Postgres Password")
 	optSSLmode := flag.String("sslmode", "disable", "Whether or not to use SSL")
 	optConnectTimeout := flag.Int("connect_timeout", 5, "Maximum wait for connection, in seconds.")
@@ -238,6 +240,10 @@ func main() {
 		flag.PrintDefaults()
 		os.Exit(1)
 	}
+        option := ""
+        if *optDatabase != "" {
+		option = fmt.Sprintf("dbname=%s", *optDatabase)
+        }
 
 	var postgres PostgresPlugin
 	postgres.Host = *optHost
@@ -246,6 +252,8 @@ func main() {
 	postgres.Password = *optPass
 	postgres.SSLmode = *optSSLmode
 	postgres.Timeout = *optConnectTimeout
+	postgres.Option = option
+
 
 	helper := mp.NewMackerelPlugin(postgres)
 
