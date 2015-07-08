@@ -8,7 +8,7 @@
 
 Summary: Monitoring program plugins for Mackerel
 Name: mackerel-agent-plugins
-Version: 0.9.2
+Version: 0.9.3
 Release: %{revision}
 License: Apache-2
 Group: Applications/System
@@ -41,6 +41,10 @@ done
 %{__targetdir}
 
 %changelog
+* Wed Jul 08 2015 <tomohiro68@gmail.com> - 0.9.3
+- Can specify database name option when postgresql does not has a database with the same name as the user name. (by azusa)
+- Add mackerel-plugin-aws-cloudfront (by najeira)
+
 * Wed Jun 17 2015 <tomohiro68@gmail.com> - 0.9.2
 - elasticsearch: add memory size used by lucene segments, which were exposed in Elasticsearch 1.4 (by yshh)
 - mysql: better error handling (by stanaka)
