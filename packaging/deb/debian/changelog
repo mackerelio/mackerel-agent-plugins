@@ -1,3 +1,12 @@
+mackerel-agent-plugins (0.10.0-1) stable; urgency=low
+
+  * Can specify database name option when postgresql does not has a database with the same name as the user name. (by azusa)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/97>
+  * Add mackerel-plugin-aws-cloudfront (by najeira)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/98>
+
+ -- Tomohiro Nishimura <tomohiro68@gmail.com>  Wed, 08 Jul 2015 11:40:18 +0900
+
 mackerel-agent-plugins (0.9.2-1) stable; urgency=low
 
   * elasticsearch: add memory size used by lucene segments, which were exposed in Elasticsearch 1.4 (by yshh)

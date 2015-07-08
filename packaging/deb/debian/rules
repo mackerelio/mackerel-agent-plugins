@@ -8,7 +8,7 @@ package=mackerel-agent-plugins
 override_dh_auto_install:
 	dh_auto_install
 	install -d -m 755 debian/tmp/usr/local/bin
-	for i in apache2 aws-ec2-cpucredit aws-elasticache aws-elb aws-rds aws-ses elasticsearch haproxy jvm linux memcached mongodb munin mysql nginx php-apc php-opcache plack postgres redis snmp squid td-table-count varnish xentop;do \
+	for i in apache2 aws-ec2-cpucredit aws-elasticache aws-elb aws-rds aws-ses elasticsearch haproxy jvm linux memcached mongodb munin mysql nginx php-apc php-opcache plack postgres redis snmp squid td-table-count varnish xentop aws-cloudfront;do \
 	    install -m755 debian/mackerel-plugin-$$i debian/tmp/usr/local/bin; \
 	done
 
