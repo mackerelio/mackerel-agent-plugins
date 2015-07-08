@@ -8,6 +8,7 @@ Detailed specification of plugin can be shown at [mackerel-agent specification](
 Document of each plugin is located under each sub directory.
 
 * [mackerel-plugin-apache2](./mackerel-plugin-apache2/README.md)
+* [mackerel-plugin-aws-cloudfront](./mackerel-plugin-aws-cloudfront/README.md)
 * [mackerel-plugin-aws-ec2-cpucredit](./mackerel-plugin-aws-ec2-cpucredit/README.md)
 * [mackerel-plugin-aws-elasticache](./mackerel-plugin-aws-elasticache/README.md)
 * [mackerel-plugin-aws-elb](./mackerel-plugin-aws-elb/README.md)
