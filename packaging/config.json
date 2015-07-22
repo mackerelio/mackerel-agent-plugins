@@ -25,7 +25,8 @@
        "squid",
        "td-table-count",
        "varnish",
-       "xentop"
+       "xentop",
+       "aws-cloudfront"
     ]
 }
 

@@ -8,7 +8,7 @@
 
 Summary: Monitoring program plugins for Mackerel
 Name: mackerel-agent-plugins
-Version: 0.9.2
+Version: 0.10.0
 Release: %{revision}
 License: Apache-2
 Group: Applications/System
@@ -29,7 +29,7 @@ This package provides plugins for Mackerel.
 
 %{__mkdir} -p %{buildroot}%{__targetdir}
 
-for i in apache2 aws-ec2-cpucredit aws-elasticache aws-elb aws-rds aws-ses elasticsearch haproxy jvm linux memcached mongodb munin mysql nginx php-apc php-opcache plack postgres redis snmp squid td-table-count varnish xentop;do \
+for i in apache2 aws-ec2-cpucredit aws-elasticache aws-elb aws-rds aws-ses elasticsearch haproxy jvm linux memcached mongodb munin mysql nginx php-apc php-opcache plack postgres redis snmp squid td-table-count varnish xentop aws-cloudfront;do \
     %{__install} -m0755 %{_sourcedir}/build/mackerel-plugin-$i %{buildroot}%{__targetdir}/; \
 done
 
@@ -41,6 +41,10 @@ done
 %{__targetdir}
 
 %changelog
+* Wed Jul 08 2015 <tomohiro68@gmail.com> - 0.10.0
+- Can specify database name option when postgresql does not has a database with the same name as the user name. (by azusa)
+- Add mackerel-plugin-aws-cloudfront (by najeira)
+
 * Wed Jun 17 2015 <tomohiro68@gmail.com> - 0.9.2
 - elasticsearch: add memory size used by lucene segments, which were exposed in Elasticsearch 1.4 (by yshh)
 - mysql: better error handling (by stanaka)
