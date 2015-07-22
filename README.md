@@ -1,11 +1,11 @@
 mackerel-agent-plugins  [![Build Status](https://travis-ci.org/mackerelio/mackerel-agent-plugins.svg?branch=master)](https://travis-ci.org/mackerelio/mackerel-agent-plugins)
 ======================
 
-Plugins for [mackerel-agent](https://github.com/mackerelio/mackerel-agent), which is resource aggregator for [Mackerel](https://mackerel.io).
+This is the official plugin pack for [mackerel-agent](https://github.com/mackerelio/mackerel-agent), a piece of software which is installed on your hosts to collect metrics and events and send them to [Mackerel](https://mackerel.io).
 
-Detailed specification of plugin can be shown at [mackerel-agent specification](http://help-ja.mackerel.io/entry/spec/agent).
+Detailed specs of plugins can be viewed here: ENG [mackerel-agent specifications](http://help.mackerel.io/entry/spec/agent), JPN [mackerel-agent 仕様](http://help-ja.mackerel.io/entry/spec/agent).
 
-Document of each plugin is located under each sub directory.
+Documentation for each plugin is located in its respective sub directory.
 
 * [mackerel-plugin-apache2](./mackerel-plugin-apache2/README.md)
 * [mackerel-plugin-aws-ec2-cpucredit](./mackerel-plugin-aws-ec2-cpucredit/README.md)
@@ -38,13 +38,14 @@ Installation
 
 ## Install mackerel-agent
 
-http://help-ja.mackerel.io/entry/howto/install-agent
+ENG http://help.mackerel.io/entry/howto/install-agent
+JPN http://help-ja.mackerel.io/entry/howto/install-agent
 
-Skip this process when you have already installed mackerel-agent.
+If the mackerel-agent has already be installed this step can be ignored.
 
 ## Install mackerel-agent-plugins
 
-Install plugins via yum or apt repository.
+Install the plugin pack from either the yum or the apt repository.
 
 ### CentOS 5/6
 
@@ -58,20 +59,20 @@ yum install mackerel-agent-plugins
 apt-get install mackerel-agent-plugins
 ```
 
-mackerel-agent-plugins are installed to ```/usr/local/bin/mackerel-plugin-*```.
+mackerel-agent-plugins will be installed to ```/usr/local/bin/mackerel-plugin-*```.
 
 Caution
 =======
 
-Some plugins may not work on CentOS/RedHat 5 because golang compiler (gc) doesn't support old kernel.
+Some plugins may not work on CentOS/RedHat 5 because the golang compiler (gc) doesn't support the old kernel.
 (https://golang.org/doc/install)
 
 Contribution
 ============
 
 * fork it
-* develop plugin you want
-* create pullrequest!
+* develop the plugin you want
+* create a pullrequest!
 
 
 
