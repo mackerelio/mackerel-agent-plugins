@@ -8,7 +8,7 @@ import (
 	"strconv"
 	"strings"
 
-	mp "github.com/mackerelio/go-mackerel-plugin"
+	mp "github.com/mackerelio/go-mackerel-plugin-helper"
 	"github.com/ziutek/mymysql/mysql"
 	_ "github.com/ziutek/mymysql/native"
 )
@@ -18,16 +18,16 @@ var graphdef map[string](mp.Graphs) = map[string](mp.Graphs){
 		Label: "MySQL Command",
 		Unit:  "float",
 		Metrics: [](mp.Metrics){
-			mp.Metrics{Name: "Com_insert", Label: "Insert", Diff: true, Stacked: true},
-			mp.Metrics{Name: "Com_select", Label: "Select", Diff: true, Stacked: true},
-			mp.Metrics{Name: "Com_update", Label: "Update", Diff: true, Stacked: true},
-			mp.Metrics{Name: "Com_update_multi", Label: "Update Multi", Diff: true, Stacked: true},
-			mp.Metrics{Name: "Com_delete", Label: "Delete", Diff: true, Stacked: true},
-			mp.Metrics{Name: "Com_delete_multi", Label: "Delete Multi", Diff: true, Stacked: true},
-			mp.Metrics{Name: "Com_replace", Label: "Replace", Diff: true, Stacked: true},
-			mp.Metrics{Name: "Com_set_option", Label: "Set Option", Diff: true, Stacked: true},
-			mp.Metrics{Name: "Qcache_hits", Label: "Query Cache Hits", Diff: true, Stacked: false},
-			mp.Metrics{Name: "Questions", Label: "Questions", Diff: true, Stacked: false},
+			mp.Metrics{Name: "Com_insert", Label: "Insert", Diff: true, Stacked: true, Type: "uint64"},
+			mp.Metrics{Name: "Com_select", Label: "Select", Diff: true, Stacked: true, Type: "uint64"},
+			mp.Metrics{Name: "Com_update", Label: "Update", Diff: true, Stacked: true, Type: "uint64"},
+			mp.Metrics{Name: "Com_update_multi", Label: "Update Multi", Diff: true, Stacked: true, Type: "uint64"},
+			mp.Metrics{Name: "Com_delete", Label: "Delete", Diff: true, Stacked: true, Type: "uint64"},
+			mp.Metrics{Name: "Com_delete_multi", Label: "Delete Multi", Diff: true, Stacked: true, Type: "uint64"},
+			mp.Metrics{Name: "Com_replace", Label: "Replace", Diff: true, Stacked: true, Type: "uint64"},
+			mp.Metrics{Name: "Com_set_option", Label: "Set Option", Diff: true, Stacked: true, Type: "uint64"},
+			mp.Metrics{Name: "Qcache_hits", Label: "Query Cache Hits", Diff: true, Stacked: false, Type: "uint64"},
+			mp.Metrics{Name: "Questions", Label: "Questions", Diff: true, Stacked: false, Type: "uint64"},
 		},
 	},
 	"mysql.join": mp.Graphs{
@@ -168,7 +168,7 @@ func (m MySQLPlugin) FetchShowSlaveStatus(db mysql.Conn, stat map[string]float64
 	return nil
 }
 
-func (m MySQLPlugin) FetchMetrics() (map[string]float64, error) {
+func (m MySQLPlugin) FetchMetrics() (map[string]interface{}, error) {
 	db := mysql.New("tcp", "", m.Target, m.Username, m.Password, "")
 	err := db.Connect()
 	if err != nil {
@@ -187,7 +187,12 @@ func (m MySQLPlugin) FetchMetrics() (map[string]float64, error) {
 
 	m.FetchShowSlaveStatus(db, stat)
 
-	return stat, err
+	statRet := make(map[string]interface{})
+	for key, value := range stat {
+		statRet[key] = value
+	}
+
+	return statRet, err
 }
 
 func (m MySQLPlugin) GraphDefinition() map[string](mp.Graphs) {

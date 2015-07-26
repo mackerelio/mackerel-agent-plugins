@@ -5,6 +5,7 @@ import (
 	"errors"
 	"flag"
 	"fmt"
+	"io"
 	"net/http"
 	"os"
 	"strconv"
@@ -99,11 +100,15 @@ func (p PlackPlugin) FetchMetrics() (map[string]interface{}, error) {
 	}
 	defer resp.Body.Close()
 
+	return p.ParseStats(resp.Body)
+}
+
+func (p PlackPlugin) ParseStats(body io.Reader) (map[string]interface{}, error) {
 	stat := make(map[string]interface{})
-	decoder := json.NewDecoder(resp.Body)
+	decoder := json.NewDecoder(body)
 
 	var s PlackServerStatus
-	err = decoder.Decode(&s)
+	err := decoder.Decode(&s)
 	if err != nil {
 		return nil, err
 	}
