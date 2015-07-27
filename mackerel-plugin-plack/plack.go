@@ -123,12 +123,12 @@ func (p PlackPlugin) ParseStats(body io.Reader) (map[string]interface{}, error) 
 		return nil, errors.New("cannot get values")
 	}
 
-	stat["requests"], err = strconv.ParseFloat(s.TotalAccesses, 64)
+	stat["requests"], err = strconv.ParseUint(s.TotalAccesses, 10, 64)
 	if err != nil {
 		return nil, errors.New("cannot get values")
 	}
 
-	stat["bytes_sent"], err = strconv.ParseFloat(s.TotalKbytes, 64)
+	stat["bytes_sent"], err = strconv.ParseUint(s.TotalKbytes, 10, 64)
 	if err != nil {
 		return nil, errors.New("cannot get values")
 	}

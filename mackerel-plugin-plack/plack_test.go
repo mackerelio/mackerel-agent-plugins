@@ -66,8 +66,8 @@ func TestParse(t *testing.T) {
 	stat, err := plack.ParseStats(plackStats)
 	fmt.Println(stat)
 	assert.Nil(t, err)
-	assert.EqualValues(t, reflect.TypeOf(stat["requests"]).String(), "float64")
-	assert.EqualValues(t, stat["requests"], 2.0)
-	assert.EqualValues(t, reflect.TypeOf(stat["bytes_sent"]).String(), "float64")
-	assert.EqualValues(t, stat["bytes_sent"], 5.0)
+	assert.EqualValues(t, reflect.TypeOf(stat["requests"]).String(), "uint64")
+	assert.EqualValues(t, stat["requests"], 2)
+	assert.EqualValues(t, reflect.TypeOf(stat["bytes_sent"]).String(), "uint64")
+	assert.EqualValues(t, stat["bytes_sent"], 5)
 }
