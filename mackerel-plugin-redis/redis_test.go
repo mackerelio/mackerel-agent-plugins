@@ -31,7 +31,7 @@ func TestFetchMetricsUnixSocket(t *testing.T) {
 
 	for _, v := range metrics {
 		if _, ok := stat[v]; !ok {
-			t.Errorf("metric of %s cannot fetched", v)
+			t.Errorf("metric of %s cannot be fetched", v)
 		}
 	}
 }
@@ -59,7 +59,7 @@ func TestFetchMetrics(t *testing.T) {
 
 	for _, v := range metrics {
 		if _, ok := stat[v]; !ok {
-			t.Errorf("metric of %s cannot fetched", v)
+			t.Errorf("metric of %s cannot be fetched", v)
 		}
 	}
 }
