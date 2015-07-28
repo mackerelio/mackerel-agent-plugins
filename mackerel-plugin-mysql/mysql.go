@@ -55,7 +55,7 @@ var graphdef map[string](mp.Graphs) = map[string](mp.Graphs){
 		Unit:  "float",
 		Metrics: [](mp.Metrics){
 			mp.Metrics{Name: "Connections", Label: "Connections", Diff: true, Stacked: false},
-			mp.Metrics{Name: "Thread_created", Label: "Created Threads", Diff: true, Stacked: false},
+			mp.Metrics{Name: "Threads_created", Label: "Created Threads", Diff: true, Stacked: false},
 			mp.Metrics{Name: "Aborted_clients", Label: "Aborted Clients", Diff: true, Stacked: false},
 			mp.Metrics{Name: "Aborted_connects", Label: "Aborted Connects", Diff: true, Stacked: false},
 		},
