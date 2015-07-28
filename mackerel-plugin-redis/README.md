@@ -20,10 +20,10 @@ command = "/path/to/mackerel-plugin-redis -port=6379 -timeout=5"
 
 ```
 [plugin.metrics.redis6379]
-command = "/path/to/mackerel-plugin-redis -port=6379 -timeout=5" -metric-key-prefix="redis6379"
+command = "/path/to/mackerel-plugin-redis -port=6379 -timeout=5 -metric-key-prefix=redis6379"
 
 [plugin.metrics.redis6380]
-command = "/path/to/mackerel-plugin-redis -port=6380 -timeout=5" -metric-key-prefix="redis6380"
+command = "/path/to/mackerel-plugin-redis -port=6380 -timeout=5 -metric-key-prefix=redis6380"
 ```
 
 ## References
