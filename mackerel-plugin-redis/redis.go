@@ -16,67 +16,17 @@ import (
 
 var logger = logging.GetLogger("metrics.plugin.redis")
 
-var graphdef map[string](mp.Graphs) = map[string](mp.Graphs){
-	"redis.queries": mp.Graphs{
-		Label: "Redis Queries",
-		Unit:  "integer",
-		Metrics: [](mp.Metrics){
-			mp.Metrics{Name: "instantaneous_ops_per_sec", Label: "Queries", Diff: false},
-		},
-	},
-	"redis.connections": mp.Graphs{
-		Label: "Redis Connections",
-		Unit:  "integer",
-		Metrics: [](mp.Metrics){
-			mp.Metrics{Name: "total_connections_received", Label: "Connections", Diff: true, Stacked: true},
-			mp.Metrics{Name: "rejected_connections", Label: "Rejected Connections", Diff: true, Stacked: true},
-		},
-	},
-	"redis.clients": mp.Graphs{
-		Label: "Redis Clients",
-		Unit:  "integer",
-		Metrics: [](mp.Metrics){
-			mp.Metrics{Name: "connected_clients", Label: "Connected Clients", Diff: false, Stacked: true},
-			mp.Metrics{Name: "blocked_clients", Label: "Blocked Clients", Diff: false, Stacked: true},
-			mp.Metrics{Name: "connected_slaves", Label: "Blocked Clients", Diff: false, Stacked: true},
-		},
-	},
-	"redis.keys": mp.Graphs{
-		Label: "Keys",
-		Unit:  "integer",
-		Metrics: [](mp.Metrics){
-			mp.Metrics{Name: "keys", Label: "Keys", Diff: false},
-			mp.Metrics{Name: "expired", Label: "Expired Keys", Diff: false},
-		},
-	},
-	"redis.keyspace": mp.Graphs{
-		Label: "Keyspace",
-		Unit:  "integer",
-		Metrics: [](mp.Metrics){
-			mp.Metrics{Name: "keyspace_hits", Label: "Keyspace Hits", Diff: true},
-			mp.Metrics{Name: "keyspace_misses", Label: "Keyspace Missed", Diff: true},
-		},
-	},
-	"redis.memory": mp.Graphs{
-		Label: "Memory",
-		Unit:  "integer",
-		Metrics: [](mp.Metrics){
-			mp.Metrics{Name: "used_memory", Label: "Used Memory", Diff: false},
-			mp.Metrics{Name: "used_memory_rss", Label: "Used Memory RSS", Diff: false},
-			mp.Metrics{Name: "used_memory_peak", Label: "Used Memory Peak", Diff: false},
-			mp.Metrics{Name: "used_memory_lua", Label: "Used Memory Lua engine", Diff: false},
-		},
-	},
-}
-
 type RedisPlugin struct {
-	Target   string
+	Host     string
+	Port     string
+	Prefix   string
 	Timeout  int
 	Tempfile string
 }
 
 func (m RedisPlugin) FetchMetrics() (map[string]float64, error) {
-	c, err := redis.DialTimeout("tcp", m.Target, time.Duration(m.Timeout)*time.Second)
+	target := fmt.Sprintf("%s:%s", m.Host, m.Port)
+	c, err := redis.DialTimeout("tcp", target, time.Duration(m.Timeout)*time.Second)
 	defer c.Close()
 
 	r := c.Cmd("info")
@@ -145,18 +95,76 @@ func (m RedisPlugin) FetchMetrics() (map[string]float64, error) {
 }
 
 func (m RedisPlugin) GraphDefinition() map[string](mp.Graphs) {
+	labelPrefix := strings.Title(m.Prefix)
+
+	var graphdef map[string](mp.Graphs) = map[string](mp.Graphs){
+		(m.Prefix + ".queries"): mp.Graphs{
+			Label: (labelPrefix + " Queries"),
+			Unit:  "integer",
+			Metrics: [](mp.Metrics){
+				mp.Metrics{Name: "instantaneous_ops_per_sec", Label: "Queries", Diff: false},
+			},
+		},
+		(m.Prefix + ".connections"): mp.Graphs{
+			Label: (labelPrefix + " Connections"),
+			Unit:  "integer",
+			Metrics: [](mp.Metrics){
+				mp.Metrics{Name: "total_connections_received", Label: "Connections", Diff: true, Stacked: true},
+				mp.Metrics{Name: "rejected_connections", Label: "Rejected Connections", Diff: true, Stacked: true},
+			},
+		},
+		(m.Prefix + ".clients"): mp.Graphs{
+			Label: (labelPrefix + " Clients"),
+			Unit:  "integer",
+			Metrics: [](mp.Metrics){
+				mp.Metrics{Name: "connected_clients", Label: "Connected Clients", Diff: false, Stacked: true},
+				mp.Metrics{Name: "blocked_clients", Label: "Blocked Clients", Diff: false, Stacked: true},
+				mp.Metrics{Name: "connected_slaves", Label: "Blocked Clients", Diff: false, Stacked: true},
+			},
+		},
+		(m.Prefix + ".keys"): mp.Graphs{
+			Label: (labelPrefix + " Keys"),
+			Unit:  "integer",
+			Metrics: [](mp.Metrics){
+				mp.Metrics{Name: "keys", Label: "Keys", Diff: false},
+				mp.Metrics{Name: "expired", Label: "Expired Keys", Diff: false},
+			},
+		},
+		(m.Prefix + ".keyspace"): mp.Graphs{
+			Label: (labelPrefix + " Keyspace"),
+			Unit:  "integer",
+			Metrics: [](mp.Metrics){
+				mp.Metrics{Name: "keyspace_hits", Label: "Keyspace Hits", Diff: true},
+				mp.Metrics{Name: "keyspace_misses", Label: "Keyspace Missed", Diff: true},
+			},
+		},
+		(m.Prefix + ".memory"): mp.Graphs{
+			Label: (labelPrefix + " Memory"),
+			Unit:  "integer",
+			Metrics: [](mp.Metrics){
+				mp.Metrics{Name: "used_memory", Label: "Used Memory", Diff: false},
+				mp.Metrics{Name: "used_memory_rss", Label: "Used Memory RSS", Diff: false},
+				mp.Metrics{Name: "used_memory_peak", Label: "Used Memory Peak", Diff: false},
+				mp.Metrics{Name: "used_memory_lua", Label: "Used Memory Lua engine", Diff: false},
+			},
+		},
+	}
+
 	return graphdef
 }
 
 func main() {
 	optHost := flag.String("host", "localhost", "Hostname")
 	optPort := flag.String("port", "6379", "Port")
+	optPrefix := flag.String("metric-key-prefix", "redis", "Metric key prefix")
 	optTimeout := flag.Int("timeout", 5, "Timeout")
 	optTempfile := flag.String("tempfile", "", "Temp file name")
 	flag.Parse()
 
 	var redis RedisPlugin
-	redis.Target = fmt.Sprintf("%s:%s", *optHost, *optPort)
+	redis.Host = *optHost
+	redis.Port = *optPort
+	redis.Prefix = *optPrefix
 	redis.Timeout = *optTimeout
 	helper := mp.NewMackerelPlugin(redis)
 
