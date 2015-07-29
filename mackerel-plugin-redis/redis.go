@@ -1,6 +1,7 @@
 package main
 
 import (
+	"crypto/md5"
 	"flag"
 	"fmt"
 	"os"
@@ -19,14 +20,20 @@ var logger = logging.GetLogger("metrics.plugin.redis")
 type RedisPlugin struct {
 	Host     string
 	Port     string
+	Socket   string
 	Prefix   string
 	Timeout  int
 	Tempfile string
 }
 
 func (m RedisPlugin) FetchMetrics() (map[string]float64, error) {
+	network := "tcp"
 	target := fmt.Sprintf("%s:%s", m.Host, m.Port)
-	c, err := redis.DialTimeout("tcp", target, time.Duration(m.Timeout)*time.Second)
+	if m.Socket != "" {
+		target = m.Socket
+		network = "unix"
+	}
+	c, err := redis.DialTimeout(network, target, time.Duration(m.Timeout)*time.Second)
 	defer c.Close()
 
 	r := c.Cmd("info")
@@ -81,7 +88,6 @@ func (m RedisPlugin) FetchMetrics() (map[string]float64, error) {
 		if err != nil {
 			continue
 		}
-
 	}
 
 	if _, ok := stat["keys"]; !ok {
@@ -156,22 +162,32 @@ func (m RedisPlugin) GraphDefinition() map[string](mp.Graphs) {
 func main() {
 	optHost := flag.String("host", "localhost", "Hostname")
 	optPort := flag.String("port", "6379", "Port")
+	optSocket := flag.String("socket", "", "Server socket (overrides host and port)")
 	optPrefix := flag.String("metric-key-prefix", "redis", "Metric key prefix")
 	optTimeout := flag.Int("timeout", 5, "Timeout")
 	optTempfile := flag.String("tempfile", "", "Temp file name")
 	flag.Parse()
 
-	var redis RedisPlugin
-	redis.Host = *optHost
-	redis.Port = *optPort
-	redis.Prefix = *optPrefix
-	redis.Timeout = *optTimeout
+	redis := RedisPlugin{
+		Timeout: *optTimeout,
+		Prefix:  *optPrefix,
+	}
+	if *optSocket != "" {
+		redis.Socket = *optSocket
+	} else {
+		redis.Host = *optHost
+		redis.Port = *optPort
+	}
 	helper := mp.NewMackerelPlugin(redis)
 
 	if *optTempfile != "" {
 		helper.Tempfile = *optTempfile
 	} else {
-		helper.Tempfile = fmt.Sprintf("/tmp/mackerel-plugin-redis-%s-%s", *optHost, *optPort)
+		if redis.Socket != "" {
+			helper.Tempfile = fmt.Sprintf("/tmp/mackerel-plugin-redis-%s", fmt.Sprintf("%x", md5.Sum([]byte(redis.Socket))))
+		} else {
+			helper.Tempfile = fmt.Sprintf("/tmp/mackerel-plugin-redis-%s-%s", redis.Host, redis.Port)
+		}
 	}
 
 	if os.Getenv("MACKEREL_AGENT_PLUGIN_META") != "" {
