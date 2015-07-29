@@ -1,3 +1,18 @@
+mackerel-agent-plugins (0.11.0-1) stable; urgency=low
+
+  * [redis] support multiple redis instances on one server by using -metric-key-prefix option (by xorphitus)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/96>
+  * [Redis] fix tiny documentation typo (by hiroakis)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/101>
+  * [memcached/mysql/nginx/plack] care counter overflow and reset by using new helper. (by stanaka)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/102>
+  * [MySQL] Fix typo of metric name s/Thread_created/Threads_created/ (by yuuki1)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/103>
+  * [Redis] Support -socket option to specify unix socket (by Songmu)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/104>
+
+ -- Songmu <y.songmu@gmail.com>  Wed, 29 Jul 2015 14:39:16 +0900
+
 mackerel-agent-plugins (0.10.0-1) stable; urgency=low
 
   * Can specify database name option when postgresql does not has a database with the same name as the user name. (by azusa)
