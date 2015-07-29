@@ -1,14 +1,16 @@
 package main
 
 import (
+	"encoding/json"
+	"errors"
 	"flag"
 	"fmt"
-	mp "github.com/mackerelio/go-mackerel-plugin"
-	"errors"
+	"io"
 	"net/http"
 	"os"
 	"strconv"
-	"encoding/json"
+
+	mp "github.com/mackerelio/go-mackerel-plugin-helper"
 )
 
 var graphdef map[string](mp.Graphs) = map[string](mp.Graphs){
@@ -16,24 +18,24 @@ var graphdef map[string](mp.Graphs) = map[string](mp.Graphs){
 		Label: "Plack Workers",
 		Unit:  "integer",
 		Metrics: [](mp.Metrics){
-            mp.Metrics{ Name: "busy_workers", Label: "Busy Workers", Diff: false, Stacked: true },
-            mp.Metrics{ Name: "idle_workers", Label: "Idle Workers", Diff: false, Stacked: true },
+			mp.Metrics{Name: "busy_workers", Label: "Busy Workers", Diff: false, Stacked: true},
+			mp.Metrics{Name: "idle_workers", Label: "Idle Workers", Diff: false, Stacked: true},
 		},
 	},
-    "plack.req": mp.Graphs{
-        Label: "Plack Requests",
-        Unit: "integer",
-        Metrics: [](mp.Metrics){
-            mp.Metrics{ Name: "requests", Label: "Requests", Diff: true },
-        },
-    },
-    "plack.bytes": mp.Graphs{
-        Label: "Plack Bytes",
-        Unit: "integer",
-        Metrics: [](mp.Metrics){
-            mp.Metrics{ Name: "bytes_sent", Label: "Bytes Sent", Diff: true },
-        },
-    },
+	"plack.req": mp.Graphs{
+		Label: "Plack Requests",
+		Unit:  "integer",
+		Metrics: [](mp.Metrics){
+			mp.Metrics{Name: "requests", Label: "Requests", Diff: true, Type: "uint64"},
+		},
+	},
+	"plack.bytes": mp.Graphs{
+		Label: "Plack Bytes",
+		Unit:  "integer",
+		Metrics: [](mp.Metrics){
+			mp.Metrics{Name: "bytes_sent", Label: "Bytes Sent", Diff: true, Type: "uint64"},
+		},
+	},
 }
 
 type PlackPlugin struct {
@@ -81,28 +83,32 @@ type PlackPlugin struct {
 // }
 
 // field types vary between versions
-type PlackRequest struct {}
+type PlackRequest struct{}
 type PlackServerStatus struct {
-	Uptime string          `json:"Uptime"`
-	TotalAccesses string   `json:"TotalAccesses"`
-	TotalKbytes string     `json:"TotalKbytes"`
-	BusyWorkers string     `json:"BusyWorkers"`
-	IdleWorkers string     `json:"IdleWorkers"`
-	Stats []PlackRequest   `json:"stats"`
+	Uptime        string         `json:"Uptime"`
+	TotalAccesses string         `json:"TotalAccesses"`
+	TotalKbytes   string         `json:"TotalKbytes"`
+	BusyWorkers   string         `json:"BusyWorkers"`
+	IdleWorkers   string         `json:"IdleWorkers"`
+	Stats         []PlackRequest `json:"stats"`
 }
 
-func (p PlackPlugin) FetchMetrics() (map[string]float64, error) {
+func (p PlackPlugin) FetchMetrics() (map[string]interface{}, error) {
 	resp, err := http.Get(p.Uri)
-    if err != nil {
-        return nil, err
-    }
+	if err != nil {
+		return nil, err
+	}
 	defer resp.Body.Close()
 
-	stat := make(map[string]float64)
-	decoder := json.NewDecoder(resp.Body)
+	return p.ParseStats(resp.Body)
+}
+
+func (p PlackPlugin) ParseStats(body io.Reader) (map[string]interface{}, error) {
+	stat := make(map[string]interface{})
+	decoder := json.NewDecoder(body)
 
 	var s PlackServerStatus
-	err = decoder.Decode(&s)
+	err := decoder.Decode(&s)
 	if err != nil {
 		return nil, err
 	}
@@ -117,18 +123,17 @@ func (p PlackPlugin) FetchMetrics() (map[string]float64, error) {
 		return nil, errors.New("cannot get values")
 	}
 
-	stat["requests"], err = strconv.ParseFloat(s.TotalAccesses, 64)
+	stat["requests"], err = strconv.ParseUint(s.TotalAccesses, 10, 64)
 	if err != nil {
 		return nil, errors.New("cannot get values")
 	}
 
-	stat["bytes_sent"], err = strconv.ParseFloat(s.TotalKbytes, 64)
+	stat["bytes_sent"], err = strconv.ParseUint(s.TotalKbytes, 10, 64)
 	if err != nil {
 		return nil, errors.New("cannot get values")
 	}
 	return stat, nil
 }
-
 
 func (n PlackPlugin) GraphDefinition() map[string](mp.Graphs) {
 	return graphdef
