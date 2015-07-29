@@ -41,6 +41,13 @@ done
 %{__targetdir}
 
 %changelog
+* Wed Jul 29 2015 <y.songmu@gmail.com> - 0.11.0
+- [redis] support multiple redis instances on one server by using -metric-key-prefix option (by xorphitus)
+- [Redis] fix tiny documentation typo (by hiroakis)
+- [memcached/mysql/nginx/plack] care counter overflow and reset by using new helper. (by stanaka)
+- [MySQL] Fix typo of metric name s/Thread_created/Threads_created/ (by yuuki1)
+- [Redis] Support -socket option to specify unix socket (by Songmu)
+
 * Wed Jul 08 2015 <tomohiro68@gmail.com> - 0.10.0
 - Can specify database name option when postgresql does not has a database with the same name as the user name. (by azusa)
 - Add mackerel-plugin-aws-cloudfront (by najeira)
