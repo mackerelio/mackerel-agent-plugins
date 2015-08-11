@@ -28,9 +28,9 @@ var graphdef map[string](mp.Graphs) = map[string](mp.Graphs){
 		Label: "Nginx requests",
 		Unit:  "float",
 		Metrics: [](mp.Metrics){
-			mp.Metrics{Name: "accepts", Label: "Accepted connections", Diff: true},
-			mp.Metrics{Name: "handled", Label: "Handled connections", Diff: true},
-			mp.Metrics{Name: "requests", Label: "Handled requests", Diff: true},
+			mp.Metrics{Name: "accepts", Label: "Accepted connections", Diff: true, Type: "uint64"},
+			mp.Metrics{Name: "handled", Label: "Handled connections", Diff: true, Type: "uint64"},
+			mp.Metrics{Name: "requests", Label: "Handled requests", Diff: true, Type: "uint64"},
 		},
 	},
 	"nginx.queue": mp.Graphs{
