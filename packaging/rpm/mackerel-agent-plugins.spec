@@ -8,7 +8,7 @@
 
 Summary: Monitoring program plugins for Mackerel
 Name: mackerel-agent-plugins
-Version: 0.11.0
+Version: 0.11.1
 Release: %{revision}
 License: Apache-2
 Group: Applications/System
@@ -41,6 +41,9 @@ done
 %{__targetdir}
 
 %changelog
+* Thu Aug 13 2015 <tomohiro68@gmail.com> - 0.11.1
+- [nginx] specify types of nginx metrics (by stanaka)
+
 * Wed Jul 29 2015 <y.songmu@gmail.com> - 0.11.0
 - [redis] support multiple redis instances on one server by using -metric-key-prefix option (by xorphitus)
 - [Redis] fix tiny documentation typo (by hiroakis)

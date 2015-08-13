@@ -1,3 +1,10 @@
+mackerel-agent-plugins (0.11.1-1) stable; urgency=low
+
+  * [nginx] specify types of nginx metrics (by stanaka)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/106>
+
+ -- Tomohiro Nishimura <tomohiro68@gmail.com>  Thu, 13 Aug 2015 15:57:19 +0900
+
 mackerel-agent-plugins (0.11.0-1) stable; urgency=low
 
   * [redis] support multiple redis instances on one server by using -metric-key-prefix option (by xorphitus)
