@@ -56,6 +56,42 @@ var graphdef map[string](mp.Graphs) = map[string](mp.Graphs){
 	},
 }
 
+var graphdef30 map[string](mp.Graphs) = map[string](mp.Graphs){
+	"mongodb.background_flushing": mp.Graphs{
+		Label: "MongoDB Command",
+		Unit:  "float",
+		Metrics: [](mp.Metrics){
+			mp.Metrics{Name: "duration_ms", Label: "Duration in ms", Diff: true},
+		},
+	},
+	"mongodb.connections": mp.Graphs{
+		Label: "MongoDB Connections",
+		Unit:  "integer",
+		Metrics: [](mp.Metrics){
+			mp.Metrics{Name: "connections_current", Label: "current"},
+		},
+	},
+	"mongodb.index_counters.btree.miss_ratio": mp.Graphs{
+		Label: "MongoDB Index Counters Btree Miss-ratio",
+		Unit:  "float",
+		Metrics: [](mp.Metrics){
+			mp.Metrics{Name: "miss_ratio", Label: "Miss ratio"},
+		},
+	},
+	"mongodb.opcounters": mp.Graphs{
+		Label: "MongoDB opcounters",
+		Unit:  "integer",
+		Metrics: [](mp.Metrics){
+			mp.Metrics{Name: "opcounters_insert", Label: "Insert", Diff: true},
+			mp.Metrics{Name: "opcounters_query", Label: "Query", Diff: true},
+			mp.Metrics{Name: "opcounters_update", Label: "Update", Diff: true},
+			mp.Metrics{Name: "opcounters_delete", Label: "Delete", Diff: true},
+			mp.Metrics{Name: "opcounters_getmore", Label: "Getmore", Diff: true},
+			mp.Metrics{Name: "opcounters_command", Label: "Command", Diff: true},
+		},
+	},
+}
+
 var metricPlace22 map[string][]string = map[string][]string{
 	"duration_ms":         []string{"backgroundFlushing", "total_ms"},
 	"connections_current": []string{"connections", "current"},
@@ -121,7 +157,7 @@ type MongoDBPlugin struct {
 	Verbose bool
 }
 
-func (m MongoDBPlugin) FetchMetrics() (map[string]float64, error) {
+func (m MongoDBPlugin) FetchStatus() (bson.M, error) {
 	session, err := mgo.Dial(m.Url)
 	if err != nil {
 		return nil, err
@@ -139,21 +175,35 @@ func (m MongoDBPlugin) FetchMetrics() (map[string]float64, error) {
 		}
 		fmt.Println(string(str))
 	}
+	return serverStatus, nil
+}
+
+func (m MongoDBPlugin) FetchMetrics() (map[string]float64, error) {
+	serverStatus, err := m.FetchStatus()
+	if err != nil {
+		return nil, err
+	}
 	return m.ParseStatus(serverStatus)
+}
+
+func (m MongoDBPlugin) getVersion(serverStatus bson.M) string {
+	if reflect.TypeOf(serverStatus["version"]).String() == "string" {
+		version := serverStatus["version"].(string)
+		return version
+	}
+	return ""
 }
 
 func (m MongoDBPlugin) ParseStatus(serverStatus bson.M) (map[string]float64, error) {
 	stat := make(map[string]float64)
 	metricPlace := &metricPlace22
-	if reflect.TypeOf(serverStatus["version"]).String() == "string" {
-		version := serverStatus["version"].(string)
-		if strings.HasPrefix(version, "2.4") {
-			metricPlace = &metricPlace24
-		} else if strings.HasPrefix(version, "2.6") {
-			metricPlace = &metricPlace24
-		} else if strings.HasPrefix(version, "3.0") {
-			metricPlace = &metricPlace30
-		}
+	version := m.getVersion(serverStatus)
+	if strings.HasPrefix(version, "2.4") {
+		metricPlace = &metricPlace24
+	} else if strings.HasPrefix(version, "2.6") {
+		metricPlace = &metricPlace24
+	} else if strings.HasPrefix(version, "3.0") {
+		metricPlace = &metricPlace30
 	}
 
 	for k, v := range *metricPlace {
@@ -169,6 +219,14 @@ func (m MongoDBPlugin) ParseStatus(serverStatus bson.M) (map[string]float64, err
 }
 
 func (m MongoDBPlugin) GraphDefinition() map[string](mp.Graphs) {
+	serverStatus, err := m.FetchStatus()
+	if err != nil {
+		return graphdef
+	}
+	version := m.getVersion(serverStatus)
+	if strings.HasPrefix(version, "3.0") {
+		return graphdef30
+	}
 	return graphdef
 }
 
