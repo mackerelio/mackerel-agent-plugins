@@ -35,13 +35,6 @@ var graphdef map[string](mp.Graphs) = map[string](mp.Graphs){
 			mp.Metrics{Name: "btree_hits", Label: "hits", Diff: true},
 		},
 	},
-	"mongodb.index_counters.btree.miss_ratio": mp.Graphs{
-		Label: "MongoDB Index Counters Btree Miss-ratio",
-		Unit:  "float",
-		Metrics: [](mp.Metrics){
-			mp.Metrics{Name: "miss_ratio", Label: "Miss ratio"},
-		},
-	},
 	"mongodb.opcounters": mp.Graphs{
 		Label: "MongoDB opcounters",
 		Unit:  "integer",

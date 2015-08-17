@@ -14,8 +14,8 @@ func TestGraphDefinition(t *testing.T) {
 	var mongodb MongoDBPlugin
 
 	graphdef := mongodb.GraphDefinition()
-	if len(graphdef) != 5 {
-		t.Errorf("GetTempfilename: %d should be 5", len(graphdef))
+	if len(graphdef) != 4 {
+		t.Errorf("GetTempfilename: %d should be 4", len(graphdef))
 	}
 }
 
