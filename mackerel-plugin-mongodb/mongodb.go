@@ -8,7 +8,9 @@ import (
 	"gopkg.in/mgo.v2"
 	"gopkg.in/mgo.v2/bson"
 	"os"
+	"reflect"
 	"strconv"
+	"strings"
 )
 
 var graphdef map[string](mp.Graphs) = map[string](mp.Graphs){
@@ -54,10 +56,35 @@ var graphdef map[string](mp.Graphs) = map[string](mp.Graphs){
 	},
 }
 
-var metricPlace map[string][]string = map[string][]string{
+var metricPlace22 map[string][]string = map[string][]string{
 	"duration_ms":         []string{"backgroundFlushing", "total_ms"},
 	"connections_current": []string{"connections", "current"},
 	"btree_hits":          []string{"indexCounters", "btree", "hits"},
+	"opcounters_insert":   []string{"opcounters", "insert"},
+	"opcounters_query":    []string{"opcounters", "query"},
+	"opcounters_update":   []string{"opcounters", "update"},
+	"opcounters_delete":   []string{"opcounters", "delete"},
+	"opcounters_getmore":  []string{"opcounters", "getmore"},
+	"opcounters_command":  []string{"opcounters", "command"},
+}
+
+var metricPlace24 map[string][]string = map[string][]string{
+	"duration_ms":         []string{"backgroundFlushing", "total_ms"},
+	"connections_current": []string{"connections", "current"},
+	"btree_hits":          []string{"indexCounters", "hits"},
+	"opcounters_insert":   []string{"opcounters", "insert"},
+	"opcounters_query":    []string{"opcounters", "query"},
+	"opcounters_update":   []string{"opcounters", "update"},
+	"opcounters_delete":   []string{"opcounters", "delete"},
+	"opcounters_getmore":  []string{"opcounters", "getmore"},
+	"opcounters_command":  []string{"opcounters", "command"},
+}
+
+// indexCounters is removed from mongodb 3.0.
+// ref. http://stackoverflow.com/questions/29428793/where-is-the-indexcounter-in-db-serverstatus-on-mongodb-3-0
+var metricPlace30 map[string][]string = map[string][]string{
+	"duration_ms":         []string{"backgroundFlushing", "total_ms"},
+	"connections_current": []string{"connections", "current"},
 	"opcounters_insert":   []string{"opcounters", "insert"},
 	"opcounters_query":    []string{"opcounters", "query"},
 	"opcounters_update":   []string{"opcounters", "update"},
@@ -112,9 +139,24 @@ func (m MongoDBPlugin) FetchMetrics() (map[string]float64, error) {
 		}
 		fmt.Println(string(str))
 	}
+	return m.ParseStatus(serverStatus)
+}
 
+func (m MongoDBPlugin) ParseStatus(serverStatus bson.M) (map[string]float64, error) {
 	stat := make(map[string]float64)
-	for k, v := range metricPlace {
+	metricPlace := &metricPlace22
+	if reflect.TypeOf(serverStatus["version"]).String() == "string" {
+		version := serverStatus["version"].(string)
+		if strings.HasPrefix(version, "2.4") {
+			metricPlace = &metricPlace24
+		} else if strings.HasPrefix(version, "2.6") {
+			metricPlace = &metricPlace24
+		} else if strings.HasPrefix(version, "3.0") {
+			metricPlace = &metricPlace30
+		}
+	}
+
+	for k, v := range *metricPlace {
 		val, err := GetFloatValue(serverStatus, v)
 		if err != nil {
 			return nil, err
@@ -123,7 +165,7 @@ func (m MongoDBPlugin) FetchMetrics() (map[string]float64, error) {
 		stat[k] = val
 	}
 
-	return stat, err
+	return stat, nil
 }
 
 func (m MongoDBPlugin) GraphDefinition() map[string](mp.Graphs) {
