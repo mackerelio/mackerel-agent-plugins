@@ -1,7 +1,7 @@
 package main
 
 import (
-	"errors"
+	"encoding/json"
 	"flag"
 	"fmt"
 	mp "github.com/mackerelio/go-mackerel-plugin"
@@ -76,7 +76,7 @@ func GetFloatValue(s map[string]interface{}, keys []string) (float64, error) {
 			case bson.M:
 				sm = sm[k].(bson.M)
 			default:
-				return 0, errors.New("Cannot handle as a hash")
+				return 0, fmt.Errorf("Cannot handle as a hash for %s", k)
 			}
 		} else {
 			val, err = strconv.ParseFloat(fmt.Sprint(sm[k]), 64)
@@ -90,7 +90,8 @@ func GetFloatValue(s map[string]interface{}, keys []string) (float64, error) {
 }
 
 type MongoDBPlugin struct {
-	Url string
+	Url     string
+	Verbose bool
 }
 
 func (m MongoDBPlugin) FetchMetrics() (map[string]float64, error) {
@@ -103,6 +104,13 @@ func (m MongoDBPlugin) FetchMetrics() (map[string]float64, error) {
 	serverStatus := bson.M{}
 	if err := session.Run("serverStatus", &serverStatus); err != nil {
 		return nil, err
+	}
+	if m.Verbose {
+		str, err := json.Marshal(serverStatus)
+		if err != nil {
+			fmt.Println(fmt.Errorf("Marshaling error: %s", err.Error()))
+		}
+		fmt.Println(string(str))
 	}
 
 	stat := make(map[string]float64)
@@ -127,10 +135,12 @@ func main() {
 	optPort := flag.String("port", "27017", "Port")
 	optUser := flag.String("username", "", "Username")
 	optPass := flag.String("password", "", "Password")
+	optVerbose := flag.Bool("v", false, "Verbose mode")
 	optTempfile := flag.String("tempfile", "", "Temp file name")
 	flag.Parse()
 
 	var mongodb MongoDBPlugin
+	mongodb.Verbose = *optVerbose
 	if *optUser == "" && *optPass == "" {
 		mongodb.Url = fmt.Sprintf("mongodb://%s:%s", *optHost, *optPort)
 	} else {
