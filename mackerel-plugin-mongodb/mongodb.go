@@ -4,13 +4,14 @@ import (
 	"encoding/json"
 	"flag"
 	"fmt"
-	mp "github.com/mackerelio/go-mackerel-plugin"
-	"gopkg.in/mgo.v2"
-	"gopkg.in/mgo.v2/bson"
 	"os"
 	"reflect"
 	"strconv"
 	"strings"
+
+	mp "github.com/mackerelio/go-mackerel-plugin-helper"
+	"gopkg.in/mgo.v2"
+	"gopkg.in/mgo.v2/bson"
 )
 
 var graphdef map[string](mp.Graphs) = map[string](mp.Graphs){
@@ -18,7 +19,7 @@ var graphdef map[string](mp.Graphs) = map[string](mp.Graphs){
 		Label: "MongoDB Command",
 		Unit:  "float",
 		Metrics: [](mp.Metrics){
-			mp.Metrics{Name: "duration_ms", Label: "Duration in ms", Diff: true},
+			mp.Metrics{Name: "duration_ms", Label: "Duration in ms", Diff: true, Type: "uint64"},
 		},
 	},
 	"mongodb.connections": mp.Graphs{
@@ -32,19 +33,19 @@ var graphdef map[string](mp.Graphs) = map[string](mp.Graphs){
 		Label: "MongoDB Index Counters Btree",
 		Unit:  "integer",
 		Metrics: [](mp.Metrics){
-			mp.Metrics{Name: "btree_hits", Label: "hits", Diff: true},
+			mp.Metrics{Name: "btree_hits", Label: "hits", Diff: true, Type: "uint64"},
 		},
 	},
 	"mongodb.opcounters": mp.Graphs{
 		Label: "MongoDB opcounters",
 		Unit:  "integer",
 		Metrics: [](mp.Metrics){
-			mp.Metrics{Name: "opcounters_insert", Label: "Insert", Diff: true},
-			mp.Metrics{Name: "opcounters_query", Label: "Query", Diff: true},
-			mp.Metrics{Name: "opcounters_update", Label: "Update", Diff: true},
-			mp.Metrics{Name: "opcounters_delete", Label: "Delete", Diff: true},
-			mp.Metrics{Name: "opcounters_getmore", Label: "Getmore", Diff: true},
-			mp.Metrics{Name: "opcounters_command", Label: "Command", Diff: true},
+			mp.Metrics{Name: "opcounters_insert", Label: "Insert", Diff: true, Type: "uint64"},
+			mp.Metrics{Name: "opcounters_query", Label: "Query", Diff: true, Type: "uint64"},
+			mp.Metrics{Name: "opcounters_update", Label: "Update", Diff: true, Type: "uint64"},
+			mp.Metrics{Name: "opcounters_delete", Label: "Delete", Diff: true, Type: "uint64"},
+			mp.Metrics{Name: "opcounters_getmore", Label: "Getmore", Diff: true, Type: "uint64"},
+			mp.Metrics{Name: "opcounters_command", Label: "Command", Diff: true, Type: "uint64"},
 		},
 	},
 }
@@ -54,7 +55,7 @@ var graphdef30 map[string](mp.Graphs) = map[string](mp.Graphs){
 		Label: "MongoDB Command",
 		Unit:  "float",
 		Metrics: [](mp.Metrics){
-			mp.Metrics{Name: "duration_ms", Label: "Duration in ms", Diff: true},
+			mp.Metrics{Name: "duration_ms", Label: "Duration in ms", Diff: true, Type: "uint64"},
 		},
 	},
 	"mongodb.connections": mp.Graphs{
@@ -75,12 +76,12 @@ var graphdef30 map[string](mp.Graphs) = map[string](mp.Graphs){
 		Label: "MongoDB opcounters",
 		Unit:  "integer",
 		Metrics: [](mp.Metrics){
-			mp.Metrics{Name: "opcounters_insert", Label: "Insert", Diff: true},
-			mp.Metrics{Name: "opcounters_query", Label: "Query", Diff: true},
-			mp.Metrics{Name: "opcounters_update", Label: "Update", Diff: true},
-			mp.Metrics{Name: "opcounters_delete", Label: "Delete", Diff: true},
-			mp.Metrics{Name: "opcounters_getmore", Label: "Getmore", Diff: true},
-			mp.Metrics{Name: "opcounters_command", Label: "Command", Diff: true},
+			mp.Metrics{Name: "opcounters_insert", Label: "Insert", Diff: true, Type: "uint64"},
+			mp.Metrics{Name: "opcounters_query", Label: "Query", Diff: true, Type: "uint64"},
+			mp.Metrics{Name: "opcounters_update", Label: "Update", Diff: true, Type: "uint64"},
+			mp.Metrics{Name: "opcounters_delete", Label: "Delete", Diff: true, Type: "uint64"},
+			mp.Metrics{Name: "opcounters_getmore", Label: "Getmore", Diff: true, Type: "uint64"},
+			mp.Metrics{Name: "opcounters_command", Label: "Command", Diff: true, Type: "uint64"},
 		},
 	},
 }
@@ -171,7 +172,7 @@ func (m MongoDBPlugin) FetchStatus() (bson.M, error) {
 	return serverStatus, nil
 }
 
-func (m MongoDBPlugin) FetchMetrics() (map[string]float64, error) {
+func (m MongoDBPlugin) FetchMetrics() (map[string]interface{}, error) {
 	serverStatus, err := m.FetchStatus()
 	if err != nil {
 		return nil, err
@@ -187,8 +188,8 @@ func (m MongoDBPlugin) getVersion(serverStatus bson.M) string {
 	return ""
 }
 
-func (m MongoDBPlugin) ParseStatus(serverStatus bson.M) (map[string]float64, error) {
-	stat := make(map[string]float64)
+func (m MongoDBPlugin) ParseStatus(serverStatus bson.M) (map[string]interface{}, error) {
+	stat := make(map[string]interface{})
 	metricPlace := &metricPlace22
 	version := m.getVersion(serverStatus)
 	if strings.HasPrefix(version, "2.4") {
