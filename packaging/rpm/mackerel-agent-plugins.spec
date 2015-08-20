@@ -8,7 +8,7 @@
 
 Summary: Monitoring program plugins for Mackerel
 Name: mackerel-agent-plugins
-Version: 0.11.1
+Version: 0.11.2
 Release: %{revision}
 License: Apache-2
 Group: Applications/System
@@ -41,6 +41,9 @@ done
 %{__targetdir}
 
 %changelog
+* Thu Aug 20 2015 <y.songmu@gmail.com> - 0.11.2
+- Fix/mongodb 2.4 or later (by stanaka)
+
 * Thu Aug 13 2015 <tomohiro68@gmail.com> - 0.11.1
 - [nginx] specify types of nginx metrics (by stanaka)
 
