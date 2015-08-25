@@ -6,7 +6,7 @@ AWS EC2 EBS custom metrics plugin for mackerel.io agent.
 ## Synopsis
 
 ```shell
-mackerel-plugin-aws-ec2-ebs [-instance-id=<id>] [-region=<aws-region>] [-access-key-id=<id>] [-secret-access-key==<key>] [-tempfile=<tempfile>]
+mackerel-plugin-aws-ec2-ebs [-instance-id=<id>] [-region=<aws-region>] [-access-key-id=<id>] [-secret-access-key=<key>] [-tempfile=<tempfile>]
 ```
 * collect data from all volumes which attached to the instance
 * if you run on an ec2-instance, you probably don't have to specify `-instance-id` & `-region`
