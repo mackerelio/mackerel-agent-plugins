@@ -26,7 +26,8 @@
        "td-table-count",
        "varnish",
        "xentop",
-       "aws-cloudfront"
+       "aws-cloudfront",
+       "aws-ec2-ebs"
     ]
 }
 
