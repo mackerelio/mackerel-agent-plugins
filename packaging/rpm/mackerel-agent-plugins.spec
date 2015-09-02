@@ -41,6 +41,9 @@ done
 %{__targetdir}
 
 %changelog
+* Wed Sep 02 2015 <tomohiro68@gmail.com> - 0.12.0
+- Plugin for AWS-EC2 EBS (by naokibtn)
+
 * Thu Aug 20 2015 <y.songmu@gmail.com> - 0.11.2
 - Fix/mongodb 2.4 or later (by stanaka)
 

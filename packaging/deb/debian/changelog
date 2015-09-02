@@ -1,3 +1,10 @@
+mackerel-agent-plugins (0.12.0-1) stable; urgency=low
+
+  * Plugin for AWS-EC2 EBS (by naokibtn)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/110>
+
+ -- Tomohiro Nishimura <tomohiro68@gmail.com>  Wed, 02 Sep 2015 11:59:38 +0900
+
 mackerel-agent-plugins (0.11.2-1) stable; urgency=low
 
   * Fix/mongodb 2.4 or later (by stanaka)
