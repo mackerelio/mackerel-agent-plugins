@@ -2,6 +2,7 @@ package main
 
 import (
 	"bytes"
+	"errors"
 	"flag"
 	"fmt"
 	"os"
@@ -47,7 +48,7 @@ func getDockerPs() (string, error) {
 	return out.String(), nil
 }
 
-func getProc(path string) (string, error) {
+func getFile(path string) (string, error) {
 	cmd := exec.Command("cat", path)
 	var out bytes.Buffer
 	cmd.Stdout = &out
@@ -69,7 +70,7 @@ func exists(path string) (bool, error) {
 	return true, err
 }
 
-func normalize(str string) string {
+func normalizeMetricName(str string) string {
 	re := regexp.MustCompile("[-a-zA-Z0-9_]")
 	runes := []rune(str)
 	for i, c := range str {
@@ -78,6 +79,20 @@ func normalize(str string) string {
 		}
 	}
 	return string(runes)
+}
+
+func (m DockerPlugin) findPrefixPath() (string, error) {
+	pathCandidate := []string{"/host/sys/fs/cgroup", "/sys/fs/cgroup"}
+	for _, path := range pathCandidate {
+		result, err := exists(path)
+		if err != nil {
+			return "", err
+		}
+		if result {
+			return path, nil
+		}
+	}
+	return "", errors.New("No prefix path is found.")
 }
 
 func (m DockerPlugin) FetchMetrics() (map[string]interface{}, error) {
@@ -98,17 +113,9 @@ func (m DockerPlugin) FetchMetrics() (map[string]interface{}, error) {
 		}
 	}
 
-	var prefixPath string
-	pathCandidate := []string{"/host/sys/fs/cgroup", "/sys/fs/cgroup"}
-	for _, path := range pathCandidate {
-		result, err := exists(path)
-		if err != nil {
-			return nil, err
-		}
-		if result {
-			prefixPath = path
-			continue
-		}
+	prefixPath, err := m.findPrefixPath()
+	if err != nil {
+		return nil, err
 	}
 
 	metrics := map[string][]string{
@@ -119,7 +126,7 @@ func (m DockerPlugin) FetchMetrics() (map[string]interface{}, error) {
 	res := map[string]interface{}{}
 	for id, name := range dockerStats {
 		for metric, stats := range metrics {
-			data, err := getProc(fmt.Sprintf("%s/%s/docker/%s/%s.stat", prefixPath, metric, id, metric))
+			data, err := getFile(fmt.Sprintf("%s/%s/docker/%s/%s.stat", prefixPath, metric, id, metric))
 			if err != nil {
 				return nil, err
 			}
@@ -127,7 +134,7 @@ func (m DockerPlugin) FetchMetrics() (map[string]interface{}, error) {
 				re := regexp.MustCompile(stat + " (\\d+)")
 				m := re.FindStringSubmatch(data)
 				if m != nil {
-					res[fmt.Sprintf("docker.%s.%s_%s.%s", metric, normalize(name[0]), id[0:6], stat)] = m[1]
+					res[fmt.Sprintf("docker.%s.%s_%s.%s", metric, normalizeMetricName(name[0]), id[0:6], stat)] = m[1]
 				}
 			}
 		}
