@@ -5,6 +5,7 @@ import (
 	"errors"
 	"flag"
 	"fmt"
+	"log"
 	"os"
 	"os/exec"
 	"regexp"
@@ -33,19 +34,9 @@ var graphdef map[string](mp.Graphs) = map[string](mp.Graphs){
 }
 
 type DockerPlugin struct {
-	Target   string
-	Tempfile string
-}
-
-func getDockerPs() (string, error) {
-	cmd := exec.Command("docker", "ps", "--no-trunc")
-	var out bytes.Buffer
-	cmd.Stdout = &out
-	err := cmd.Run()
-	if err != nil {
-		return "", err
-	}
-	return out.String(), nil
+	Host          string
+	DockerCommand string
+	Tempfile      string
 }
 
 func getFile(path string) (string, error) {
@@ -81,6 +72,17 @@ func normalizeMetricName(str string) string {
 	return string(runes)
 }
 
+func (m DockerPlugin) getDockerPs() (string, error) {
+	cmd := exec.Command(m.DockerCommand, "--host", m.Host, "ps", "--no-trunc")
+	var out bytes.Buffer
+	cmd.Stdout = &out
+	err := cmd.Run()
+	if err != nil {
+		return "", err
+	}
+	return out.String(), nil
+}
+
 func (m DockerPlugin) findPrefixPath() (string, error) {
 	pathCandidate := []string{"/host/sys/fs/cgroup", "/sys/fs/cgroup"}
 	for _, path := range pathCandidate {
@@ -97,7 +99,7 @@ func (m DockerPlugin) findPrefixPath() (string, error) {
 
 func (m DockerPlugin) FetchMetrics() (map[string]interface{}, error) {
 	dockerStats := map[string][]string{}
-	data, err := getDockerPs()
+	data, err := m.getDockerPs()
 	if err != nil {
 		return nil, err
 	}
@@ -149,20 +151,26 @@ func (m DockerPlugin) GraphDefinition() map[string](mp.Graphs) {
 }
 
 func main() {
-	optHost := flag.String("host", "localhost", "Hostname")
-	optPort := flag.String("port", "4243", "Port")
+	optHost := flag.String("host", "unix:///var/run/docker.sock", "Host for socket")
+	optCommand := flag.String("command", "docker", "Command path to docker")
 	optTempfile := flag.String("tempfile", "", "Temp file name")
 	flag.Parse()
 
 	var docker DockerPlugin
 
-	docker.Target = fmt.Sprintf("%s:%s", *optHost, *optPort)
+	docker.Host = fmt.Sprintf("%s", *optHost)
+	docker.DockerCommand = *optCommand
+	_, err := exec.LookPath(docker.DockerCommand)
+	if err != nil {
+		log.Fatalf("Docker command is not found: %s", docker.DockerCommand)
+	}
+
 	helper := mp.NewMackerelPlugin(docker)
 
 	if *optTempfile != "" {
 		helper.Tempfile = *optTempfile
 	} else {
-		helper.Tempfile = fmt.Sprintf("/tmp/mackerel-plugin-docker-%s-%s", *optHost, *optPort)
+		helper.Tempfile = fmt.Sprintf("/tmp/mackerel-plugin-docker-%s", normalizeMetricName(*optHost))
 	}
 
 	if os.Getenv("MACKEREL_AGENT_PLUGIN_META") != "" {
