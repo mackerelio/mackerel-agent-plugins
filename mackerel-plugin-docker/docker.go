@@ -9,6 +9,7 @@ import (
 	"os"
 	"os/exec"
 	"regexp"
+	"strconv"
 	"strings"
 
 	mp "github.com/mackerelio/go-mackerel-plugin-helper"
@@ -29,6 +30,36 @@ var graphdef map[string](mp.Graphs) = map[string](mp.Graphs){
 		Metrics: [](mp.Metrics){
 			mp.Metrics{Name: "cache", Label: "Cache", Diff: false, Stacked: true},
 			mp.Metrics{Name: "rss", Label: "RSS", Diff: false, Stacked: true},
+		},
+	},
+	"docker.blkio.io_queued.#": mp.Graphs{
+		Label: "Docker BlkIO Queued",
+		Unit:  "integer",
+		Metrics: [](mp.Metrics){
+			mp.Metrics{Name: "read", Label: "Read", Diff: false, Stacked: true},
+			mp.Metrics{Name: "write", Label: "Write", Diff: false, Stacked: true},
+			mp.Metrics{Name: "sync", Label: "Sync", Diff: false, Stacked: true},
+			mp.Metrics{Name: "async", Label: "Async", Diff: false, Stacked: true},
+		},
+	},
+	"docker.blkio.io_serviced.#": mp.Graphs{
+		Label: "Docker BlkIO IOPS",
+		Unit:  "integer",
+		Metrics: [](mp.Metrics){
+			mp.Metrics{Name: "read", Label: "Read", Diff: true, Stacked: true, Type: "uint64"},
+			mp.Metrics{Name: "write", Label: "Write", Diff: true, Stacked: true, Type: "uint64"},
+			mp.Metrics{Name: "sync", Label: "Sync", Diff: true, Stacked: true, Type: "uint64"},
+			mp.Metrics{Name: "async", Label: "Async", Diff: true, Stacked: true, Type: "uint64"},
+		},
+	},
+	"docker.blkio.io_service_bytes.#": mp.Graphs{
+		Label: "Docker BlkIO Bytes",
+		Unit:  "integer",
+		Metrics: [](mp.Metrics){
+			mp.Metrics{Name: "read", Label: "Read", Diff: true, Stacked: true, Type: "uint64"},
+			mp.Metrics{Name: "write", Label: "Write", Diff: true, Stacked: true, Type: "uint64"},
+			mp.Metrics{Name: "sync", Label: "Sync", Diff: true, Stacked: true, Type: "uint64"},
+			mp.Metrics{Name: "async", Label: "Async", Diff: true, Stacked: true, Type: "uint64"},
 		},
 	},
 }
@@ -140,6 +171,28 @@ func (m DockerPlugin) FetchMetrics() (map[string]interface{}, error) {
 				}
 			}
 		}
+
+		// blkio statistics
+		for _, blkioType := range []string{"io_queued", "io_serviced", "io_service_bytes"} {
+			data, err := getFile(fmt.Sprintf("%s/blkio/docker/%s/blkio.%s", prefixPath, id, blkioType))
+			if err != nil {
+				return nil, err
+			}
+			for _, stat := range []string{"Read", "Write", "Sync", "Async"} {
+				re := regexp.MustCompile(stat + " (\\d+)")
+				matchs := re.FindAllStringSubmatch(data, -1)
+				v := 0.0
+				for _, m := range matchs {
+					if m != nil {
+						ret, _ := strconv.ParseFloat(m[1], 64)
+						//fmt.Println(ret)
+						v += ret
+					}
+				}
+				res[fmt.Sprintf("docker.blkio.%s.%s_%s.%s", blkioType, normalizeMetricName(name[0]), id[0:6], strings.ToLower(stat))] = v
+			}
+		}
+
 	}
 	//fmt.Println(res)
 
