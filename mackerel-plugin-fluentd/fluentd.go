@@ -7,7 +7,7 @@ import (
 	"io/ioutil"
 	"net/http"
 	"os"
-	"strings"
+	"regexp"
 
 	mp "github.com/mackerelio/go-mackerel-plugin-helper"
 )
@@ -35,12 +35,18 @@ type FluentMonitorJSON struct {
 	Plugins []FluentdPluginMetrics `json:"plugins"`
 }
 
+var normalizePluginIDRe = regexp.MustCompile(`[^-a-zA-Z0-9_]`)
+
+func normalizePluginID(str string) string {
+	return normalizePluginIDRe.ReplaceAllString(str, "_")
+}
+
 func (f *FluentdMetrics) ParseStats(body []byte) (map[string]interface{}, error) {
 	var j FluentMonitorJSON
 	err := json.Unmarshal(body, &j)
 	f.plugins = j.Plugins
 	for i, _ := range f.plugins {
-		f.plugins[i].PluginIDModified = strings.Replace(f.plugins[i].PluginID, ":", "_", 1)
+		f.plugins[i].PluginIDModified = normalizePluginID(f.plugins[i].PluginID)
 	}
 
 	metrics := make(map[string]interface{})
