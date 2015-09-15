@@ -92,15 +92,10 @@ func exists(path string) (bool, error) {
 	return true, err
 }
 
+var normalizeMetricRe = regexp.MustCompile(`[^-a-zA-Z0-9_]`)
+
 func normalizeMetricName(str string) string {
-	re := regexp.MustCompile("[-a-zA-Z0-9_]")
-	runes := []rune(str)
-	for i, c := range str {
-		if re.FindString(string(c)) == "" {
-			runes[i] = '_'
-		}
-	}
-	return string(runes)
+	return normalizeMetricRe.ReplaceAllString(str, "_")
 }
 
 func (m DockerPlugin) getDockerPs() (string, error) {
