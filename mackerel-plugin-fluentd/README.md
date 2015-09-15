@@ -3,8 +3,6 @@ mackerel-plugin-fluentd
 
 Fluentd (http://www.fluentd.org/) custom metrics plugin for mackerel.io agent.
 
-The source code of this plugin is based on https://github.com/y-matsuwitter/mackerel-fluentd .
-
 ## Synopsis
 
 ```shell
@@ -32,3 +30,15 @@ port 24220
 ```
 
 See http://docs.fluentd.org/articles/monitoring in details.
+
+## License
+
+Released under the MIT license
+http://opensource.org/licenses/mit-license.php
+
+Original version of the plugin https://github.com/y-matsuwitter/mackerel-fluentd
+Copyright (c) 2015 Yuki Matsumoto
+
+Current version is forked from the original version under the MIT license.
+Copyright (c) 2015 Shinji Tanaka
+
