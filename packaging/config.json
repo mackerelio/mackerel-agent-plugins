@@ -27,7 +27,9 @@
        "varnish",
        "xentop",
        "aws-cloudfront",
-       "aws-ec2-ebs"
+       "aws-ec2-ebs",
+       "fluentd",
+       "docker"
     ]
 }
 
