@@ -41,6 +41,10 @@ done
 %{__targetdir}
 
 %changelog
+* Wed Sep 16 2015 <itchyny@hatena.ne.jp> - 0.13.0
+- add mackerel-plugin-fluentd (by stanaka)
+- add mackerel-plugin-docker (by stanaka)
+
 * Wed Sep 02 2015 <tomohiro68@gmail.com> - 0.12.0
 - Plugin for AWS-EC2 EBS (by naokibtn)
 
