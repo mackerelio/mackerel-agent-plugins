@@ -1,3 +1,12 @@
+mackerel-agent-plugins (0.13.0-1) stable; urgency=low
+
+  * add mackerel-plugin-fluentd (by stanaka)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/114>
+  * add mackerel-plugin-docker (by stanaka)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/115>
+
+ -- itchyny <itchyny@hatena.ne.jp>  Wed, 16 Sep 2015 10:57:37 +0900
+
 mackerel-agent-plugins (0.12.0-1) stable; urgency=low
 
   * Plugin for AWS-EC2 EBS (by naokibtn)

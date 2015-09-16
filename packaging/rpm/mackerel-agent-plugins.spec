@@ -8,7 +8,7 @@
 
 Summary: Monitoring program plugins for Mackerel
 Name: mackerel-agent-plugins
-Version: 0.12.0
+Version: 0.13.0
 Release: %{revision}
 License: Apache-2
 Group: Applications/System
@@ -29,7 +29,7 @@ This package provides plugins for Mackerel.
 
 %{__mkdir} -p %{buildroot}%{__targetdir}
 
-for i in apache2 aws-ec2-cpucredit aws-elasticache aws-elb aws-rds aws-ses elasticsearch haproxy jvm linux memcached mongodb munin mysql nginx php-apc php-opcache plack postgres redis snmp squid td-table-count varnish xentop aws-cloudfront aws-ec2-ebs;do \
+for i in apache2 aws-ec2-cpucredit aws-elasticache aws-elb aws-rds aws-ses elasticsearch haproxy jvm linux memcached mongodb munin mysql nginx php-apc php-opcache plack postgres redis snmp squid td-table-count varnish xentop aws-cloudfront aws-ec2-ebs fluentd docker;do \
     %{__install} -m0755 %{_sourcedir}/build/mackerel-plugin-$i %{buildroot}%{__targetdir}/; \
 done
 
@@ -41,6 +41,10 @@ done
 %{__targetdir}
 
 %changelog
+* Wed Sep 16 2015 <itchyny@hatena.ne.jp> - 0.13.0
+- add mackerel-plugin-fluentd (by stanaka)
+- add mackerel-plugin-docker (by stanaka)
+
 * Wed Sep 02 2015 <tomohiro68@gmail.com> - 0.12.0
 - Plugin for AWS-EC2 EBS (by naokibtn)
 
