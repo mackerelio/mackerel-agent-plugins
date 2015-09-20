@@ -68,6 +68,7 @@ type DockerPlugin struct {
 	Host          string
 	DockerCommand string
 	Tempfile      string
+	pathBuilder   *pathBuilder
 }
 
 func getFile(path string) (string, error) {
@@ -109,7 +110,7 @@ func (m DockerPlugin) getDockerPs() (string, error) {
 	return out.String(), nil
 }
 
-func (m DockerPlugin) findPrefixPath() (string, error) {
+func findPrefixPath() (string, error) {
 	pathCandidate := []string{"/host/sys/fs/cgroup", "/sys/fs/cgroup"}
 	for _, path := range pathCandidate {
 		result, err := exists(path)
@@ -121,6 +122,61 @@ func (m DockerPlugin) findPrefixPath() (string, error) {
 		}
 	}
 	return "", errors.New("No prefix path is found.")
+}
+
+type pathBuilder struct {
+	prefix   string
+	pathType pathType
+}
+
+type pathType uint8
+
+const (
+	pathUnknown pathType = iota
+	pathDocker
+	pathLxc
+	pathSlice
+)
+
+func newPathBuilder() (*pathBuilder, error) {
+	prefixPath, err := findPrefixPath()
+	if err != nil {
+		return nil, err
+	}
+	pathT, err := guessPathType(prefixPath)
+	if err != nil {
+		return nil, err
+	}
+	return &pathBuilder{
+		prefix:   prefixPath,
+		pathType: pathT,
+	}, nil
+}
+
+func (pb *pathBuilder) build(id, metric, postfix string) string {
+	switch pb.pathType {
+	case pathDocker:
+		return fmt.Sprintf("%s/%s/docker/%s/%s.%s", pb.prefix, metric, id, metric, postfix)
+	case pathLxc:
+		return fmt.Sprintf("%s/%s/lxc/%s/%s.%s", pb.prefix, metric, id, metric, postfix)
+	case pathSlice:
+		return fmt.Sprintf("%s/%s/system.slice/docker-%s.scope/%s.%s", pb.prefix, metric, id, metric, postfix)
+	default:
+		return ""
+	}
+}
+
+func guessPathType(prefix string) (pathType, error) {
+	if ok, err := exists(prefix + "/memory/system.slice/"); ok && err == nil {
+		return pathSlice, nil
+	}
+	if ok, err := exists(prefix + "/memory/docker/"); ok && err == nil {
+		return pathDocker, nil
+	}
+	if ok, err := exists(prefix + "/memory/lxc/"); ok && err == nil {
+		return pathLxc, nil
+	}
+	return pathUnknown, fmt.Errorf("can't resolve runtime metrics path")
 }
 
 func (m DockerPlugin) FetchMetrics() (map[string]interface{}, error) {
@@ -135,16 +191,11 @@ func (m DockerPlugin) FetchMetrics() (map[string]interface{}, error) {
 			continue
 		}
 		fields := regexp.MustCompile(" +").Split(line, -1)
-		//fmt.Println(fields)
 		if len(fields) > 3 {
 			dockerStats[fields[0]] = []string{fields[1], fields[len(fields)-2]}
 		}
 	}
-
-	prefixPath, err := m.findPrefixPath()
-	if err != nil {
-		return nil, err
-	}
+	pb := m.pathBuilder
 
 	metrics := map[string][]string{
 		"cpuacct": []string{"user", "system"},
@@ -154,7 +205,7 @@ func (m DockerPlugin) FetchMetrics() (map[string]interface{}, error) {
 	res := map[string]interface{}{}
 	for id, name := range dockerStats {
 		for metric, stats := range metrics {
-			data, err := getFile(fmt.Sprintf("%s/%s/docker/%s/%s.stat", prefixPath, metric, id, metric))
+			data, err := getFile(pb.build(id, metric, "stat"))
 			if err != nil {
 				return nil, err
 			}
@@ -169,7 +220,7 @@ func (m DockerPlugin) FetchMetrics() (map[string]interface{}, error) {
 
 		// blkio statistics
 		for _, blkioType := range []string{"io_queued", "io_serviced", "io_service_bytes"} {
-			data, err := getFile(fmt.Sprintf("%s/blkio/docker/%s/blkio.%s", prefixPath, id, blkioType))
+			data, err := getFile(pb.build(id, "blkio", blkioType))
 			if err != nil {
 				return nil, err
 			}
@@ -212,6 +263,12 @@ func main() {
 	if err != nil {
 		log.Fatalf("Docker command is not found: %s", docker.DockerCommand)
 	}
+
+	pb, err := newPathBuilder()
+	if err != nil {
+		log.Fatalf("failed to resolve docker metrics path: %s", err)
+	}
+	docker.pathBuilder = pb
 
 	helper := mp.NewMackerelPlugin(docker)
 
