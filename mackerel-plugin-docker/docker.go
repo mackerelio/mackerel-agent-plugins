@@ -266,7 +266,7 @@ func main() {
 
 	pb, err := newPathBuilder()
 	if err != nil {
-		log.Fatalf("failed to resolve docker metrics path: %s", err)
+		log.Fatalf("failed to resolve docker metrics path: %s. It may be no Docker containers exists.", err)
 	}
 	docker.pathBuilder = pb
 
