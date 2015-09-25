@@ -41,6 +41,9 @@ done
 %{__targetdir}
 
 %changelog
+* Fri Sep 25 2015 <y.songmu@gmail.com> - 0.13.1
+- [docker] resolve cgroup path in systemd environment (by Songmu)
+
 * Wed Sep 16 2015 <itchyny@hatena.ne.jp> - 0.13.0
 - add mackerel-plugin-fluentd (by stanaka)
 - add mackerel-plugin-docker (by stanaka)

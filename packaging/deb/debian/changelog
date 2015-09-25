@@ -1,3 +1,10 @@
+mackerel-agent-plugins (0.13.1-1) stable; urgency=low
+
+  * [docker] resolve cgroup path in systemd environment (by Songmu)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/118>
+
+ -- Songmu <y.songmu@gmail.com>  Fri, 25 Sep 2015 15:17:44 +0900
+
 mackerel-agent-plugins (0.13.0-1) stable; urgency=low
 
   * add mackerel-plugin-fluentd (by stanaka)
