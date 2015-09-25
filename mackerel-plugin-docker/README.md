@@ -16,6 +16,6 @@ mackerel-plugin-docker [-host=<host>] [-command=<docker>] [-tempfile=<tempfile>]
 ## Example of mackerel-agent.conf
 
 ```
-[plugin.metrics.memcached]
+[plugin.metrics.docker]
 command = "/path/to/mackerel-plugin-docker"
 ```
