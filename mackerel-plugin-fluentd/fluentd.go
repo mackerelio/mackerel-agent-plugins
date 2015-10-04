@@ -20,14 +20,13 @@ type FluentdMetrics struct {
 }
 
 type FluentdPluginMetrics struct {
-	RetryCount            uint64            `json:"retry_count"`
-	BufferQueueLength     uint64            `json:"buffer_queue_length"`
-	BufferTotalQueuedSize uint64            `json:"buffer_total_queued_size"`
-	OutputPlugin          bool              `json:"output_plugin"`
-	Config                map[string]string `json:"config"`
-	Type                  string            `json:"type"`
-	PluginCategory        string            `json:"plugin_category"`
-	PluginID              string            `json:"plugin_id"`
+	RetryCount            uint64 `json:"retry_count"`
+	BufferQueueLength     uint64 `json:"buffer_queue_length"`
+	BufferTotalQueuedSize uint64 `json:"buffer_total_queued_size"`
+	OutputPlugin          bool   `json:"output_plugin"`
+	Type                  string `json:"type"`
+	PluginCategory        string `json:"plugin_category"`
+	PluginID              string `json:"plugin_id"`
 	PluginIDModified      string
 }
 
