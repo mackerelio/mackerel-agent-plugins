@@ -31,7 +31,7 @@ func TestNormalizePluginID(t *testing.T) {
 
 func TestParse(t *testing.T) {
 	var fluentd FluentdMetrics
-	stub := `{"plugins":[{"plugin_id":"object:3feb368cfad0","plugin_category":"output","type":"mackerel","config":{"type":"mackerel","api_key":"aaa","service":"foo","metrics_name":"${[1]}-bar.${out_key}","remove_prefix":"","out_keys":"Latency"},"output_plugin":true,"buffer_queue_length":0,"buffer_total_queued_size":53,"retry_count":0}]}`
+	stub := `{"plugins":[{"plugin_id":"object:3feb368cfad0","plugin_category":"output","type":"mackerel","config":{"type":"mackerel","api_key":"aaa","service":"foo","metrics_name":"${[1]}-bar.${out_key}","remove_prefix":"","out_keys":"Latency","localtime":true},"output_plugin":true,"buffer_queue_length":0,"buffer_total_queued_size":53,"retry_count":0}]}`
 
 	fluentdStats := []byte(stub)
 
