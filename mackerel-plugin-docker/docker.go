@@ -111,7 +111,7 @@ func (m DockerPlugin) getDockerPs() (string, error) {
 }
 
 func findPrefixPath() (string, error) {
-	pathCandidate := []string{"/host/sys/fs/cgroup", "/sys/fs/cgroup"}
+	pathCandidate := []string{"/host/cgroup/", "/cgroup", "/host/sys/fs/cgroup", "/sys/fs/cgroup"}
 	for _, path := range pathCandidate {
 		result, err := exists(path)
 		if err != nil {
@@ -205,6 +205,11 @@ func (m DockerPlugin) FetchMetrics() (map[string]interface{}, error) {
 	res := map[string]interface{}{}
 	for id, name := range dockerStats {
 		for metric, stats := range metrics {
+			//fmt.Println(pb.build(id, metric, "stat"))
+			ret, err := exists(pb.build(id, metric, "stat"))
+			if ret == false {
+				continue
+			}
 			data, err := getFile(pb.build(id, metric, "stat"))
 			if err != nil {
 				return nil, err
@@ -220,8 +225,13 @@ func (m DockerPlugin) FetchMetrics() (map[string]interface{}, error) {
 
 		// blkio statistics
 		for _, blkioType := range []string{"io_queued", "io_serviced", "io_service_bytes"} {
+			ret, err := exists(pb.build(id, "blkio", blkioType))
+			if ret == false {
+				continue
+			}
 			data, err := getFile(pb.build(id, "blkio", blkioType))
 			if err != nil {
+				fmt.Println(err)
 				return nil, err
 			}
 			for _, stat := range []string{"Read", "Write", "Sync", "Async"} {
