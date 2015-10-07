@@ -231,7 +231,6 @@ func (m DockerPlugin) FetchMetrics() (map[string]interface{}, error) {
 			}
 			data, err := getFile(pb.build(id, "blkio", blkioType))
 			if err != nil {
-				fmt.Println(err)
 				return nil, err
 			}
 			for _, stat := range []string{"Read", "Write", "Sync", "Async"} {
