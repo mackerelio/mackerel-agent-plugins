@@ -205,7 +205,6 @@ func (m DockerPlugin) FetchMetrics() (map[string]interface{}, error) {
 	res := map[string]interface{}{}
 	for id, name := range dockerStats {
 		for metric, stats := range metrics {
-			//fmt.Println(pb.build(id, metric, "stat"))
 			ret, err := exists(pb.build(id, metric, "stat"))
 			if ret == false {
 				continue
@@ -240,7 +239,6 @@ func (m DockerPlugin) FetchMetrics() (map[string]interface{}, error) {
 				for _, m := range matchs {
 					if m != nil {
 						ret, _ := strconv.ParseFloat(m[1], 64)
-						//fmt.Println(ret)
 						v += ret
 					}
 				}
@@ -249,7 +247,6 @@ func (m DockerPlugin) FetchMetrics() (map[string]interface{}, error) {
 		}
 
 	}
-	//fmt.Println(res)
 
 	return res, nil
 }
