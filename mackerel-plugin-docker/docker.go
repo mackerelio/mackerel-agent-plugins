@@ -205,8 +205,7 @@ func (m DockerPlugin) FetchMetrics() (map[string]interface{}, error) {
 	res := map[string]interface{}{}
 	for id, name := range dockerStats {
 		for metric, stats := range metrics {
-			ret, err := exists(pb.build(id, metric, "stat"))
-			if ret == false {
+			if ok, err := exists(pb.build(id, metric, "stat")); !ok || err != nil {
 				continue
 			}
 			data, err := getFile(pb.build(id, metric, "stat"))
@@ -224,8 +223,7 @@ func (m DockerPlugin) FetchMetrics() (map[string]interface{}, error) {
 
 		// blkio statistics
 		for _, blkioType := range []string{"io_queued", "io_serviced", "io_service_bytes"} {
-			ret, err := exists(pb.build(id, "blkio", blkioType))
-			if ret == false {
+			if ok, err := exists(pb.build(id, "blkio", blkioType)); !ok || err != nil {
 				continue
 			}
 			data, err := getFile(pb.build(id, "blkio", blkioType))
