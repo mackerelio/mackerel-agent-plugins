@@ -3,97 +3,22 @@ package main
 import (
 	"errors"
 	"flag"
+	"fmt"
 	"log"
 	"os"
 	"time"
 
-	"github.com/crowdmob/goamz/aws"
-	"github.com/crowdmob/goamz/cloudwatch"
+	"github.com/AdRoll/goamz/aws"
+	"github.com/AdRoll/goamz/cloudwatch"
 	mp "github.com/mackerelio/go-mackerel-plugin"
 )
-
-var graphdef map[string](mp.Graphs) = map[string](mp.Graphs){
-	"rds.CPUUtilization": mp.Graphs{
-		Label: "RDS CPU Utilization",
-		Unit:  "percentage",
-		Metrics: [](mp.Metrics){
-			mp.Metrics{Name: "CPUUtilization", Label: "CPUUtilization"},
-		},
-	},
-	"rds.DatabaseConnections": mp.Graphs{
-		Label: "RDS Database Connections",
-		Unit:  "float",
-		Metrics: [](mp.Metrics){
-			mp.Metrics{Name: "DatabaseConnections", Label: "DatabaseConnections"},
-		},
-	},
-	"rds.FreeableMemory": mp.Graphs{
-		Label: "RDS Freeable Memory",
-		Unit:  "bytes",
-		Metrics: [](mp.Metrics){
-			mp.Metrics{Name: "FreeableMemory", Label: "FreeableMemory"},
-		},
-	},
-	"rds.FreeStorageSpace": mp.Graphs{
-		Label: "RDS Free Storage Space",
-		Unit:  "bytes",
-		Metrics: [](mp.Metrics){
-			mp.Metrics{Name: "FreeStorageSpace", Label: "FreeStorageSpace"},
-		},
-	},
-	"rds.ReplicaLag": mp.Graphs{
-		Label: "RDS Replica Lag",
-		Unit:  "float",
-		Metrics: [](mp.Metrics){
-			mp.Metrics{Name: "ReplicaLag", Label: "ReplicaLag"},
-		},
-	},
-	"rds.SwapUsage": mp.Graphs{
-		Label: "RDS Swap Usage",
-		Unit:  "bytes",
-		Metrics: [](mp.Metrics){
-			mp.Metrics{Name: "SwapUsage", Label: "SwapUsage"},
-		},
-	},
-	"rds.IOPS": mp.Graphs{
-		Label: "RDS IOPS",
-		Unit:  "iops",
-		Metrics: [](mp.Metrics){
-			mp.Metrics{Name: "ReadIOPS", Label: "Read"},
-			mp.Metrics{Name: "WriteIOPS", Label: "Write"},
-		},
-	},
-	"rds.Latency": mp.Graphs{
-		Label: "RDS Latency in second",
-		Unit:  "float",
-		Metrics: [](mp.Metrics){
-			mp.Metrics{Name: "ReadLatency", Label: "Read"},
-			mp.Metrics{Name: "WriteLatency", Label: "Write"},
-		},
-	},
-	"rds.Throughput": mp.Graphs{
-		Label: "RDS Throughput",
-		Unit:  "bytes/sec",
-		Metrics: [](mp.Metrics){
-			mp.Metrics{Name: "ReadThroughput", Label: "Read"},
-			mp.Metrics{Name: "WriteThroughput", Label: "Write"},
-		},
-	},
-	"rds.NetworkThroughput": mp.Graphs{
-		Label: "RDS Network Throughput",
-		Unit:  "bytes/sec",
-		Metrics: [](mp.Metrics){
-			mp.Metrics{Name: "NetworkTransmitThroughput", Label: "Transmit"},
-			mp.Metrics{Name: "NetworkReceiveThroughput", Label: "Receive"},
-		},
-	},
-}
 
 type RDSPlugin struct {
 	Region          string
 	AccessKeyId     string
 	SecretAccessKey string
 	Identifier      string
+	KeyPrefix       string
 }
 
 func GetLastPoint(cloudWatch *cloudwatch.CloudWatch, dimension *cloudwatch.Dimension, metricName string) (float64, error) {
@@ -166,14 +91,90 @@ func (p RDSPlugin) FetchMetrics() (map[string]float64, error) {
 }
 
 func (p RDSPlugin) GraphDefinition() map[string](mp.Graphs) {
-	return graphdef
+	return map[string](mp.Graphs){
+		fmt.Sprintf("%s.CPUUtilization", p.KeyPrefix): mp.Graphs{
+			Label: "RDS CPU Utilization",
+			Unit:  "percentage",
+			Metrics: [](mp.Metrics){
+				mp.Metrics{Name: "CPUUtilization", Label: "CPUUtilization"},
+			},
+		},
+		fmt.Sprintf("%s.DatabaseConnections", p.KeyPrefix): mp.Graphs{
+			Label: "RDS Database Connections",
+			Unit:  "float",
+			Metrics: [](mp.Metrics){
+				mp.Metrics{Name: "DatabaseConnections", Label: "DatabaseConnections"},
+			},
+		},
+		fmt.Sprintf("%s.FreeableMemory", p.KeyPrefix): mp.Graphs{
+			Label: "RDS Freeable Memory",
+			Unit:  "bytes",
+			Metrics: [](mp.Metrics){
+				mp.Metrics{Name: "FreeableMemory", Label: "FreeableMemory"},
+			},
+		},
+		fmt.Sprintf("%s.FreeStorageSpace", p.KeyPrefix): mp.Graphs{
+			Label: "RDS Free Storage Space",
+			Unit:  "bytes",
+			Metrics: [](mp.Metrics){
+				mp.Metrics{Name: "FreeStorageSpace", Label: "FreeStorageSpace"},
+			},
+		},
+		fmt.Sprintf("%s.ReplicaLag", p.KeyPrefix): mp.Graphs{
+			Label: "RDS Replica Lag",
+			Unit:  "float",
+			Metrics: [](mp.Metrics){
+				mp.Metrics{Name: "ReplicaLag", Label: "ReplicaLag"},
+			},
+		},
+		fmt.Sprintf("%s.SwapUsage", p.KeyPrefix): mp.Graphs{
+			Label: "RDS Swap Usage",
+			Unit:  "bytes",
+			Metrics: [](mp.Metrics){
+				mp.Metrics{Name: "SwapUsage", Label: "SwapUsage"},
+			},
+		},
+		fmt.Sprintf("%s.IOPS", p.KeyPrefix): mp.Graphs{
+			Label: "RDS IOPS",
+			Unit:  "iops",
+			Metrics: [](mp.Metrics){
+				mp.Metrics{Name: "ReadIOPS", Label: "Read"},
+				mp.Metrics{Name: "WriteIOPS", Label: "Write"},
+			},
+		},
+		fmt.Sprintf("%s.Latency", p.KeyPrefix): mp.Graphs{
+			Label: "RDS Latency in second",
+			Unit:  "float",
+			Metrics: [](mp.Metrics){
+				mp.Metrics{Name: "ReadLatency", Label: "Read"},
+				mp.Metrics{Name: "WriteLatency", Label: "Write"},
+			},
+		},
+		fmt.Sprintf("%s.Throughput", p.KeyPrefix): mp.Graphs{
+			Label: "RDS Throughput",
+			Unit:  "bytes/sec",
+			Metrics: [](mp.Metrics){
+				mp.Metrics{Name: "ReadThroughput", Label: "Read"},
+				mp.Metrics{Name: "WriteThroughput", Label: "Write"},
+			},
+		},
+		fmt.Sprintf("%s.NetworkThroughput", p.KeyPrefix): mp.Graphs{
+			Label: "RDS Network Throughput",
+			Unit:  "bytes/sec",
+			Metrics: [](mp.Metrics){
+				mp.Metrics{Name: "NetworkTransmitThroughput", Label: "Transmit"},
+				mp.Metrics{Name: "NetworkReceiveThroughput", Label: "Receive"},
+			},
+		},
+	}
 }
 
 func main() {
 	optRegion := flag.String("region", "", "AWS Region")
 	optAccessKeyId := flag.String("access-key-id", "", "AWS Access Key ID")
 	optSecretAccessKey := flag.String("secret-access-key", "", "AWS Secret Access Key")
-	optIdentifier := flag.String("identifier", "", "DB Instance Identifier")
+	optIdentifier := flag.String("identifier", "", "Prefix name (default: rds)")
+	optKeyPrefix := flag.Bool("use-identifier-as-prefix", false, "Use Identifier as key prefix (default: false)")
 	optTempfile := flag.String("tempfile", "", "Temp file name")
 	flag.Parse()
 
@@ -188,6 +189,11 @@ func main() {
 	rds.Identifier = *optIdentifier
 	rds.AccessKeyId = *optAccessKeyId
 	rds.SecretAccessKey = *optSecretAccessKey
+	if *optKeyPrefix {
+		rds.KeyPrefix = "rds." + rds.Identifier
+	} else {
+		rds.KeyPrefix = "rds"
+	}
 
 	helper := mp.NewMackerelPlugin(rds)
 	if *optTempfile != "" {
