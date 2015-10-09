@@ -111,7 +111,7 @@ func (m DockerPlugin) getDockerPs() (string, error) {
 }
 
 func findPrefixPath() (string, error) {
-	pathCandidate := []string{"/host/sys/fs/cgroup", "/sys/fs/cgroup"}
+	pathCandidate := []string{"/host/cgroup/", "/cgroup", "/host/sys/fs/cgroup", "/sys/fs/cgroup"}
 	for _, path := range pathCandidate {
 		result, err := exists(path)
 		if err != nil {
@@ -205,6 +205,9 @@ func (m DockerPlugin) FetchMetrics() (map[string]interface{}, error) {
 	res := map[string]interface{}{}
 	for id, name := range dockerStats {
 		for metric, stats := range metrics {
+			if ok, err := exists(pb.build(id, metric, "stat")); !ok || err != nil {
+				continue
+			}
 			data, err := getFile(pb.build(id, metric, "stat"))
 			if err != nil {
 				return nil, err
@@ -220,6 +223,9 @@ func (m DockerPlugin) FetchMetrics() (map[string]interface{}, error) {
 
 		// blkio statistics
 		for _, blkioType := range []string{"io_queued", "io_serviced", "io_service_bytes"} {
+			if ok, err := exists(pb.build(id, "blkio", blkioType)); !ok || err != nil {
+				continue
+			}
 			data, err := getFile(pb.build(id, "blkio", blkioType))
 			if err != nil {
 				return nil, err
@@ -231,7 +237,6 @@ func (m DockerPlugin) FetchMetrics() (map[string]interface{}, error) {
 				for _, m := range matchs {
 					if m != nil {
 						ret, _ := strconv.ParseFloat(m[1], 64)
-						//fmt.Println(ret)
 						v += ret
 					}
 				}
@@ -240,7 +245,6 @@ func (m DockerPlugin) FetchMetrics() (map[string]interface{}, error) {
 		}
 
 	}
-	//fmt.Println(res)
 
 	return res, nil
 }
