@@ -41,6 +41,12 @@ done
 %{__targetdir}
 
 %changelog
+* Thu Oct 15 2015 <itchyny@hatena.ne.jp> - 0.13.2
+- reduce binary size (by Songmu)
+- remove Config field from FluentPluginMetrics (by Songmu)
+- support coreos and amazon linux for docker plugin (by stanaka)
+- Add Key prefix option for AWS RDS plugin (by stanaka)
+
 * Fri Sep 25 2015 <y.songmu@gmail.com> - 0.13.1
 - [docker] resolve cgroup path in systemd environment (by Songmu)
 

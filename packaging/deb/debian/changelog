@@ -1,3 +1,16 @@
+mackerel-agent-plugins (0.13.2-1) stable; urgency=low
+
+  * reduce binary size (by Songmu)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/120>
+  * remove Config field from FluentPluginMetrics (by Songmu)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/121>
+  * support coreos and amazon linux for docker plugin (by stanaka)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/122>
+  * Add Key prefix option for AWS RDS plugin (by stanaka)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/124>
+
+ -- itchyny <itchyny@hatena.ne.jp>  Thu, 15 Oct 2015 12:24:35 +0900
+
 mackerel-agent-plugins (0.13.1-1) stable; urgency=low
 
   * [docker] resolve cgroup path in systemd environment (by Songmu)
