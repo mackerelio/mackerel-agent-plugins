@@ -1,8 +1,9 @@
 package main
 
 import (
-	"github.com/stretchr/testify/assert"
 	"testing"
+
+	"github.com/stretchr/testify/assert"
 )
 
 func TestParsePluginConfig(t *testing.T) {
@@ -19,7 +20,7 @@ func TestParsePluginConfig(t *testing.T) {
 	assert.EqualValues(t, stat["conn_client"], 2)
 }
 
-var parseVarsStub string = `
+var parseVarsStub = `
 proxy.node.num_processes 0
 proxy.node.hostname_FQ examplehost
 proxy.node.hostname examplehost
