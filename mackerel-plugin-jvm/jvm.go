@@ -1,7 +1,6 @@
 package main
 
 import (
-	"errors"
 	"flag"
 	"fmt"
 	"io/ioutil"
@@ -16,6 +15,7 @@ import (
 
 var logger = logging.GetLogger("metrics.plugin.jvm")
 
+// JVMPlugin plugin for JVM
 type JVMPlugin struct {
 	Target    string
 	Lvmid     string
@@ -27,7 +27,7 @@ type JVMPlugin struct {
 // # jps
 // 26547 NettyServer
 // 6438 Jps
-func FetchLvmidByAppname(appname, target, jpsPath string) (string, error) {
+func fetchLvmidByAppname(appname, target, jpsPath string) (string, error) {
 	out, err := exec.Command(jpsPath, target).Output()
 	if err != nil {
 		logger.Errorf("Failed to run exec jps. %s", err)
@@ -43,7 +43,7 @@ func FetchLvmidByAppname(appname, target, jpsPath string) (string, error) {
 			return lvmid, nil
 		}
 	}
-	return "", errors.New(fmt.Sprintf("Cannot get lvmid from %s", appname))
+	return "", fmt.Errorf("Cannot get lvmid from %s", appname)
 }
 
 func fetchJstatMetrics(lvmid, option, jstatPath string) (map[string]float64, error) {
@@ -101,6 +101,7 @@ func mergeStat(dst, src map[string]float64) {
 //  S0C    S1C    S0U    S1U   TT MTT  DSS      EC       EU     YGC     YGCT
 // 3072.0 3072.0    0.0 2848.0  1  15 3072.0 693248.0 626782.2   3463   33.658
 
+// FetchMetrics interface for mackerelplugin
 func (m JVMPlugin) FetchMetrics() (map[string]interface{}, error) {
 	gcStat, err := fetchJstatMetrics(m.Lvmid, "-gc", m.JstatPath)
 	if err != nil {
@@ -132,6 +133,7 @@ func (m JVMPlugin) FetchMetrics() (map[string]interface{}, error) {
 	return result, nil
 }
 
+// GraphDefinition interface for mackerelplugin
 func (m JVMPlugin) GraphDefinition() map[string](mp.Graphs) {
 	rawJavaName := m.JavaName
 	lowerJavaName := strings.ToLower(m.JavaName)
@@ -226,7 +228,7 @@ func main() {
 	}
 
 	if *optPidFile == "" {
-		lvmid, err := FetchLvmidByAppname(*optJavaName, jvm.Target, *optJpsPath)
+		lvmid, err := fetchLvmidByAppname(*optJavaName, jvm.Target, *optJpsPath)
 		if err != nil {
 			logger.Errorf("Failed to fetch lvmid. %s", err)
 			os.Exit(1)
