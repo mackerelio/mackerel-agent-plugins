@@ -13,7 +13,7 @@ import (
 
 var logger = logging.GetLogger("metrics.plugin.postgres")
 
-var graphdef map[string](mp.Graphs) = map[string](mp.Graphs){
+var graphdef = map[string](mp.Graphs){
 	"postgres.connections": mp.Graphs{
 		Label: "Postgres Connections",
 		Unit:  "integer",
@@ -80,6 +80,7 @@ var graphdef map[string](mp.Graphs) = map[string](mp.Graphs){
 	},
 }
 
+// PostgresPlugin mackerel plugin for PostgreSQL
 type PostgresPlugin struct {
 	Host     string
 	Port     string
@@ -88,10 +89,10 @@ type PostgresPlugin struct {
 	SSLmode  string
 	Timeout  int
 	Tempfile string
-        Option   string
+	Option   string
 }
 
-func FetchStatDatabase(db *sql.DB) (map[string]float64, error) {
+func fetchStatDatabase(db *sql.DB) (map[string]float64, error) {
 	rows, err := db.Query(`
 		select xact_commit, xact_rollback, blks_read, blks_hit, blk_read_time, blk_write_time,
 		tup_returned, tup_fetched, tup_inserted, tup_updated, tup_deleted, deadlocks, temp_bytes
@@ -105,33 +106,32 @@ func FetchStatDatabase(db *sql.DB) (map[string]float64, error) {
 	stat := make(map[string]float64)
 
 	for rows.Next() {
-		var xact_commit, xact_rollback, blks_read, blks_hit, blk_read_time, blk_write_time int
-		var tup_returned, tup_fetched, tup_inserted, tup_updated, tup_deleted, deadlocks, temp_bytes int
+		var xactCommit, xactRollback, blksRead, blksHit, blkReadTime, blkWriteTime, tupReturned, tupFetched, tupInserted, tupUpdated, tupDeleted, deadlocks, tempBytes int
 
-		if err := rows.Scan(&xact_commit, &xact_rollback, &blks_read, &blks_hit, &blk_read_time, &blk_write_time, &tup_returned, &tup_fetched, &tup_inserted, &tup_updated, &tup_deleted, &deadlocks, &temp_bytes); err != nil {
+		if err := rows.Scan(&xactCommit, &xactRollback, &blksRead, &blksHit, &blkReadTime, &blkWriteTime, &tupReturned, &tupFetched, &tupInserted, &tupUpdated, &tupDeleted, &deadlocks, &tempBytes); err != nil {
 			logger.Warningf("Failed to scan. %s", err)
 			continue
 		}
 
-		stat["xact_commit"] += float64(xact_commit)
-		stat["xact_rollback"] += float64(xact_rollback)
-		stat["blks_read"] += float64(blks_read)
-		stat["blks_hit"] += float64(blks_hit)
-		stat["blk_read_time"] += float64(blks_hit)
-		stat["blk_write_time"] += float64(blks_hit)
-		stat["tup_returned"] += float64(tup_returned)
-		stat["tup_fetched"] += float64(tup_fetched)
-		stat["tup_inserted"] += float64(tup_inserted)
-		stat["tup_updated"] += float64(tup_updated)
-		stat["tup_deleted"] += float64(tup_deleted)
+		stat["xact_commit"] += float64(xactCommit)
+		stat["xact_rollback"] += float64(xactRollback)
+		stat["blks_read"] += float64(blksRead)
+		stat["blks_hit"] += float64(blksHit)
+		stat["blk_read_time"] += float64(blksHit)
+		stat["blk_write_time"] += float64(blksHit)
+		stat["tup_returned"] += float64(tupReturned)
+		stat["tup_fetched"] += float64(tupFetched)
+		stat["tup_inserted"] += float64(tupInserted)
+		stat["tup_updated"] += float64(tupUpdated)
+		stat["tup_deleted"] += float64(tupDeleted)
 		stat["deadlocks"] += float64(deadlocks)
-		stat["temp_bytes"] += float64(temp_bytes)
+		stat["temp_bytes"] += float64(tempBytes)
 	}
 
 	return stat, nil
 }
 
-func FetchConnections(db *sql.DB) (map[string]float64, error) {
+func fetchConnections(db *sql.DB) (map[string]float64, error) {
 	rows, err := db.Query(`
 		select count(*), waiting from pg_stat_activity group by waiting
 	`)
@@ -159,7 +159,7 @@ func FetchConnections(db *sql.DB) (map[string]float64, error) {
 	return stat, nil
 }
 
-func FetchDatabaseSize(db *sql.DB) (map[string]float64, error) {
+func fetchDatabaseSize(db *sql.DB) (map[string]float64, error) {
 	rows, err := db.Query("select sum(pg_database_size(datname)) as dbsize from pg_database")
 	if err != nil {
 		logger.Errorf("Failed to select pg_database_size. %s", err)
@@ -186,6 +186,7 @@ func mergeStat(dst, src map[string]float64) {
 	}
 }
 
+// FetchMetrics interface for mackerelplugin
 func (p PostgresPlugin) FetchMetrics() (map[string]float64, error) {
 	db, err := sql.Open("postgres", fmt.Sprintf("user=%s password=%s host=%s port=%s sslmode=%s connect_timeout=%d %s", p.Username, p.Password, p.Host, p.Port, p.SSLmode, p.Timeout, p.Option))
 	if err != nil {
@@ -194,15 +195,15 @@ func (p PostgresPlugin) FetchMetrics() (map[string]float64, error) {
 	}
 	defer db.Close()
 
-	statStatDatabase, err := FetchStatDatabase(db)
+	statStatDatabase, err := fetchStatDatabase(db)
 	if err != nil {
 		return nil, err
 	}
-	statConnections, err := FetchConnections(db)
+	statConnections, err := fetchConnections(db)
 	if err != nil {
 		return nil, err
 	}
-	statDatabaseSize, err := FetchDatabaseSize(db)
+	statDatabaseSize, err := fetchDatabaseSize(db)
 	if err != nil {
 		return nil, err
 	}
@@ -215,6 +216,7 @@ func (p PostgresPlugin) FetchMetrics() (map[string]float64, error) {
 	return stat, err
 }
 
+// GraphDefinition interface for mackerelplugin
 func (p PostgresPlugin) GraphDefinition() map[string](mp.Graphs) {
 	return graphdef
 }
@@ -223,7 +225,7 @@ func main() {
 	optHost := flag.String("hostname", "localhost", "Hostname to login to")
 	optPort := flag.String("port", "5432", "Database port")
 	optUser := flag.String("user", "", "Postgres User")
-        optDatabase := flag.String("database", "", "Database name")
+	optDatabase := flag.String("database", "", "Database name")
 	optPass := flag.String("password", "", "Postgres Password")
 	optSSLmode := flag.String("sslmode", "disable", "Whether or not to use SSL")
 	optConnectTimeout := flag.Int("connect_timeout", 5, "Maximum wait for connection, in seconds.")
@@ -240,10 +242,10 @@ func main() {
 		flag.PrintDefaults()
 		os.Exit(1)
 	}
-        option := ""
-        if *optDatabase != "" {
+	option := ""
+	if *optDatabase != "" {
 		option = fmt.Sprintf("dbname=%s", *optDatabase)
-        }
+	}
 
 	var postgres PostgresPlugin
 	postgres.Host = *optHost
@@ -253,7 +255,6 @@ func main() {
 	postgres.SSLmode = *optSSLmode
 	postgres.Timeout = *optConnectTimeout
 	postgres.Option = option
-
 
 	helper := mp.NewMackerelPlugin(postgres)
 

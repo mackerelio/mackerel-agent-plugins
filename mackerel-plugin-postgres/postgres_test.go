@@ -22,7 +22,7 @@ func TestFetchStatDatabase(t *testing.T) {
 	10,20,30,40,50,60,70,80,90,100,110,120,130
 	`))
 
-	stat, err := FetchStatDatabase(db)
+	stat, err := fetchStatDatabase(db)
 
 	if err != nil {
 		t.Errorf("Expected no error, but got %s instead", err)
