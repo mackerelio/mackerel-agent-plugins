@@ -3,19 +3,22 @@ package main
 import (
 	"flag"
 	"fmt"
-	"github.com/alouca/gosnmp"
-	mp "github.com/mackerelio/go-mackerel-plugin"
 	"log"
 	"os"
 	"strconv"
 	"strings"
+
+	"github.com/alouca/gosnmp"
+	mp "github.com/mackerelio/go-mackerel-plugin"
 )
 
+// SNMPMetrics metrics
 type SNMPMetrics struct {
 	OID     string
 	Metrics mp.Metrics
 }
 
+// SNMPPlugin mackerel plugin for snmp
 type SNMPPlugin struct {
 	GraphName        string
 	GraphUnit        string
@@ -25,6 +28,7 @@ type SNMPPlugin struct {
 	SNMPMetricsSlice []SNMPMetrics
 }
 
+// FetchMetrics interface for mackerelplugin
 func (m SNMPPlugin) FetchMetrics() (map[string]float64, error) {
 	stat := make(map[string]float64)
 
@@ -52,6 +56,7 @@ func (m SNMPPlugin) FetchMetrics() (map[string]float64, error) {
 	return stat, err
 }
 
+// GraphDefinition interface for mackerelplugin
 func (m SNMPPlugin) GraphDefinition() map[string](mp.Graphs) {
 	metrics := []mp.Metrics{}
 	for _, sm := range m.SNMPMetricsSlice {
