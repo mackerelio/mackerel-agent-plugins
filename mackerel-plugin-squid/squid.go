@@ -4,14 +4,15 @@ import (
 	"bufio"
 	"flag"
 	"fmt"
-	mp "github.com/mackerelio/go-mackerel-plugin"
 	"net"
 	"os"
-	"strconv"
 	"regexp"
+	"strconv"
+
+	mp "github.com/mackerelio/go-mackerel-plugin"
 )
 
-var graphdef map[string](mp.Graphs) = map[string](mp.Graphs){
+var graphdef = map[string](mp.Graphs){
 	"squid.requests": mp.Graphs{
 		Label: "Squid Client Requests",
 		Unit:  "integer",
@@ -29,17 +30,19 @@ var graphdef map[string](mp.Graphs) = map[string](mp.Graphs){
 	},
 }
 
+// SquidPlugin mackerel plugin for squid
 type SquidPlugin struct {
 	Target   string
 	Tempfile string
 }
 
+// FetchMetrics interface for mackerelplugin
 func (m SquidPlugin) FetchMetrics() (map[string]float64, error) {
 	conn, err := net.Dial("tcp", m.Target)
 	if err != nil {
 		return nil, err
 	}
-	fmt.Fprintln(conn, "GET cache_object://"+ m.Target + "/info HTTP/1.0\n\n")
+	fmt.Fprintln(conn, "GET cache_object://"+m.Target+"/info HTTP/1.0\n\n")
 	scanner := bufio.NewScanner(conn)
 	stat := make(map[string]float64)
 	regexpmap := make(map[string]*regexp.Regexp)
@@ -53,22 +56,23 @@ func (m SquidPlugin) FetchMetrics() (map[string]float64, error) {
 		s := string(line)
 
 		for key, rexp := range regexpmap {
-		    match := rexp.FindStringSubmatch(s)
-		    if match == nil {
-		        continue
-		    }
+			match := rexp.FindStringSubmatch(s)
+			if match == nil {
+				continue
+			}
 
-		    stat[key], err = strconv.ParseFloat(match[1], 64)
-		    if err != nil {
-			return nil, err
-		    }
-		    break
+			stat[key], err = strconv.ParseFloat(match[1], 64)
+			if err != nil {
+				return nil, err
+			}
+			break
 		}
 	}
 
 	return stat, err
 }
 
+// GraphDefinition interface for mackerelplugin
 func (m SquidPlugin) GraphDefinition() map[string](mp.Graphs) {
 	return graphdef
 }
