@@ -60,7 +60,7 @@ END
 
 	memcachedStats := bytes.NewBufferString(stub)
 
-	stat, err := memcached.ParseStats(memcachedStats)
+	stat, err := memcached.parseStats(memcachedStats)
 	fmt.Println(stat)
 	assert.Nil(t, err)
 	// Memcached Stats
