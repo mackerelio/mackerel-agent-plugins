@@ -3,8 +3,9 @@ package main
 import (
 	"bytes"
 	"fmt"
-	"github.com/stretchr/testify/assert"
 	"testing"
+
+	"github.com/stretchr/testify/assert"
 )
 
 func TestGraphDefinition(t *testing.T) {
@@ -25,10 +26,10 @@ hastats,BACKEND,0,0,0,1,7,17,7061,15994,0,0,,17,0,0,0,UP,0,0,0,,0,1543,0,,1,1,0,
 
 	haproxyStats := bytes.NewBufferString(stub)
 
-	stat, err := haproxy.ParseStats(haproxyStats)
+	stat, err := haproxy.parseStats(haproxyStats)
 	fmt.Println(stat)
 	assert.Nil(t, err)
-	// HaProxy Stats 
+	// HaProxy Stats
 	assert.EqualValues(t, stat["sessions"], 17)
 	assert.EqualValues(t, stat["bytes_in"], 7061)
 	assert.EqualValues(t, stat["bytes_out"], 15994)
