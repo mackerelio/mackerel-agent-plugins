@@ -10,7 +10,7 @@ import (
 	"strconv"
 	"strings"
 
-	mp "github.com/mackerelio/go-mackerel-plugin"
+	mp "github.com/mackerelio/go-mackerel-plugin-helper"
 	"github.com/mackerelio/mackerel-agent/logging"
 )
 
@@ -75,8 +75,6 @@ func mergeStat(dst, src map[string]float64) {
 	}
 }
 
-
-
 // <Java8> https://docs.oracle.com/javase/8/docs/technotes/tools/unix/jstat.html
 // # jstat -gc <vmid>
 //  S0C    S1C    S0U    S1U      EC       EU        OC         OU       MC     MU    CCSC   CCSU   YGC     YGCT    FGC    FGCT     GCT
@@ -103,7 +101,7 @@ func mergeStat(dst, src map[string]float64) {
 //  S0C    S1C    S0U    S1U   TT MTT  DSS      EC       EU     YGC     YGCT
 // 3072.0 3072.0    0.0 2848.0  1  15 3072.0 693248.0 626782.2   3463   33.658
 
-func (m JVMPlugin) FetchMetrics() (map[string]float64, error) {
+func (m JVMPlugin) FetchMetrics() (map[string]interface{}, error) {
 	gcStat, err := fetchJstatMetrics(m.Lvmid, "-gc", m.JstatPath)
 	if err != nil {
 		return nil, err
@@ -127,7 +125,11 @@ func (m JVMPlugin) FetchMetrics() (map[string]float64, error) {
 	mergeStat(stat, gcNewStat)
 	mergeStat(stat, gcOldStat)
 
-	return stat, nil
+	result := make(map[string]interface{})
+	for k, v := range stat {
+		result[k] = v
+	}
+	return result, nil
 }
 
 func (m JVMPlugin) GraphDefinition() map[string](mp.Graphs) {
