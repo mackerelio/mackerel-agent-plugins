@@ -5,15 +5,16 @@ import (
 	"errors"
 	"flag"
 	"fmt"
-	mp "github.com/mackerelio/go-mackerel-plugin"
-	"github.com/mackerelio/mackerel-agent/logging"
 	"net/http"
 	"os"
+
+	mp "github.com/mackerelio/go-mackerel-plugin"
+	"github.com/mackerelio/mackerel-agent/logging"
 )
 
 var logger = logging.GetLogger("metrics.plugin.elasticsearch")
 
-var graphdef map[string](mp.Graphs) = map[string](mp.Graphs){
+var graphdef = map[string](mp.Graphs){
 	"elasticsearch.http": mp.Graphs{
 		Label: "Elasticsearch HTTP",
 		Unit:  "integer",
@@ -60,12 +61,11 @@ var graphdef map[string](mp.Graphs) = map[string](mp.Graphs){
 	},
 	"elasticsearch.indices.evictions": mp.Graphs{
 		Label: "Elasticsearch Indices Evictions",
-		Unit: "integer",
+		Unit:  "integer",
 		Metrics: [](mp.Metrics){
 			mp.Metrics{Name: "evictions_fielddata", Label: "Fielddata", Diff: true},
 			mp.Metrics{Name: "evictions_filter_cache", Label: "Filter Cache", Diff: true},
 		},
-
 	},
 	"elasticsearch.jvm.heap": mp.Graphs{
 		Label: "Elasticsearch JVM Heap Mem",
@@ -107,7 +107,7 @@ var graphdef map[string](mp.Graphs) = map[string](mp.Graphs){
 	},
 }
 
-var metricPlace map[string][]string = map[string][]string{
+var metricPlace = map[string][]string{
 	"http_opened":                 []string{"http", "total_opened"},
 	"total_indexing_index":        []string{"indices", "indexing", "index_total"},
 	"total_indexing_delete":       []string{"indices", "indexing", "delete_total"},
@@ -152,7 +152,7 @@ var metricPlace map[string][]string = map[string][]string{
 	"count_tx":                    []string{"transport", "tx_count"},
 }
 
-func GetFloatValue(s map[string]interface{}, keys []string) (float64, error) {
+func getFloatValue(s map[string]interface{}, keys []string) (float64, error) {
 	var val float64
 	sm := s
 	for i, k := range keys {
@@ -176,12 +176,14 @@ func GetFloatValue(s map[string]interface{}, keys []string) (float64, error) {
 	return val, nil
 }
 
+// ElasticsearchPlugin mackerel plugin for Elasticsearch
 type ElasticsearchPlugin struct {
-	Uri string
+	URI string
 }
 
+// FetchMetrics interface for mackerelplugin
 func (p ElasticsearchPlugin) FetchMetrics() (map[string]float64, error) {
-	resp, err := http.Get(p.Uri + "/_nodes/_local/stats")
+	resp, err := http.Get(p.URI + "/_nodes/_local/stats")
 	if err != nil {
 		return nil, err
 	}
@@ -198,7 +200,7 @@ func (p ElasticsearchPlugin) FetchMetrics() (map[string]float64, error) {
 
 	nodes := s["nodes"].(map[string]interface{})
 	n := ""
-	for k, _ := range nodes {
+	for k := range nodes {
 		if n != "" {
 			return nil, errors.New("Multiple node found")
 		}
@@ -207,7 +209,7 @@ func (p ElasticsearchPlugin) FetchMetrics() (map[string]float64, error) {
 	node := nodes[n].(map[string]interface{})
 
 	for k, v := range metricPlace {
-		val, err := GetFloatValue(node, v)
+		val, err := getFloatValue(node, v)
 		if err != nil {
 			logger.Errorf("Failed to find '%s': %s", k, err)
 			continue
@@ -219,7 +221,8 @@ func (p ElasticsearchPlugin) FetchMetrics() (map[string]float64, error) {
 	return stat, nil
 }
 
-func (n ElasticsearchPlugin) GraphDefinition() map[string](mp.Graphs) {
+// GraphDefinition interface for mackerelplugin
+func (p ElasticsearchPlugin) GraphDefinition() map[string](mp.Graphs) {
 	return graphdef
 }
 
@@ -230,7 +233,7 @@ func main() {
 	flag.Parse()
 
 	var elasticsearch ElasticsearchPlugin
-	elasticsearch.Uri = fmt.Sprintf("http://%s:%s", *optHost, *optPort)
+	elasticsearch.URI = fmt.Sprintf("http://%s:%s", *optHost, *optPort)
 
 	helper := mp.NewMackerelPlugin(elasticsearch)
 	if *optTempfile != "" {
