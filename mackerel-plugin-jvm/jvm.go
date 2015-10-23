@@ -10,7 +10,7 @@ import (
 	"strconv"
 	"strings"
 
-	mp "github.com/mackerelio/go-mackerel-plugin"
+	mp "github.com/mackerelio/go-mackerel-plugin-helper"
 	"github.com/mackerelio/mackerel-agent/logging"
 )
 
@@ -75,6 +75,20 @@ func mergeStat(dst, src map[string]float64) {
 	}
 }
 
+// <Java8> https://docs.oracle.com/javase/8/docs/technotes/tools/unix/jstat.html
+// # jstat -gc <vmid>
+//  S0C    S1C    S0U    S1U      EC       EU        OC         OU       MC     MU    CCSC   CCSU   YGC     YGCT    FGC    FGCT     GCT
+// 1024.0 1024.0  0.0    0.0    8256.0   8256.0   20480.0     453.4    4864.0 2776.2 512.0  300.8       0    0.000   1      0.003    0.003
+
+// # jstat -gccapacity <vmid>
+//  NGCMN    NGCMX     NGC     S0C   S1C       EC      OGCMN      OGCMX       OGC         OC       MCMN     MCMX      MC     CCSMN    CCSMX     CCSC    YGC    FGC
+//  10240.0 160384.0  10304.0 1024.0 1024.0   8256.0    20480.0   320896.0    20480.0    20480.0      0.0 1056768.0   4864.0      0.0 1048576.0    512.0      0     1
+
+// # jstat -gcnew <vmid>
+//  S0C    S1C    S0U    S1U   TT MTT  DSS      EC       EU     YGC     YGCT
+// 1024.0 1024.0    0.0    0.0 15  15    0.0   8256.0   8256.0      0    0.000
+
+// <Java7>
 // # jstat -gc <vmid>
 //  S0C    S1C    S0U    S1U      EC       EU        OC         OU       PC     PU    YGC     YGCT    FGC    FGCT     GCT
 // 3584.0 3584.0 2528.0  0.0   692224.0 19062.4  1398272.0   485450.1  72704.0 72611.3   3152   30.229   0      0.000   30.229
@@ -87,7 +101,7 @@ func mergeStat(dst, src map[string]float64) {
 //  S0C    S1C    S0U    S1U   TT MTT  DSS      EC       EU     YGC     YGCT
 // 3072.0 3072.0    0.0 2848.0  1  15 3072.0 693248.0 626782.2   3463   33.658
 
-func (m JVMPlugin) FetchMetrics() (map[string]float64, error) {
+func (m JVMPlugin) FetchMetrics() (map[string]interface{}, error) {
 	gcStat, err := fetchJstatMetrics(m.Lvmid, "-gc", m.JstatPath)
 	if err != nil {
 		return nil, err
@@ -111,7 +125,11 @@ func (m JVMPlugin) FetchMetrics() (map[string]float64, error) {
 	mergeStat(stat, gcNewStat)
 	mergeStat(stat, gcOldStat)
 
-	return stat, nil
+	result := make(map[string]interface{})
+	for k, v := range stat {
+		result[k] = v
+	}
+	return result, nil
 }
 
 func (m JVMPlugin) GraphDefinition() map[string](mp.Graphs) {
@@ -170,6 +188,18 @@ func (m JVMPlugin) GraphDefinition() map[string](mp.Graphs) {
 				mp.Metrics{Name: "PGCMX", Label: "Perm max", Diff: false, Scale: 1024},
 				mp.Metrics{Name: "PGC", Label: "Perm current", Diff: false, Scale: 1024},
 				mp.Metrics{Name: "PU", Label: "Perm used", Diff: false, Scale: 1024},
+			},
+		},
+		fmt.Sprintf("jvm.%s.metaspace", lowerJavaName): mp.Graphs{
+			Label: fmt.Sprintf("JVM %s Metaspace", rawJavaName),
+			Unit:  "float",
+			Metrics: [](mp.Metrics){
+				mp.Metrics{Name: "MCMX", Label: "Metaspace capacity max", Diff: false, Scale: 1024},
+				mp.Metrics{Name: "MCMN", Label: "Metaspace capacity min", Diff: false, Scale: 1024},
+				mp.Metrics{Name: "MC", Label: "Metaspace capacity", Diff: false, Scale: 1024},
+				mp.Metrics{Name: "MU", Label: "Metaspace utilization ", Diff: false, Scale: 1024},
+				mp.Metrics{Name: "CCSC", Label: "Compressed Class Space Capacity", Diff: false, Scale: 1024},
+				mp.Metrics{Name: "CCSU", Label: "Compressed Class Space Used", Diff: false, Scale: 1024},
 			},
 		},
 	}
