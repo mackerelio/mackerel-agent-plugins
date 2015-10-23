@@ -189,7 +189,7 @@ func mergeStat(dst, src map[string]float64) {
 func (p PostgresPlugin) FetchMetrics() (map[string]float64, error) {
 	db, err := sql.Open("postgres", fmt.Sprintf("user=%s password=%s host=%s port=%s sslmode=%s connect_timeout=%d %s", p.Username, p.Password, p.Host, p.Port, p.SSLmode, p.Timeout, p.Option))
 	if err != nil {
-		logger.Errorf("FetchMetrics: ", err)
+		logger.Errorf("FetchMetrics: %s", err)
 		return nil, err
 	}
 	defer db.Close()
