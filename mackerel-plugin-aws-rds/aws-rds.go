@@ -13,16 +13,17 @@ import (
 	mp "github.com/mackerelio/go-mackerel-plugin"
 )
 
+// RDSPlugin mackerel plugin for amazon RDS
 type RDSPlugin struct {
 	Region          string
-	AccessKeyId     string
+	AccessKeyID     string
 	SecretAccessKey string
 	Identifier      string
 	Prefix          string
 	LabelPrefix     string
 }
 
-func GetLastPoint(cloudWatch *cloudwatch.CloudWatch, dimension *cloudwatch.Dimension, metricName string) (float64, error) {
+func getLastPoint(cloudWatch *cloudwatch.CloudWatch, dimension *cloudwatch.Dimension, metricName string) (float64, error) {
 	now := time.Now()
 
 	response, err := cloudWatch.GetMetricStatistics(&cloudwatch.GetMetricStatisticsRequest{
@@ -57,8 +58,9 @@ func GetLastPoint(cloudWatch *cloudwatch.CloudWatch, dimension *cloudwatch.Dimen
 	return latestVal, nil
 }
 
+// FetchMetrics interface for mackerel-plugin
 func (p RDSPlugin) FetchMetrics() (map[string]float64, error) {
-	auth, err := aws.GetAuth(p.AccessKeyId, p.SecretAccessKey, "", time.Now())
+	auth, err := aws.GetAuth(p.AccessKeyID, p.SecretAccessKey, "", time.Now())
 	if err != nil {
 		return nil, err
 	}
@@ -80,7 +82,7 @@ func (p RDSPlugin) FetchMetrics() (map[string]float64, error) {
 		"FreeStorageSpace", "ReplicaLag", "SwapUsage", "ReadIOPS", "WriteIOPS", "ReadLatency",
 		"WriteLatency", "ReadThroughput", "WriteThroughput", "NetworkTransmitThroughput", "NetworkReceiveThroughput",
 	} {
-		v, err := GetLastPoint(cloudWatch, perInstance, met)
+		v, err := getLastPoint(cloudWatch, perInstance, met)
 		if err == nil {
 			stat[met] = v
 		} else {
@@ -91,8 +93,9 @@ func (p RDSPlugin) FetchMetrics() (map[string]float64, error) {
 	return stat, nil
 }
 
+// GraphDefinition interface for mackerel plugin
 func (p RDSPlugin) GraphDefinition() map[string](mp.Graphs) {
-	var graphdef map[string](mp.Graphs) = map[string](mp.Graphs){
+	graphdef := map[string](mp.Graphs){
 		p.Prefix + ".CPUUtilization": mp.Graphs{
 			Label: p.LabelPrefix + " CPU Utilization",
 			Unit:  "percentage",
@@ -174,7 +177,7 @@ func (p RDSPlugin) GraphDefinition() map[string](mp.Graphs) {
 
 func main() {
 	optRegion := flag.String("region", "", "AWS Region")
-	optAccessKeyId := flag.String("access-key-id", "", "AWS Access Key ID")
+	optAccessKeyID := flag.String("access-key-id", "", "AWS Access Key ID")
 	optSecretAccessKey := flag.String("secret-access-key", "", "AWS Secret Access Key")
 	optIdentifier := flag.String("identifier", "", "DB Instance Identifier")
 	optPrefix := flag.String("metric-key-prefix", "rds", "Metric key prefix")
@@ -202,7 +205,7 @@ func main() {
 	}
 
 	rds.Identifier = *optIdentifier
-	rds.AccessKeyId = *optAccessKeyId
+	rds.AccessKeyID = *optAccessKeyID
 	rds.SecretAccessKey = *optSecretAccessKey
 
 	helper := mp.NewMackerelPlugin(rds)
