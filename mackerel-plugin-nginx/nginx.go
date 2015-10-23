@@ -4,7 +4,9 @@ import (
 	"bufio"
 	"flag"
 	"fmt"
-	mp "github.com/mackerelio/go-mackerel-plugin"
+	"io"
+
+	mp "github.com/mackerelio/go-mackerel-plugin-helper"
 	//"io/ioutil"
 	"errors"
 	"net/http"
@@ -26,9 +28,9 @@ var graphdef map[string](mp.Graphs) = map[string](mp.Graphs){
 		Label: "Nginx requests",
 		Unit:  "float",
 		Metrics: [](mp.Metrics){
-			mp.Metrics{Name: "accepts", Label: "Accepted connections", Diff: true},
-			mp.Metrics{Name: "handled", Label: "Handled connections", Diff: true},
-			mp.Metrics{Name: "requests", Label: "Handled requests", Diff: true},
+			mp.Metrics{Name: "accepts", Label: "Accepted connections", Diff: true, Type: "uint64"},
+			mp.Metrics{Name: "handled", Label: "Handled connections", Diff: true, Type: "uint64"},
+			mp.Metrics{Name: "requests", Label: "Handled requests", Diff: true, Type: "uint64"},
 		},
 	},
 	"nginx.queue": mp.Graphs{
@@ -64,7 +66,7 @@ type NginxPlugin struct {
 //  1693613501 1693613501 7996986318
 // Reading: 66 Writing: 16 Waiting: 41
 
-func (n NginxPlugin) FetchMetrics() (map[string]float64, error) {
+func (n NginxPlugin) FetchMetrics() (map[string]interface{}, error) {
 	req, err := http.NewRequest("GET", n.Uri, nil)
 	if err != nil {
 		return nil, err
@@ -88,9 +90,13 @@ func (n NginxPlugin) FetchMetrics() (map[string]float64, error) {
 	}
 	defer resp.Body.Close()
 
-	stat := make(map[string]float64)
+	return n.ParseStats(resp.Body)
+}
 
-	r := bufio.NewReader(resp.Body)
+func (n NginxPlugin) ParseStats(body io.Reader) (map[string]interface{}, error) {
+	stat := make(map[string]interface{})
+
+	r := bufio.NewReader(body)
 	line, _, err := r.ReadLine()
 	if err != nil {
 		return nil, errors.New("cannot get values")

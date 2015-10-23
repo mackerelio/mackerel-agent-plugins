@@ -17,17 +17,17 @@ func TestParseApache2Scoreboard(t *testing.T) {
 
 	err := parseApache2Scoreboard(stub, &stat)
 	assert.Nil(t, err)
-	assert.Equal(t, stat["score-_"], 1)
-	assert.Equal(t, stat["score-S"], 1)
-	assert.Equal(t, stat["score-R"], 1)
-	assert.Equal(t, stat["score-W"], 2)
-	assert.Equal(t, stat["score-K"], 1)
-	assert.Equal(t, stat["score-D"], 1)
-	assert.Equal(t, stat["score-C"], 1)
-	assert.Equal(t, stat["score-L"], 1)
-	assert.Equal(t, stat["score-G"], 1)
-	assert.Equal(t, stat["score-I"], 1)
-	assert.Equal(t, stat["score-."], 5)
+	assert.EqualValues(t, stat["score-_"], 1)
+	assert.EqualValues(t, stat["score-S"], 1)
+	assert.EqualValues(t, stat["score-R"], 1)
+	assert.EqualValues(t, stat["score-W"], 2)
+	assert.EqualValues(t, stat["score-K"], 1)
+	assert.EqualValues(t, stat["score-D"], 1)
+	assert.EqualValues(t, stat["score-C"], 1)
+	assert.EqualValues(t, stat["score-L"], 1)
+	assert.EqualValues(t, stat["score-G"], 1)
+	assert.EqualValues(t, stat["score-I"], 1)
+	assert.EqualValues(t, stat["score-."], 5)
 }
 
 func TestParseApache2Status(t *testing.T) {
@@ -45,11 +45,11 @@ IdleWorkers: 4
 
 	err := parseApache2Status(stub, &stat)
 	assert.Nil(t, err)
-	assert.Equal(t, stat["requests"], 358)
-	assert.Equal(t, stat["bytes_sent"], 20)
-	assert.Equal(t, stat["cpu_load"], 0.00117358)
-	assert.Equal(t, stat["busy_workers"], 1)
-	assert.Equal(t, stat["idle_workers"], 4)
+	assert.EqualValues(t, stat["requests"], 358)
+	assert.EqualValues(t, stat["bytes_sent"], 20)
+	assert.EqualValues(t, stat["cpu_load"], 0.00117358)
+	assert.EqualValues(t, stat["busy_workers"], 1)
+	assert.EqualValues(t, stat["idle_workers"], 4)
 }
 
 func TestGetApache2Metrics_1(t *testing.T) {
@@ -72,7 +72,7 @@ Scoreboard: W_.__...........................`
 	defer ts.Close()
 	re, _ := regexp.Compile("([a-z]+)://([A-Za-z0-9.]+):([0-9]+)(.*)")
 	found := re.FindStringSubmatch(ts.URL)
-	assert.Equal(t, len(found), 5, fmt.Sprintf("Test stub uri format is changed. %s", ts.URL))
+	assert.EqualValues(t, len(found), 5, fmt.Sprintf("Test stub uri format is changed. %s", ts.URL))
 
 	host := found[2]
 	port, _ := strconv.Atoi(found[3])

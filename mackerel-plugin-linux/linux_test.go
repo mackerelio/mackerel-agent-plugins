@@ -25,7 +25,7 @@ test2  pts/48       2014-09-30 09:00 (192.168.24.123)`
 
 	err := parseWho(stub, &stat)
 	assert.Nil(t, err)
-	assert.Equal(t, stat["users"], 3)
+	assert.EqualValues(t, stat["users"], 3)
 }
 
 func TestParseWho2(t *testing.T) {
@@ -34,7 +34,7 @@ func TestParseWho2(t *testing.T) {
 
 	err := parseWho(stub, &stat)
 	assert.Nil(t, err)
-	assert.Equal(t, stat["users"], 0)
+	assert.EqualValues(t, stat["users"], 0)
 }
 
 func TestGetWho(t *testing.T) {
@@ -119,9 +119,9 @@ ESTAB      0      0                              10.0.25.101:60826              
 
 	err := parseSs(stub, &stat)
 	assert.Nil(t, err)
-	assert.Equal(t, stat["LISTEN"], 2)
-	assert.Equal(t, stat["TIME-WAIT"], 1)
-	assert.Equal(t, stat["ESTAB"], 1)
+	assert.EqualValues(t, stat["LISTEN"], 2)
+	assert.EqualValues(t, stat["TIME-WAIT"], 1)
+	assert.EqualValues(t, stat["ESTAB"], 1)
 }
 
 func TestParseSs2(t *testing.T) {
@@ -136,9 +136,9 @@ u_str ESTAB      0      0                                    @/com/ubuntu/upstar
 
 	err := parseSs(stub, &stat)
 	assert.Nil(t, err)
-	assert.Equal(t, stat["LISTEN"], 2)
-	assert.Equal(t, stat["UNCONN"], 3)
-	assert.Equal(t, stat["ESTAB"], 1)
+	assert.EqualValues(t, stat["LISTEN"], 2)
+	assert.EqualValues(t, stat["UNCONN"], 3)
+	assert.EqualValues(t, stat["ESTAB"], 1)
 }
 
 func TestGetSs(t *testing.T) {
@@ -173,10 +173,10 @@ pswpout 113`
 
 	err := parseProcVmstat(stub, &stat)
 	assert.Nil(t, err)
-	assert.Equal(t, stat["pgpgin"], 770294)
+	assert.EqualValues(t, stat["pgpgin"], 770294)
 	assert.EqualValues(t, stat["pgpgout"], 31351354)
-	assert.Equal(t, stat["pswpin"], 0)
-	assert.Equal(t, stat["pswpout"], 113)
+	assert.EqualValues(t, stat["pswpin"], 0)
+	assert.EqualValues(t, stat["pswpout"], 113)
 }
 
 func TestGetProc(t *testing.T) {

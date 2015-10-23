@@ -6,14 +6,15 @@ PostgreSQL custom metrics plugin for mackerel.io agent.
 ## Synopsis
 
 ```shell
-mackerel-plugin-postgres -user=<username> -password=<password>
+mackerel-plugin-postgres -user=<username> -password=<password> -database=<databasename>
 ```
+`-database` is optional.
 
 ## Example of mackerel-agent.conf
 
 ```
 [plugin.metrics.postgres]
-command = "/path/to/mackerel-plugin-postgres -user=test -password=secret"
+command = "/path/to/mackerel-plugin-postgres -user=test -password=secret -database=databasename"
 ```
 
 ## References

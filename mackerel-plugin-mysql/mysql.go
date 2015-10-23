@@ -8,7 +8,7 @@ import (
 	"strconv"
 	"strings"
 
-	mp "github.com/mackerelio/go-mackerel-plugin"
+	mp "github.com/mackerelio/go-mackerel-plugin-helper"
 	"github.com/ziutek/mymysql/mysql"
 	_ "github.com/ziutek/mymysql/native"
 )
@@ -18,16 +18,16 @@ var graphdef map[string](mp.Graphs) = map[string](mp.Graphs){
 		Label: "MySQL Command",
 		Unit:  "float",
 		Metrics: [](mp.Metrics){
-			mp.Metrics{Name: "Com_insert", Label: "Insert", Diff: true, Stacked: true},
-			mp.Metrics{Name: "Com_select", Label: "Select", Diff: true, Stacked: true},
-			mp.Metrics{Name: "Com_update", Label: "Update", Diff: true, Stacked: true},
-			mp.Metrics{Name: "Com_update_multi", Label: "Update Multi", Diff: true, Stacked: true},
-			mp.Metrics{Name: "Com_delete", Label: "Delete", Diff: true, Stacked: true},
-			mp.Metrics{Name: "Com_delete_multi", Label: "Delete Multi", Diff: true, Stacked: true},
-			mp.Metrics{Name: "Com_replace", Label: "Replace", Diff: true, Stacked: true},
-			mp.Metrics{Name: "Com_set_option", Label: "Set Option", Diff: true, Stacked: true},
-			mp.Metrics{Name: "Qcache_hits", Label: "Query Cache Hits", Diff: true, Stacked: false},
-			mp.Metrics{Name: "Questions", Label: "Questions", Diff: true, Stacked: false},
+			mp.Metrics{Name: "Com_insert", Label: "Insert", Diff: true, Stacked: true, Type: "uint64"},
+			mp.Metrics{Name: "Com_select", Label: "Select", Diff: true, Stacked: true, Type: "uint64"},
+			mp.Metrics{Name: "Com_update", Label: "Update", Diff: true, Stacked: true, Type: "uint64"},
+			mp.Metrics{Name: "Com_update_multi", Label: "Update Multi", Diff: true, Stacked: true, Type: "uint64"},
+			mp.Metrics{Name: "Com_delete", Label: "Delete", Diff: true, Stacked: true, Type: "uint64"},
+			mp.Metrics{Name: "Com_delete_multi", Label: "Delete Multi", Diff: true, Stacked: true, Type: "uint64"},
+			mp.Metrics{Name: "Com_replace", Label: "Replace", Diff: true, Stacked: true, Type: "uint64"},
+			mp.Metrics{Name: "Com_set_option", Label: "Set Option", Diff: true, Stacked: true, Type: "uint64"},
+			mp.Metrics{Name: "Qcache_hits", Label: "Query Cache Hits", Diff: true, Stacked: false, Type: "uint64"},
+			mp.Metrics{Name: "Questions", Label: "Questions", Diff: true, Stacked: false, Type: "uint64"},
 		},
 	},
 	"mysql.join": mp.Graphs{
@@ -55,7 +55,7 @@ var graphdef map[string](mp.Graphs) = map[string](mp.Graphs){
 		Unit:  "float",
 		Metrics: [](mp.Metrics){
 			mp.Metrics{Name: "Connections", Label: "Connections", Diff: true, Stacked: false},
-			mp.Metrics{Name: "Thread_created", Label: "Created Threads", Diff: true, Stacked: false},
+			mp.Metrics{Name: "Threads_created", Label: "Created Threads", Diff: true, Stacked: false},
 			mp.Metrics{Name: "Aborted_clients", Label: "Aborted Clients", Diff: true, Stacked: false},
 			mp.Metrics{Name: "Aborted_connects", Label: "Aborted Connects", Diff: true, Stacked: false},
 		},
@@ -94,7 +94,81 @@ type MySQLPlugin struct {
 	DisableInnoDB bool
 }
 
-func (m MySQLPlugin) FetchMetrics() (map[string]float64, error) {
+func (m MySQLPlugin) FetchShowStatus(db mysql.Conn, stat map[string]float64) error {
+	rows, _, err := db.Query("show /*!50002 global */ status")
+	if err != nil {
+		log.Fatalln("FetchMetrics (Status): ", err)
+		return err
+	}
+
+	for _, row := range rows {
+		if len(row) > 1 {
+			Variable_name := string(row[0].([]byte))
+			if err != nil {
+				log.Fatalln("FetchMetrics (Status Fetch): ", err)
+				return err
+			}
+			//fmt.Println(Variable_name, Value)
+			stat[Variable_name], _ = _atof(string(row[1].([]byte)))
+		} else {
+			log.Fatalln("FetchMetrics (Status): row length is too small: ", len(row))
+		}
+	}
+	return nil
+}
+
+func (m MySQLPlugin) FetchShowInnodbStatus(db mysql.Conn, stat map[string]float64) error {
+	row, _, err := db.QueryFirst("SHOW /*!50000 ENGINE*/ INNODB STATUS")
+	if err != nil {
+		log.Fatalln("FetchMetrics (InnoDB Status): ", err)
+		return err
+	}
+
+	if len(row) > 0 {
+		err = parseInnodbStatus(string(row[len(row)-1].([]byte)), &stat)
+	} else {
+		log.Fatalln("FetchMetrics (InnoDB Status): row length is too small: ", len(row))
+	}
+	return nil
+}
+
+func (m MySQLPlugin) FetchShowVariables(db mysql.Conn, stat map[string]float64) error {
+	rows, _, err := db.Query("SHOW VARIABLES")
+	if err != nil {
+		log.Fatalln("FetchMetrics (Variables): ", err)
+	}
+
+	for _, row := range rows {
+		if len(row) > 1 {
+			Variable_name := string(row[0].([]byte))
+			if err != nil {
+				log.Println("FetchMetrics (Fetch Variables): ", err)
+			}
+			//fmt.Println(Variable_name, Value)
+			stat[Variable_name], _ = _atof(string(row[1].([]byte)))
+		} else {
+			log.Fatalln("FetchMetrics (Variables): row length is too small: ", len(row))
+		}
+	}
+	return nil
+}
+
+func (m MySQLPlugin) FetchShowSlaveStatus(db mysql.Conn, stat map[string]float64) error {
+	rows, res, err := db.Query("show slave status")
+	if err != nil {
+		log.Fatalln("FetchMetrics (Slave Status): ", err)
+		return err
+	}
+
+	for _, row := range rows {
+		idx := res.Map("Seconds_Behind_Master")
+		Value := row.Int(idx)
+		stat["Seconds_Behind_Master"] = float64(Value)
+	}
+	return nil
+}
+
+func (m MySQLPlugin) FetchMetrics() (map[string]interface{}, error) {
 	db := mysql.New("tcp", "", m.Target, m.Username, m.Password, "")
 	err := db.Connect()
 	if err != nil {
@@ -104,55 +178,21 @@ func (m MySQLPlugin) FetchMetrics() (map[string]float64, error) {
 	defer db.Close()
 
 	stat := make(map[string]float64)
-
-	rows, _, err := db.Query("show /*!50002 global */ status")
-	if err != nil {
-		log.Fatalln("FetchMetrics (Status): ", err)
-		return nil, err
-	}
-	for _, row := range rows {
-		Variable_name := string(row[0].([]byte))
-		if err != nil {
-			log.Println("FetchMetrics (Status Fetch): ", err)
-		}
-		//fmt.Println(Variable_name, Value)
-		stat[Variable_name], _ = _atof(string(row[1].([]byte)))
-	}
+	m.FetchShowStatus(db, stat)
 
 	if m.DisableInnoDB != true {
-		row, _, err := db.QueryFirst("SHOW /*!50000 ENGINE*/ INNODB STATUS")
-		if err != nil {
-			log.Fatalln("FetchMetrics (InnoDB Status): ", err)
-			return nil, err
-		}
-		err = parseInnodbStatus(string(row[2].([]byte)), &stat)
-
-		rows, _, err = db.Query("SHOW VARIABLES")
-		if err != nil {
-			log.Fatalln("FetchMetrics (Variables): ", err)
-			return nil, err
-		}
-		for _, row := range rows {
-			Variable_name := string(row[0].([]byte))
-			if err != nil {
-				log.Println("FetchMetrics (Fetch Variables): ", err)
-			}
-			//fmt.Println(Variable_name, Value)
-			stat[Variable_name], _ = _atof(string(row[1].([]byte)))
-		}
+		m.FetchShowInnodbStatus(db, stat)
+		m.FetchShowVariables(db, stat)
 	}
 
-	rows, res, err := db.Query("show slave status")
-	if err != nil {
-		log.Fatalln("FetchMetrics (Slave Status): ", err)
-		return nil, err
+	m.FetchShowSlaveStatus(db, stat)
+
+	statRet := make(map[string]interface{})
+	for key, value := range stat {
+		statRet[key] = value
 	}
-	for _, row := range rows {
-		idx := res.Map("Seconds_Behind_Master")
-		Value := row.Int(idx)
-		stat["Seconds_Behind_Master"] = float64(Value)
-	}
-	return stat, err
+
+	return statRet, err
 }
 
 func (m MySQLPlugin) GraphDefinition() map[string](mp.Graphs) {

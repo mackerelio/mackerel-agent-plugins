@@ -144,7 +144,7 @@ sub merged_prs {
         my $res = $ua->get($url);
         unless ($res->{success}) {
             warnf "request to $url failed\n";
-            next;
+            exit;
         }
         my $data = eval { decode_json $res->{content} };
         if ($@) {
@@ -157,7 +157,7 @@ sub merged_prs {
             title => $data->{title},
             user  => $data->{user}{login},
             url   => $data->{html_url},
-        };
+        } if $data->{title} !~ /\[nit\]/i;
     }
     @releases;
 }
@@ -188,7 +188,7 @@ sub decide_next_version {
     if (!is_valid_version($next_version)) {
         die qq{"$next_version" is invalid version string\n};
     }
-    if ($next_version lt $current_version) {
+    if (version->parse($next_version) < version->parse($current_version)) {
         die qq{"$next_version" is smaller than current version "$current_version"\n};
     }
     $next_version;
@@ -299,10 +299,13 @@ sub build_pull_request_body {
     $body;
 }
 
+sub load_packaging_confg {
+    decode_json slurp 'packaging/config.json';
+}
 
 ### main process
 if (!$ENV{HARNESS_ACTIVE}) {
-    main();
+    main() unless caller;
 } else {
     # When called via `prove`, tests will run.
     run_tests();
@@ -315,6 +318,8 @@ sub main {
     git qw/checkout master/;
     git qw/pull/;
 
+    my $config = load_packaging_confg;
+
     my $current_version = last_release;
     my $next_version    = decide_next_version($current_version);
 
@@ -326,13 +331,17 @@ sub main {
     update_versions($current_version, $next_version);
     my @plugins = retrieve_plugins;
     update_readme(@plugins);
-    update_packaging_specs(@plugins);
+    update_packaging_specs(@{ $config->{plugins} });
     git qw/commit -am/, "ready for next release. version: $next_version";
 
     infof "update changelogs\n";
     my @releases = merged_prs $current_version;
     update_changelog($next_version, @releases);
     git qw/commit -am/, "update changelogs";
+
+    git qw/diff/, qw/--word-diff/, "master..$branch_name";
+    my $pr_body = build_pull_request_body($next_version, @releases);
+    say $pr_body;
 
     if (prompt('push changes?', 'y') !~ /^y(?:es)?$/i ) {
         warnf('releng is aborted. remove the branch [%s] before next releng', $branch_name);
@@ -341,7 +350,6 @@ sub main {
 
     infof "push changes\n";
     git qw/push --set-upstream origin/, $branch_name;
-    my $pr_body = build_pull_request_body($next_version, @releases);
     hub qw/pull-request -m/, $pr_body;
 
     infof "Releasing pull request is created. Review and merge it. You can update changelogs and commit more in this branch before merging.\n";
@@ -358,5 +366,15 @@ sub run_tests {
     is($patch, 2);
     is( suggest_next_version($version), '0.2.0' );
 
+    my $config = load_packaging_confg;
+    ok($config->{description});
+
+    my $plugins_to_be_packaged = $config->{plugins};
+    isa_ok($plugins_to_be_packaged, 'ARRAY');
+
+    my %plugins = map { $_ => 1, } retrieve_plugins;
+    for my $plug (@$plugins_to_be_packaged) {
+        ok($plugins{$plug}, "$plug ok");
+    }
     done_testing();
 }

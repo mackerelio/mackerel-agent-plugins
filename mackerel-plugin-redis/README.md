@@ -6,7 +6,7 @@ Redis custom metrics plugin for mackerel.io agent.
 ## Synopsis
 
 ```shell
-mackerel-plugin-redis [-hostname=<hostname>] [-port=<port>] [-timeout=<time>]
+mackerel-plugin-redis [-host=<hostname>] [-port=<port>] [-socket=<unix socket>] [-timeout=<time>] [-metric-key-prefix=<prefix>]
 ```
 
 ## Example of mackerel-agent.conf
@@ -14,6 +14,16 @@ mackerel-plugin-redis [-hostname=<hostname>] [-port=<port>] [-timeout=<time>]
 ```
 [plugin.metrics.redis]
 command = "/path/to/mackerel-plugin-redis -port=6379 -timeout=5"
+```
+
+### Using multiple Redis instances on one server
+
+```
+[plugin.metrics.redis6379]
+command = "/path/to/mackerel-plugin-redis -port=6379 -timeout=5 -metric-key-prefix=redis6379"
+
+[plugin.metrics.redis6380]
+command = "/path/to/mackerel-plugin-redis -port=6380 -timeout=5 -metric-key-prefix=redis6380"
 ```
 
 ## References
