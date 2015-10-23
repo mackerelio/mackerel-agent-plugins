@@ -12,6 +12,7 @@ import (
 	mp "github.com/mackerelio/go-mackerel-plugin-helper"
 )
 
+// FluentdMetrics plugin for fluentd
 type FluentdMetrics struct {
 	Target   string
 	Tempfile string
@@ -19,6 +20,7 @@ type FluentdMetrics struct {
 	plugins []FluentdPluginMetrics
 }
 
+// FluentdPluginMetrics metrics
 type FluentdPluginMetrics struct {
 	RetryCount            uint64 `json:"retry_count"`
 	BufferQueueLength     uint64 `json:"buffer_queue_length"`
@@ -27,36 +29,43 @@ type FluentdPluginMetrics struct {
 	Type                  string `json:"type"`
 	PluginCategory        string `json:"plugin_category"`
 	PluginID              string `json:"plugin_id"`
-	PluginIDModified      string
+	normalizedPluginID    string
 }
 
+// FluentMonitorJSON monitor json
 type FluentMonitorJSON struct {
 	Plugins []FluentdPluginMetrics `json:"plugins"`
 }
 
 var normalizePluginIDRe = regexp.MustCompile(`[^-a-zA-Z0-9_]`)
 
-func normalizePluginID(str string) string {
-	return normalizePluginIDRe.ReplaceAllString(str, "_")
+func normalizePluginID(in string) string {
+	return normalizePluginIDRe.ReplaceAllString(in, "_")
 }
 
-func (f *FluentdMetrics) ParseStats(body []byte) (map[string]interface{}, error) {
+func (fpm FluentdPluginMetrics) getNormalizedPluginID() string {
+	if fpm.normalizedPluginID == "" {
+		fpm.normalizedPluginID = normalizePluginID(fpm.PluginID)
+	}
+	return fpm.normalizedPluginID
+}
+
+func (f *FluentdMetrics) parseStats(body []byte) (map[string]interface{}, error) {
 	var j FluentMonitorJSON
 	err := json.Unmarshal(body, &j)
 	f.plugins = j.Plugins
-	for i, _ := range f.plugins {
-		f.plugins[i].PluginIDModified = normalizePluginID(f.plugins[i].PluginID)
-	}
 
 	metrics := make(map[string]interface{})
-	for _, plugin := range f.plugins {
-		metrics["fluentd.retry_count."+plugin.PluginIDModified] = float64(plugin.RetryCount)
-		metrics["fluentd.buffer_queue_length."+plugin.PluginIDModified] = float64(plugin.BufferQueueLength)
-		metrics["fluentd.buffer_total_queued_size."+plugin.PluginIDModified] = float64(plugin.BufferTotalQueuedSize)
+	for _, p := range f.plugins {
+		pid := p.getNormalizedPluginID()
+		metrics["fluentd.retry_count."+pid] = float64(p.RetryCount)
+		metrics["fluentd.buffer_queue_length."+pid] = float64(p.BufferQueueLength)
+		metrics["fluentd.buffer_total_queued_size."+pid] = float64(p.BufferTotalQueuedSize)
 	}
 	return metrics, err
 }
 
+// FetchMetrics interface for mackerelplugin
 func (f FluentdMetrics) FetchMetrics() (map[string]interface{}, error) {
 	resp, err := http.Get(f.Target)
 	if err != nil {
@@ -67,9 +76,10 @@ func (f FluentdMetrics) FetchMetrics() (map[string]interface{}, error) {
 		return nil, err
 	}
 
-	return f.ParseStats(body)
+	return f.parseStats(body)
 }
 
+// GraphDefinition interface for mackerelplugin
 func (f FluentdMetrics) GraphDefinition() map[string](mp.Graphs) {
 	return map[string](mp.Graphs){
 		"fluentd.retry_count": mp.Graphs{
