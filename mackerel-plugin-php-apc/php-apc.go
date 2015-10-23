@@ -14,7 +14,7 @@ import (
 )
 
 // metric value structure
-var graphdef map[string](mp.Graphs) = map[string](mp.Graphs){
+var graphdef = map[string](mp.Graphs){
 	"php-apc.purges": mp.Graphs{
 		Label: "PHP APC Cache Purge Count",
 		Unit:  "integer",
@@ -50,7 +50,7 @@ var graphdef map[string](mp.Graphs) = map[string](mp.Graphs){
 	},
 }
 
-// for fetching metrics
+// PhpApcPlugin mackerel plugin for php-apc
 type PhpApcPlugin struct {
 	Host     string
 	Port     uint16
@@ -58,7 +58,7 @@ type PhpApcPlugin struct {
 	Tempfile string
 }
 
-// Graph definition
+// GraphDefinition interface for mackerelplugin
 func (c PhpApcPlugin) GraphDefinition() map[string](mp.Graphs) {
 	return graphdef
 }
@@ -82,7 +82,7 @@ func doMain(c *cli.Context) {
 	}
 }
 
-// fetch metrics
+// FetchMetrics interface for mackerelplugin
 func (c PhpApcPlugin) FetchMetrics() (map[string]float64, error) {
 	data, err := getPhpApcMetrics(c.Host, c.Port, c.Path)
 	if err != nil {
@@ -90,9 +90,9 @@ func (c PhpApcPlugin) FetchMetrics() (map[string]float64, error) {
 	}
 
 	stat := make(map[string]float64)
-	err_stat := parsePhpApcStatus(data, &stat)
-	if err_stat != nil {
-		return nil, err_stat
+	errStat := parsePhpApcStatus(data, &stat)
+	if errStat != nil {
+		return nil, errStat
 	}
 
 	return stat, nil
@@ -105,10 +105,10 @@ func parsePhpApcStatus(str string, p *map[string]float64) error {
 		if len(record) != 2 {
 			continue
 		}
-		var err_parse error
-		(*p)[record[0]], err_parse = strconv.ParseFloat(strings.Trim(record[1], " "), 64)
-		if err_parse != nil {
-			return err_parse
+		var errParse error
+		(*p)[record[0]], errParse = strconv.ParseFloat(strings.Trim(record[1], " "), 64)
+		if errParse != nil {
+			return errParse
 		}
 	}
 
@@ -127,7 +127,7 @@ func getPhpApcMetrics(host string, port uint16, path string) (string, error) {
 		return "", err
 	}
 	if resp.StatusCode != http.StatusOK {
-		return "", errors.New(fmt.Sprintf("HTTP status error: %d", resp.StatusCode))
+		return "", fmt.Errorf("HTTP status error: %d", resp.StatusCode)
 	}
 	body, err := ioutil.ReadAll(resp.Body)
 	resp.Body.Close()
@@ -141,11 +141,11 @@ func getPhpApcMetrics(host string, port uint16, path string) (string, error) {
 func main() {
 	app := cli.NewApp()
 	app.Name = "php-apc_metrics"
-	app.Version = Version
+	app.Version = version
 	app.Usage = "Get metrics from php-apc."
 	app.Author = "Yuichiro Saito"
 	app.Email = "saito@heartbeats.jp"
-	app.Flags = Flags
+	app.Flags = flags
 	app.Action = doMain
 
 	app.Run(os.Args)
