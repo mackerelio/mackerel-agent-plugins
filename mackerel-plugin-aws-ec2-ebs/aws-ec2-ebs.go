@@ -4,15 +4,16 @@ import (
 	"errors"
 	"flag"
 	"fmt"
+	"log"
+	"os"
+	"time"
+
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/credentials"
 	"github.com/aws/aws-sdk-go/aws/ec2metadata"
 	"github.com/aws/aws-sdk-go/service/cloudwatch"
 	"github.com/aws/aws-sdk-go/service/ec2"
 	mp "github.com/mackerelio/go-mackerel-plugin"
-	"log"
-	"os"
-	"time"
 )
 
 var metricPeriodDefault = 300
@@ -38,59 +39,59 @@ var extraGraphs = []string{
 	"ec2.ebs.consumed_ops",
 }
 
-type CloudWatchSetting struct {
+type cloudWatchSetting struct {
 	MetricName string
 	Statistics string
 	CalcFunc   func(float64, float64) float64
 }
 
 // http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/monitoring-volume-status.html
-var cloudwatchdef = map[string](CloudWatchSetting){
-	"bw_%s_read": CloudWatchSetting{
+var cloudwatchdef = map[string](cloudWatchSetting){
+	"bw_%s_read": cloudWatchSetting{
 		MetricName: "VolumeReadBytes", Statistics: "Sum",
 		CalcFunc: func(val float64, period float64) float64 { return val / period },
 	},
-	"bw_%s_write": CloudWatchSetting{
+	"bw_%s_write": cloudWatchSetting{
 		MetricName: "VolumeWriteBytes", Statistics: "Sum",
 		CalcFunc: func(val float64, period float64) float64 { return val / period },
 	},
-	"throughput_%s_read": CloudWatchSetting{
+	"throughput_%s_read": cloudWatchSetting{
 		MetricName: "VolumeReadOps", Statistics: "Sum",
 		CalcFunc: func(val float64, period float64) float64 { return val / period },
 	},
-	"throughput_%s_write": CloudWatchSetting{
+	"throughput_%s_write": cloudWatchSetting{
 		MetricName: "VolumeWriteOps", Statistics: "Sum",
 		CalcFunc: func(val float64, period float64) float64 { return val / period },
 	},
-	"size_per_op_%s_read": CloudWatchSetting{
+	"size_per_op_%s_read": cloudWatchSetting{
 		MetricName: "VolumeReadBytes", Statistics: "Average",
 		CalcFunc: func(val float64, period float64) float64 { return val },
 	},
-	"size_per_op_%s_write": CloudWatchSetting{
+	"size_per_op_%s_write": cloudWatchSetting{
 		MetricName: "VolumeWriteBytes", Statistics: "Average",
 		CalcFunc: func(val float64, period float64) float64 { return val },
 	},
-	"latency_%s_read": CloudWatchSetting{
+	"latency_%s_read": cloudWatchSetting{
 		MetricName: "VolumeTotalReadTime", Statistics: "Average",
 		CalcFunc: func(val float64, period float64) float64 { return val * 1000 },
 	},
-	"latency_%s_write": CloudWatchSetting{
+	"latency_%s_write": cloudWatchSetting{
 		MetricName: "VolumeTotalWriteTime", Statistics: "Average",
 		CalcFunc: func(val float64, period float64) float64 { return val * 1000 },
 	},
-	"queue_length_%s": CloudWatchSetting{
+	"queue_length_%s": cloudWatchSetting{
 		MetricName: "VolumeQueueLength", Statistics: "Average",
 		CalcFunc: func(val float64, period float64) float64 { return val },
 	},
-	"idle_time_%s": CloudWatchSetting{
+	"idle_time_%s": cloudWatchSetting{
 		MetricName: "VolumeIdleTime", Statistics: "Sum",
 		CalcFunc: func(val float64, period float64) float64 { return val / period * 100 },
 	},
-	"throughput_delivered_%s": CloudWatchSetting{
+	"throughput_delivered_%s": cloudWatchSetting{
 		MetricName: "VolumeThroughputPercentage", Statistics: "Average",
 		CalcFunc: func(val float64, period float64) float64 { return val },
 	},
-	"consumed_ops_%s": CloudWatchSetting{
+	"consumed_ops_%s": cloudWatchSetting{
 		MetricName: "VolumeConsumedReadWriteOps", Statistics: "Sum",
 		CalcFunc: func(val float64, period float64) float64 { return val },
 	},
@@ -161,11 +162,12 @@ var graphdef = map[string](mp.Graphs){
 
 var stderrLogger *log.Logger
 
+// EBSPlugin mackerel plugin for ebs
 type EBSPlugin struct {
 	Region          string
-	AccessKeyId     string
+	AccessKeyID     string
 	SecretAccessKey string
-	InstanceId      string
+	InstanceID      string
 	Credentials     *credentials.Credentials
 	EC2             *ec2.EC2
 	CloudWatch      *cloudwatch.CloudWatch
@@ -173,8 +175,8 @@ type EBSPlugin struct {
 }
 
 func (p *EBSPlugin) prepare() error {
-	if p.AccessKeyId != "" && p.SecretAccessKey != "" {
-		p.Credentials = credentials.NewStaticCredentials(p.AccessKeyId, p.SecretAccessKey, "")
+	if p.AccessKeyID != "" && p.SecretAccessKey != "" {
+		p.Credentials = credentials.NewStaticCredentials(p.AccessKeyID, p.SecretAccessKey, "")
 	}
 
 	p.EC2 = ec2.New(&aws.Config{Credentials: p.Credentials, Region: &p.Region})
@@ -183,7 +185,7 @@ func (p *EBSPlugin) prepare() error {
 			&ec2.Filter{
 				Name: aws.String("attachment.instance-id"),
 				Values: []*string{
-					&p.InstanceId,
+					&p.InstanceID,
 				},
 			},
 		},
@@ -207,8 +209,8 @@ func (p EBSPlugin) getLastPoint(vol *ec2.Volume, metricName string, statType str
 	now := time.Now()
 
 	period := metricPeriodDefault
-	if period_, ok := metricPeriodByVolumeType[*vol.VolumeType]; ok {
-		period = period_
+	if tmp, ok := metricPeriodByVolumeType[*vol.VolumeType]; ok {
+		period = tmp
 	}
 	start := now.Add(time.Duration(period) * 3 * time.Second * -1)
 
@@ -254,6 +256,7 @@ func (p EBSPlugin) getLastPoint(vol *ec2.Volume, metricName string, statType str
 	return latestVal, period, nil
 }
 
+// FetchMetrics fetch the metrics
 func (p EBSPlugin) FetchMetrics() (map[string]float64, error) {
 	stat := make(map[string]float64)
 	p.CloudWatch = cloudwatch.New(&aws.Config{Credentials: p.Credentials, Region: &p.Region})
@@ -267,11 +270,11 @@ func (p EBSPlugin) FetchMetrics() (map[string]float64, error) {
 				skey := fmt.Sprintf(met.Name, *vol.VolumeId)
 
 				if err != nil {
-					err_ := errors.New(*vol.VolumeId + " " + err.Error() + ":" + cwdef.MetricName)
+					retErr := errors.New(*vol.VolumeId + " " + err.Error() + ":" + cwdef.MetricName)
 					if err.Error() == "fetched no datapoints" {
-						getStderrLogger().Println(err_)
+						getStderrLogger().Println(retErr)
 					} else {
-						return nil, err_
+						return nil, retErr
 					}
 				} else {
 					stat[skey] = cwdef.CalcFunc(val, float64(period))
@@ -283,6 +286,7 @@ func (p EBSPlugin) FetchMetrics() (map[string]float64, error) {
 	return stat, nil
 }
 
+// GraphDefinition for plugin
 func (p EBSPlugin) GraphDefinition() map[string](mp.Graphs) {
 	graphMetrics := map[string]([]mp.Metrics){}
 	for _, vol := range *p.Volumes {
@@ -294,18 +298,17 @@ func (p EBSPlugin) GraphDefinition() map[string](mp.Graphs) {
 			}
 
 			for _, metric := range graphdef[graph].Metrics {
-				metric_ := mp.Metrics{
+				m := mp.Metrics{
 					Name:  fmt.Sprintf(metric.Name, *vol.VolumeId),
 					Label: fmt.Sprintf(metric.Label, *vol.VolumeId+":"+*vol.Attachments[0].Device),
 					Diff:  metric.Diff,
 				}
-				graphMetrics[graph] = append(graphMetrics[graph], metric_)
+				graphMetrics[graph] = append(graphMetrics[graph], m)
 			}
 		}
-
 	}
 
-	for k, _ := range graphdef {
+	for k := range graphdef {
 		graphdef[k] = mp.Graphs{
 			Label:   graphdef[k].Label,
 			Unit:    graphdef[k].Unit,
@@ -329,9 +332,8 @@ func graphsToProcess(volumeType *string) *[]string {
 	if stringInSlice(*volumeType, volumeTypesHavingExtraMetrics) {
 		var graphsWithExtra = append(defaultGraphs, extraGraphs...)
 		return &graphsWithExtra
-	} else {
-		return &defaultGraphs
 	}
+	return &defaultGraphs
 }
 
 func getStderrLogger() *log.Logger {
@@ -343,8 +345,8 @@ func getStderrLogger() *log.Logger {
 
 func main() {
 	optRegion := flag.String("region", "", "AWS Region")
-	optInstanceId := flag.String("instance-id", "", "Instance ID")
-	optAccessKeyId := flag.String("access-key-id", "", "AWS Access Key ID")
+	optInstanceID := flag.String("instance-id", "", "Instance ID")
+	optAccessKeyID := flag.String("access-key-id", "", "AWS Access Key ID")
 	optSecretAccessKey := flag.String("secret-access-key", "", "AWS Secret Access Key")
 	optTempfile := flag.String("tempfile", "", "Temp file name")
 	flag.Parse()
@@ -352,18 +354,18 @@ func main() {
 	var ebs EBSPlugin
 
 	ebs.Region = *optRegion
-	ebs.InstanceId = *optInstanceId
+	ebs.InstanceID = *optInstanceID
 
 	// get metadata in ec2 instance
 	ec2MC := ec2metadata.New(&ec2metadata.Config{})
 	if *optRegion == "" {
 		ebs.Region, _ = ec2MC.Region()
 	}
-	if *optInstanceId == "" {
-		ebs.InstanceId, _ = ec2MC.GetMetadata("instance-id")
+	if *optInstanceID == "" {
+		ebs.InstanceID, _ = ec2MC.GetMetadata("instance-id")
 	}
 
-	ebs.AccessKeyId = *optAccessKeyId
+	ebs.AccessKeyID = *optAccessKeyID
 	ebs.SecretAccessKey = *optSecretAccessKey
 
 	if err := ebs.prepare(); err != nil {
