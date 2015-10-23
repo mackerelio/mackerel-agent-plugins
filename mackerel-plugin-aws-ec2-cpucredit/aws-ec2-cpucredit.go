@@ -3,14 +3,15 @@ package main
 import (
 	"errors"
 	"flag"
+	"os"
+	"time"
+
 	"github.com/crowdmob/goamz/aws"
 	"github.com/crowdmob/goamz/cloudwatch"
 	mp "github.com/mackerelio/go-mackerel-plugin"
-	"os"
-	"time"
 )
 
-var graphdef map[string](mp.Graphs) = map[string](mp.Graphs){
+var graphdef = map[string](mp.Graphs){
 	"ec2.cpucredit": mp.Graphs{
 		Label: "EC2 CPU Credit",
 		Unit:  "float",
@@ -21,14 +22,15 @@ var graphdef map[string](mp.Graphs) = map[string](mp.Graphs){
 	},
 }
 
+// CPUCreditPlugin is a mackerel plugin
 type CPUCreditPlugin struct {
 	Region          string
-	AccessKeyId     string
+	AccessKeyID     string
 	SecretAccessKey string
-	InstanceId      string
+	InstanceID      string
 }
 
-func GetLastPointAverage(cw *cloudwatch.CloudWatch, dimension *cloudwatch.Dimension, metricName string) (float64, error) {
+func getLastPointAverage(cw *cloudwatch.CloudWatch, dimension *cloudwatch.Dimension, metricName string) (float64, error) {
 	namespace := "AWS/EC2"
 	now := time.Now()
 	prev := now.Add(time.Duration(600) * time.Second * -1) // 10 min (to fetch at least 1 data-point)
@@ -67,14 +69,15 @@ func GetLastPointAverage(cw *cloudwatch.CloudWatch, dimension *cloudwatch.Dimens
 	return latestVal, nil
 }
 
+// FetchMetrics fetch the metrics
 func (p CPUCreditPlugin) FetchMetrics() (map[string]float64, error) {
 	region := aws.Regions[p.Region]
 	dimension := &cloudwatch.Dimension{
 		Name:  "InstanceId",
-		Value: p.InstanceId,
+		Value: p.InstanceID,
 	}
 
-	auth, err := aws.GetAuth(p.AccessKeyId, p.SecretAccessKey, "", time.Now())
+	auth, err := aws.GetAuth(p.AccessKeyID, p.SecretAccessKey, "", time.Now())
 	if err != nil {
 		return nil, err
 	}
@@ -82,12 +85,12 @@ func (p CPUCreditPlugin) FetchMetrics() (map[string]float64, error) {
 
 	stat := make(map[string]float64)
 
-	stat["usage"], err = GetLastPointAverage(cw, dimension, "CPUCreditUsage")
+	stat["usage"], err = getLastPointAverage(cw, dimension, "CPUCreditUsage")
 	if err != nil {
 		return nil, err
 	}
 
-	stat["balance"], err = GetLastPointAverage(cw, dimension, "CPUCreditBalance")
+	stat["balance"], err = getLastPointAverage(cw, dimension, "CPUCreditBalance")
 	if err != nil {
 		return nil, err
 	}
@@ -95,29 +98,30 @@ func (p CPUCreditPlugin) FetchMetrics() (map[string]float64, error) {
 	return stat, nil
 }
 
-func (n CPUCreditPlugin) GraphDefinition() map[string](mp.Graphs) {
+// GraphDefinition for plugin
+func (p CPUCreditPlugin) GraphDefinition() map[string](mp.Graphs) {
 	return graphdef
 }
 
 func main() {
 	optRegion := flag.String("region", "", "AWS Region")
-	optInstanceId := flag.String("instance-id", "", "Instance ID")
-	optAccessKeyId := flag.String("access-key-id", "", "AWS Access Key ID")
+	optInstanceID := flag.String("instance-id", "", "Instance ID")
+	optAccessKeyID := flag.String("access-key-id", "", "AWS Access Key ID")
 	optSecretAccessKey := flag.String("secret-access-key", "", "AWS Secret Access Key")
 	optTempfile := flag.String("tempfile", "", "Temp file name")
 	flag.Parse()
 
 	var cpucredit CPUCreditPlugin
 
-	if *optRegion == "" || *optInstanceId == "" {
+	if *optRegion == "" || *optInstanceID == "" {
 		cpucredit.Region = aws.InstanceRegion()
-		cpucredit.InstanceId = aws.InstanceId()
+		cpucredit.InstanceID = aws.InstanceId()
 	} else {
 		cpucredit.Region = *optRegion
-		cpucredit.InstanceId = *optInstanceId
+		cpucredit.InstanceID = *optInstanceID
 	}
 
-	cpucredit.AccessKeyId = *optAccessKeyId
+	cpucredit.AccessKeyID = *optAccessKeyID
 	cpucredit.SecretAccessKey = *optSecretAccessKey
 
 	helper := mp.NewMackerelPlugin(cpucredit)
