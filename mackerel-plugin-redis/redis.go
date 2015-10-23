@@ -17,6 +17,7 @@ import (
 
 var logger = logging.GetLogger("metrics.plugin.redis")
 
+// RedisPlugin mackerel plugin for Redis
 type RedisPlugin struct {
 	Host     string
 	Port     string
@@ -26,6 +27,7 @@ type RedisPlugin struct {
 	Tempfile string
 }
 
+// FetchMetrics interface for mackerelplugin
 func (m RedisPlugin) FetchMetrics() (map[string]float64, error) {
 	network := "tcp"
 	target := fmt.Sprintf("%s:%s", m.Host, m.Port)
@@ -67,19 +69,19 @@ func (m RedisPlugin) FetchMetrics() (map[string]float64, error) {
 			kv := strings.SplitN(value, ",", 3)
 			keys, expired := kv[0], kv[1]
 
-			keys_kv := strings.SplitN(keys, "=", 2)
-			keys_fv, err := strconv.ParseFloat(keys_kv[1], 64)
+			keysKv := strings.SplitN(keys, "=", 2)
+			keysFv, err := strconv.ParseFloat(keysKv[1], 64)
 			if err != nil {
 				logger.Warningf("Failed to parse db keys. %s", err)
 			}
-			stat["keys"] += keys_fv
+			stat["keys"] += keysFv
 
-			expired_kv := strings.SplitN(expired, "=", 2)
-			expired_fv, err := strconv.ParseFloat(expired_kv[1], 64)
+			expiredKv := strings.SplitN(expired, "=", 2)
+			expiredFv, err := strconv.ParseFloat(expiredKv[1], 64)
 			if err != nil {
 				logger.Warningf("Failed to parse db expired. %s", err)
 			}
-			stat["expired"] += expired_fv
+			stat["expired"] += expiredFv
 
 			continue
 		}
@@ -100,10 +102,11 @@ func (m RedisPlugin) FetchMetrics() (map[string]float64, error) {
 	return stat, nil
 }
 
+// GraphDefinition interface for mackerelplugin
 func (m RedisPlugin) GraphDefinition() map[string](mp.Graphs) {
 	labelPrefix := strings.Title(m.Prefix)
 
-	var graphdef map[string](mp.Graphs) = map[string](mp.Graphs){
+	var graphdef = map[string](mp.Graphs){
 		(m.Prefix + ".queries"): mp.Graphs{
 			Label: (labelPrefix + " Queries"),
 			Unit:  "integer",
