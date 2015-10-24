@@ -9,7 +9,7 @@ BUILD_FLAGS = -ldflags "\
 
 TARGET_OSARCH="linux/386"
 
-all: test build rpm deb
+all: lint cover testtool rpm deb
 
 build: deps
 	mkdir -p build
@@ -19,7 +19,9 @@ build: deps
 	    github.com/mackerelio/mackerel-agent-plugins/$$i; \
 	done
 
-test: testgo
+test: testgo lint testtool
+
+testtool:
 	prove tool/releng tool/autotag
 
 testgo: testdeps
@@ -30,6 +32,20 @@ deps:
 
 testdeps:
 	go get -d -v -t $(VERBOSE_FLAG) ./...
+	go get github.com/golang/lint/golint
+	go get golang.org/x/tools/cmd/vet
+	go get golang.org/x/tools/cmd/cover
+	go get github.com/mattn/goveralls
+
+LINT_RET = .golint.txt
+lint: testdeps
+	go vet ./...
+	rm -f $(LINT_RET)
+	golint ./... | tee -a $(LINT_RET)
+	test ! -s $(LINT_RET)
+
+cover: testdeps
+	tool/cover.sh
 
 rpm: build
 	rpmbuild --define "_sourcedir `pwd`" -ba packaging/rpm/mackerel-agent-plugins.spec
@@ -51,4 +67,4 @@ clean:
 release:
 	tool/releng
 
-.PHONY: all build test testgo deps testdeps rpm deb gox clean release
+.PHONY: all build test testgo deps testdeps rpm deb gox clean release lint cover testtool
