@@ -12,6 +12,7 @@ Documentation for each plugin is located in its respective sub directory.
 * [mackerel-plugin-aws-ec2-cpucredit](./mackerel-plugin-aws-ec2-cpucredit/README.md)
 * [mackerel-plugin-aws-ec2-ebs](./mackerel-plugin-aws-ec2-ebs/README.md)
 * [mackerel-plugin-aws-elasticache](./mackerel-plugin-aws-elasticache/README.md)
+* [mackerel-plugin-aws-elasticsearch](./mackerel-plugin-aws-elasticsearch/README.md)
 * [mackerel-plugin-aws-elb](./mackerel-plugin-aws-elb/README.md)
 * [mackerel-plugin-aws-rds](./mackerel-plugin-aws-rds/README.md)
 * [mackerel-plugin-aws-ses](./mackerel-plugin-aws-ses/README.md)
