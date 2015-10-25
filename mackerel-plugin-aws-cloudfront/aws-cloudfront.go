@@ -3,22 +3,23 @@ package main
 import (
 	"errors"
 	"flag"
-	"github.com/crowdmob/goamz/aws"
-	"github.com/crowdmob/goamz/cloudwatch"
-	mp "github.com/mackerelio/go-mackerel-plugin"
 	"log"
 	"os"
 	"time"
+
+	"github.com/crowdmob/goamz/aws"
+	"github.com/crowdmob/goamz/cloudwatch"
+	mp "github.com/mackerelio/go-mackerel-plugin"
 )
 
 const (
-	Namespace          = "AWS/CloudFront"
-	Region             = "us-east-1"
-	MetricsTypeAverage = "Average"
-	MetricsTypeSum     = "Sum"
+	namespace          = "AWS/CloudFront"
+	region             = "us-east-1"
+	metricsTypeAverage = "Average"
+	metricsTypeSum     = "Sum"
 )
 
-var graphdef map[string](mp.Graphs) = map[string](mp.Graphs){
+var graphdef = map[string](mp.Graphs){
 	"cloudfront.Requests": mp.Graphs{
 		Label: "CloudFront Requests",
 		Unit:  "integer",
@@ -44,25 +45,26 @@ var graphdef map[string](mp.Graphs) = map[string](mp.Graphs){
 	},
 }
 
-type Metrics struct {
+type metrics struct {
 	Name string
 	Type string
 }
 
+// CloudFrontPlugin mackerel plugin for cloudfront
 type CloudFrontPlugin struct {
-	AccessKeyId     string
+	AccessKeyID     string
 	SecretAccessKey string
 	CloudWatch      *cloudwatch.CloudWatch
 	Name            string
 }
 
-func (p *CloudFrontPlugin) Prepare() error {
-	auth, err := aws.GetAuth(p.AccessKeyId, p.SecretAccessKey, "", time.Now())
+func (p *CloudFrontPlugin) prepare() error {
+	auth, err := aws.GetAuth(p.AccessKeyID, p.SecretAccessKey, "", time.Now())
 	if err != nil {
 		return err
 	}
 
-	p.CloudWatch, err = cloudwatch.NewCloudWatch(auth, aws.Regions[Region].CloudWatchServicepoint)
+	p.CloudWatch, err = cloudwatch.NewCloudWatch(auth, aws.Regions[region].CloudWatchServicepoint)
 	if err != nil {
 		return err
 	}
@@ -70,7 +72,7 @@ func (p *CloudFrontPlugin) Prepare() error {
 	return nil
 }
 
-func (p CloudFrontPlugin) GetLastPoint(metric Metrics) (float64, error) {
+func (p CloudFrontPlugin) getLastPoint(metric metrics) (float64, error) {
 	now := time.Now()
 
 	dimensions := []cloudwatch.Dimension{
@@ -91,7 +93,7 @@ func (p CloudFrontPlugin) GetLastPoint(metric Metrics) (float64, error) {
 		MetricName: metric.Name,
 		Period:     60,
 		Statistics: []string{metric.Type},
-		Namespace:  Namespace,
+		Namespace:  namespace,
 	})
 	if err != nil {
 		return 0, err
@@ -109,9 +111,9 @@ func (p CloudFrontPlugin) GetLastPoint(metric Metrics) (float64, error) {
 	for _, dp := range datapoints {
 		if dp.Timestamp.Before(least) {
 			least = dp.Timestamp
-			if metric.Type == MetricsTypeAverage {
+			if metric.Type == metricsTypeAverage {
 				latestVal = dp.Average
-			} else if metric.Type == MetricsTypeSum {
+			} else if metric.Type == metricsTypeSum {
 				latestVal = dp.Sum
 			}
 		}
@@ -120,17 +122,18 @@ func (p CloudFrontPlugin) GetLastPoint(metric Metrics) (float64, error) {
 	return latestVal, nil
 }
 
+// FetchMetrics fetch the metrics
 func (p CloudFrontPlugin) FetchMetrics() (map[string]float64, error) {
 	stat := make(map[string]float64)
 
-	for _, met := range [...]Metrics{
-		{Name: "Requests", Type: MetricsTypeSum},
-		{Name: "BytesDownloaded", Type: MetricsTypeSum},
-		{Name: "BytesUploaded", Type: MetricsTypeSum},
-		{Name: "4xxErrorRate", Type: MetricsTypeAverage},
-		{Name: "5xxErrorRate", Type: MetricsTypeAverage},
+	for _, met := range [...]metrics{
+		{Name: "Requests", Type: metricsTypeSum},
+		{Name: "BytesDownloaded", Type: metricsTypeSum},
+		{Name: "BytesUploaded", Type: metricsTypeSum},
+		{Name: "4xxErrorRate", Type: metricsTypeAverage},
+		{Name: "5xxErrorRate", Type: metricsTypeAverage},
 	} {
-		v, err := p.GetLastPoint(met)
+		v, err := p.getLastPoint(met)
 		if err == nil {
 			stat[met.Name] = v
 		} else {
@@ -141,12 +144,13 @@ func (p CloudFrontPlugin) FetchMetrics() (map[string]float64, error) {
 	return stat, nil
 }
 
+// GraphDefinition of CloudFrontPlugin
 func (p CloudFrontPlugin) GraphDefinition() map[string](mp.Graphs) {
 	return graphdef
 }
 
 func main() {
-	optAccessKeyId := flag.String("access-key-id", "", "AWS Access Key ID")
+	optAccessKeyID := flag.String("access-key-id", "", "AWS Access Key ID")
 	optSecretAccessKey := flag.String("secret-access-key", "", "AWS Secret Access Key")
 	optIdentifier := flag.String("identifier", "", "Distribution ID")
 	optTempfile := flag.String("tempfile", "", "Temp file name")
@@ -154,11 +158,11 @@ func main() {
 
 	var plugin CloudFrontPlugin
 
-	plugin.AccessKeyId = *optAccessKeyId
+	plugin.AccessKeyID = *optAccessKeyID
 	plugin.SecretAccessKey = *optSecretAccessKey
 	plugin.Name = *optIdentifier
 
-	err := plugin.Prepare()
+	err := plugin.prepare()
 	if err != nil {
 		log.Fatalln(err)
 	}

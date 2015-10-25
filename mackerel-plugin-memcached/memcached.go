@@ -13,7 +13,7 @@ import (
 )
 
 // https://github.com/memcached/memcached/blob/master/doc/protocol.txt
-var graphdef map[string](mp.Graphs) = map[string](mp.Graphs){
+var graphdef = map[string](mp.Graphs){
 	"memcached.connections": mp.Graphs{
 		Label: "Memcached Connections",
 		Unit:  "integer",
@@ -80,21 +80,23 @@ var graphdef map[string](mp.Graphs) = map[string](mp.Graphs){
 	},
 }
 
+// MemcachedPlugin mackerel plugin for memchached
 type MemcachedPlugin struct {
 	Target   string
 	Tempfile string
 }
 
+// FetchMetrics interface for mackerelplugin
 func (m MemcachedPlugin) FetchMetrics() (map[string]interface{}, error) {
 	conn, err := net.Dial("tcp", m.Target)
 	if err != nil {
 		return nil, err
 	}
 	fmt.Fprintln(conn, "stats")
-	return m.ParseStats(conn)
+	return m.parseStats(conn)
 }
 
-func (m MemcachedPlugin) ParseStats(conn io.Reader) (map[string]interface{}, error) {
+func (m MemcachedPlugin) parseStats(conn io.Reader) (map[string]interface{}, error) {
 	scanner := bufio.NewScanner(conn)
 	stat := make(map[string]interface{})
 
@@ -116,6 +118,7 @@ func (m MemcachedPlugin) ParseStats(conn io.Reader) (map[string]interface{}, err
 	return nil, nil
 }
 
+// GraphDefinition interface for mackerelplugin
 func (m MemcachedPlugin) GraphDefinition() map[string](mp.Graphs) {
 	return graphdef
 }

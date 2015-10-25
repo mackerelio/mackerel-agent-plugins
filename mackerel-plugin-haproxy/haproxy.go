@@ -5,15 +5,16 @@ import (
 	"errors"
 	"flag"
 	"fmt"
-	mp "github.com/mackerelio/go-mackerel-plugin"
 	"io"
 	"net/http"
 	"os"
 	"strconv"
 	"time"
+
+	mp "github.com/mackerelio/go-mackerel-plugin"
 )
 
-var graphdef map[string](mp.Graphs) = map[string](mp.Graphs){
+var graphdef = map[string](mp.Graphs){
 	"haproxy.total.sessions": mp.Graphs{
 		Label: "HAProxy Total Sessions",
 		Unit:  "integer",
@@ -38,19 +39,21 @@ var graphdef map[string](mp.Graphs) = map[string](mp.Graphs){
 	},
 }
 
+// HAProxyPlugin mackerel plugin for haproxy
 type HAProxyPlugin struct {
-	Uri      string
+	URI      string
 	Username string
 	Password string
 }
 
+// FetchMetrics interface for mackerelplugin
 func (p HAProxyPlugin) FetchMetrics() (map[string]float64, error) {
 	client := &http.Client{
 		Timeout: time.Duration(5) * time.Second,
 	}
 
-	request_uri := p.Uri + ";csv;norefresh"
-	req, err := http.NewRequest("GET", request_uri, nil)
+	requestURI := p.URI + ";csv;norefresh"
+	req, err := http.NewRequest("GET", requestURI, nil)
 	if err != nil {
 		return nil, err
 	}
@@ -65,13 +68,13 @@ func (p HAProxyPlugin) FetchMetrics() (map[string]float64, error) {
 	defer resp.Body.Close()
 
 	if resp.StatusCode != 200 {
-		return nil, fmt.Errorf("Request failed. Status: %s, URI: %s", resp.Status, request_uri)
+		return nil, fmt.Errorf("Request failed. Status: %s, URI: %s", resp.Status, requestURI)
 	}
 
-	return p.ParseStats(resp.Body)
+	return p.parseStats(resp.Body)
 }
 
-func (p HAProxyPlugin) ParseStats(statsBody io.Reader) (map[string]float64, error) {
+func (p HAProxyPlugin) parseStats(statsBody io.Reader) (map[string]float64, error) {
 	stat := make(map[string]float64)
 	reader := csv.NewReader(statsBody)
 
@@ -119,12 +122,13 @@ func (p HAProxyPlugin) ParseStats(statsBody io.Reader) (map[string]float64, erro
 	return stat, nil
 }
 
-func (n HAProxyPlugin) GraphDefinition() map[string](mp.Graphs) {
+// GraphDefinition interface for mackerelplugin
+func (p HAProxyPlugin) GraphDefinition() map[string](mp.Graphs) {
 	return graphdef
 }
 
 func main() {
-	optUri := flag.String("uri", "", "URI")
+	optURI := flag.String("uri", "", "URI")
 	optScheme := flag.String("scheme", "http", "Scheme")
 	optHost := flag.String("host", "localhost", "Hostname")
 	optPort := flag.String("port", "80", "Port")
@@ -135,10 +139,10 @@ func main() {
 	flag.Parse()
 
 	var haproxy HAProxyPlugin
-	if *optUri != "" {
-		haproxy.Uri = *optUri
+	if *optURI != "" {
+		haproxy.URI = *optURI
 	} else {
-		haproxy.Uri = fmt.Sprintf("%s://%s:%s%s", *optScheme, *optHost, *optPort, *optPath)
+		haproxy.URI = fmt.Sprintf("%s://%s:%s%s", *optScheme, *optHost, *optPort, *optPath)
 	}
 
 	if *optUsername != "" {

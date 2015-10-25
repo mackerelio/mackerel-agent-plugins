@@ -28,7 +28,7 @@ Reading: 66 Writing: 16 Waiting: 41
 
 	nginxStats := bytes.NewBufferString(stub)
 
-	stat, err := nginx.ParseStats(nginxStats)
+	stat, err := nginx.parseStats(nginxStats)
 	fmt.Println(stat)
 	assert.Nil(t, err)
 	assert.EqualValues(t, reflect.TypeOf(stat["writing"]).String(), "float64")

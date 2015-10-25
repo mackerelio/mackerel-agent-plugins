@@ -14,7 +14,7 @@ import (
 	"gopkg.in/mgo.v2/bson"
 )
 
-var graphdef map[string](mp.Graphs) = map[string](mp.Graphs){
+var graphdef = map[string](mp.Graphs){
 	"mongodb.background_flushing": mp.Graphs{
 		Label: "MongoDB Command",
 		Unit:  "float",
@@ -50,7 +50,7 @@ var graphdef map[string](mp.Graphs) = map[string](mp.Graphs){
 	},
 }
 
-var graphdef30 map[string](mp.Graphs) = map[string](mp.Graphs){
+var graphdef30 = map[string](mp.Graphs){
 	"mongodb.background_flushing": mp.Graphs{
 		Label: "MongoDB Command",
 		Unit:  "float",
@@ -86,7 +86,7 @@ var graphdef30 map[string](mp.Graphs) = map[string](mp.Graphs){
 	},
 }
 
-var metricPlace22 map[string][]string = map[string][]string{
+var metricPlace22 = map[string][]string{
 	"duration_ms":         []string{"backgroundFlushing", "total_ms"},
 	"connections_current": []string{"connections", "current"},
 	"btree_hits":          []string{"indexCounters", "btree", "hits"},
@@ -98,7 +98,7 @@ var metricPlace22 map[string][]string = map[string][]string{
 	"opcounters_command":  []string{"opcounters", "command"},
 }
 
-var metricPlace24 map[string][]string = map[string][]string{
+var metricPlace24 = map[string][]string{
 	"duration_ms":         []string{"backgroundFlushing", "total_ms"},
 	"connections_current": []string{"connections", "current"},
 	"btree_hits":          []string{"indexCounters", "hits"},
@@ -112,7 +112,7 @@ var metricPlace24 map[string][]string = map[string][]string{
 
 // indexCounters is removed from mongodb 3.0.
 // ref. http://stackoverflow.com/questions/29428793/where-is-the-indexcounter-in-db-serverstatus-on-mongodb-3-0
-var metricPlace30 map[string][]string = map[string][]string{
+var metricPlace30 = map[string][]string{
 	"duration_ms":         []string{"backgroundFlushing", "total_ms"},
 	"connections_current": []string{"connections", "current"},
 	"opcounters_insert":   []string{"opcounters", "insert"},
@@ -123,7 +123,7 @@ var metricPlace30 map[string][]string = map[string][]string{
 	"opcounters_command":  []string{"opcounters", "command"},
 }
 
-func GetFloatValue(s map[string]interface{}, keys []string) (float64, error) {
+func getFloatValue(s map[string]interface{}, keys []string) (float64, error) {
 	var val float64
 	sm := s
 	var err error
@@ -146,13 +146,14 @@ func GetFloatValue(s map[string]interface{}, keys []string) (float64, error) {
 	return val, nil
 }
 
+// MongoDBPlugin mackerel plugin for mongo
 type MongoDBPlugin struct {
-	Url     string
+	URL     string
 	Verbose bool
 }
 
-func (m MongoDBPlugin) FetchStatus() (bson.M, error) {
-	session, err := mgo.Dial(m.Url)
+func (m MongoDBPlugin) fetchStatus() (bson.M, error) {
+	session, err := mgo.Dial(m.URL)
 	if err != nil {
 		return nil, err
 	}
@@ -172,12 +173,13 @@ func (m MongoDBPlugin) FetchStatus() (bson.M, error) {
 	return serverStatus, nil
 }
 
+// FetchMetrics interface for mackerelplugin
 func (m MongoDBPlugin) FetchMetrics() (map[string]interface{}, error) {
-	serverStatus, err := m.FetchStatus()
+	serverStatus, err := m.fetchStatus()
 	if err != nil {
 		return nil, err
 	}
-	return m.ParseStatus(serverStatus)
+	return m.parseStatus(serverStatus)
 }
 
 func (m MongoDBPlugin) getVersion(serverStatus bson.M) string {
@@ -188,7 +190,7 @@ func (m MongoDBPlugin) getVersion(serverStatus bson.M) string {
 	return ""
 }
 
-func (m MongoDBPlugin) ParseStatus(serverStatus bson.M) (map[string]interface{}, error) {
+func (m MongoDBPlugin) parseStatus(serverStatus bson.M) (map[string]interface{}, error) {
 	stat := make(map[string]interface{})
 	metricPlace := &metricPlace22
 	version := m.getVersion(serverStatus)
@@ -201,7 +203,7 @@ func (m MongoDBPlugin) ParseStatus(serverStatus bson.M) (map[string]interface{},
 	}
 
 	for k, v := range *metricPlace {
-		val, err := GetFloatValue(serverStatus, v)
+		val, err := getFloatValue(serverStatus, v)
 		if err != nil {
 			return nil, err
 		}
@@ -212,8 +214,9 @@ func (m MongoDBPlugin) ParseStatus(serverStatus bson.M) (map[string]interface{},
 	return stat, nil
 }
 
+// GraphDefinition interface for mackerelplugin
 func (m MongoDBPlugin) GraphDefinition() map[string](mp.Graphs) {
-	serverStatus, err := m.FetchStatus()
+	serverStatus, err := m.fetchStatus()
 	if err != nil {
 		return graphdef
 	}
@@ -236,9 +239,9 @@ func main() {
 	var mongodb MongoDBPlugin
 	mongodb.Verbose = *optVerbose
 	if *optUser == "" && *optPass == "" {
-		mongodb.Url = fmt.Sprintf("mongodb://%s:%s", *optHost, *optPort)
+		mongodb.URL = fmt.Sprintf("mongodb://%s:%s", *optHost, *optPort)
 	} else {
-		mongodb.Url = fmt.Sprintf("mongodb://%s:%s@%s:%s", *optUser, *optPass, *optHost, *optPort)
+		mongodb.URL = fmt.Sprintf("mongodb://%s:%s@%s:%s", *optUser, *optPass, *optHost, *optPort)
 	}
 
 	helper := mp.NewMackerelPlugin(mongodb)

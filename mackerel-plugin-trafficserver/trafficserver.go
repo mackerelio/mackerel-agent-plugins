@@ -13,7 +13,7 @@ import (
 	mp "github.com/mackerelio/go-mackerel-plugin-helper"
 )
 
-var graphdef map[string](mp.Graphs) = map[string](mp.Graphs){
+var graphdef = map[string](mp.Graphs){
 	"trafficserver.cache": mp.Graphs{
 		Label: "Trafficserver Cache Hits/Misses",
 		Unit:  "integer",
@@ -42,7 +42,7 @@ var graphdef map[string](mp.Graphs) = map[string](mp.Graphs){
 	},
 }
 
-var metricVarDef map[string]string = map[string]string{
+var metricVarDef = map[string]string{
 	"cache_hits":   "proxy.node.cache_total_hits",
 	"cache_misses": "proxy.node.cache_total_misses",
 	"http_2xx":     "proxy.process.http.2xx_responses",
@@ -53,10 +53,12 @@ var metricVarDef map[string]string = map[string]string{
 	"conn_client":  "proxy.node.current_client_connections",
 }
 
+// TrafficserverPlugin mackerel plugin for apache trafficserver
 type TrafficserverPlugin struct {
 	Tempfile string
 }
 
+// FetchMetrics interface for mackerelplugin
 func (m TrafficserverPlugin) FetchMetrics() (map[string]interface{}, error) {
 	var err error
 	strp, err := getDataWithCommand()
@@ -105,6 +107,7 @@ func getDataWithCommand() (*string, error) {
 	return &str, nil
 }
 
+// GraphDefinition interface for mackerelplugin
 func (m TrafficserverPlugin) GraphDefinition() map[string](mp.Graphs) {
 	return graphdef
 }

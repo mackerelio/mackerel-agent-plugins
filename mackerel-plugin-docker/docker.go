@@ -15,7 +15,7 @@ import (
 	mp "github.com/mackerelio/go-mackerel-plugin-helper"
 )
 
-var graphdef map[string](mp.Graphs) = map[string](mp.Graphs){
+var graphdef = map[string](mp.Graphs){
 	"docker.cpuacct.#": mp.Graphs{
 		Label: "Docker CPU",
 		Unit:  "integer",
@@ -64,6 +64,7 @@ var graphdef map[string](mp.Graphs) = map[string](mp.Graphs){
 	},
 }
 
+// DockerPlugin mackerel plugin for docker
 type DockerPlugin struct {
 	Host          string
 	DockerCommand string
@@ -179,6 +180,7 @@ func guessPathType(prefix string) (pathType, error) {
 	return pathUnknown, fmt.Errorf("can't resolve runtime metrics path")
 }
 
+// FetchMetrics interface for mackerel plugin
 func (m DockerPlugin) FetchMetrics() (map[string]interface{}, error) {
 	dockerStats := map[string][]string{}
 	data, err := m.getDockerPs()
@@ -249,6 +251,7 @@ func (m DockerPlugin) FetchMetrics() (map[string]interface{}, error) {
 	return res, nil
 }
 
+// GraphDefinition interface for mackerel plugin
 func (m DockerPlugin) GraphDefinition() map[string](mp.Graphs) {
 	return graphdef
 }

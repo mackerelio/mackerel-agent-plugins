@@ -1,18 +1,18 @@
 package main
 
 import (
-	"errors"
 	"flag"
 	"fmt"
-	mp "github.com/mackerelio/go-mackerel-plugin"
 	"os"
 	"os/exec"
 	"regexp"
 	"strconv"
 	"strings"
+
+	mp "github.com/mackerelio/go-mackerel-plugin"
 )
 
-var graphdef map[string](mp.Graphs) = map[string](mp.Graphs){
+var graphdef = map[string](mp.Graphs){
 	"varnish.requests": mp.Graphs{
 		Label: "Varnish Client Requests",
 		Unit:  "integer",
@@ -23,12 +23,14 @@ var graphdef map[string](mp.Graphs) = map[string](mp.Graphs){
 	},
 }
 
+// VarnishPlugin mackerel plugin for varnish
 type VarnishPlugin struct {
 	VarnishStatPath string
 	VarnishName     string
 	Tempfile        string
 }
 
+// FetchMetrics interface for mackerelplugin
 func (m VarnishPlugin) FetchMetrics() (map[string]float64, error) {
 	var out []byte
 	var err error
@@ -39,7 +41,7 @@ func (m VarnishPlugin) FetchMetrics() (map[string]float64, error) {
 		out, err = exec.Command(m.VarnishStatPath, "-1", "-n", m.VarnishName).CombinedOutput()
 	}
 	if err != nil {
-		return nil, errors.New(fmt.Sprintf("%s: %s", err, out))
+		return nil, fmt.Errorf("%s: %s", err, out)
 	}
 
 	lineexp, err := regexp.Compile("^([^ ]+) +(\\d+)")
@@ -70,6 +72,7 @@ func (m VarnishPlugin) FetchMetrics() (map[string]float64, error) {
 	return stat, err
 }
 
+// GraphDefinition interface for mackerelplugin
 func (m VarnishPlugin) GraphDefinition() map[string](mp.Graphs) {
 	return graphdef
 }

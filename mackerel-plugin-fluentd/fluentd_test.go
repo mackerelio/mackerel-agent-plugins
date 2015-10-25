@@ -35,8 +35,7 @@ func TestParse(t *testing.T) {
 
 	fluentdStats := []byte(stub)
 
-	stat, err := fluentd.ParseStats(fluentdStats)
-	//fmt.Println(stat)
+	stat, err := fluentd.parseStats(fluentdStats)
 	assert.Nil(t, err)
 	// Fluentd Stats
 	assert.EqualValues(t, reflect.TypeOf(stat["fluentd.buffer_total_queued_size.object_3feb368cfad0"]).String(), "float64")
