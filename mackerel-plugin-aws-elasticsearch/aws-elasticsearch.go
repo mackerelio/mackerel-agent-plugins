@@ -11,7 +11,7 @@ import (
 	"time"
 )
 
-var graphdef map[string](mp.Graphs) = map[string](mp.Graphs){
+var graphdef = map[string](mp.Graphs){
 	"es.Nodes": mp.Graphs{
 		Label: "AWS ES Nodes",
 		Unit:  "integer",
@@ -124,19 +124,20 @@ var graphdef map[string](mp.Graphs) = map[string](mp.Graphs){
 	},
 }
 
+// ESPlugin mackerel plugin for aws elasticsearch
 type ESPlugin struct {
 	Region          string
-	AccessKeyId     string
+	AccessKeyID     string
 	SecretAccessKey string
 	Domain          string
-	ClientId        string
+	ClientID        string
 	CloudWatch      *cloudwatch.CloudWatch
 }
 
-const ESNameSpace = "AWS/ES"
+const esNameSpace = "AWS/ES"
 
-func (p *ESPlugin) Prepare() error {
-	auth, err := aws.GetAuth(p.AccessKeyId, p.SecretAccessKey, "", time.Now())
+func (p *ESPlugin) prepare() error {
+	auth, err := aws.GetAuth(p.AccessKeyID, p.SecretAccessKey, "", time.Now())
 	if err != nil {
 		return err
 	}
@@ -148,7 +149,7 @@ func (p *ESPlugin) Prepare() error {
 	return nil
 }
 
-func (p ESPlugin) GetLastPoint(dimensions *[]cloudwatch.Dimension, metricName string) (float64, error) {
+func (p ESPlugin) getLastPoint(dimensions *[]cloudwatch.Dimension, metricName string) (float64, error) {
 	now := time.Now()
 
 	response, err := p.CloudWatch.GetMetricStatistics(&cloudwatch.GetMetricStatisticsRequest{
@@ -158,7 +159,7 @@ func (p ESPlugin) GetLastPoint(dimensions *[]cloudwatch.Dimension, metricName st
 		MetricName: metricName,
 		Period:     60,
 		Statistics: []string{"Average"},
-		Namespace:  ESNameSpace,
+		Namespace:  esNameSpace,
 	})
 
 	if err != nil {
@@ -184,6 +185,7 @@ func (p ESPlugin) GetLastPoint(dimensions *[]cloudwatch.Dimension, metricName st
 	return latestVal, nil
 }
 
+// FetchMetrics interface for mackerelplugin
 func (p ESPlugin) FetchMetrics() (map[string]float64, error) {
 	dimensions := []cloudwatch.Dimension{
 		cloudwatch.Dimension{
@@ -192,12 +194,12 @@ func (p ESPlugin) FetchMetrics() (map[string]float64, error) {
 		},
 		cloudwatch.Dimension{
 			Name:  "ClientId",
-			Value: p.ClientId,
+			Value: p.ClientID,
 		},
 	}
 
 	ret, err := p.CloudWatch.ListMetrics(&cloudwatch.ListMetricsRequest{
-		Namespace:  ESNameSpace,
+		Namespace:  esNameSpace,
 		Dimensions: dimensions,
 	})
 	if err != nil {
@@ -207,7 +209,7 @@ func (p ESPlugin) FetchMetrics() (map[string]float64, error) {
 	stat := make(map[string]float64)
 
 	for _, met := range ret.ListMetricsResult.Metrics {
-		v, err := p.GetLastPoint(&dimensions, met.MetricName)
+		v, err := p.getLastPoint(&dimensions, met.MetricName)
 		if err == nil {
 			if met.MetricName == "MasterFreeStorageSpace" || met.MetricName == "FreeStorageSpace" {
 				// MBytes -> Bytes
@@ -222,15 +224,16 @@ func (p ESPlugin) FetchMetrics() (map[string]float64, error) {
 	return stat, nil
 }
 
+// GraphDefinition interface for mackerelplugin
 func (p ESPlugin) GraphDefinition() map[string](mp.Graphs) {
 	return graphdef
 }
 
 func main() {
 	optRegion := flag.String("region", "", "AWS Region")
-	optAccessKeyId := flag.String("access-key-id", "", "AWS Access Key ID")
+	optAccessKeyID := flag.String("access-key-id", "", "AWS Access Key ID")
 	optSecretAccessKey := flag.String("secret-access-key", "", "AWS Secret Access Key")
-	optClientId := flag.String("client-id", "", "AWS Client ID")
+	optClientID := flag.String("client-id", "", "AWS Client ID")
 	optDomain := flag.String("domain", "", "ES domain name")
 	optTempfile := flag.String("tempfile", "", "Temp file name")
 	flag.Parse()
@@ -244,11 +247,11 @@ func main() {
 	}
 
 	es.Domain = *optDomain
-	es.ClientId = *optClientId
-	es.AccessKeyId = *optAccessKeyId
+	es.ClientID = *optClientID
+	es.AccessKeyID = *optAccessKeyID
 	es.SecretAccessKey = *optSecretAccessKey
 
-	err := es.Prepare()
+	err := es.prepare()
 	if err != nil {
 		log.Fatalln(err)
 	}
