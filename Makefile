@@ -35,6 +35,7 @@ testdeps:
 	go get github.com/golang/lint/golint
 	go get golang.org/x/tools/cmd/vet
 	go get golang.org/x/tools/cmd/cover
+	go get github.com/pierrre/gotestcover
 	go get github.com/mattn/goveralls
 
 LINT_RET = .golint.txt
@@ -45,7 +46,7 @@ lint: testdeps
 	test ! -s $(LINT_RET)
 
 cover: testdeps
-	tool/cover.sh
+	gotestcover -v -covermode=count -coverprofile=.profile.cov ./...
 
 rpm: build
 	rpmbuild --define "_sourcedir `pwd`" -ba packaging/rpm/mackerel-agent-plugins.spec
