@@ -1,3 +1,10 @@
+mackerel-agent-plugins (0.14.1-1) stable; urgency=low
+
+  * fix index bug in plugin-xentop (by Songmu)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/135>
+
+ -- Songmu <y.songmu@gmail.com>  Mon, 26 Oct 2015 19:20:45 +0900
+
 mackerel-agent-plugins (0.14.0-1) stable; urgency=low
 
   * Apache Traffic Server Plugin (by naokibtn)

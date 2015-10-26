@@ -41,6 +41,9 @@ done
 %{__targetdir}
 
 %changelog
+* Mon Oct 26 2015 <y.songmu@gmail.com> - 0.14.1
+- fix index bug in plugin-xentop (by Songmu)
+
 * Mon Oct 26 2015 <daiksy@hatena.ne.jp> - 0.14.0
 - Apache Traffic Server Plugin (by naokibtn)
 - added plugin for AWS Elasticsearch Service (by hiroakis)
