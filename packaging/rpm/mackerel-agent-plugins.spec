@@ -41,6 +41,12 @@ done
 %{__targetdir}
 
 %changelog
+* Mon Oct 26 2015 <daiksy@hatena.ne.jp> - 0.14.0
+- Apache Traffic Server Plugin (by naokibtn)
+- added plugin for AWS Elasticsearch Service (by hiroakis)
+- use wildcard definition & normalize xen names (by naokibtn)
+- add graph definition for java8 metaspace (by Songmu)
+
 * Thu Oct 15 2015 <itchyny@hatena.ne.jp> - 0.13.2
 - reduce binary size (by Songmu)
 - remove Config field from FluentPluginMetrics (by Songmu)
