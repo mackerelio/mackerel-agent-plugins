@@ -1,3 +1,16 @@
+mackerel-agent-plugins (0.14.0-1) stable; urgency=low
+
+  * Apache Traffic Server Plugin (by naokibtn)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/126>
+  * added plugin for AWS Elasticsearch Service (by hiroakis)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/127>
+  * use wildcard definition & normalize xen names (by naokibtn)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/128>
+  * add graph definition for java8 metaspace (by Songmu)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/129>
+
+ -- daiksy <daiksy@hatena.ne.jp>  Mon, 26 Oct 2015 15:25:03 +0900
+
 mackerel-agent-plugins (0.13.2-1) stable; urgency=low
 
   * reduce binary size (by Songmu)
