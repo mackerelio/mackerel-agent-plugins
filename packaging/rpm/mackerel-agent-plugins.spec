@@ -8,7 +8,7 @@
 
 Summary: Monitoring program plugins for Mackerel
 Name: mackerel-agent-plugins
-Version: 0.13.2
+Version: 0.14.0
 Release: %{revision}
 License: Apache-2
 Group: Applications/System
@@ -29,7 +29,7 @@ This package provides plugins for Mackerel.
 
 %{__mkdir} -p %{buildroot}%{__targetdir}
 
-for i in apache2 aws-ec2-cpucredit aws-elasticache aws-elb aws-rds aws-ses elasticsearch haproxy jvm linux memcached mongodb munin mysql nginx php-apc php-opcache plack postgres redis snmp squid td-table-count varnish xentop aws-cloudfront aws-ec2-ebs fluentd docker;do \
+for i in apache2 aws-ec2-cpucredit aws-elasticache aws-elasticsearch aws-elb aws-rds aws-ses elasticsearch haproxy jvm linux memcached mongodb munin mysql nginx php-apc php-opcache plack postgres redis snmp squid td-table-count trafficserver varnish xentop aws-cloudfront aws-ec2-ebs fluentd docker;do \
     %{__install} -m0755 %{_sourcedir}/build/mackerel-plugin-$i %{buildroot}%{__targetdir}/; \
 done
 
@@ -41,6 +41,13 @@ done
 %{__targetdir}
 
 %changelog
+* Mon Oct 26 2015 <daiksy@hatena.ne.jp> - 0.14.0
+- Apache Traffic Server Plugin (by naokibtn)
+- added plugin for AWS Elasticsearch Service (by hiroakis)
+- use wildcard definition & normalize xen names (by naokibtn)
+- add graph definition for java8 metaspace (by Songmu)
+- add plugins (aws-elasticsearch and trafficserver) into package (by Songmu)
+
 * Thu Oct 15 2015 <itchyny@hatena.ne.jp> - 0.13.2
 - reduce binary size (by Songmu)
 - remove Config field from FluentPluginMetrics (by Songmu)
