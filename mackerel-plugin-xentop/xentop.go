@@ -14,7 +14,7 @@ import (
 
 // index from table headers to array index
 // This is generated dynamically at generateIndex
-var index map[string](int)
+var index = map[string]int{}
 
 var graphdef = map[string](mp.Graphs){
 	"xentop.cpu.#": mp.Graphs{
