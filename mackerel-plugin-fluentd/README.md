@@ -12,7 +12,7 @@ mackerel-plugin-fluentd [-host=<host>] [-port=<port>] [-tempfile=<tempfile>]
 ## Example of mackerel-agent.conf
 
 ```
-[plugin.metrics.memcached]
+[plugin.metrics.fluentd]
 command = "/path/to/mackerel-plugin-fluentd"
 ```
 
