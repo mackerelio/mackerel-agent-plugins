@@ -9,8 +9,8 @@ import (
 	"strconv"
 	"strings"
 
-    mp "github.com/mackerelio/go-mackerel-plugin-helper"
-    "github.com/mackerelio/mackerel-agent/logging"
+	mp "github.com/mackerelio/go-mackerel-plugin-helper"
+	"github.com/mackerelio/mackerel-agent/logging"
 )
 
 var logger = logging.GetLogger("metrics.plugin.jvm")
@@ -72,36 +72,36 @@ func fetchJstatMetrics(lvmid, option, jstatPath string) (map[string]float64, err
 
 func calculateMemorySpaceRate(gcStat map[string]float64, m JVMPlugin) (map[string]float64, error) {
 	ret := make(map[string]float64)
-    ret["oldSpaceRate"] = gcStat["OU"] / gcStat["OC"] * 100
-    ret["newSpaceRate"] = (gcStat["S0U"] + gcStat["S1U"] + gcStat["EU"]) / (gcStat["S0C"] + gcStat["S1C"] + gcStat["EC"]) * 100
-    if checkCMSGC(m.Lvmid, m.JinfoPath) {
-        ret["CMSInitiatingOccupancyFraction"] = fetchCMSInitiatingOccupancyFraction(m.Lvmid, m.JinfoPath)
-    }
+	ret["oldSpaceRate"] = gcStat["OU"] / gcStat["OC"] * 100
+	ret["newSpaceRate"] = (gcStat["S0U"] + gcStat["S1U"] + gcStat["EU"]) / (gcStat["S0C"] + gcStat["S1C"] + gcStat["EC"]) * 100
+	if checkCMSGC(m.Lvmid, m.JinfoPath) {
+		ret["CMSInitiatingOccupancyFraction"] = fetchCMSInitiatingOccupancyFraction(m.Lvmid, m.JinfoPath)
+	}
 
-    return ret, nil
+	return ret, nil
 }
 
-func checkCMSGC(lvmid, JinfoPath string) (bool) {
-    output, err := exec.Command(JinfoPath, "-flag", "UseConcMarkSweepGC", lvmid).Output()
+func checkCMSGC(lvmid, JinfoPath string) bool {
+	output, err := exec.Command(JinfoPath, "-flag", "UseConcMarkSweepGC", lvmid).Output()
 	if err != nil {
 		logger.Errorf("Failed to run exec jinfo. %s", err)
-        os.Exit(1)
+		os.Exit(1)
 	}
-    return strings.Index(string(output), "+UseConcMarkSweepGC") != -1
+	return strings.Index(string(output), "+UseConcMarkSweepGC") != -1
 }
 
-func fetchCMSInitiatingOccupancyFraction(lvmid, JinfoPath string) (float64) {
-    var fraction float64
-    output, err := exec.Command(JinfoPath, "-flag", "CMSInitiatingOccupancyFraction", lvmid).Output()
+func fetchCMSInitiatingOccupancyFraction(lvmid, JinfoPath string) float64 {
+	var fraction float64
+	output, err := exec.Command(JinfoPath, "-flag", "CMSInitiatingOccupancyFraction", lvmid).Output()
 	if err != nil {
 		logger.Errorf("Failed to run exec jinfo. %s", err)
-        os.Exit(1)
+		os.Exit(1)
 	}
-    out := strings.Trim(string(output), "\n")
-    tmp := strings.Split(out, "=")
-    fraction, _ = strconv.ParseFloat(tmp[1], 64)
+	out := strings.Trim(string(output), "\n")
+	tmp := strings.Split(out, "=")
+	fraction, _ = strconv.ParseFloat(tmp[1], 64)
 
-    return fraction
+	return fraction
 }
 
 func mergeStat(dst, src map[string]float64) {
@@ -154,7 +154,7 @@ func (m JVMPlugin) FetchMetrics() (map[string]interface{}, error) {
 	if err != nil {
 		return nil, err
 	}
-    gcSpaceRate, err := calculateMemorySpaceRate(gcStat, m)
+	gcSpaceRate, err := calculateMemorySpaceRate(gcStat, m)
 	if err != nil {
 		return nil, err
 	}
@@ -164,7 +164,7 @@ func (m JVMPlugin) FetchMetrics() (map[string]interface{}, error) {
 	mergeStat(stat, gcCapacityStat)
 	mergeStat(stat, gcNewStat)
 	mergeStat(stat, gcOldStat)
-    mergeStat(stat, gcSpaceRate)
+	mergeStat(stat, gcSpaceRate)
 
 	result := make(map[string]interface{})
 	for k, v := range stat {
