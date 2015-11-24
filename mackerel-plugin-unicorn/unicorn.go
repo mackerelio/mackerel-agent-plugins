@@ -4,10 +4,12 @@ import (
 	"flag"
 	"fmt"
 	"io/ioutil"
+	"time"
 
 	"os"
 	"os/exec"
 
+	"strconv"
 	"strings"
 
 	mp "github.com/mackerelio/go-mackerel-plugin-helper"
@@ -19,15 +21,15 @@ var graphdef = map[string](mp.Graphs){
 		Label: "Unicorn Memory",
 		Unit:  "bytes",
 		Metrics: [](mp.Metrics){
-			mp.Metrics{Name: "used", Label: "Memory Used", Diff: false},
+			mp.Metrics{Name: "memory_used", Label: "Memory Used", Diff: false},
 		},
 	},
 	"unicorn.workers": mp.Graphs{
 		Label: "Unicorn Workers",
 		Unit:  "integer",
 		Metrics: [](mp.Metrics){
-			mp.Metrics{Name: "total", Label: "Worker Total", Diff: false},
-			mp.Metrics{Name: "idles", Label: "Worker Idles", Diff: false},
+			mp.Metrics{Name: "worker_total", Label: "Worker Total", Diff: false},
+			mp.Metrics{Name: "worker_idles", Label: "Worker Idles", Diff: false},
 		},
 	},
 }
@@ -39,9 +41,24 @@ type UnicornPlugin struct {
 }
 
 // FetchMetrics interface for mackerelplugin
-func (n UnicornPlugin) FetchMetrics() (map[string]interface{}, error) {
+func (u UnicornPlugin) FetchMetrics() (map[string]interface{}, error) {
+	stat := make(map[string]interface{})
 
-	return n.parseStats(resp.Body)
+	workers := len(u.WorkerPids)
+	idles, err := idleWorkerCount(u.WorkerPids)
+	if err != nil {
+		return stat, err
+	}
+	used, err := usedMemory()
+	if err != nil {
+		return stat, err
+	}
+
+	stat["worker_total"] = fmt.Sprint(workers)
+	stat["worker_idles"] = fmt.Sprint(idles)
+	stat["memory_used"] = used
+
+	return stat, nil
 }
 
 // GraphDefinition interface for mackerelplugin
@@ -49,56 +66,58 @@ func (n UnicornPlugin) GraphDefinition() map[string](mp.Graphs) {
 	return graphdef
 }
 
-func totalMemory() ([]string, error) {
-	var m []string
-	return m, nil
-}
-
-func memoryUsage() ([]string, error) {
-	var m []string
-	out, err := exec.Command("ps", "auxw").Output()
-	if err != nil {
-		return m, fmt.Errorf("Failed to ps of command: %s", err)
-	}
-	for _, line := range strings.Split(string(out), "\n") {
-		words := strings.Split(line, " ")
-		if len(words) != 2 {
-			continue
-		}
-		masterPid, name := words[0], words[1]
-		if name == "unicorn" {
-			m = append(m, masterPid)
-		}
-	}
-	return m, fmt.Errorf("Cannot get unicorn master pid")
-}
-
-func workerCount() (int, error) {
-	return 0, nil
-}
-
-func idleWorkerCount() (int, error) {
-	return 0, nil
-}
-
-func cpuTime() (int, error) {
-	return 0, nil
-}
-
-func fetchUnicornMasterPid() (string, error) {
+func usedMemory() (string, error) {
 	out, err := pipeline.Output(
-		[]string{"ps", "ax"},
-		[]string{"grep", "unicorn"},
-		[]string{"grep", "master"},
+		[]string{"ps", "auxw"},
+		[]string{"grep", "[u]nicorn"},
+		[]string{"awk", "{m+=$6*1024} END{print m;}"},
 	)
 	if err != nil {
-		return "", fmt.Errorf("Failed to ps and grep: %s", err)
+		return "", fmt.Errorf("Cannot get unicorn used memory")
 	}
-	lines := strings.Split(string(out), "\n")
-	if len(lines) > 1 {
-		return "", fmt.Errorf("At least two unicorn master processes.")
+	return strings.Trim(string(out), "\n"), nil
+}
+
+func idleWorkerCount(pids []string) (int, error) {
+	var beforeCpu []string
+	var afterCpu []string
+	idles := 0
+
+	for _, pid := range pids {
+		cputime, err := cpuTime(pid)
+		if err != nil {
+			return idles, err
+		}
+		beforeCpu = append(beforeCpu, cputime)
 	}
-	return lines[0], nil
+	time.Sleep(1 * time.Second)
+	for _, pid := range pids {
+		cputime, err := cpuTime(pid)
+		if err != nil {
+			return idles, err
+		}
+		afterCpu = append(afterCpu, cputime)
+	}
+	for i, _ := range pids {
+		b, _ := strconv.Atoi(beforeCpu[i])
+		a, _ := strconv.Atoi(afterCpu[i])
+		if (a - b) == 0 {
+			idles++
+		}
+	}
+
+	return idles, nil
+}
+
+func cpuTime(pid string) (string, error) {
+	out, err := pipeline.Output(
+		[]string{"cat", fmt.Sprintf("/proc/%s/stat", pid)},
+		[]string{"awk", "{print $14+$15}"},
+	)
+	if err != nil {
+		return "", fmt.Errorf("Failed to cat /proc/%s/stat: %s", pid, err)
+	}
+	return string(out), nil
 }
 
 func fetchUnicornWorkerPids(m string) ([]string, error) {
@@ -111,7 +130,11 @@ func fetchUnicornWorkerPids(m string) ([]string, error) {
 
 	for _, line := range strings.Split(string(out), "\n") {
 		words := strings.SplitN(line, " ", 5)
-		pid, cmd := words[0], words[4]
+		if len(words) < 5 {
+			continue
+		}
+		pid := words[0]
+		cmd := words[4]
 		if strings.Contains(cmd, "worker") {
 			workerPids = append(workerPids, pid)
 		}
@@ -130,12 +153,8 @@ func main() {
 	var unicorn UnicornPlugin
 
 	if *optPidFile == "" {
-		masterPid, err := fetchUnicornMasterPid()
-		if err != nil {
-			fmt.Errorf("Failed to fetch unicorn pid. %s", err)
-			os.Exit(1)
-		}
-		unicorn.MasterPid = masterPid
+		fmt.Errorf("Required unicorn pidfile.")
+		os.Exit(1)
 	} else {
 		pid, err := ioutil.ReadFile(*optPidFile)
 		if err != nil {
