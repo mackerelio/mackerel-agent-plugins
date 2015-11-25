@@ -51,7 +51,7 @@ func TestIdleWorkerCount(t *testing.T) {
 	expectedCount := len(pids)
 	c, _ := idleWorkerCount(pids)
 	if c != 7 {
-		t.Errorf("idleWorkerCount: expected %s but got %s", expectedCount, c)
+		t.Errorf("idleWorkerCount: expected %d but got %d", expectedCount, c)
 	}
 }
 
