@@ -4,14 +4,12 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/mattn/go-pipeline"
-
 	"strconv"
 	"strings"
 )
 
 func usedMemory() (string, error) {
-	out, err := pipeline.Output(
+	out, err := pipedCommands.Output(
 		[]string{"ps", "auxw"},
 		[]string{"grep", "[u]nicorn"},
 		[]string{"awk", "{m+=$6*1024} END{print m;}"},
@@ -23,7 +21,7 @@ func usedMemory() (string, error) {
 }
 
 func averageMemory() (string, error) {
-	out, err := pipeline.Output(
+	out, err := pipedCommands.Output(
 		[]string{"ps", "auxw"},
 		[]string{"grep", "[u]nicorn"},
 		[]string{"grep", "-v", "master"},
