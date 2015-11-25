@@ -15,7 +15,7 @@ func usedMemory() (string, error) {
 		[]string{"awk", "{m+=$6*1024} END{print m;}"},
 	)
 	if err != nil {
-		return "", fmt.Errorf("Cannot get unicorn used memory")
+		return "", fmt.Errorf("Cannot get unicorn used memory: %s", err)
 	}
 	return strings.Trim(string(out), "\n"), nil
 }
@@ -28,7 +28,7 @@ func averageMemory() (string, error) {
 		[]string{"awk", "{mem=$6*1024+mem; proc++} END{printf(\"%d\n\", mem/proc)}"},
 	)
 	if err != nil {
-		return "", fmt.Errorf("Cannot get unicorn used memory")
+		return "", fmt.Errorf("Cannot get unicorn memory average: %s", err)
 	}
 	return strings.Trim(string(out), "\n"), nil
 }
