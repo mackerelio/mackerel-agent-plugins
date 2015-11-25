@@ -10,7 +10,10 @@ import (
 	"strings"
 
 	mp "github.com/mackerelio/go-mackerel-plugin-helper"
+	"github.com/mackerelio/mackerel-agent/logging"
 )
+
+var logger = logging.GetLogger("metrics.plugin.unicorn")
 
 var graphdef = map[string](mp.Graphs){
 	"unicorn.memory": mp.Graphs{
@@ -88,12 +91,12 @@ func main() {
 	pipedCommands = RealPipedCommands{}
 
 	if *optPidFile == "" {
-		fmt.Errorf("Required unicorn pidfile.")
+		logger.Errorf("Required unicorn pidfile.")
 		os.Exit(1)
 	} else {
 		pid, err := ioutil.ReadFile(*optPidFile)
 		if err != nil {
-			fmt.Errorf("Failed to load unicorn pid file. %s", err)
+			logger.Errorf("Failed to load unicorn pid file. %s", err)
 			os.Exit(1)
 		}
 		unicorn.MasterPid = strings.Replace(string(pid), "\n", "", 1)
@@ -101,7 +104,7 @@ func main() {
 
 	workerPids, err := fetchUnicornWorkerPids(unicorn.MasterPid)
 	if err != nil {
-		fmt.Errorf("Failed to fetch unicorn worker pids. %s", err)
+		logger.Errorf("Failed to fetch unicorn worker pids. %s", err)
 		os.Exit(1)
 	}
 	unicorn.WorkerPids = workerPids
