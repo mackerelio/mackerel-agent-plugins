@@ -17,15 +17,15 @@ var graphdef = map[string](mp.Graphs){
 		Label: "Unicorn Memory",
 		Unit:  "bytes",
 		Metrics: [](mp.Metrics){
-			mp.Metrics{Name: "memory_used", Label: "Memory Used", Diff: false},
+			mp.Metrics{Name: "memory_used", Label: "Memory Used", Diff: false, Stacked: true},
 		},
 	},
 	"unicorn.workers": mp.Graphs{
 		Label: "Unicorn Workers",
 		Unit:  "integer",
 		Metrics: [](mp.Metrics){
-			mp.Metrics{Name: "worker_total", Label: "Worker Total", Diff: false},
-			mp.Metrics{Name: "worker_idles", Label: "Worker Idles", Diff: false},
+			mp.Metrics{Name: "worker_total", Label: "Worker Total", Diff: false, Stacked: true},
+			mp.Metrics{Name: "worker_idles", Label: "Worker Idles", Diff: false, Stacked: true},
 		},
 	},
 }
