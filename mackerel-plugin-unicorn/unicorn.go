@@ -4,16 +4,12 @@ import (
 	"flag"
 	"fmt"
 	"io/ioutil"
-	"time"
 
 	"os"
-	"os/exec"
 
-	"strconv"
 	"strings"
 
 	mp "github.com/mackerelio/go-mackerel-plugin-helper"
-	"github.com/mattn/go-pipeline"
 )
 
 var graphdef = map[string](mp.Graphs){
@@ -66,91 +62,13 @@ func (n UnicornPlugin) GraphDefinition() map[string](mp.Graphs) {
 	return graphdef
 }
 
-func usedMemory() (string, error) {
-	out, err := pipeline.Output(
-		[]string{"ps", "auxw"},
-		[]string{"grep", "[u]nicorn"},
-		[]string{"awk", "{m+=$6*1024} END{print m;}"},
-	)
-	if err != nil {
-		return "", fmt.Errorf("Cannot get unicorn used memory")
-	}
-	return strings.Trim(string(out), "\n"), nil
-}
-
-func idleWorkerCount(pids []string) (int, error) {
-	var beforeCpu []string
-	var afterCpu []string
-	idles := 0
-
-	for _, pid := range pids {
-		cputime, err := cpuTime(pid)
-		if err != nil {
-			return idles, err
-		}
-		beforeCpu = append(beforeCpu, cputime)
-	}
-	time.Sleep(1 * time.Second)
-	for _, pid := range pids {
-		cputime, err := cpuTime(pid)
-		if err != nil {
-			return idles, err
-		}
-		afterCpu = append(afterCpu, cputime)
-	}
-	for i, _ := range pids {
-		b, _ := strconv.Atoi(beforeCpu[i])
-		a, _ := strconv.Atoi(afterCpu[i])
-		if (a - b) == 0 {
-			idles++
-		}
-	}
-
-	return idles, nil
-}
-
-func cpuTime(pid string) (string, error) {
-	out, err := pipeline.Output(
-		[]string{"cat", fmt.Sprintf("/proc/%s/stat", pid)},
-		[]string{"awk", "{print $14+$15}"},
-	)
-	if err != nil {
-		return "", fmt.Errorf("Failed to cat /proc/%s/stat: %s", pid, err)
-	}
-	return string(out), nil
-}
-
-func fetchUnicornWorkerPids(m string) ([]string, error) {
-	var workerPids []string
-
-	out, err := exec.Command("ps", "w", "--ppid", m).Output()
-	if err != nil {
-		return workerPids, fmt.Errorf("Failed to ps of command: %s", err)
-	}
-
-	for _, line := range strings.Split(string(out), "\n") {
-		words := strings.SplitN(line, " ", 5)
-		if len(words) < 5 {
-			continue
-		}
-		pid := words[0]
-		cmd := words[4]
-		if strings.Contains(cmd, "worker") {
-			workerPids = append(workerPids, pid)
-		}
-	}
-
-	if len(workerPids) > 0 {
-		return workerPids, nil
-	}
-
-	return workerPids, fmt.Errorf("Cannot get unicorn worker pids")
-}
-
 func main() {
 	optPidFile := flag.String("pidfile", "", "pidfile path")
 	flag.Parse()
 	var unicorn UnicornPlugin
+
+	command = RealCommand{}
+	pipedCommands = RealPipedCommands{}
 
 	if *optPidFile == "" {
 		fmt.Errorf("Required unicorn pidfile.")
@@ -163,6 +81,7 @@ func main() {
 		}
 		unicorn.MasterPid = strings.Replace(string(pid), "\n", "", 1)
 	}
+
 	workerPids, err := fetchUnicornWorkerPids(unicorn.MasterPid)
 	if err != nil {
 		fmt.Errorf("Failed to fetch unicorn worker pids. %s", err)
