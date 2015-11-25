@@ -7,7 +7,7 @@ Synopsis
 --------
 
 ```sh
-mackerel-plugin-unicorn [-pidfile=<path>]
+mackerel-plugin-unicorn [-pidfile=<path>] [-tempfile=<tempfile>]
 ```
 
 Example of mackerel-agent.conf

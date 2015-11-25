@@ -36,6 +36,7 @@ var graphdef = map[string](mp.Graphs){
 type UnicornPlugin struct {
 	MasterPid  string
 	WorkerPids []string
+	Tempfile   string
 }
 
 // FetchMetrics interface for mackerelplugin
