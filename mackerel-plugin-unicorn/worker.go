@@ -25,7 +25,7 @@ func averageMemory() (string, error) {
 		[]string{"ps", "auxw"},
 		[]string{"grep", "[u]nicorn"},
 		[]string{"grep", "-v", "master"},
-		[]string{"awk", "{mem=$6*1024+mem; proc++} END{printf(\"%d\n\", mem/proc)}"},
+		[]string{"awk", "{mem=$6*1024+mem; proc++} END{print mem/proc}"},
 	)
 	if err != nil {
 		return "", fmt.Errorf("Cannot get unicorn memory average: %s", err)
