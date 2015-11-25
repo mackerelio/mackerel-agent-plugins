@@ -22,6 +22,19 @@ func usedMemory() (string, error) {
 	return strings.Trim(string(out), "\n"), nil
 }
 
+func averageMemory() (string, error) {
+	out, err := pipeline.Output(
+		[]string{"ps", "auxw"},
+		[]string{"grep", "[u]nicorn"},
+		[]string{"grep", "-v", "master"},
+		[]string{"awk", "{mem=$6*1024+mem; proc++} END{printf(\"%d\n\", mem/proc)}"},
+	)
+	if err != nil {
+		return "", fmt.Errorf("Cannot get unicorn used memory")
+	}
+	return strings.Trim(string(out), "\n"), nil
+}
+
 func idleWorkerCount(pids []string) (int, error) {
 	var beforeCpu []string
 	var afterCpu []string

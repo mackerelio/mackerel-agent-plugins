@@ -18,6 +18,7 @@ var graphdef = map[string](mp.Graphs){
 		Unit:  "bytes",
 		Metrics: [](mp.Metrics){
 			mp.Metrics{Name: "memory_used", Label: "Memory Used", Diff: false, Stacked: true},
+			mp.Metrics{Name: "memory_average", Label: "Memory Average", Diff: false, Stacked: true},
 		},
 	},
 	"unicorn.workers": mp.Graphs{
@@ -49,10 +50,15 @@ func (u UnicornPlugin) FetchMetrics() (map[string]interface{}, error) {
 	if err != nil {
 		return stat, err
 	}
+	average, err := averageMemory()
+	if err != nil {
+		return stat, err
+	}
 
 	stat["worker_total"] = fmt.Sprint(workers)
 	stat["worker_idles"] = fmt.Sprint(idles)
 	stat["memory_used"] = used
+	stat["memory_average"] = average
 
 	return stat, nil
 }
