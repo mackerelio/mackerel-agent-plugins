@@ -78,7 +78,8 @@ func (n UnicornPlugin) GraphDefinition() map[string](mp.Graphs) {
 }
 
 func main() {
-	optPidFile := flag.String("pidfile", "", "pidfile path")
+	optPidFile := flag.String("pidfile", "", "Pid file name")
+	optTempfile := flag.String("tempfile", "", "Temp file name")
 	flag.Parse()
 	var unicorn UnicornPlugin
 
@@ -105,6 +106,11 @@ func main() {
 	unicorn.WorkerPids = workerPids
 
 	helper := mp.NewMackerelPlugin(unicorn)
+	if *optTempfile != "" {
+		helper.Tempfile = *optTempfile
+	} else {
+		helper.Tempfile = fmt.Sprintf("/tmp/mackerel-plugin-unicorn")
+	}
 
 	if os.Getenv("MACKEREL_AGENT_PLUGIN_META") != "" {
 		helper.OutputDefinitions()
