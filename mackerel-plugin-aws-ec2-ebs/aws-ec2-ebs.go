@@ -11,6 +11,7 @@ import (
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/credentials"
 	"github.com/aws/aws-sdk-go/aws/ec2metadata"
+	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/cloudwatch"
 	"github.com/aws/aws-sdk-go/service/ec2"
 	mp "github.com/mackerelio/go-mackerel-plugin"
@@ -179,7 +180,7 @@ func (p *EBSPlugin) prepare() error {
 		p.Credentials = credentials.NewStaticCredentials(p.AccessKeyID, p.SecretAccessKey, "")
 	}
 
-	p.EC2 = ec2.New(&aws.Config{Credentials: p.Credentials, Region: &p.Region})
+	p.EC2 = ec2.New(session.New(&aws.Config{Credentials: p.Credentials, Region: &p.Region}))
 	resp, err := p.EC2.DescribeVolumes(&ec2.DescribeVolumesInput{
 		Filters: []*ec2.Filter{
 			&ec2.Filter{
@@ -259,7 +260,7 @@ func (p EBSPlugin) getLastPoint(vol *ec2.Volume, metricName string, statType str
 // FetchMetrics fetch the metrics
 func (p EBSPlugin) FetchMetrics() (map[string]float64, error) {
 	stat := make(map[string]float64)
-	p.CloudWatch = cloudwatch.New(&aws.Config{Credentials: p.Credentials, Region: &p.Region})
+	p.CloudWatch = cloudwatch.New(session.New(&aws.Config{Credentials: p.Credentials, Region: &p.Region}))
 
 	for _, vol := range *p.Volumes {
 		graphs := graphsToProcess(vol.VolumeType)
@@ -357,7 +358,7 @@ func main() {
 	ebs.InstanceID = *optInstanceID
 
 	// get metadata in ec2 instance
-	ec2MC := ec2metadata.New(&ec2metadata.Config{})
+	ec2MC := ec2metadata.New(session.New())
 	if *optRegion == "" {
 		ebs.Region, _ = ec2MC.Region()
 	}
