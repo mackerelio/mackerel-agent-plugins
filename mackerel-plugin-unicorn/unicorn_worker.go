@@ -9,8 +9,8 @@ import (
 )
 
 func idleWorkerCount(pids []string) (int, error) {
-	var beforeCpu []string
-	var afterCpu []string
+	var beforeCPU []string
+	var afterCPU []string
 	idles := 0
 
 	for _, pid := range pids {
@@ -18,7 +18,7 @@ func idleWorkerCount(pids []string) (int, error) {
 		if err != nil {
 			return idles, err
 		}
-		beforeCpu = append(beforeCpu, cputime)
+		beforeCPU = append(beforeCPU, cputime)
 	}
 	time.Sleep(1 * time.Second)
 	for _, pid := range pids {
@@ -26,11 +26,11 @@ func idleWorkerCount(pids []string) (int, error) {
 		if err != nil {
 			return idles, err
 		}
-		afterCpu = append(afterCpu, cputime)
+		afterCPU = append(afterCPU, cputime)
 	}
-	for i, _ := range pids {
-		b, _ := strconv.Atoi(beforeCpu[i])
-		a, _ := strconv.Atoi(afterCpu[i])
+	for i := range pids {
+		b, _ := strconv.Atoi(beforeCPU[i])
+		a, _ := strconv.Atoi(afterCPU[i])
 		if (a - b) == 0 {
 			idles++
 		}

@@ -77,7 +77,7 @@ func (u UnicornPlugin) FetchMetrics() (map[string]interface{}, error) {
 }
 
 // GraphDefinition interface for mackerelplugin
-func (n UnicornPlugin) GraphDefinition() map[string](mp.Graphs) {
+func (u UnicornPlugin) GraphDefinition() map[string](mp.Graphs) {
 	return graphdef
 }
 

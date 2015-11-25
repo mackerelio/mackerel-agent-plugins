@@ -39,18 +39,18 @@ func TestFetchUnicornWorkerPids(t *testing.T) {
 	}
 }
 
-type TestCpuTimePipedCommands struct{}
+type TestCPUTimePipedCommands struct{}
 
-func (r TestCpuTimePipedCommands) Output(commands ...[]string) ([]byte, error) {
+func (r TestCPUTimePipedCommands) Output(commands ...[]string) ([]byte, error) {
 	return []byte("418\n"), nil
 }
 
-func TestCpuTime(t *testing.T) {
-	pipedCommands = TestCpuTimePipedCommands{}
+func TestCPUTime(t *testing.T) {
+	pipedCommands = TestCPUTimePipedCommands{}
 	pid := "3061"
-	expectedCpuTime := "418"
+	expectedCPUTime := "418"
 	c, _ := cpuTime(pid)
-	if c != expectedCpuTime {
-		t.Errorf("cpuTime: expected %s but got %s", expectedCpuTime, c)
+	if c != expectedCPUTime {
+		t.Errorf("cpuTime: expected %s but got %s", expectedCPUTime, c)
 	}
 }
