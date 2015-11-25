@@ -5,36 +5,6 @@ import (
 	"testing"
 )
 
-type TestUsedMemoryPipedCommands struct{}
-
-func (r TestUsedMemoryPipedCommands) Output(commands ...[]string) ([]byte, error) {
-	return []byte("3321016320\n"), nil
-}
-
-func TestUsedMemory(t *testing.T) {
-	pipedCommands = TestUsedMemoryPipedCommands{}
-	expectedMemory := "3321016320"
-	m, _ := usedMemory()
-	if m != expectedMemory {
-		t.Errorf("usedMemory: expected %s but got %s", expectedMemory, m)
-	}
-}
-
-type TestAverageMemoryPipedCommands struct{}
-
-func (r TestAverageMemoryPipedCommands) Output(commands ...[]string) ([]byte, error) {
-	return []byte("204277504\n"), nil
-}
-
-func TestAverageMemory(t *testing.T) {
-	pipedCommands = TestAverageMemoryPipedCommands{}
-	expectedMemory := "204277504"
-	m, _ := averageMemory()
-	if m != expectedMemory {
-		t.Errorf("averageMemory: expected %s but got %s", expectedMemory, m)
-	}
-}
-
 type TestFetchUnicornWorkerPidsCommand struct{}
 
 func (r TestFetchUnicornWorkerPidsCommand) Output(command string, args ...string) ([]byte, error) {

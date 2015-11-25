@@ -17,16 +17,17 @@ var graphdef = map[string](mp.Graphs){
 		Label: "Unicorn Memory",
 		Unit:  "bytes",
 		Metrics: [](mp.Metrics){
-			mp.Metrics{Name: "memory_used", Label: "Memory Used", Diff: false, Stacked: true},
-			mp.Metrics{Name: "memory_average", Label: "Memory Average", Diff: false, Stacked: true},
+			mp.Metrics{Name: "memory_workers", Label: "Workers", Diff: false, Stacked: true},
+			mp.Metrics{Name: "memory_master", Label: "Master", Diff: false, Stacked: true},
+			mp.Metrics{Name: "memory_workeravg", Label: "Worker Average", Diff: false, Stacked: false},
 		},
 	},
 	"unicorn.workers": mp.Graphs{
 		Label: "Unicorn Workers",
 		Unit:  "integer",
 		Metrics: [](mp.Metrics){
-			mp.Metrics{Name: "worker_total", Label: "Worker Total", Diff: false, Stacked: true},
-			mp.Metrics{Name: "worker_idles", Label: "Worker Idles", Diff: false, Stacked: true},
+			mp.Metrics{Name: "worker_total", Label: "Worker Total", Diff: false, Stacked: false},
+			mp.Metrics{Name: "worker_idles", Label: "Worker Idles", Diff: false, Stacked: false},
 		},
 	},
 }
@@ -42,23 +43,31 @@ func (u UnicornPlugin) FetchMetrics() (map[string]interface{}, error) {
 	stat := make(map[string]interface{})
 
 	workers := len(u.WorkerPids)
+	stat["worker_total"] = fmt.Sprint(workers)
+
 	idles, err := idleWorkerCount(u.WorkerPids)
 	if err != nil {
 		return stat, err
 	}
-	used, err := usedMemory()
-	if err != nil {
-		return stat, err
-	}
-	average, err := averageMemory()
-	if err != nil {
-		return stat, err
-	}
-
-	stat["worker_total"] = fmt.Sprint(workers)
 	stat["worker_idles"] = fmt.Sprint(idles)
-	stat["memory_used"] = used
-	stat["memory_average"] = average
+
+	workersM, err := workersMemory()
+	if err != nil {
+		return stat, err
+	}
+	stat["memory_workers"] = workersM
+
+	masterM, err := masterMemory()
+	if err != nil {
+		return stat, err
+	}
+	stat["memory_master"] = masterM
+
+	averageM, err := workersMemoryAvg()
+	if err != nil {
+		return stat, err
+	}
+	stat["memory_workeravg"] = averageM
 
 	return stat, nil
 }
