@@ -45,6 +45,16 @@ func (r TestCPUTimePipedCommands) Output(commands ...[]string) ([]byte, error) {
 	return []byte("418\n"), nil
 }
 
+func TestIdleWorkerCount(t *testing.T) {
+	pipedCommands = TestCPUTimePipedCommands{}
+	pids := []string{"584", "1857", "2258", "2627", "2872", "3085", "3546"}
+	expectedCount := len(pids)
+	c, _ := idleWorkerCount(pids)
+	if c != 7 {
+		t.Errorf("idleWorkerCount: expected %s but got %s", expectedCount, c)
+	}
+}
+
 func TestCPUTime(t *testing.T) {
 	pipedCommands = TestCPUTimePipedCommands{}
 	pid := "3061"
