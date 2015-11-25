@@ -5,9 +5,39 @@ import (
 	"testing"
 )
 
-type TestCommand struct{}
+type TestUsedMemoryPipedCommands struct{}
 
-func (r TestCommand) Output(command string, args ...string) ([]byte, error) {
+func (r TestUsedMemoryPipedCommands) Output(commands ...[]string) ([]byte, error) {
+	return []byte("3321016320\n"), nil
+}
+
+func TestUsedMemory(t *testing.T) {
+	pipedCommands = TestUsedMemoryPipedCommands{}
+	expectedMemory := "3321016320"
+	m, _ := usedMemory()
+	if m != expectedMemory {
+		t.Errorf("usedMemory: expected %s but got %s", expectedMemory, m)
+	}
+}
+
+type TestAverageMemoryPipedCommands struct{}
+
+func (r TestAverageMemoryPipedCommands) Output(commands ...[]string) ([]byte, error) {
+	return []byte("204277504\n"), nil
+}
+
+func TestAverageMemory(t *testing.T) {
+	pipedCommands = TestAverageMemoryPipedCommands{}
+	expectedMemory := "204277504"
+	m, _ := averageMemory()
+	if m != expectedMemory {
+		t.Errorf("averageMemory: expected %s but got %s", expectedMemory, m)
+	}
+}
+
+type TestFetchUnicornWorkerPidsCommand struct{}
+
+func (r TestFetchUnicornWorkerPidsCommand) Output(command string, args ...string) ([]byte, error) {
 	out := ` PID TTY      STAT   TIME COMMAND
   584 ?        Sl     0:27 unicorn worker[7] -c config/unicorn.rb -E deployment
  1857 ?        Sl     0:24 unicorn worker[6] -c config/unicorn.rb -E deployment
@@ -29,7 +59,7 @@ func (r TestCommand) Output(command string, args ...string) ([]byte, error) {
 }
 
 func TestFetchUnicornWorkerPids(t *testing.T) {
-	command = TestCommand{}
+	command = TestFetchUnicornWorkerPidsCommand{}
 	masterPid := "30661"
 	expectedPids := []string{"584", "1857", "2258", "2627", "2872", "3085", "3546",
 		"4392", "6049", "8430", "8744", "9293", "10425", "11152", "11576", "11685"}
@@ -39,14 +69,14 @@ func TestFetchUnicornWorkerPids(t *testing.T) {
 	}
 }
 
-type TestPipedCommands struct{}
+type TestCpuTimePipedCommands struct{}
 
-func (r TestPipedCommands) Output(commands ...[]string) ([]byte, error) {
+func (r TestCpuTimePipedCommands) Output(commands ...[]string) ([]byte, error) {
 	return []byte("418\n"), nil
 }
 
 func TestCpuTime(t *testing.T) {
-	pipedCommands = TestPipedCommands{}
+	pipedCommands = TestCpuTimePipedCommands{}
 	pid := "3061"
 	expectedCpuTime := "418"
 	c, _ := cpuTime(pid)
