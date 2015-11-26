@@ -8,7 +8,7 @@
 
 Summary: Monitoring program plugins for Mackerel
 Name: mackerel-agent-plugins
-Version: 0.14.1
+Version: 0.14.2
 Release: %{revision}
 License: Apache-2
 Group: Applications/System
@@ -41,6 +41,11 @@ done
 %{__targetdir}
 
 %changelog
+* Wed Nov 25 2015 <y.songmu@gmail.com> - 0.14.2
+- Fix document (by tkuchiki)
+- Get memory usage percentage and CMSInitiatingOccupancyFraction when CMS GC is running (by tom--bo)
+- follow latest aws-sdk-go (by Songmu)
+
 * Mon Oct 26 2015 <y.songmu@gmail.com> - 0.14.1
 - fix index bug in plugin-xentop (by Songmu)
 
