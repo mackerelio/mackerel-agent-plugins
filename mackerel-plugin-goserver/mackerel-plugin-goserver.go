@@ -86,8 +86,8 @@ func (m GoServerPlugin) GraphDefinition() map[string](mp.Graphs) {
 			Unit:  "integer",
 			Metrics: [](mp.Metrics){
 				mp.Metrics{Name: "heap_sys", Label: "Sys"},
-				mp.Metrics{Name: "heap_idle", Label: "Idle", Stacked: true},
-				mp.Metrics{Name: "heap_inuse", Label: "In Use", Stacked: true},
+				mp.Metrics{Name: "heap_idle", Label: "Idle"},
+				mp.Metrics{Name: "heap_inuse", Label: "In Use"},
 				mp.Metrics{Name: "heap_released", Label: "Released", Diff: true},
 			},
 		},
