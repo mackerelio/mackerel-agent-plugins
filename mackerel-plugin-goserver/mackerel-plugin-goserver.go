@@ -6,7 +6,6 @@ import (
 	"fmt"
 	"io"
 	"net/http"
-	"os"
 	"strings"
 
 	"github.com/fukata/golang-stats-api-handler"
@@ -168,9 +167,5 @@ func main() {
 		helper.Tempfile = fmt.Sprintf("/tmp/mackerel-plugin-gosrv")
 	}
 
-	if os.Getenv("MACKEREL_AGENT_PLUGIN_META") != "" {
-		helper.OutputDefinitions()
-	} else {
-		helper.OutputValues()
-	}
+	helper.Run()
 }
