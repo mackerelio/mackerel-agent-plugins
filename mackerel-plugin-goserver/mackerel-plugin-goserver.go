@@ -59,7 +59,7 @@ func (m GoServerPlugin) GraphDefinition() map[string](mp.Graphs) {
 			Unit:  "integer",
 			Metrics: [](mp.Metrics){
 				mp.Metrics{Name: "goroutine_num", Label: "Gorotine Num"},
-				mp.Metrics{Name: "cgo_call_num", Label: "cgo Call Num", Diff: true},
+				mp.Metrics{Name: "cgo_call_num", Label: "CGO Call Num", Diff: true},
 			},
 		},
 		(m.Prefix + ".memory"): mp.Graphs{
@@ -119,8 +119,8 @@ func (m GoServerPlugin) parseStats(body io.Reader) (map[string]interface{}, erro
 	if err != nil {
 		return nil, err
 	}
-	stat["goroutine_num"] = s.GoroutineNum
-	stat["cgo_call_num"] = s.CgoCallNum
+	stat["goroutine_num"] = uint64(s.GoroutineNum)
+	stat["cgo_call_num"] = uint64(s.CgoCallNum)
 	stat["memory_alloc"] = s.MemoryAlloc
 	stat["memory_total_alloc"] = s.MemoryTotalAlloc
 	stat["memory_sys"] = s.MemorySys
