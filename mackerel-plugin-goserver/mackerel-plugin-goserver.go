@@ -68,31 +68,34 @@ func (m GoServerPlugin) GraphDefinition() map[string](mp.Graphs) {
 			Unit:  "integer",
 			Metrics: [](mp.Metrics){
 				mp.Metrics{Name: "memory_alloc", Label: "Alloc"},
-				mp.Metrics{Name: "memory_total_alloc", Label: "Total Alloc", Diff: true},
 				mp.Metrics{Name: "memory_sys", Label: "Sys"},
-				mp.Metrics{Name: "memory_lookups", Label: "Lookups"},
-				mp.Metrics{Name: "memory_mallocs", Label: "Mallocs"},
-				mp.Metrics{Name: "memory_frees", Label: "Frees"},
 				mp.Metrics{Name: "memory_stack", Label: "Stack In Use"},
+			},
+		},
+		(m.Prefix + ".operation"): mp.Graphs{
+			Label: (labelPrefix + " Operation"),
+			Unit:  "integer",
+			Metrics: [](mp.Metrics){
+				mp.Metrics{Name: "memory_lookups", Label: "Pointer Lookups", Diff: true},
+				mp.Metrics{Name: "memory_mallocs", Label: "Mallocs", Diff: true},
+				mp.Metrics{Name: "memory_frees", Label: "Frees", Diff: true},
 			},
 		},
 		(m.Prefix + ".heap"): mp.Graphs{
 			Label: (labelPrefix + " Heap"),
 			Unit:  "integer",
 			Metrics: [](mp.Metrics){
-				mp.Metrics{Name: "heap_alloc", Label: "Alloc"},
 				mp.Metrics{Name: "heap_sys", Label: "Sys"},
-				mp.Metrics{Name: "heap_idle", Label: "Idle"},
-				mp.Metrics{Name: "heap_inuse", Label: "In Use"},
+				mp.Metrics{Name: "heap_idle", Label: "Idle", Stacked: true},
+				mp.Metrics{Name: "heap_inuse", Label: "In Use", Stacked: true},
 				mp.Metrics{Name: "heap_released", Label: "Released", Diff: true},
-				mp.Metrics{Name: "heap_objects", Label: "Objects", Diff: true},
 			},
 		},
 		(m.Prefix + ".gc"): mp.Graphs{
 			Label: (labelPrefix + " GC"),
 			Unit:  "integer",
 			Metrics: [](mp.Metrics){
-				mp.Metrics{Name: "gc_num", Label: "GC Num"},
+				mp.Metrics{Name: "gc_num", Label: "GC Num", Diff: true},
 				mp.Metrics{Name: "gc_per_second", Label: "GC Per Second"},
 				mp.Metrics{Name: "gc_pause_per_second", Label: "GC Pause Per Second"},
 			},
@@ -122,18 +125,16 @@ func (m GoServerPlugin) parseStats(body io.Reader) (map[string]interface{}, erro
 	}
 	stat["goroutine_num"] = uint64(s.GoroutineNum)
 	stat["cgo_call_num"] = uint64(s.CgoCallNum)
-	stat["memory_alloc"] = s.MemoryAlloc
-	stat["memory_total_alloc"] = s.MemoryTotalAlloc
 	stat["memory_sys"] = s.MemorySys
+	stat["memory_alloc"] = s.MemoryAlloc
+	stat["memory_stack"] = s.StackInUse
 	stat["memory_lookups"] = s.MemoryLookups
 	stat["memory_frees"] = s.MemoryFrees
-	stat["memory_stack"] = s.StackInUse
-	stat["heap_alloc"] = s.HeapAlloc
+	stat["memory_mallocs"] = s.MemoryMallocs
 	stat["heap_sys"] = s.HeapSys
 	stat["heap_idle"] = s.HeapIdle
 	stat["heap_inuse"] = s.HeapInuse
 	stat["heap_released"] = s.HeapReleased
-	stat["heap_objects"] = s.HeapObjects
 	stat["gc_num"] = s.GcNum
 	stat["gc_per_second"] = s.GcPerSecond
 	stat["gc_pause_per_second"] = s.GcPausePerSecond
