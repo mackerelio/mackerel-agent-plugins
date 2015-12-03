@@ -13,6 +13,7 @@ import (
 	mp "github.com/mackerelio/go-mackerel-plugin-helper"
 )
 
+// GoServerPlugin mackerel plugin for go server
 type GoServerPlugin struct {
 	URI    string
 	Prefix string
@@ -83,15 +84,15 @@ func (m GoServerPlugin) GraphDefinition() map[string](mp.Graphs) {
 				mp.Metrics{Name: "heap_sys", Label: "Sys"},
 				mp.Metrics{Name: "heap_idle", Label: "Idle"},
 				mp.Metrics{Name: "heap_inuse", Label: "In Use"},
-				mp.Metrics{Name: "heap_released", Label: "Released"},
-				mp.Metrics{Name: "heap_objects", Label: "Objects"},
+				mp.Metrics{Name: "heap_released", Label: "Released", Diff: true},
+				mp.Metrics{Name: "heap_objects", Label: "Objects", Diff: true},
 			},
 		},
 		(m.Prefix + ".gc"): mp.Graphs{
 			Label: (labelPrefix + " GC"),
 			Unit:  "integer",
 			Metrics: [](mp.Metrics){
-				mp.Metrics{Name: "gc_num", Label: "Num"},
+				mp.Metrics{Name: "gc_num", Label: "GC Num"},
 				mp.Metrics{Name: "gc_per_second", Label: "GC Per Second"},
 				mp.Metrics{Name: "gc_pause_per_second", Label: "GC Pause Per Second"},
 			},
