@@ -64,7 +64,7 @@ func (m GoServerPlugin) GraphDefinition() map[string](mp.Graphs) {
 		},
 		(m.Prefix + ".memory"): mp.Graphs{
 			Label: (labelPrefix + " Memory"),
-			Unit:  "integer",
+			Unit:  "bytes",
 			Metrics: [](mp.Metrics){
 				mp.Metrics{Name: "memory_alloc", Label: "Alloc"},
 				mp.Metrics{Name: "memory_sys", Label: "Sys"},
@@ -82,7 +82,7 @@ func (m GoServerPlugin) GraphDefinition() map[string](mp.Graphs) {
 		},
 		(m.Prefix + ".heap"): mp.Graphs{
 			Label: (labelPrefix + " Heap"),
-			Unit:  "integer",
+			Unit:  "bytes",
 			Metrics: [](mp.Metrics){
 				mp.Metrics{Name: "heap_sys", Label: "Sys"},
 				mp.Metrics{Name: "heap_idle", Label: "Idle"},
@@ -92,7 +92,7 @@ func (m GoServerPlugin) GraphDefinition() map[string](mp.Graphs) {
 		},
 		(m.Prefix + ".gc"): mp.Graphs{
 			Label: (labelPrefix + " GC"),
-			Unit:  "integer",
+			Unit:  "float",
 			Metrics: [](mp.Metrics){
 				mp.Metrics{Name: "gc_num", Label: "GC Num", Diff: true},
 				mp.Metrics{Name: "gc_per_second", Label: "GC Per Second"},
