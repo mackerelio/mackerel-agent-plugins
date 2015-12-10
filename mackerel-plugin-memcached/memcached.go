@@ -78,6 +78,14 @@ var graphdef = map[string](mp.Graphs){
 			mp.Metrics{Name: "bytes_written", Label: "Write", Diff: true, Type: "uint64"},
 		},
 	},
+	"memcached.capacity": mp.Graphs{
+		Label: "Memcached Capacity",
+		Unit:  "bytes",
+		Metrics: [](mp.Metrics){
+			mp.Metrics{Name: "limit_maxbytes", Label: "Limit", Diff: true, Type: "uint64", Stacked: false},
+			mp.Metrics{Name: "bytes", Label: "Used", Diff: true, Type: "uint64", Stacked: true},
+		},
+	},
 }
 
 // MemcachedPlugin mackerel plugin for memchached
