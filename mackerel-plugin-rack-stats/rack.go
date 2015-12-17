@@ -60,7 +60,7 @@ func parseBody(r io.Reader, index string) (stats map[string]interface{}, err err
 	return stats, err
 }
 
-func parseBodyHttp(uri, port string) (stats map[string]interface{}, err error) {
+func parseBodyHTTP(uri, port string) (stats map[string]interface{}, err error) {
 	var req *http.Request
 	req, err = http.NewRequest("GET", uri, nil)
 	if err != nil {
@@ -99,6 +99,7 @@ func parseBodyUnix(path string) (stats map[string]interface{}, err error) {
 	return stats, err
 }
 
+// RackStatsPlugin mackerel plugin for Rack servers
 type RackStatsPlugin struct {
 	Address   string
 	Path      string
@@ -116,7 +117,7 @@ func (u RackStatsPlugin) parseStats() (stats map[string]interface{}, err error) 
 
 	switch scheme {
 	case "http":
-		stats, err = parseBodyHttp(fmt.Sprintf("%s/%s", u.Address, strings.TrimLeft(u.Path, "/")), port)
+		stats, err = parseBodyHTTP(fmt.Sprintf("%s/%s", u.Address, strings.TrimLeft(u.Path, "/")), port)
 	case "unix":
 		sock = path
 		stats, err = parseBodyUnix(u.Path)

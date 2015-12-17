@@ -26,7 +26,7 @@ func TestGraphDefinition(t *testing.T) {
 var testPort string
 var testSock string
 
-func requestHandlerHttp(w http.ResponseWriter, req *http.Request) {
+func requestHandlerHTTP(w http.ResponseWriter, req *http.Request) {
 	w.WriteHeader(200)
 	w.Header().Set("Content-Type", "text/plain")
 	fmt.Fprintln(w, "calling: 10")
@@ -57,7 +57,7 @@ func requestHandlerUnix(w http.ResponseWriter, req *http.Request) {
 func TestParseHttp(t *testing.T) {
 	var rack RackStatsPlugin
 
-	ts := httptest.NewServer(http.HandlerFunc(requestHandlerHttp))
+	ts := httptest.NewServer(http.HandlerFunc(requestHandlerHTTP))
 	defer ts.Close()
 
 	u, _ := url.Parse(ts.URL)
