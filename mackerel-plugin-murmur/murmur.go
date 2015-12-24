@@ -29,7 +29,7 @@ type MurmurPlugin struct {
 
 // FetchMetrics interface for mackerelplugin
 func (m MurmurPlugin) FetchMetrics() (map[string]interface{}, error) {
-	resp, err := mumble.Ping(m.Host, time.Millisecond * time.Duration(m.Timeout))
+	resp, err := mumble.Ping(m.Host, 0, time.Millisecond * time.Duration(m.Timeout))
 
 	if err != nil {
 		return nil, err

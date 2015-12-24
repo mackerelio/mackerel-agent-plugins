@@ -73,6 +73,8 @@ Caution
 Some plugins may not work on CentOS/RedHat 5 because the golang compiler (gc) doesn't support the old kernel.
 (https://golang.org/doc/install)
 
+Some plugins are not contained in rpm and deb packages. If you want to use them, build them.
+
 Contribution
 ============
 
