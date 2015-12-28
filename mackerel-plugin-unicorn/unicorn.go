@@ -29,8 +29,8 @@ var graphdef = map[string](mp.Graphs){
 		Label: "Unicorn Workers",
 		Unit:  "integer",
 		Metrics: [](mp.Metrics){
-			mp.Metrics{Name: "worker_total", Label: "Worker Total", Diff: false, Stacked: false},
-			mp.Metrics{Name: "worker_idles", Label: "Worker Idles", Diff: false, Stacked: false},
+			mp.Metrics{Name: "busy_workers", Label: "Busy Workers", Diff: false, Stacked: true},
+			mp.Metrics{Name: "idle_workers", Label: "Idle Workers", Diff: false, Stacked: true},
 		},
 	},
 }
@@ -47,13 +47,12 @@ func (u UnicornPlugin) FetchMetrics() (map[string]interface{}, error) {
 	stat := make(map[string]interface{})
 
 	workers := len(u.WorkerPids)
-	stat["worker_total"] = fmt.Sprint(workers)
-
 	idles, err := idleWorkerCount(u.WorkerPids)
 	if err != nil {
 		return stat, err
 	}
-	stat["worker_idles"] = fmt.Sprint(idles)
+	stat["idle_workers"] = fmt.Sprint(idles)
+	stat["busy_workers"] = fmt.Sprint(workers - idles)
 
 	workersM, err := workersMemory()
 	if err != nil {
