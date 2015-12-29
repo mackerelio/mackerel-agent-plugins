@@ -14,7 +14,7 @@ func TestGraphDefinition(t *testing.T) {
 
 	graphdef := memcached.GraphDefinition()
 	if len(graphdef) != 8 {
-		t.Errorf("GetTempfilename: %d should be 3", len(graphdef))
+		t.Errorf("GetTempfilename: %d should be 8", len(graphdef))
 	}
 }
 
