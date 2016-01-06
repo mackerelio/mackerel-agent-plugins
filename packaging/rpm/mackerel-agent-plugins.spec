@@ -41,6 +41,19 @@ done
 %{__targetdir}
 
 %changelog
+* Wed Jan 06 2016 <y.songmu@gmail.com> - 0.15.0
+- Add mackerel-plugin-unicorn (by linyows)
+- Update README (by y-kuno)
+- Add mackerel-plugin-solr [not into package] (by supercaracal)
+- Add mackerel-plugin-murmur (not into package) (by mikoim)
+- add mackerel-plugin-gostats (by Songmu)
+- Add graph definition for memcached cache size (by y-kuno)
+- Squid: work with squid v3 (by naokibtn)
+- add graphs to varnish plugin (by naokibtn)
+- When Seconds_Behind_Master is NULL, agent-plugin doesn't send the Seconds_Behind_Master metric. (by norisu0313)
+- support mongodb 3.2 (by stanaka)
+- rename goserver2gostats and add README (by Songmu)
+
 * Wed Nov 25 2015 <y.songmu@gmail.com> - 0.14.2
 - Fix document (by tkuchiki)
 - Get memory usage percentage and CMSInitiatingOccupancyFraction when CMS GC is running (by tom--bo)

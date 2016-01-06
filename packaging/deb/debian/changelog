@@ -1,3 +1,30 @@
+mackerel-agent-plugins (0.15.0-1) stable; urgency=low
+
+  * Add mackerel-plugin-unicorn (by linyows)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/141>
+  * Update README (by y-kuno)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/142>
+  * Add mackerel-plugin-solr [not into package] (by supercaracal)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/143>
+  * Add mackerel-plugin-murmur (not into package) (by mikoim)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/145>
+  * add mackerel-plugin-gostats (by Songmu)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/146>
+  * Add graph definition for memcached cache size (by y-kuno)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/148>
+  * Squid: work with squid v3 (by naokibtn)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/151>
+  * add graphs to varnish plugin (by naokibtn)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/152>
+  * When Seconds_Behind_Master is NULL, agent-plugin doesn't send the Seconds_Behind_Master metric. (by norisu0313)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/154>
+  * support mongodb 3.2 (by stanaka)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/155>
+  * rename goserver2gostats and add README (by Songmu)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/156>
+
+ -- Songmu <y.songmu@gmail.com>  Wed, 06 Jan 2016 20:39:55 +0900
+
 mackerel-agent-plugins (0.14.2-1) stable; urgency=low
 
   * Fix document (by tkuchiki)
