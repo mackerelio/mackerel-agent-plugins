@@ -12,7 +12,7 @@ func TestCollectWho(t *testing.T) {
 	if err != nil {
 		return
 	}
-	p := make(map[string]float64)
+	p := make(map[string]interface{})
 
 	assert.Nil(t, collectWho(&p))
 }
@@ -21,7 +21,7 @@ func TestParseWho(t *testing.T) {
 	stub := `test0  pts/48       2014-09-30 08:00 (192.168.24.123)
 test1  pts/48       2014-09-30 08:59 (192.168.24.123)
 test2  pts/48       2014-09-30 09:00 (192.168.24.123)`
-	stat := make(map[string]float64)
+	stat := make(map[string]interface{})
 
 	err := parseWho(stub, &stat)
 	assert.Nil(t, err)
@@ -30,7 +30,7 @@ test2  pts/48       2014-09-30 09:00 (192.168.24.123)`
 
 func TestParseWho2(t *testing.T) {
 	stub := ""
-	stat := make(map[string]float64)
+	stat := make(map[string]interface{})
 
 	err := parseWho(stub, &stat)
 	assert.Nil(t, err)
@@ -54,7 +54,7 @@ func TestCollectStat(t *testing.T) {
 	if err != nil {
 		return
 	}
-	p := make(map[string]float64)
+	p := make(map[string]interface{})
 
 	assert.Nil(t, collectProcStat(path, &p))
 }
@@ -64,7 +64,7 @@ func TestParseProcStat(t *testing.T) {
  ctxt 879305394
  btime 1409212617
  processes 1959410`
-	stat := make(map[string]float64)
+	stat := make(map[string]interface{})
 
 	err := parseProcStat(stub, &stat)
 	assert.Nil(t, err)
@@ -79,7 +79,7 @@ func TestCollectProcDiskstats(t *testing.T) {
 	if err != nil {
 		return
 	}
-	p := make(map[string]float64)
+	p := make(map[string]interface{})
 
 	assert.Nil(t, collectProcDiskstats(path, &p))
 }
@@ -89,7 +89,7 @@ func TestParseProcDiskstats(t *testing.T) {
    8       0 sda 324351 303093 35032074 12441261 4456146 5387174 68639686 423711425 0 23865772 436201338
    8       1 sda1 678 405 10970 4696 276 22946 46462 1217036 0 53528 1221732
  253       2 dm-2 83 0 664 94 0 0 0 0 0 94 94`
-	stat := make(map[string]float64)
+	stat := make(map[string]interface{})
 
 	err := parseProcDiskstats(stub, &stat)
 	assert.Nil(t, err)
@@ -104,7 +104,7 @@ func TestCollectSs(t *testing.T) {
 	if err != nil {
 		return
 	}
-	p := make(map[string]float64)
+	p := make(map[string]interface{})
 
 	assert.Nil(t, collectSs(&p))
 }
@@ -115,7 +115,7 @@ LISTEN     0      128                                     :::45103              
 LISTEN     0      128                                     :::111                                    :::* 
 TIME-WAIT  0      0                         ::ffff:127.0.0.1:80                       ::ffff:127.0.0.1:50082 
 ESTAB      0      0                              10.0.25.101:60826                         10.0.25.104:5672  `
-	stat := make(map[string]float64)
+	stat := make(map[string]interface{})
 
 	err := parseSs(stub, &stat)
 	assert.Nil(t, err)
@@ -132,7 +132,7 @@ u_dgr UNCONN     0      0                                                /dev/lo
 u_dgr LISTEN     0      0                                       /run/udev/control 8552                                                   * 0
 u_str LISTEN     0      10                                  /var/run/acpid.socket 9649                                                   * 0
 u_str ESTAB      0      0                                    @/com/ubuntu/upstart 10582                                                  * 1887`
-	stat := make(map[string]float64)
+	stat := make(map[string]interface{})
 
 	err := parseSs(stub, &stat)
 	assert.Nil(t, err)
@@ -159,7 +159,7 @@ func TestCollectProcVmstat(t *testing.T) {
 	if err != nil {
 		return
 	}
-	p := make(map[string]float64)
+	p := make(map[string]interface{})
 
 	assert.Nil(t, collectProcVmstat(path, &p))
 }
@@ -169,7 +169,7 @@ func TestParseProcVmstat(t *testing.T) {
 pgpgout 31351354
 pswpin 0
 pswpout 113`
-	stat := make(map[string]float64)
+	stat := make(map[string]interface{})
 
 	err := parseProcVmstat(stub, &stat)
 	assert.Nil(t, err)
