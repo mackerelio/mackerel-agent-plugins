@@ -9,6 +9,7 @@
        "aws-rds",
        "aws-ses",
        "elasticsearch",
+       "gostats",
        "haproxy",
        "jvm",
        "linux",
