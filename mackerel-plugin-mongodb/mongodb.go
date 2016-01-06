@@ -10,9 +10,12 @@ import (
 	"strings"
 
 	mp "github.com/mackerelio/go-mackerel-plugin-helper"
+	"github.com/mackerelio/mackerel-agent/logging"
 	"gopkg.in/mgo.v2"
 	"gopkg.in/mgo.v2/bson"
 )
+
+var logger = logging.GetLogger("metrics.plugin.mongodb")
 
 var graphdef = map[string](mp.Graphs){
 	"mongodb.background_flushing": mp.Graphs{
@@ -65,11 +68,26 @@ var graphdef30 = map[string](mp.Graphs){
 			mp.Metrics{Name: "connections_current", Label: "current"},
 		},
 	},
-	"mongodb.index_counters.btree.miss_ratio": mp.Graphs{
-		Label: "MongoDB Index Counters Btree Miss-ratio",
-		Unit:  "float",
+	"mongodb.opcounters": mp.Graphs{
+		Label: "MongoDB opcounters",
+		Unit:  "integer",
 		Metrics: [](mp.Metrics){
-			mp.Metrics{Name: "miss_ratio", Label: "Miss ratio"},
+			mp.Metrics{Name: "opcounters_insert", Label: "Insert", Diff: true, Type: "uint64"},
+			mp.Metrics{Name: "opcounters_query", Label: "Query", Diff: true, Type: "uint64"},
+			mp.Metrics{Name: "opcounters_update", Label: "Update", Diff: true, Type: "uint64"},
+			mp.Metrics{Name: "opcounters_delete", Label: "Delete", Diff: true, Type: "uint64"},
+			mp.Metrics{Name: "opcounters_getmore", Label: "Getmore", Diff: true, Type: "uint64"},
+			mp.Metrics{Name: "opcounters_command", Label: "Command", Diff: true, Type: "uint64"},
+		},
+	},
+}
+
+var graphdef32 = map[string](mp.Graphs){
+	"mongodb.connections": mp.Graphs{
+		Label: "MongoDB Connections",
+		Unit:  "integer",
+		Metrics: [](mp.Metrics){
+			mp.Metrics{Name: "connections_current", Label: "current"},
 		},
 	},
 	"mongodb.opcounters": mp.Graphs{
@@ -114,6 +132,19 @@ var metricPlace24 = map[string][]string{
 // ref. http://stackoverflow.com/questions/29428793/where-is-the-indexcounter-in-db-serverstatus-on-mongodb-3-0
 var metricPlace30 = map[string][]string{
 	"duration_ms":         []string{"backgroundFlushing", "total_ms"},
+	"connections_current": []string{"connections", "current"},
+	"opcounters_insert":   []string{"opcounters", "insert"},
+	"opcounters_query":    []string{"opcounters", "query"},
+	"opcounters_update":   []string{"opcounters", "update"},
+	"opcounters_delete":   []string{"opcounters", "delete"},
+	"opcounters_getmore":  []string{"opcounters", "getmore"},
+	"opcounters_command":  []string{"opcounters", "command"},
+}
+
+// backgroundFlushing information only appears for instances that use the MMAPv1 storage engine.
+// and the MMAPv1 is no longer the default storage engine in MongoDB 3.2
+// ref. https://docs.mongodb.org/manual/reference/command/serverStatus/#server-status-backgroundflushing
+var metricPlace32 = map[string][]string{
 	"connections_current": []string{"connections", "current"},
 	"opcounters_insert":   []string{"opcounters", "insert"},
 	"opcounters_query":    []string{"opcounters", "query"},
@@ -200,12 +231,14 @@ func (m MongoDBPlugin) parseStatus(serverStatus bson.M) (map[string]interface{},
 		metricPlace = &metricPlace24
 	} else if strings.HasPrefix(version, "3.0") {
 		metricPlace = &metricPlace30
+	} else if strings.HasPrefix(version, "3.2") {
+		metricPlace = &metricPlace32
 	}
 
 	for k, v := range *metricPlace {
 		val, err := getFloatValue(serverStatus, v)
 		if err != nil {
-			return nil, err
+			logger.Warningf("Cannot fetch metric %s: %s", v, err)
 		}
 
 		stat[k] = val
@@ -223,6 +256,8 @@ func (m MongoDBPlugin) GraphDefinition() map[string](mp.Graphs) {
 	version := m.getVersion(serverStatus)
 	if strings.HasPrefix(version, "3.0") {
 		return graphdef30
+	} else if strings.HasPrefix(version, "3.2") {
+		return graphdef32
 	}
 	return graphdef
 }
