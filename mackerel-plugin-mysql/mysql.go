@@ -161,8 +161,13 @@ func (m MySQLPlugin) fetchShowSlaveStatus(db mysql.Conn, stat map[string]float64
 
 	for _, row := range rows {
 		idx := res.Map("Seconds_Behind_Master")
-		Value := row.Int(idx)
-		stat["Seconds_Behind_Master"] = float64(Value)
+		switch row[idx].(type) {
+		case nil:
+			// nop
+		default:
+			Value := row.Int(idx)
+			stat["Seconds_Behind_Master"] = float64(Value)
+		}
 	}
 	return nil
 }
