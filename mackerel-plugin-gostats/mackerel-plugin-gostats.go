@@ -12,8 +12,8 @@ import (
 	mp "github.com/mackerelio/go-mackerel-plugin-helper"
 )
 
-// GoServerPlugin mackerel plugin for go server
-type GoServerPlugin struct {
+// GostatsPlugin mackerel plugin for go server
+type GostatsPlugin struct {
 	URI    string
 	Prefix string
 }
@@ -51,7 +51,7 @@ type GoServerPlugin struct {
 */
 
 // GraphDefinition interface for mackerelplugin
-func (m GoServerPlugin) GraphDefinition() map[string](mp.Graphs) {
+func (m GostatsPlugin) GraphDefinition() map[string](mp.Graphs) {
 	labelPrefix := strings.Title(m.Prefix)
 	return map[string](mp.Graphs){
 		(m.Prefix + ".runtime"): mp.Graphs{
@@ -103,7 +103,7 @@ func (m GoServerPlugin) GraphDefinition() map[string](mp.Graphs) {
 }
 
 // FetchMetrics interface for mackerelplugin
-func (m GoServerPlugin) FetchMetrics() (map[string]interface{}, error) {
+func (m GostatsPlugin) FetchMetrics() (map[string]interface{}, error) {
 	resp, err := http.Get(m.URI)
 	if err != nil {
 		return nil, err
@@ -113,7 +113,7 @@ func (m GoServerPlugin) FetchMetrics() (map[string]interface{}, error) {
 	return m.parseStats(resp.Body)
 }
 
-func (m GoServerPlugin) parseStats(body io.Reader) (map[string]interface{}, error) {
+func (m GostatsPlugin) parseStats(body io.Reader) (map[string]interface{}, error) {
 	stat := make(map[string]interface{})
 	decoder := json.NewDecoder(body)
 
@@ -147,11 +147,11 @@ func main() {
 	optHost := flag.String("host", "localhost", "Hostname")
 	optPort := flag.String("port", "8080", "Port")
 	optPath := flag.String("path", "/api/stats", "Path")
-	optPrefix := flag.String("metric-key-prefix", "goserver", "Metric key prefix")
+	optPrefix := flag.String("metric-key-prefix", "gostats", "Metric key prefix")
 	optTempfile := flag.String("tempfile", "", "Temp file name")
 	flag.Parse()
 
-	gosrv := GoServerPlugin{
+	gosrv := GostatsPlugin{
 		Prefix: *optPrefix,
 	}
 	if *optURI != "" {
