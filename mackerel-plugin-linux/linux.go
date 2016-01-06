@@ -10,7 +10,7 @@ import (
 	"strings"
 
 	"github.com/codegangsta/cli"
-	mp "github.com/mackerelio/go-mackerel-plugin"
+	mp "github.com/mackerelio/go-mackerel-plugin-helper"
 )
 
 const (
@@ -33,7 +33,7 @@ type LinuxPlugin struct {
 func (c LinuxPlugin) GraphDefinition() map[string](mp.Graphs) {
 	var err error
 
-	p := make(map[string]float64)
+	p := make(map[string]interface{})
 
 	if c.Type == "all" || c.Type == "swap" {
 		err = collectProcVmstat(pathVmstat, &p)
@@ -89,10 +89,10 @@ func doMain(c *cli.Context) {
 }
 
 // FetchMetrics interface for mackerelplugin
-func (c LinuxPlugin) FetchMetrics() (map[string]float64, error) {
+func (c LinuxPlugin) FetchMetrics() (map[string]interface{}, error) {
 	var err error
 
-	p := make(map[string]float64)
+	p := make(map[string]interface{})
 
 	if c.Type == "all" || c.Type == "swap" {
 		err = collectProcVmstat(pathVmstat, &p)
@@ -133,7 +133,7 @@ func (c LinuxPlugin) FetchMetrics() (map[string]float64, error) {
 }
 
 // collect who
-func collectWho(p *map[string]float64) error {
+func collectWho(p *map[string]interface{}) error {
 	var err error
 	var data string
 
@@ -158,7 +158,7 @@ func collectWho(p *map[string]float64) error {
 }
 
 // parsing metrics from /proc/stat
-func parseWho(str string, p *map[string]float64) error {
+func parseWho(str string, p *map[string]interface{}) error {
 	str = strings.TrimSpace(str)
 	if str == "" {
 		(*p)["users"] = 0
@@ -183,7 +183,7 @@ func getWho() (string, error) {
 }
 
 // collect /proc/stat
-func collectProcStat(path string, p *map[string]float64) error {
+func collectProcStat(path string, p *map[string]interface{}) error {
 	var err error
 	var data string
 
@@ -222,7 +222,7 @@ func collectProcStat(path string, p *map[string]float64) error {
 }
 
 // parsing metrics from /proc/stat
-func parseProcStat(str string, p *map[string]float64) error {
+func parseProcStat(str string, p *map[string]interface{}) error {
 	for _, line := range strings.Split(str, "\n") {
 		record := strings.Fields(line)
 		if len(record) < 2 {
@@ -247,7 +247,7 @@ func parseProcStat(str string, p *map[string]float64) error {
 }
 
 // collect /proc/diskstats
-func collectProcDiskstats(path string, p *map[string]float64) error {
+func collectProcDiskstats(path string, p *map[string]interface{}) error {
 	var err error
 	var data string
 
@@ -264,7 +264,7 @@ func collectProcDiskstats(path string, p *map[string]float64) error {
 }
 
 // parsing metrics from diskstats
-func parseProcDiskstats(str string, p *map[string]float64) error {
+func parseProcDiskstats(str string, p *map[string]interface{}) error {
 
 	var elapsedData []mp.Metrics
 	var rwtimeData []mp.Metrics
@@ -308,7 +308,7 @@ func parseProcDiskstats(str string, p *map[string]float64) error {
 }
 
 // collect ss
-func collectSs(p *map[string]float64) error {
+func collectSs(p *map[string]interface{}) error {
 	var err error
 	var data string
 
@@ -343,7 +343,7 @@ func collectSs(p *map[string]float64) error {
 }
 
 // parsing metrics from ss
-func parseSs(str string, p *map[string]float64) error {
+func parseSs(str string, p *map[string]interface{}) error {
 	status := 0
 	for i, line := range strings.Split(str, "\n") {
 		record := strings.Fields(line)
@@ -359,7 +359,8 @@ func parseSs(str string, p *map[string]float64) error {
 				status = 1
 			}
 		}
-		(*p)[record[status]] = (*p)[record[status]] + 1
+		v, _ := (*p)[record[status]].(float64)
+		(*p)[record[status]] = v + 1
 	}
 
 	return nil
@@ -378,7 +379,7 @@ func getSs() (string, error) {
 }
 
 // collect /proc/vmstat
-func collectProcVmstat(path string, p *map[string]float64) error {
+func collectProcVmstat(path string, p *map[string]interface{}) error {
 	var err error
 	var data string
 
@@ -404,7 +405,7 @@ func collectProcVmstat(path string, p *map[string]float64) error {
 }
 
 // parsing metrics from /proc/vmstat
-func parseProcVmstat(str string, p *map[string]float64) error {
+func parseProcVmstat(str string, p *map[string]interface{}) error {
 	for _, line := range strings.Split(str, "\n") {
 		record := strings.Fields(line)
 		if len(record) != 2 {
