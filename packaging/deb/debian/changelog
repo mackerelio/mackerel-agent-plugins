@@ -1,3 +1,10 @@
+mackerel-agent-plugins (0.15.1-1) stable; urgency=low
+
+  * use mackerel-plugin-helper for mackerel-plugin-linux (by stanaka)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/159>
+
+ -- Songmu <y.songmu@gmail.com>  Thu, 07 Jan 2016 11:27:43 +0900
+
 mackerel-agent-plugins (0.15.0-1) stable; urgency=low
 
   * Add mackerel-plugin-unicorn (by linyows)
