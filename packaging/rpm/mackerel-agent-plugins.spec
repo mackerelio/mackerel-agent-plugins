@@ -41,6 +41,9 @@ done
 %{__targetdir}
 
 %changelog
+* Thu Jan 07 2016 <y.songmu@gmail.com> - 0.15.2
+- add unicorn plugin to package (by yano3)
+
 * Thu Jan 07 2016 <y.songmu@gmail.com> - 0.15.1
 - use mackerel-plugin-helper for mackerel-plugin-linux (by stanaka)
 
