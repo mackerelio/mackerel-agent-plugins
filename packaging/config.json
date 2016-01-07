@@ -32,7 +32,8 @@
        "aws-cloudfront",
        "aws-ec2-ebs",
        "fluentd",
-       "docker"
+       "docker",
+       "unicorn"
     ]
 }
 
