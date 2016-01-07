@@ -8,7 +8,7 @@
 
 Summary: Monitoring program plugins for Mackerel
 Name: mackerel-agent-plugins
-Version: 0.15.1
+Version: 0.15.2
 Release: %{revision}
 License: Apache-2
 Group: Applications/System
@@ -41,6 +41,9 @@ done
 %{__targetdir}
 
 %changelog
+* Thu Jan 07 2016 <y.songmu@gmail.com> - 0.15.2
+- add unicorn plugin to package (by yano3)
+
 * Thu Jan 07 2016 <y.songmu@gmail.com> - 0.15.1
 - use mackerel-plugin-helper for mackerel-plugin-linux (by stanaka)
 
