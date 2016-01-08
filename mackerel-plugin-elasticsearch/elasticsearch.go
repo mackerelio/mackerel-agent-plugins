@@ -5,10 +5,11 @@ import (
 	"errors"
 	"flag"
 	"fmt"
-	mp "github.com/mackerelio/go-mackerel-plugin"
-	"github.com/mackerelio/mackerel-agent/logging"
 	"net/http"
 	"os"
+
+	mp "github.com/mackerelio/go-mackerel-plugin"
+	"github.com/mackerelio/mackerel-agent/logging"
 )
 
 var logger = logging.GetLogger("metrics.plugin.elasticsearch")
@@ -60,12 +61,11 @@ var graphdef map[string](mp.Graphs) = map[string](mp.Graphs){
 	},
 	"elasticsearch.indices.evictions": mp.Graphs{
 		Label: "Elasticsearch Indices Evictions",
-		Unit: "integer",
+		Unit:  "integer",
 		Metrics: [](mp.Metrics){
 			mp.Metrics{Name: "evictions_fielddata", Label: "Fielddata", Diff: true},
 			mp.Metrics{Name: "evictions_filter_cache", Label: "Filter Cache", Diff: true},
 		},
-
 	},
 	"elasticsearch.jvm.heap": mp.Graphs{
 		Label: "Elasticsearch JVM Heap Mem",
