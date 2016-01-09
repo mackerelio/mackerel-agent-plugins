@@ -95,6 +95,9 @@ var graphdef = map[string](mp.Graphs){
 			mp.Metrics{Name: "threads_percolate", Label: "Percolate", Stacked: true},
 			mp.Metrics{Name: "threads_refresh", Label: "Refresh", Stacked: true},
 			mp.Metrics{Name: "threads_management", Label: "Management", Stacked: true},
+			mp.Metrics{Name: "threads_fetch_shard_started", Label: "Fetch Shard Started", Stacked: true},
+			mp.Metrics{Name: "threads_fetch_shard_store", Label: "Fetch Shard Store", Stacked: true},
+			mp.Metrics{Name: "threads_listener", Label: "Listener", Stacked: true},
 		},
 	},
 	"elasticsearch.transport.count": mp.Graphs{
@@ -148,6 +151,9 @@ var metricPlace = map[string][]string{
 	"threads_percolate":           []string{"thread_pool", "percolate", "threads"},
 	"threads_refresh":             []string{"thread_pool", "refresh", "threads"},
 	"threads_management":          []string{"thread_pool", "management", "threads"},
+	"threads_fetch_shard_started": []string{"thread_pool", "fetch_shard_started", "threads"},
+	"threads_fetch_shard_store":   []string{"thread_pool", "fetch_shard_store", "threads"},
+	"threads_listener":            []string{"thread_pool", "listener", "threads"},
 	"count_rx":                    []string{"transport", "rx_count"},
 	"count_tx":                    []string{"transport", "tx_count"},
 }
