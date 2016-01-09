@@ -6,7 +6,7 @@ Squid custom metrics plugin for mackerel.io agent.
 ## Synopsis
 
 ```shell
-mackerel-plugin-squid [-host=<host>] [-port=<manager_port>] [-tempfile=<tempfile>]
+mackerel-plugin-squid [-host=<host>] [-port=<squid_http_port>] [-tempfile=<tempfile>]
 ```
 
 ## Example of mackerel-agent.conf

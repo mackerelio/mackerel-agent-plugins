@@ -4,31 +4,72 @@ import (
 	"bufio"
 	"flag"
 	"fmt"
-	mp "github.com/mackerelio/go-mackerel-plugin"
 	"os"
 	"os/exec"
 	"strconv"
 	"strings"
+
+	mp "github.com/mackerelio/go-mackerel-plugin-helper"
 )
 
 // index from table headers to array index
-// This is generated dynamically at GenerateIndex
-var index map[string](int) = map[string](int){}
+// This is generated dynamically at generateIndex
+var index = map[string]int{}
 
-// All metrics are added dinamically at GraphDefinition
-var graphdef map[string](mp.Graphs) = map[string](mp.Graphs){}
-
-type XentopMetrics struct {
-	HostName string
-	Metrics  mp.Metrics
+var graphdef = map[string](mp.Graphs){
+	"xentop.cpu.#": mp.Graphs{
+		Label: "Xentop CPU",
+		Unit:  "percentage",
+		Metrics: [](mp.Metrics){
+			mp.Metrics{Name: "cpu", Label: "cpu", Stacked: true, Diff: true},
+		},
+	},
+	"xentop.memory.#": mp.Graphs{
+		Label: "Xentop Memory",
+		Unit:  "percentage",
+		Metrics: [](mp.Metrics){
+			mp.Metrics{Name: "memory", Label: "memory", Stacked: true},
+		},
+	},
+	"xentop.nettx.#": mp.Graphs{
+		Label: "Xentop Nettx",
+		Unit:  "bytes",
+		Metrics: [](mp.Metrics){
+			mp.Metrics{Name: "nettx", Label: "nettx", Stacked: true, Diff: true},
+		},
+	},
+	"xentop.netrx.#": mp.Graphs{
+		Label: "Xentop Netrx",
+		Unit:  "bytes",
+		Metrics: [](mp.Metrics){
+			mp.Metrics{Name: "netrx", Label: "netrx", Stacked: true, Diff: true},
+		},
+	},
+	"xentop.vbdrd.#": mp.Graphs{
+		Label: "Xentop VBD_RD",
+		Unit:  "iops",
+		Metrics: [](mp.Metrics){
+			mp.Metrics{Name: "vbdrd", Label: "vbdrd", Stacked: true, Diff: true},
+		},
+	},
+	"xentop.vbdwr.#": mp.Graphs{
+		Label: "Xentop VBD_WR",
+		Unit:  "iops",
+		Metrics: [](mp.Metrics){
+			mp.Metrics{Name: "vbdwr", Label: "vbdwr", Stacked: true, Diff: true},
+		},
+	},
 }
 
+// XentopPlugin mackerel plugin for xentop
 type XentopPlugin struct {
 	XenVersion int
 }
 
-func (m XentopPlugin) FetchMetrics() (map[string]float64, error) {
-	stat := make(map[string]float64)
+// FetchMetrics interface for mackerelplugin
+func (m XentopPlugin) FetchMetrics() (map[string]interface{}, error) {
+	stat := make(map[string]interface{})
+
 	var cmd *exec.Cmd
 	if m.XenVersion == 4 {
 		cmd = exec.Command("/bin/sh", "-c", "xentop --batch -i 1 -f")
@@ -42,9 +83,9 @@ func (m XentopPlugin) FetchMetrics() (map[string]float64, error) {
 		os.Exit(1)
 	}
 
-	exec_err := cmd.Start()
-	if exec_err != nil {
-		fmt.Println(exec_err)
+	execErr := cmd.Start()
+	if execErr != nil {
+		fmt.Println(execErr)
 		os.Exit(1)
 	}
 
@@ -54,49 +95,50 @@ func (m XentopPlugin) FetchMetrics() (map[string]float64, error) {
 	for scanner.Scan() {
 		sf := strings.Fields(string(scanner.Text()))
 		if sf[0] == "NAME" {
-			GenerateIndex(sf, index)
+			generateIndex(sf, index)
 			hasIndex = true
 			continue
 		}
 		if !hasIndex {
 			continue
 		}
-		if StringInSlice("n/a", sf) {
-			ChangeIndex(&index)
+		if stringInSlice("n/a", sf) {
+			changeIndex(&index)
 			dom0 = true
 		}
-		name := sf[index["NAME"]]
+		name := normalizeXenName(sf[index["NAME"]])
 
-		var err_parse error
+		var errParse error
+		var tmpval float64 // avoid `stat[*] *= 1000` because of go interface bug
 
-		stat[fmt.Sprintf("cpu_%s", name)], err_parse = strconv.ParseFloat(sf[index["CPU(sec)"]], 64)
-		if err_parse != nil {
-			return nil, err_parse
+		stat[fmt.Sprintf("xentop.cpu.%s.cpu", name)], errParse = strconv.ParseFloat(sf[index["CPU(sec)"]], 64)
+		if errParse != nil {
+			return nil, errParse
 		}
-		stat[fmt.Sprintf("memory_%s", name)], err_parse = strconv.ParseFloat(sf[index["MEM(%)"]], 64)
-		if err_parse != nil {
-			return nil, err_parse
+		stat[fmt.Sprintf("xentop.memory.%s.memory", name)], errParse = strconv.ParseFloat(sf[index["MEM(%)"]], 64)
+		if errParse != nil {
+			return nil, errParse
 		}
-		stat[fmt.Sprintf("nettx_%s", name)], err_parse = strconv.ParseFloat(sf[index["NETTX(k)"]], 64)
-		if err_parse != nil {
-			return nil, err_parse
+		tmpval, errParse = strconv.ParseFloat(sf[index["NETTX(k)"]], 64)
+		if errParse != nil {
+			return nil, errParse
 		}
-		stat[fmt.Sprintf("nettx_%s", name)] *= 1000
-		stat[fmt.Sprintf("netrx_%s", name)], err_parse = strconv.ParseFloat(sf[index["NETRX(k)"]], 64)
-		if err_parse != nil {
-			return nil, err_parse
+		stat[fmt.Sprintf("xentop.nettx.%s.nettx", name)] = tmpval * 1000
+		tmpval, errParse = strconv.ParseFloat(sf[index["NETRX(k)"]], 64)
+		if errParse != nil {
+			return nil, errParse
 		}
-		stat[fmt.Sprintf("netrx_%s", name)] *= 1000
-		stat[fmt.Sprintf("vbdrd_%s", name)], err_parse = strconv.ParseFloat(sf[index["VBD_RD"]], 64)
-		if err_parse != nil {
-			return nil, err_parse
+		stat[fmt.Sprintf("xentop.netrx.%s.netrx", name)] = tmpval * 1000
+		stat[fmt.Sprintf("xentop.vbdrd.%s.vbdrd", name)], errParse = strconv.ParseFloat(sf[index["VBD_RD"]], 64)
+		if errParse != nil {
+			return nil, errParse
 		}
-		stat[fmt.Sprintf("vbdwr_%s", name)], err_parse = strconv.ParseFloat(sf[index["VBD_WR"]], 64)
-		if err_parse != nil {
-			return nil, err_parse
+		stat[fmt.Sprintf("xentop.vbdwr.%s.vbdwr", name)], errParse = strconv.ParseFloat(sf[index["VBD_WR"]], 64)
+		if errParse != nil {
+			return nil, errParse
 		}
 		if dom0 {
-			RevertIndex(&index)
+			revertIndex(&index)
 			dom0 = false
 		}
 	}
@@ -107,131 +149,9 @@ func (m XentopPlugin) FetchMetrics() (map[string]float64, error) {
 	return stat, nil
 }
 
-func DefineCpuMetrics(names []string) []mp.Metrics {
-	cpu_metrics := make([]mp.Metrics, 0)
-	for _, name := range names {
-		cpu_metrics = append(cpu_metrics, mp.Metrics{Name: fmt.Sprintf("cpu_%s", name), Label: name, Stacked: true, Diff: true})
-	}
-	return cpu_metrics
-}
-
-func DefineMemoryMetrics(names []string) []mp.Metrics {
-	memory_metrics := make([]mp.Metrics, 0)
-	for _, name := range names {
-		memory_metrics = append(memory_metrics, mp.Metrics{Name: fmt.Sprintf("memory_%s", name), Label: name, Stacked: true})
-	}
-	return memory_metrics
-}
-
-func DefineNettxMetrics(names []string) []mp.Metrics {
-	nettx_metrics := make([]mp.Metrics, 0)
-	for _, name := range names {
-		nettx_metrics = append(nettx_metrics, mp.Metrics{Name: fmt.Sprintf("nettx_%s", name), Label: name, Stacked: true, Diff: true})
-	}
-	return nettx_metrics
-}
-
-func DefineNetrxMetrics(names []string) []mp.Metrics {
-	netrx_metrics := make([]mp.Metrics, 0)
-	for _, name := range names {
-		netrx_metrics = append(netrx_metrics, mp.Metrics{Name: fmt.Sprintf("netrx_%s", name), Label: name, Stacked: true, Diff: true})
-	}
-	return netrx_metrics
-}
-
-func DefineVbdrdMetrics(names []string) []mp.Metrics {
-	vbdrd_metrics := make([]mp.Metrics, 0)
-	for _, name := range names {
-		vbdrd_metrics = append(vbdrd_metrics, mp.Metrics{Name: fmt.Sprintf("vbdrd_%s", name), Label: name, Stacked: true, Diff: true})
-	}
-	return vbdrd_metrics
-}
-
-func DefineVbdwrMetrics(names []string) []mp.Metrics {
-	vbdwr_metrics := make([]mp.Metrics, 0)
-	for _, name := range names {
-		vbdwr_metrics = append(vbdwr_metrics, mp.Metrics{Name: fmt.Sprintf("vbdwr_%s", name), Label: name, Stacked: true, Diff: true})
-	}
-	return vbdwr_metrics
-}
-
-func DefineGraphs(names []string) {
-	graphdef["xentop.cpu"] = mp.Graphs{
-		Label:   "Xentop CPU",
-		Unit:    "percentage",
-		Metrics: DefineCpuMetrics(names),
-	}
-	graphdef["xentop.memory"] = mp.Graphs{
-		Label:   "Xentop Memory",
-		Unit:    "percentage",
-		Metrics: DefineMemoryMetrics(names),
-	}
-	graphdef["xentop.nettx"] = mp.Graphs{
-		Label:   "Xentop Nettx",
-		Unit:    "bytes",
-		Metrics: DefineNettxMetrics(names),
-	}
-	graphdef["xentop.netrx"] = mp.Graphs{
-		Label:   "Xentop Netrx",
-		Unit:    "bytes",
-		Metrics: DefineNetrxMetrics(names),
-	}
-	graphdef["xentop.vbdrd"] = mp.Graphs{
-		Label:   "Xentop VBD_RD",
-		Unit:    "iops",
-		Metrics: DefineVbdrdMetrics(names),
-	}
-	graphdef["xentop.vbdwr"] = mp.Graphs{
-		Label:   "Xentop VBD_WR",
-		Unit:    "iops",
-		Metrics: DefineVbdwrMetrics(names),
-	}
-}
-
+// GraphDefinition interface for mackerelplugin
 func (m XentopPlugin) GraphDefinition() map[string](mp.Graphs) {
-	var cmd *exec.Cmd
-	if m.XenVersion == 4 {
-		cmd = exec.Command("/bin/sh", "-c", "xentop --batch -i 1 -f")
-	} else {
-		cmd = exec.Command("/bin/sh", "-c", "xentop --batch -i 1")
-	}
-	stdout, err := cmd.StdoutPipe()
-
-	if err != nil {
-		fmt.Println(err)
-		os.Exit(1)
-	}
-
-	exec_err := cmd.Start()
-	if exec_err != nil {
-		fmt.Println(exec_err)
-		os.Exit(1)
-	}
-
-	names := make([]string, 0)
-	scanner := bufio.NewScanner(stdout)
-	hasIndex := false
-	for scanner.Scan() {
-		sf := strings.Fields(string(scanner.Text()))
-		if sf[0] == "NAME" {
-			GenerateIndex(sf, index)
-			hasIndex = true
-			continue
-		}
-		if !hasIndex {
-			continue
-		}
-		name := sf[index["NAME"]]
-		names = append(names, name)
-	}
-	if err := scanner.Err(); err != nil {
-		panic(err)
-	}
-
-	DefineGraphs(names)
-
 	return graphdef
-
 }
 
 func main() {
@@ -258,7 +178,11 @@ func main() {
 	}
 }
 
-func StringInSlice(a string, list []string) bool {
+func normalizeXenName(raw string) string {
+	return strings.Replace(raw, ".", "_", -1)
+}
+
+func stringInSlice(a string, list []string) bool {
 	for _, b := range list {
 		if b == a {
 			return true
@@ -267,7 +191,7 @@ func StringInSlice(a string, list []string) bool {
 	return false
 }
 
-func GenerateIndex(sf []string, index map[string]int) {
+func generateIndex(sf []string, index map[string]int) {
 	i := 0
 	for _, column := range sf {
 		index[column] = i
@@ -275,20 +199,20 @@ func GenerateIndex(sf []string, index map[string]int) {
 	}
 }
 
-func ChangeIndex(p *map[string]int) {
-	maxmem_per := (*p)["MAXMEM(%)"]
+func changeIndex(p *map[string]int) {
+	maxmemPer := (*p)["MAXMEM(%)"]
 	for key, value := range *p {
-		if value >= maxmem_per {
-			(*p)[key] += 1
+		if value >= maxmemPer {
+			(*p)[key]++
 		}
 	}
 }
 
-func RevertIndex(p *map[string]int) {
-	maxmem_per := (*p)["MAXMEM(%)"]
+func revertIndex(p *map[string]int) {
+	maxmemPer := (*p)["MAXMEM(%)"]
 	for key, value := range *p {
-		if value >= maxmem_per {
-			(*p)[key] -= 1
+		if value >= maxmemPer {
+			(*p)[key]--
 		}
 	}
 }

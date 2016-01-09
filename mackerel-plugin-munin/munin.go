@@ -2,10 +2,8 @@ package main
 
 import (
 	"bufio"
-	"errors"
 	"flag"
 	"fmt"
-	mp "github.com/mackerelio/go-mackerel-plugin"
 	"io"
 	"io/ioutil"
 	"log"
@@ -16,14 +14,15 @@ import (
 	"sort"
 	"strconv"
 	"strings"
+
+	mp "github.com/mackerelio/go-mackerel-plugin"
 )
 
-var exp map[string](*regexp.Regexp) = map[string](*regexp.Regexp){}
+type serviceEnvs map[string]string
 
-type ServiceEnvs map[string]string
+type services map[string]serviceEnvs
 
-type Services map[string]ServiceEnvs
-
+// MuninMetric metric of munin
 type MuninMetric struct {
 	Label string
 	Type  string
@@ -31,6 +30,7 @@ type MuninMetric struct {
 	Value string
 }
 
+// MuninPlugin mackerel plugin for munin
 type MuninPlugin struct {
 	PluginPath    string
 	PluginConfDir string
@@ -39,6 +39,8 @@ type MuninPlugin struct {
 	MuninMetrics  map[string](*MuninMetric)
 }
 
+var exp = map[string](*regexp.Regexp){}
+
 func getExp(expstr string) *(regexp.Regexp) {
 	if exp[expstr] == nil {
 		exp[expstr] = regexp.MustCompile(expstr)
@@ -46,8 +48,8 @@ func getExp(expstr string) *(regexp.Regexp) {
 	return exp[expstr]
 }
 
-func getEnvSettingsReader(s *Services, plg string, reader io.Reader) {
-	var service string
+func getEnvSettingsReader(s *services, plg string, reader io.Reader) {
+	svc := ""
 	scanner := bufio.NewScanner(reader)
 
 	for scanner.Scan() {
@@ -56,33 +58,33 @@ func getEnvSettingsReader(s *Services, plg string, reader io.Reader) {
 		line = getExp("\\\\#").ReplaceAllString(line, "#")
 		line = getExp("(^\\s+|\\s+$)").ReplaceAllString(line, "")
 
-		service_m := getExp("^\\s*\\[([^\\]]*?)(\\*?)\\]\\s*$").FindStringSubmatch(line)
-		if service_m != nil {
-			if service_m[2] == "" && plg == service_m[1] { // perfect match
-				service = service_m[1]
-			} else if service_m[2] == "*" && len(service_m[1]) <= len(plg) && plg[0:len(service_m[1])] == service_m[1] { // left-hand match
-				service = service_m[1] + service_m[2]
+		svcM := getExp("^\\s*\\[([^\\]]*?)(\\*?)\\]\\s*$").FindStringSubmatch(line)
+		if svcM != nil {
+			if svcM[2] == "" && plg == svcM[1] { // perfect match
+				svc = svcM[1]
+			} else if svcM[2] == "*" && len(svcM[1]) <= len(plg) && plg[0:len(svcM[1])] == svcM[1] { // left-hand match
+				svc = svcM[1] + svcM[2]
 			} else {
-				service = ""
+				svc = ""
 			}
 			continue
 		}
 
-		if service == "" {
+		if svc == "" {
 			continue
 		}
 
-		env_m := getExp("^\\s*env\\.(\\w+)\\s+(.+)$").FindStringSubmatch(line)
-		if env_m != nil && service != "" {
-			if (*s)[service] == nil {
-				(*s)[service] = ServiceEnvs{}
+		envM := getExp("^\\s*env\\.(\\w+)\\s+(.+)$").FindStringSubmatch(line)
+		if envM != nil && svc != "" {
+			if (*s)[svc] == nil {
+				(*s)[svc] = serviceEnvs{}
 			}
-			(*s)[service][env_m[1]] = env_m[2]
+			(*s)[svc][envM[1]] = envM[2]
 		}
 	}
 }
 
-func getEnvSettingsFile(s *Services, plg string, file string) {
+func getEnvSettingsFile(s *services, plg string, file string) {
 	fp, err := os.Open(file)
 	if err != nil {
 		return
@@ -92,7 +94,7 @@ func getEnvSettingsFile(s *Services, plg string, file string) {
 	getEnvSettingsReader(s, plg, fp)
 }
 
-func compileEnvPairs(s *Services, plg string) *map[string]string {
+func compileEnvPairs(s *services, plg string) *map[string]string {
 	servenvs := *s
 
 	// ordered services
@@ -134,7 +136,7 @@ func setPluginEnvironments(plg string, confdir string) {
 	}
 	sort.Strings(filenames)
 
-	servenvs := make(Services)
+	servenvs := make(services)
 	for _, f := range filenames {
 		getEnvSettingsFile(&servenvs, plg, path.Join(confdir, f))
 	}
@@ -146,57 +148,57 @@ func setPluginEnvironments(plg string, confdir string) {
 
 func parsePluginConfig(str string, m *map[string](*MuninMetric), title *string) {
 	for _, line := range strings.Split(str, "\n") {
-		line_m := getExp("^([^ ]+) +(.*)$").FindStringSubmatch(line)
-		if line_m == nil {
+		lineM := getExp("^([^ ]+) +(.*)$").FindStringSubmatch(line)
+		if lineM == nil {
 			continue
 		}
 
-		if line_m[1] == "graph_title" {
-			(*title) = line_m[2]
+		if lineM[1] == "graph_title" {
+			(*title) = lineM[2]
 			continue
 		}
 
-		key_m := getExp("^([^\\.]+)\\.(.*)$").FindStringSubmatch(line_m[1])
-		if key_m == nil {
+		keyM := getExp("^([^\\.]+)\\.(.*)$").FindStringSubmatch(lineM[1])
+		if keyM == nil {
 			continue
 		}
 
-		if (*m)[key_m[1]] == nil {
-			(*m)[key_m[1]] = &(MuninMetric{})
+		if (*m)[keyM[1]] == nil {
+			(*m)[keyM[1]] = &(MuninMetric{})
 		}
-		met := (*m)[key_m[1]]
+		met := (*m)[keyM[1]]
 
-		switch key_m[2] {
+		switch keyM[2] {
 		case "label":
-			met.Label = line_m[2]
+			met.Label = lineM[2]
 		case "type":
-			met.Type = line_m[2]
+			met.Type = lineM[2]
 		case "draw":
-			met.Draw = line_m[2]
+			met.Draw = lineM[2]
 		}
 	}
 }
 
 func parsePluginVals(str string, m *map[string](*MuninMetric)) {
 	for _, line := range strings.Split(str, "\n") {
-		line_m := getExp("^([^ ]+) +(.*)$").FindStringSubmatch(line)
-		if line_m == nil {
+		lineM := getExp("^([^ ]+) +(.*)$").FindStringSubmatch(line)
+		if lineM == nil {
 			continue
 		}
 
-		key_m := getExp("^([^\\.]+)\\.(.*)$").FindStringSubmatch(line_m[1])
-		if key_m == nil {
+		keyM := getExp("^([^\\.]+)\\.(.*)$").FindStringSubmatch(lineM[1])
+		if keyM == nil {
 			continue
 		}
 
-		if (*m)[key_m[1]] == nil {
-			(*m)[key_m[1]] = &(MuninMetric{})
+		if (*m)[keyM[1]] == nil {
+			(*m)[keyM[1]] = &(MuninMetric{})
 		}
-		met := (*m)[key_m[1]]
+		met := (*m)[keyM[1]]
 
-		switch key_m[2] {
+		switch keyM[2] {
 		case "value":
-			met.Value = line_m[2]
+			met.Value = lineM[2]
 		}
 	}
 }
@@ -210,31 +212,32 @@ func removeUselessMetrics(m *map[string](*MuninMetric)) {
 	}
 }
 
-func (p *MuninPlugin) Prepare() error {
+func (p *MuninPlugin) prepare() error {
 	var err error
 
 	if p.PluginConfDir != "" {
 		setPluginEnvironments(path.Base(p.PluginPath), p.PluginConfDir)
 	}
 
-	out_config, err := exec.Command(p.PluginPath, "config").Output()
+	outConfig, err := exec.Command(p.PluginPath, "config").Output()
 	if err != nil {
-		return errors.New(fmt.Sprintf("%s: %s", err, out_config))
+		return fmt.Errorf("%s: %s", err, outConfig)
 	}
 
-	out_vals, err := exec.Command(p.PluginPath).Output()
+	outVals, err := exec.Command(p.PluginPath).Output()
 	if err != nil {
-		return errors.New(fmt.Sprintf("%s: %s", err, out_vals))
+		return fmt.Errorf("%s: %s", err, outVals)
 	}
 
 	p.MuninMetrics = make(map[string](*MuninMetric))
-	parsePluginConfig(string(out_config), &p.MuninMetrics, &p.GraphTitle)
-	parsePluginVals(string(out_vals), &p.MuninMetrics)
+	parsePluginConfig(string(outConfig), &p.MuninMetrics, &p.GraphTitle)
+	parsePluginVals(string(outVals), &p.MuninMetrics)
 	removeUselessMetrics(&p.MuninMetrics)
 
 	return nil
 }
 
+// FetchMetrics interface for mackerelplugin
 func (p MuninPlugin) FetchMetrics() (map[string]float64, error) {
 	stat := make(map[string]float64, len(p.MuninMetrics))
 	for name, mmet := range p.MuninMetrics {
@@ -250,6 +253,7 @@ func (p MuninPlugin) FetchMetrics() (map[string]float64, error) {
 	return stat, nil
 }
 
+// GraphDefinition interface for mackerelplugin
 func (p MuninPlugin) GraphDefinition() map[string](mp.Graphs) {
 	metrics := make([](mp.Metrics), 0, len(p.MuninMetrics))
 	for name, mmet := range p.MuninMetrics {
@@ -296,7 +300,7 @@ func main() {
 		munin.GraphName = *optGraphName
 	}
 
-	err := munin.Prepare()
+	err := munin.prepare()
 	if err != nil {
 		log.Fatalln(err)
 	}

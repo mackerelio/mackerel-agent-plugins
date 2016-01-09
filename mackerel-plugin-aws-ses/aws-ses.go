@@ -3,14 +3,15 @@ package main
 import (
 	"errors"
 	"flag"
+	"os"
+	"time"
+
 	"github.com/crowdmob/goamz/aws"
 	mp "github.com/mackerelio/go-mackerel-plugin"
 	ses "github.com/naokibtn/go-ses"
-	"os"
-	"time"
 )
 
-var graphdef map[string](mp.Graphs) = map[string](mp.Graphs){
+var graphdef = map[string](mp.Graphs){
 	"ses.send24h": mp.Graphs{
 		Label: "SES Send (last 24h)",
 		Unit:  "float",
@@ -38,18 +39,20 @@ var graphdef map[string](mp.Graphs) = map[string](mp.Graphs){
 	},
 }
 
+// SESPlugin mackerel plugin for Amazon SES
 type SESPlugin struct {
 	Endpoint        string
-	AccessKeyId     string
+	AccessKeyID     string
 	SecretAccessKey string
 }
 
+// FetchMetrics interface for mackerel plugin
 func (p SESPlugin) FetchMetrics() (map[string]float64, error) {
 	if p.Endpoint == "" {
 		return nil, errors.New("no endpoint")
 	}
 
-	auth, err := aws.GetAuth(p.AccessKeyId, p.SecretAccessKey, "", time.Now())
+	auth, err := aws.GetAuth(p.AccessKeyID, p.SecretAccessKey, "", time.Now())
 	if err != nil {
 		return nil, err
 	}
@@ -90,13 +93,14 @@ func (p SESPlugin) FetchMetrics() (map[string]float64, error) {
 	return stat, nil
 }
 
+// GraphDefinition interface for mackerel plugin
 func (p SESPlugin) GraphDefinition() map[string](mp.Graphs) {
 	return graphdef
 }
 
 func main() {
 	optEndpoint := flag.String("endpoint", "", "AWS Endpoint")
-	optAccessKeyId := flag.String("access-key-id", "", "AWS Access Key ID")
+	optAccessKeyID := flag.String("access-key-id", "", "AWS Access Key ID")
 	optSecretAccessKey := flag.String("secret-access-key", "", "AWS Secret Access Key")
 	optTempfile := flag.String("tempfile", "", "Temp file name")
 	flag.Parse()
@@ -104,7 +108,7 @@ func main() {
 	var ses SESPlugin
 
 	ses.Endpoint = *optEndpoint
-	ses.AccessKeyId = *optAccessKeyId
+	ses.AccessKeyID = *optAccessKeyID
 	ses.SecretAccessKey = *optSecretAccessKey
 
 	helper := mp.NewMackerelPlugin(ses)

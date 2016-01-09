@@ -1,7 +1,6 @@
 package main
 
 import (
-	"errors"
 	"flag"
 	"fmt"
 	"io/ioutil"
@@ -10,16 +9,18 @@ import (
 	"strconv"
 	"strings"
 
-	mp "github.com/mackerelio/go-mackerel-plugin"
+	mp "github.com/mackerelio/go-mackerel-plugin-helper"
 	"github.com/mackerelio/mackerel-agent/logging"
 )
 
 var logger = logging.GetLogger("metrics.plugin.jvm")
 
+// JVMPlugin plugin for JVM
 type JVMPlugin struct {
 	Target    string
 	Lvmid     string
 	JstatPath string
+	JinfoPath string
 	JavaName  string
 	Tempfile  string
 }
@@ -27,7 +28,7 @@ type JVMPlugin struct {
 // # jps
 // 26547 NettyServer
 // 6438 Jps
-func FetchLvmidByAppname(appname, target, jpsPath string) (string, error) {
+func fetchLvmidByAppname(appname, target, jpsPath string) (string, error) {
 	out, err := exec.Command(jpsPath, target).Output()
 	if err != nil {
 		logger.Errorf("Failed to run exec jps. %s", err)
@@ -43,7 +44,7 @@ func FetchLvmidByAppname(appname, target, jpsPath string) (string, error) {
 			return lvmid, nil
 		}
 	}
-	return "", errors.New(fmt.Sprintf("Cannot get lvmid from %s", appname))
+	return "", fmt.Errorf("Cannot get lvmid from %s", appname)
 }
 
 func fetchJstatMetrics(lvmid, option, jstatPath string) (map[string]float64, error) {
@@ -69,12 +70,60 @@ func fetchJstatMetrics(lvmid, option, jstatPath string) (map[string]float64, err
 	return stat, nil
 }
 
+func calculateMemorySpaceRate(gcStat map[string]float64, m JVMPlugin) (map[string]float64, error) {
+	ret := make(map[string]float64)
+	ret["oldSpaceRate"] = gcStat["OU"] / gcStat["OC"] * 100
+	ret["newSpaceRate"] = (gcStat["S0U"] + gcStat["S1U"] + gcStat["EU"]) / (gcStat["S0C"] + gcStat["S1C"] + gcStat["EC"]) * 100
+	if checkCMSGC(m.Lvmid, m.JinfoPath) {
+		ret["CMSInitiatingOccupancyFraction"] = fetchCMSInitiatingOccupancyFraction(m.Lvmid, m.JinfoPath)
+	}
+
+	return ret, nil
+}
+
+func checkCMSGC(lvmid, JinfoPath string) bool {
+	output, err := exec.Command(JinfoPath, "-flag", "UseConcMarkSweepGC", lvmid).Output()
+	if err != nil {
+		logger.Errorf("Failed to run exec jinfo. %s", err)
+		os.Exit(1)
+	}
+	return strings.Index(string(output), "+UseConcMarkSweepGC") != -1
+}
+
+func fetchCMSInitiatingOccupancyFraction(lvmid, JinfoPath string) float64 {
+	var fraction float64
+	output, err := exec.Command(JinfoPath, "-flag", "CMSInitiatingOccupancyFraction", lvmid).Output()
+	if err != nil {
+		logger.Errorf("Failed to run exec jinfo. %s", err)
+		os.Exit(1)
+	}
+	out := strings.Trim(string(output), "\n")
+	tmp := strings.Split(out, "=")
+	fraction, _ = strconv.ParseFloat(tmp[1], 64)
+
+	return fraction
+}
+
 func mergeStat(dst, src map[string]float64) {
 	for k, v := range src {
 		dst[k] = v
 	}
 }
 
+// <Java8> https://docs.oracle.com/javase/8/docs/technotes/tools/unix/jstat.html
+// # jstat -gc <vmid>
+//  S0C    S1C    S0U    S1U      EC       EU        OC         OU       MC     MU    CCSC   CCSU   YGC     YGCT    FGC    FGCT     GCT
+// 1024.0 1024.0  0.0    0.0    8256.0   8256.0   20480.0     453.4    4864.0 2776.2 512.0  300.8       0    0.000   1      0.003    0.003
+
+// # jstat -gccapacity <vmid>
+//  NGCMN    NGCMX     NGC     S0C   S1C       EC      OGCMN      OGCMX       OGC         OC       MCMN     MCMX      MC     CCSMN    CCSMX     CCSC    YGC    FGC
+//  10240.0 160384.0  10304.0 1024.0 1024.0   8256.0    20480.0   320896.0    20480.0    20480.0      0.0 1056768.0   4864.0      0.0 1048576.0    512.0      0     1
+
+// # jstat -gcnew <vmid>
+//  S0C    S1C    S0U    S1U   TT MTT  DSS      EC       EU     YGC     YGCT
+// 1024.0 1024.0    0.0    0.0 15  15    0.0   8256.0   8256.0      0    0.000
+
+// <Java7>
 // # jstat -gc <vmid>
 //  S0C    S1C    S0U    S1U      EC       EU        OC         OU       PC     PU    YGC     YGCT    FGC    FGCT     GCT
 // 3584.0 3584.0 2528.0  0.0   692224.0 19062.4  1398272.0   485450.1  72704.0 72611.3   3152   30.229   0      0.000   30.229
@@ -87,7 +136,8 @@ func mergeStat(dst, src map[string]float64) {
 //  S0C    S1C    S0U    S1U   TT MTT  DSS      EC       EU     YGC     YGCT
 // 3072.0 3072.0    0.0 2848.0  1  15 3072.0 693248.0 626782.2   3463   33.658
 
-func (m JVMPlugin) FetchMetrics() (map[string]float64, error) {
+// FetchMetrics interface for mackerelplugin
+func (m JVMPlugin) FetchMetrics() (map[string]interface{}, error) {
 	gcStat, err := fetchJstatMetrics(m.Lvmid, "-gc", m.JstatPath)
 	if err != nil {
 		return nil, err
@@ -104,16 +154,26 @@ func (m JVMPlugin) FetchMetrics() (map[string]float64, error) {
 	if err != nil {
 		return nil, err
 	}
+	gcSpaceRate, err := calculateMemorySpaceRate(gcStat, m)
+	if err != nil {
+		return nil, err
+	}
 
 	stat := make(map[string]float64)
 	mergeStat(stat, gcStat)
 	mergeStat(stat, gcCapacityStat)
 	mergeStat(stat, gcNewStat)
 	mergeStat(stat, gcOldStat)
+	mergeStat(stat, gcSpaceRate)
 
-	return stat, nil
+	result := make(map[string]interface{})
+	for k, v := range stat {
+		result[k] = v
+	}
+	return result, nil
 }
 
+// GraphDefinition interface for mackerelplugin
 func (m JVMPlugin) GraphDefinition() map[string](mp.Graphs) {
 	rawJavaName := m.JavaName
 	lowerJavaName := strings.ToLower(m.JavaName)
@@ -172,6 +232,27 @@ func (m JVMPlugin) GraphDefinition() map[string](mp.Graphs) {
 				mp.Metrics{Name: "PU", Label: "Perm used", Diff: false, Scale: 1024},
 			},
 		},
+		fmt.Sprintf("jvm.%s.metaspace", lowerJavaName): mp.Graphs{
+			Label: fmt.Sprintf("JVM %s Metaspace", rawJavaName),
+			Unit:  "float",
+			Metrics: [](mp.Metrics){
+				mp.Metrics{Name: "MCMX", Label: "Metaspace capacity max", Diff: false, Scale: 1024},
+				mp.Metrics{Name: "MCMN", Label: "Metaspace capacity min", Diff: false, Scale: 1024},
+				mp.Metrics{Name: "MC", Label: "Metaspace capacity", Diff: false, Scale: 1024},
+				mp.Metrics{Name: "MU", Label: "Metaspace utilization ", Diff: false, Scale: 1024},
+				mp.Metrics{Name: "CCSC", Label: "Compressed Class Space Capacity", Diff: false, Scale: 1024},
+				mp.Metrics{Name: "CCSU", Label: "Compressed Class Space Used", Diff: false, Scale: 1024},
+			},
+		},
+		fmt.Sprintf("jvm.%s.memorySpace", lowerJavaName): mp.Graphs{
+			Label: fmt.Sprintf("JVM %s MemorySpace", rawJavaName),
+			Unit:  "float",
+			Metrics: [](mp.Metrics){
+				mp.Metrics{Name: "oldSpaceRate", Label: "GC Old Memory Space", Diff: false},
+				mp.Metrics{Name: "newSpaceRate", Label: "GC New Memory Space", Diff: false},
+				mp.Metrics{Name: "CMSInitiatingOccupancyFraction", Label: "CMS Initiating Occupancy Fraction", Diff: false},
+			},
+		},
 	}
 }
 
@@ -179,6 +260,7 @@ func main() {
 	optHost := flag.String("host", "localhost", "Hostname")
 	optPort := flag.String("port", "1099", "Port")
 	optJstatPath := flag.String("jstatpath", "/usr/bin/jstat", "jstat path")
+	optJinfoPath := flag.String("jinfopath", "/usr/bin/jinfo", "jinfo path")
 	optJpsPath := flag.String("jpspath", "/usr/bin/jps", "jps path")
 	optJavaName := flag.String("javaname", "", "Java app name")
 	optPidFile := flag.String("pidfile", "", "pidfile path")
@@ -188,6 +270,7 @@ func main() {
 	var jvm JVMPlugin
 	jvm.Target = fmt.Sprintf("%s:%s", *optHost, *optPort)
 	jvm.JstatPath = *optJstatPath
+	jvm.JinfoPath = *optJinfoPath
 
 	if *optJavaName == "" {
 		logger.Errorf("javaname is required (if you use 'pidfile' option, 'javaname' is used as just a prefix of graph label)")
@@ -196,7 +279,7 @@ func main() {
 	}
 
 	if *optPidFile == "" {
-		lvmid, err := FetchLvmidByAppname(*optJavaName, jvm.Target, *optJpsPath)
+		lvmid, err := fetchLvmidByAppname(*optJavaName, jvm.Target, *optJpsPath)
 		if err != nil {
 			logger.Errorf("Failed to fetch lvmid. %s", err)
 			os.Exit(1)

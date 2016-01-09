@@ -8,7 +8,7 @@
 
 Summary: Monitoring program plugins for Mackerel
 Name: mackerel-agent-plugins
-Version: 0.11.0
+Version: 0.15.2
 Release: %{revision}
 License: Apache-2
 Group: Applications/System
@@ -29,7 +29,7 @@ This package provides plugins for Mackerel.
 
 %{__mkdir} -p %{buildroot}%{__targetdir}
 
-for i in apache2 aws-ec2-cpucredit aws-elasticache aws-elb aws-rds aws-ses elasticsearch haproxy jvm linux memcached mongodb munin mysql nginx php-apc php-opcache plack postgres redis snmp squid td-table-count varnish xentop aws-cloudfront;do \
+for i in apache2 aws-ec2-cpucredit aws-elasticache aws-elasticsearch aws-elb aws-rds aws-ses elasticsearch gostats haproxy jvm linux memcached mongodb munin mysql nginx php-apc php-opcache plack postgres redis snmp squid td-table-count trafficserver varnish xentop aws-cloudfront aws-ec2-ebs fluentd docker unicorn;do \
     %{__install} -m0755 %{_sourcedir}/build/mackerel-plugin-$i %{buildroot}%{__targetdir}/; \
 done
 
@@ -41,6 +41,62 @@ done
 %{__targetdir}
 
 %changelog
+* Thu Jan 07 2016 <y.songmu@gmail.com> - 0.15.2
+- add unicorn plugin to package (by yano3)
+
+* Thu Jan 07 2016 <y.songmu@gmail.com> - 0.15.1
+- use mackerel-plugin-helper for mackerel-plugin-linux (by stanaka)
+
+* Wed Jan 06 2016 <y.songmu@gmail.com> - 0.15.0
+- Add mackerel-plugin-unicorn (by linyows)
+- Update README (by y-kuno)
+- Add mackerel-plugin-solr [not into package] (by supercaracal)
+- Add mackerel-plugin-murmur (not into package) (by mikoim)
+- add mackerel-plugin-gostats (by Songmu)
+- Add graph definition for memcached cache size (by y-kuno)
+- Squid: work with squid v3 (by naokibtn)
+- add graphs to varnish plugin (by naokibtn)
+- When Seconds_Behind_Master is NULL, agent-plugin doesn't send the Seconds_Behind_Master metric. (by norisu0313)
+- support mongodb 3.2 (by stanaka)
+- rename goserver2gostats and add README (by Songmu)
+
+* Wed Nov 25 2015 <y.songmu@gmail.com> - 0.14.2
+- Fix document (by tkuchiki)
+- Get memory usage percentage and CMSInitiatingOccupancyFraction when CMS GC is running (by tom--bo)
+- follow latest aws-sdk-go (by Songmu)
+
+* Mon Oct 26 2015 <y.songmu@gmail.com> - 0.14.1
+- fix index bug in plugin-xentop (by Songmu)
+
+* Mon Oct 26 2015 <daiksy@hatena.ne.jp> - 0.14.0
+- Apache Traffic Server Plugin (by naokibtn)
+- added plugin for AWS Elasticsearch Service (by hiroakis)
+- use wildcard definition & normalize xen names (by naokibtn)
+- add graph definition for java8 metaspace (by Songmu)
+- add plugins (aws-elasticsearch and trafficserver) into package (by Songmu)
+
+* Thu Oct 15 2015 <itchyny@hatena.ne.jp> - 0.13.2
+- reduce binary size (by Songmu)
+- remove Config field from FluentPluginMetrics (by Songmu)
+- support coreos and amazon linux for docker plugin (by stanaka)
+- Add Key prefix option for AWS RDS plugin (by stanaka)
+
+* Fri Sep 25 2015 <y.songmu@gmail.com> - 0.13.1
+- [docker] resolve cgroup path in systemd environment (by Songmu)
+
+* Wed Sep 16 2015 <itchyny@hatena.ne.jp> - 0.13.0
+- add mackerel-plugin-fluentd (by stanaka)
+- add mackerel-plugin-docker (by stanaka)
+
+* Wed Sep 02 2015 <tomohiro68@gmail.com> - 0.12.0
+- Plugin for AWS-EC2 EBS (by naokibtn)
+
+* Thu Aug 20 2015 <y.songmu@gmail.com> - 0.11.2
+- Fix/mongodb 2.4 or later (by stanaka)
+
+* Thu Aug 13 2015 <tomohiro68@gmail.com> - 0.11.1
+- [nginx] specify types of nginx metrics (by stanaka)
+
 * Wed Jul 29 2015 <y.songmu@gmail.com> - 0.11.0
 - [redis] support multiple redis instances on one server by using -metric-key-prefix option (by xorphitus)
 - [Redis] fix tiny documentation typo (by hiroakis)

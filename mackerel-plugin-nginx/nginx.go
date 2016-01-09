@@ -6,17 +6,17 @@ import (
 	"fmt"
 	"io"
 
-	mp "github.com/mackerelio/go-mackerel-plugin-helper"
-	//"io/ioutil"
 	"errors"
 	"net/http"
 	"os"
 	"regexp"
 	"strconv"
 	"strings"
+
+	mp "github.com/mackerelio/go-mackerel-plugin-helper"
 )
 
-var graphdef map[string](mp.Graphs) = map[string](mp.Graphs){
+var graphdef = map[string](mp.Graphs){
 	"nginx.connections": mp.Graphs{
 		Label: "Nginx Connections",
 		Unit:  "integer",
@@ -28,9 +28,9 @@ var graphdef map[string](mp.Graphs) = map[string](mp.Graphs){
 		Label: "Nginx requests",
 		Unit:  "float",
 		Metrics: [](mp.Metrics){
-			mp.Metrics{Name: "accepts", Label: "Accepted connections", Diff: true},
-			mp.Metrics{Name: "handled", Label: "Handled connections", Diff: true},
-			mp.Metrics{Name: "requests", Label: "Handled requests", Diff: true},
+			mp.Metrics{Name: "accepts", Label: "Accepted connections", Diff: true, Type: "uint64"},
+			mp.Metrics{Name: "handled", Label: "Handled connections", Diff: true, Type: "uint64"},
+			mp.Metrics{Name: "requests", Label: "Handled requests", Diff: true, Type: "uint64"},
 		},
 	},
 	"nginx.queue": mp.Graphs{
@@ -55,8 +55,9 @@ func (s *stringSlice) String() string {
 	return fmt.Sprintf("%v", *s)
 }
 
+// NginxPlugin mackerel plugin for Nginx
 type NginxPlugin struct {
-	Uri    string
+	URI    string
 	Header stringSlice
 }
 
@@ -66,8 +67,9 @@ type NginxPlugin struct {
 //  1693613501 1693613501 7996986318
 // Reading: 66 Writing: 16 Waiting: 41
 
+// FetchMetrics interface for mackerelplugin
 func (n NginxPlugin) FetchMetrics() (map[string]interface{}, error) {
-	req, err := http.NewRequest("GET", n.Uri, nil)
+	req, err := http.NewRequest("GET", n.URI, nil)
 	if err != nil {
 		return nil, err
 	}
@@ -90,10 +92,10 @@ func (n NginxPlugin) FetchMetrics() (map[string]interface{}, error) {
 	}
 	defer resp.Body.Close()
 
-	return n.ParseStats(resp.Body)
+	return n.parseStats(resp.Body)
 }
 
-func (n NginxPlugin) ParseStats(body io.Reader) (map[string]interface{}, error) {
+func (n NginxPlugin) parseStats(body io.Reader) (map[string]interface{}, error) {
 	stat := make(map[string]interface{})
 
 	r := bufio.NewReader(body)
@@ -162,12 +164,13 @@ func (n NginxPlugin) ParseStats(body io.Reader) (map[string]interface{}, error) 
 	return stat, nil
 }
 
+// GraphDefinition interface for mackerelplugin
 func (n NginxPlugin) GraphDefinition() map[string](mp.Graphs) {
 	return graphdef
 }
 
 func main() {
-	optUri := flag.String("uri", "", "URI")
+	optURI := flag.String("uri", "", "URI")
 	optScheme := flag.String("scheme", "http", "Scheme")
 	optHost := flag.String("host", "localhost", "Hostname")
 	optPort := flag.String("port", "8080", "Port")
@@ -178,10 +181,10 @@ func main() {
 	flag.Parse()
 
 	var nginx NginxPlugin
-	if *optUri != "" {
-		nginx.Uri = *optUri
+	if *optURI != "" {
+		nginx.URI = *optURI
 	} else {
-		nginx.Uri = fmt.Sprintf("%s://%s:%s%s", *optScheme, *optHost, *optPort, *optPath)
+		nginx.URI = fmt.Sprintf("%s://%s:%s%s", *optScheme, *optHost, *optPort, *optPath)
 	}
 	nginx.Header = *optHeader
 

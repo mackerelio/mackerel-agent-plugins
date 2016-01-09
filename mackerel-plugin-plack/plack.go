@@ -13,7 +13,7 @@ import (
 	mp "github.com/mackerelio/go-mackerel-plugin-helper"
 )
 
-var graphdef map[string](mp.Graphs) = map[string](mp.Graphs){
+var graphdef = map[string](mp.Graphs){
 	"plack.workers": mp.Graphs{
 		Label: "Plack Workers",
 		Unit:  "integer",
@@ -38,8 +38,9 @@ var graphdef map[string](mp.Graphs) = map[string](mp.Graphs){
 	},
 }
 
+// PlackPlugin mackerel plugin for Plack
 type PlackPlugin struct {
-	Uri string
+	URI string
 }
 
 // {
@@ -83,7 +84,11 @@ type PlackPlugin struct {
 // }
 
 // field types vary between versions
+
+// PlackRequest request
 type PlackRequest struct{}
+
+// PlackServerStatus sturct for server-status's json
 type PlackServerStatus struct {
 	Uptime        string         `json:"Uptime"`
 	TotalAccesses string         `json:"TotalAccesses"`
@@ -93,17 +98,18 @@ type PlackServerStatus struct {
 	Stats         []PlackRequest `json:"stats"`
 }
 
+// FetchMetrics interface for mackerelplugin
 func (p PlackPlugin) FetchMetrics() (map[string]interface{}, error) {
-	resp, err := http.Get(p.Uri)
+	resp, err := http.Get(p.URI)
 	if err != nil {
 		return nil, err
 	}
 	defer resp.Body.Close()
 
-	return p.ParseStats(resp.Body)
+	return p.parseStats(resp.Body)
 }
 
-func (p PlackPlugin) ParseStats(body io.Reader) (map[string]interface{}, error) {
+func (p PlackPlugin) parseStats(body io.Reader) (map[string]interface{}, error) {
 	stat := make(map[string]interface{})
 	decoder := json.NewDecoder(body)
 
@@ -135,12 +141,13 @@ func (p PlackPlugin) ParseStats(body io.Reader) (map[string]interface{}, error) 
 	return stat, nil
 }
 
-func (n PlackPlugin) GraphDefinition() map[string](mp.Graphs) {
+// GraphDefinition interface for mackerelplugin
+func (p PlackPlugin) GraphDefinition() map[string](mp.Graphs) {
 	return graphdef
 }
 
 func main() {
-	optUri := flag.String("uri", "", "URI")
+	optURI := flag.String("uri", "", "URI")
 	optScheme := flag.String("scheme", "http", "Scheme")
 	optHost := flag.String("host", "localhost", "Hostname")
 	optPort := flag.String("port", "5000", "Port")
@@ -149,10 +156,10 @@ func main() {
 	flag.Parse()
 
 	var plack PlackPlugin
-	if *optUri != "" {
-		plack.Uri = *optUri
+	if *optURI != "" {
+		plack.URI = *optURI
 	} else {
-		plack.Uri = fmt.Sprintf("%s://%s:%s%s", *optScheme, *optHost, *optPort, *optPath)
+		plack.URI = fmt.Sprintf("%s://%s:%s%s", *optScheme, *optHost, *optPort, *optPath)
 	}
 
 	helper := mp.NewMackerelPlugin(plack)

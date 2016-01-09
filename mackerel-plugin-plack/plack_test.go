@@ -63,7 +63,7 @@ func TestParse(t *testing.T) {
 
 	plackStats := bytes.NewBufferString(stub)
 
-	stat, err := plack.ParseStats(plackStats)
+	stat, err := plack.parseStats(plackStats)
 	fmt.Println(stat)
 	assert.Nil(t, err)
 	assert.EqualValues(t, reflect.TypeOf(stat["requests"]).String(), "uint64")

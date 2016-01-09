@@ -10,17 +10,23 @@ Documentation for each plugin is located in its respective sub directory.
 * [mackerel-plugin-apache2](./mackerel-plugin-apache2/README.md)
 * [mackerel-plugin-aws-cloudfront](./mackerel-plugin-aws-cloudfront/README.md)
 * [mackerel-plugin-aws-ec2-cpucredit](./mackerel-plugin-aws-ec2-cpucredit/README.md)
+* [mackerel-plugin-aws-ec2-ebs](./mackerel-plugin-aws-ec2-ebs/README.md)
 * [mackerel-plugin-aws-elasticache](./mackerel-plugin-aws-elasticache/README.md)
+* [mackerel-plugin-aws-elasticsearch](./mackerel-plugin-aws-elasticsearch/README.md)
 * [mackerel-plugin-aws-elb](./mackerel-plugin-aws-elb/README.md)
 * [mackerel-plugin-aws-rds](./mackerel-plugin-aws-rds/README.md)
 * [mackerel-plugin-aws-ses](./mackerel-plugin-aws-ses/README.md)
+* [mackerel-plugin-docker](./mackerel-plugin-docker/README.md)
 * [mackerel-plugin-elasticsearch](./mackerel-plugin-elasticsearch/README.md)
+* [mackerel-plugin-fluentd](./mackerel-plugin-fluentd/README.md)
+* [mackerel-plugin-gostats](./mackerel-plugin-gostats/README.md)
 * [mackerel-plugin-haproxy](./mackerel-plugin-haproxy/README.md)
 * [mackerel-plugin-jvm](./mackerel-plugin-jvm/README.md)
 * [mackerel-plugin-linux](./mackerel-plugin-linux/README.md)
 * [mackerel-plugin-memcached](./mackerel-plugin-memcached/README.md)
 * [mackerel-plugin-mongodb](./mackerel-plugin-mongodb/README.md)
 * [mackerel-plugin-munin](./mackerel-plugin-munin/README.md)
+* [mackerel-plugin-murmur](./mackerel-plugin-murmur/README.md)
 * [mackerel-plugin-mysql](./mackerel-plugin-mysql/README.md)
 * [mackerel-plugin-nginx](./mackerel-plugin-nginx/README.md)
 * [mackerel-plugin-php-apc](./mackerel-plugin-php-apc/README.md)
@@ -29,8 +35,11 @@ Documentation for each plugin is located in its respective sub directory.
 * [mackerel-plugin-postgres](./mackerel-plugin-postgres/README.md)
 * [mackerel-plugin-redis](./mackerel-plugin-redis/README.md)
 * [mackerel-plugin-snmp](./mackerel-plugin-snmp/README.md)
+* [mackerel-plugin-solr](./mackerel-plugin-solr/README.md)
 * [mackerel-plugin-squid](./mackerel-plugin-squid/README.md)
 * [mackerel-plugin-td-table-count](./mackerel-plugin-td-table-count/README.md)
+* [mackerel-plugin-trafficserver](./mackerel-plugin-trafficserver/README.md)
+* [mackerel-plugin-unicorn](./mackerel-plugin-unicorn/README.md)
 * [mackerel-plugin-varnish](./mackerel-plugin-varnish/README.md)
 * [mackerel-plugin-xentop](./mackerel-plugin-xentop/README.md)
 
@@ -67,6 +76,8 @@ Caution
 
 Some plugins may not work on CentOS/RedHat 5 because the golang compiler (gc) doesn't support the old kernel.
 (https://golang.org/doc/install)
+
+Some plugins are not contained in rpm and deb packages. If you want to use them, build them.
 
 Contribution
 ============

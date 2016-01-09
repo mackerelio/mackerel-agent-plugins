@@ -15,15 +15,16 @@ var logger = logging.GetLogger("metrics.plugin.td-table")
 
 var tableNames = []string{}
 
+// TDTablePlugin mackerel plugin for td
 type TDTablePlugin struct {
-	ApiKey           string
+	APIKey           string
 	Database         string
 	IgnoreTableNames []string
 	Tempfile         string
 }
 
-func GetTables(m TDTablePlugin) ([]td.Table, error) {
-	cli := td.NewClient(m.ApiKey)
+func getTables(m TDTablePlugin) ([]td.Table, error) {
+	cli := td.NewClient(m.APIKey)
 
 	tables, err := cli.TableList(m.Database)
 	if err != nil {
@@ -48,10 +49,11 @@ func GetTables(m TDTablePlugin) ([]td.Table, error) {
 	return filteredTables, nil
 }
 
+// FetchMetrics interface for mackerelplugin
 func (m TDTablePlugin) FetchMetrics() (map[string]float64, error) {
 	stat := make(map[string]float64)
 
-	tables, _ := GetTables(m)
+	tables, _ := getTables(m)
 	for _, table := range tables {
 		stat[table.Name] = float64(table.Count)
 	}
@@ -59,8 +61,9 @@ func (m TDTablePlugin) FetchMetrics() (map[string]float64, error) {
 	return stat, nil
 }
 
+// GraphDefinition interface for mackerelplugin
 func (m TDTablePlugin) GraphDefinition() map[string](mp.Graphs) {
-	tables, _ := GetTables(m)
+	tables, _ := getTables(m)
 
 	var metrics []mp.Metrics
 	for _, table := range tables {
@@ -86,14 +89,14 @@ func (m TDTablePlugin) GraphDefinition() map[string](mp.Graphs) {
 }
 
 func main() {
-	optApiKey := flag.String("api-key", "", "API Key")
+	optAPIKey := flag.String("api-key", "", "API Key")
 	optDatabase := flag.String("database", "", "Database name")
 	optIgnoreTableNames := flag.String("ignore-table", "", "Ignore Table name (Can be Comma-Separated)")
 	optTempfile := flag.String("tempfile", "", "Temp file name")
 	flag.Parse()
 
 	var plugin TDTablePlugin
-	plugin.ApiKey = *optApiKey
+	plugin.APIKey = *optAPIKey
 	plugin.Database = *optDatabase
 
 	ignoreTableNames := []string{}

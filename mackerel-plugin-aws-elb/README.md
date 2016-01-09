@@ -7,7 +7,7 @@ As it stands, this can fetch only across-all-LBs metrics.
 ## Synopsis
 
 ```shell
-mackerel-plugin-aws-elb [-lbname=<aws-load-blancer-name>] [-region=<aws-region>] [-access-key-id=<id>] [-secret-access-key==<key>] [-tempfile=<tempfile>]
+mackerel-plugin-aws-elb [-lbname=<aws-load-blancer-name>] [-region=<aws-region>] [-access-key-id=<id>] [-secret-access-key=<key>] [-tempfile=<tempfile>]
 ```
 * if you run on an ec2-instance, you probably don't have to specify `-region`
 * if you run on an ec2-instance and the instance is associated with an appropriate IAM Role, you probably don't have to specify `-access-key-id` & `-secret-access-key`

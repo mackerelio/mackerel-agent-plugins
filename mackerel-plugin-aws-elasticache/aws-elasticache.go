@@ -3,16 +3,17 @@ package main
 import (
 	"errors"
 	"flag"
-	"github.com/crowdmob/goamz/aws"
-	"github.com/crowdmob/goamz/cloudwatch"
-	mp "github.com/mackerelio/go-mackerel-plugin"
+	"fmt"
 	"log"
 	"os"
 	"time"
-	"fmt"
+
+	"github.com/crowdmob/goamz/aws"
+	"github.com/crowdmob/goamz/cloudwatch"
+	mp "github.com/mackerelio/go-mackerel-plugin"
 )
 
-var metricsdefMemcached []string = []string{
+var metricsdefMemcached = []string{
 	"CPUUtilization", "SwapUsage", "FreeableMemory", "NetworkBytesIn", "NetworkBytesOut",
 	"BytesUsedForCacheItems", "BytesReadIntoMemcached", "BytesWrittenOutFromMemcached", "CasBadval", "CasHits",
 	"CasMisses", "CmdFlush", "CmdGet", "CmdSet", "CurrConnections",
@@ -23,7 +24,7 @@ var metricsdefMemcached []string = []string{
 	"TouchMisses", "NewConnections", "NewItems", "UnusedMemory",
 }
 
-var metricsdefRedis []string = []string{
+var metricsdefRedis = []string{
 	"CPUUtilization", "SwapUsage", "FreeableMemory", "NetworkBytesIn", "NetworkBytesOut",
 	"CurrConnections", "Evictions", "Reclaimed", "NewConnections", "BytesUsedForCache",
 	"CacheHits", "CacheMisses", "ReplicationLag", "GetTypeCmds", "SetTypeCmds",
@@ -31,7 +32,7 @@ var metricsdefRedis []string = []string{
 	"SortedSetBasedCmds", "CurrItems",
 }
 
-var graphdefMemcached map[string](mp.Graphs) = map[string](mp.Graphs){
+var graphdefMemcached = map[string](mp.Graphs){
 	"ecache.CPUUtilization": mp.Graphs{
 		Label: "ECache CPU Utilization",
 		Unit:  "percentage",
@@ -145,7 +146,7 @@ var graphdefMemcached map[string](mp.Graphs) = map[string](mp.Graphs){
 	},
 }
 
-var graphdefRedis map[string](mp.Graphs) = map[string](mp.Graphs){
+var graphdefRedis = map[string](mp.Graphs){
 	"ecache.CPUUtilization": mp.Graphs{
 		Label: "ECache CPU Utilization",
 		Unit:  "percentage",
@@ -229,17 +230,18 @@ var graphdefRedis map[string](mp.Graphs) = map[string](mp.Graphs){
 	},
 }
 
+// ECachePlugin mackerel plugin for elasticache
 type ECachePlugin struct {
 	Region          string
-	AccessKeyId     string
+	AccessKeyID     string
 	SecretAccessKey string
-	CacheClusterId  string
-	CacheNodeId     string
+	CacheClusterID  string
+	CacheNodeID     string
 	ElastiCacheType string
 	CacheMetrics    []string
 }
 
-func GetLastPoint(cloudWatch *cloudwatch.CloudWatch, dimensions *[]cloudwatch.Dimension, metricName string) (float64, error) {
+func getLastPoint(cloudWatch *cloudwatch.CloudWatch, dimensions *[]cloudwatch.Dimension, metricName string) (float64, error) {
 	now := time.Now()
 
 	response, err := cloudWatch.GetMetricStatistics(&cloudwatch.GetMetricStatisticsRequest{
@@ -274,8 +276,9 @@ func GetLastPoint(cloudWatch *cloudwatch.CloudWatch, dimensions *[]cloudwatch.Di
 	return latestVal, nil
 }
 
+// FetchMetrics fetch elasticache values
 func (p ECachePlugin) FetchMetrics() (map[string]float64, error) {
-	auth, err := aws.GetAuth(p.AccessKeyId, p.SecretAccessKey, "", time.Now())
+	auth, err := aws.GetAuth(p.AccessKeyID, p.SecretAccessKey, "", time.Now())
 	if err != nil {
 		return nil, err
 	}
@@ -290,16 +293,16 @@ func (p ECachePlugin) FetchMetrics() (map[string]float64, error) {
 	perInstances := &[]cloudwatch.Dimension{
 		cloudwatch.Dimension{
 			Name:  "CacheClusterId",
-			Value: p.CacheClusterId,
+			Value: p.CacheClusterID,
 		},
 		cloudwatch.Dimension{
 			Name:  "CacheNodeId",
-			Value: p.CacheNodeId,
+			Value: p.CacheNodeID,
 		},
 	}
 
 	for _, met := range p.CacheMetrics {
-		v, err := GetLastPoint(cloudWatch, perInstances, met)
+		v, err := getLastPoint(cloudWatch, perInstances, met)
 		if err == nil {
 			stat[met] = v
 		} else {
@@ -310,6 +313,7 @@ func (p ECachePlugin) FetchMetrics() (map[string]float64, error) {
 	return stat, nil
 }
 
+// GraphDefinition graph definition
 func (p ECachePlugin) GraphDefinition() map[string](mp.Graphs) {
 	switch p.ElastiCacheType {
 	case "memcached":
@@ -324,10 +328,10 @@ func (p ECachePlugin) GraphDefinition() map[string](mp.Graphs) {
 
 func main() {
 	optRegion := flag.String("region", "", "AWS Region")
-	optAccessKeyId := flag.String("access-key-id", "", "AWS Access Key ID")
+	optAccessKeyID := flag.String("access-key-id", "", "AWS Access Key ID")
 	optSecretAccessKey := flag.String("secret-access-key", "", "AWS Secret Access Key")
-	optCacheClusterId := flag.String("cache-cluster-id", "", "Cache Cluster Id")
-	optCacheNodeId := flag.String("cache-node-id", "0001", "Cache Node Id")
+	optCacheClusterID := flag.String("cache-cluster-id", "", "Cache Cluster Id")
+	optCacheNodeID := flag.String("cache-node-id", "0001", "Cache Node Id")
 	optElastiCacheType := flag.String("elasticache-type", "", "ElastiCache type")
 	optTempfile := flag.String("tempfile", "", "Temp file name")
 	flag.Parse()
@@ -340,10 +344,10 @@ func main() {
 		ecache.Region = *optRegion
 	}
 
-	ecache.AccessKeyId = *optAccessKeyId
+	ecache.AccessKeyID = *optAccessKeyID
 	ecache.SecretAccessKey = *optSecretAccessKey
-	ecache.CacheClusterId = *optCacheClusterId
-	ecache.CacheNodeId = *optCacheNodeId
+	ecache.CacheClusterID = *optCacheClusterID
+	ecache.CacheNodeID = *optCacheNodeID
 	ecache.ElastiCacheType = *optElastiCacheType
 	switch ecache.ElastiCacheType {
 	case "memcached":
@@ -359,7 +363,7 @@ func main() {
 	if *optTempfile != "" {
 		helper.Tempfile = *optTempfile
 	} else {
-		helper.Tempfile = fmt.Sprintf("/tmp/mackerel-plugin-aws-elasticache-%s-%s", *optCacheClusterId, *optCacheNodeId)
+		helper.Tempfile = fmt.Sprintf("/tmp/mackerel-plugin-aws-elasticache-%s-%s", *optCacheClusterID, *optCacheNodeID)
 	}
 
 	if os.Getenv("MACKEREL_AGENT_PLUGIN_META") != "" {

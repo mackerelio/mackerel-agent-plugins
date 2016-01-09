@@ -4,10 +4,12 @@
        "apache2",
        "aws-ec2-cpucredit",
        "aws-elasticache",
+       "aws-elasticsearch",
        "aws-elb",
        "aws-rds",
        "aws-ses",
        "elasticsearch",
+       "gostats",
        "haproxy",
        "jvm",
        "linux",
@@ -24,9 +26,14 @@
        "snmp",
        "squid",
        "td-table-count",
+       "trafficserver",
        "varnish",
        "xentop",
-       "aws-cloudfront"
+       "aws-cloudfront",
+       "aws-ec2-ebs",
+       "fluentd",
+       "docker",
+       "unicorn"
     ]
 }
 
