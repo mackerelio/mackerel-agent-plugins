@@ -3,8 +3,6 @@ mackerel-plugin-elasticsearch
 
 Elasticsearch custom metrics plugin for mackerel.io agent.
 
-**NOTICE: This plugin only support Elasticsearch versions 1.6.0 and higher.**
-
 ## Synopsis
 
 ```shell
