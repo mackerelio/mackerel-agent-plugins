@@ -27,15 +27,17 @@ var graphdef = map[string](mp.Graphs){
 	},
 }
 
+// RabbitMQPlugin metrics
 type RabbitMQPlugin struct {
-	Url string
+	URI string
 	User string
 	Password string
 	TempFile string
 }
 
+// FetchMetrics interface for mackerelplugin
 func (r RabbitMQPlugin) FetchMetrics() (map[string]interface{},error){
-	rmqc, err:= rabbithole.NewClient(r.Url, r.User, r.Password)
+	rmqc, err:= rabbithole.NewClient(r.URI, r.User, r.Password)
 	if err != nil {
 		return nil, err
 	}
@@ -59,6 +61,7 @@ func (r RabbitMQPlugin) parseStats(res rabbithole.Overview) (map[string]interfac
 
 }
 
+// GraphDefinition interface for mackerel plugin
 func (r RabbitMQPlugin) GraphDefinition() map[string](mp.Graphs){
 	return graphdef
 }
@@ -71,7 +74,7 @@ func main(){
 
 	var rabbitmq RabbitMQPlugin
 
-	rabbitmq.Url = *optURI
+	rabbitmq.URI = *optURI
 	rabbitmq.User = *optUser
 	rabbitmq.Password = *optPass
 
