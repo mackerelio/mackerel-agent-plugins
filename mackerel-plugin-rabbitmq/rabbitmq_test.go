@@ -12,7 +12,7 @@ func TestGraphDefinition(t *testing.T){
 
 	graphdef := rabbitmq.GraphDefinition()
 	if len(graphdef) != 2 {
-		t.Error("GetTempfilename: %d should be 2", len(graphdef))
+		t.Errorf("GetTempfilename: %d should be 2", len(graphdef))
 	}
 }
 

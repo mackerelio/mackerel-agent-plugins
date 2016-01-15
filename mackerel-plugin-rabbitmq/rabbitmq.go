@@ -34,8 +34,8 @@ type RabbitMQPlugin struct {
 	TempFile string
 }
 
-func (m RabbitMQPlugin) FetchMetrics() (map[string]interface{},error){
-	rmqc, err:= rabbithole.NewClient(m.Url, m.User, m.Password)
+func (r RabbitMQPlugin) FetchMetrics() (map[string]interface{},error){
+	rmqc, err:= rabbithole.NewClient(r.Url, r.User, r.Password)
 	if err != nil {
 		return nil, err
 	}
@@ -44,10 +44,10 @@ func (m RabbitMQPlugin) FetchMetrics() (map[string]interface{},error){
 		return nil, err
 	}
 
-	return m.parseStats(*res)
+	return r.parseStats(*res)
 }
 
-func (m RabbitMQPlugin) parseStats(res rabbithole.Overview) (map[string]interface{},error){
+func (r RabbitMQPlugin) parseStats(res rabbithole.Overview) (map[string]interface{},error){
 	stat := make(map[string]interface{})
 
 	stat["messages"] = float64(res.QueueTotals.Messages)
@@ -59,7 +59,7 @@ func (m RabbitMQPlugin) parseStats(res rabbithole.Overview) (map[string]interfac
 
 }
 
-func (m RabbitMQPlugin) GraphDefinition() map[string](mp.Graphs){
+func (r RabbitMQPlugin) GraphDefinition() map[string](mp.Graphs){
 	return graphdef
 }
 
