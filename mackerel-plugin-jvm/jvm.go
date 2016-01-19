@@ -31,7 +31,7 @@ type JVMPlugin struct {
 func fetchLvmidByAppname(appname, target, jpsPath string) (string, error) {
 	out, err := exec.Command(jpsPath, target).Output()
 	if err != nil {
-		logger.Errorf("Failed to run exec jps. %s", err)
+		logger.Errorf("Failed to run exec jps. %s. Please run with the java process user.", err)
 		return "", err
 	}
 	for _, line := range strings.Split(string(out), "\n") {
@@ -44,13 +44,13 @@ func fetchLvmidByAppname(appname, target, jpsPath string) (string, error) {
 			return lvmid, nil
 		}
 	}
-	return "", fmt.Errorf("Cannot get lvmid from %s", appname)
+	return "", fmt.Errorf("Cannot get lvmid from %s. Please run with the java process user.", appname)
 }
 
 func fetchJstatMetrics(lvmid, option, jstatPath string) (map[string]float64, error) {
 	out, err := exec.Command(jstatPath, option, lvmid).Output()
 	if err != nil {
-		logger.Errorf("Failed to run exec jstat. %s", err)
+		logger.Errorf("Failed to run exec jstat. %s. Please run with the java process user.", err)
 		return nil, err
 	}
 
@@ -84,7 +84,7 @@ func calculateMemorySpaceRate(gcStat map[string]float64, m JVMPlugin) (map[strin
 func checkCMSGC(lvmid, JinfoPath string) bool {
 	output, err := exec.Command(JinfoPath, "-flag", "UseConcMarkSweepGC", lvmid).Output()
 	if err != nil {
-		logger.Errorf("Failed to run exec jinfo. %s", err)
+		logger.Errorf("Failed to run exec jinfo. %s. Please run with the java process user.", err)
 		os.Exit(1)
 	}
 	return strings.Index(string(output), "+UseConcMarkSweepGC") != -1
@@ -94,7 +94,7 @@ func fetchCMSInitiatingOccupancyFraction(lvmid, JinfoPath string) float64 {
 	var fraction float64
 	output, err := exec.Command(JinfoPath, "-flag", "CMSInitiatingOccupancyFraction", lvmid).Output()
 	if err != nil {
-		logger.Errorf("Failed to run exec jinfo. %s", err)
+		logger.Errorf("Failed to run exec jinfo. %s. Please run with the java process user.", err)
 		os.Exit(1)
 	}
 	out := strings.Trim(string(output), "\n")
@@ -281,7 +281,7 @@ func main() {
 	if *optPidFile == "" {
 		lvmid, err := fetchLvmidByAppname(*optJavaName, jvm.Target, *optJpsPath)
 		if err != nil {
-			logger.Errorf("Failed to fetch lvmid. %s", err)
+			logger.Errorf("Failed to fetch lvmid. %s. Please run with the java process user.", err)
 			os.Exit(1)
 		}
 		jvm.Lvmid = lvmid
