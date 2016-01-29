@@ -227,13 +227,14 @@ func (p ElasticsearchPlugin) GraphDefinition() map[string](mp.Graphs) {
 }
 
 func main() {
+	optScheme := flag.String("scheme", "http", "Scheme")
 	optHost := flag.String("host", "localhost", "Host")
 	optPort := flag.String("port", "9200", "Port")
 	optTempfile := flag.String("tempfile", "", "Temp file name")
 	flag.Parse()
 
 	var elasticsearch ElasticsearchPlugin
-	elasticsearch.URI = fmt.Sprintf("http://%s:%s", *optHost, *optPort)
+	elasticsearch.URI = fmt.Sprintf("%s://%s:%s", *optScheme, *optHost, *optPort)
 
 	helper := mp.NewMackerelPlugin(elasticsearch)
 	if *optTempfile != "" {
