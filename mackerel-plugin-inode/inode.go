@@ -74,7 +74,7 @@ func (p InodePlugin) FetchMetrics() (map[string]interface{}, error) {
 				result["inode.count."+device+".used"] = uint64(iused)
 				result["inode.count."+device+".free"] = uint64(ifree)
 				result["inode.count."+device+".total"] = uint64(iused + ifree)
-				usedPercentage := 0.0
+				usedPercentage := 100.0 // 100% if both iused and ifree are 0
 				if iused+ifree > 0 {
 					usedPercentage = float64(iused) * 100 / float64(iused+ifree)
 				}
