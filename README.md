@@ -42,6 +42,7 @@ Documentation for each plugin is located in its respective sub directory.
 * [mackerel-plugin-unicorn](./mackerel-plugin-unicorn/README.md)
 * [mackerel-plugin-varnish](./mackerel-plugin-varnish/README.md)
 * [mackerel-plugin-xentop](./mackerel-plugin-xentop/README.md)
+* [mackerel-plugin-inode](./mackerel-plugin-inode/README.md)
 
 Installation
 ============

@@ -33,7 +33,8 @@
        "aws-ec2-ebs",
        "fluentd",
        "docker",
-       "unicorn"
+       "unicorn",
+       "inode"
     ]
 }
 
