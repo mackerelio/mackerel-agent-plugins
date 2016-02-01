@@ -1,15 +1,12 @@
 package main
 
 import (
-	"bufio"
 	"flag"
 	"os/exec"
 	"regexp"
 	"strconv"
 	"strings"
-	"time"
 
-	"github.com/Songmu/timeout"
 	mp "github.com/mackerelio/go-mackerel-plugin-helper"
 	"github.com/mackerelio/mackerel-agent/logging"
 )
@@ -46,20 +43,13 @@ var deviceUnacceptablePattern = regexp.MustCompile(
 func (p InodePlugin) FetchMetrics() (map[string]interface{}, error) {
 	cmd := exec.Command("df", "-i")
 	cmd.Env = append(cmd.Env, "LANG=C")
-	tio := &timeout.Timeout{
-		Cmd:       cmd,
-		Duration:  15 * time.Second,
-		KillAfter: 5 * time.Second,
-	}
-	_, stdout, _, err := tio.Run()
+	out, err := cmd.Output()
 	if err != nil {
 		logger.Warningf("'df -i' command exited with a non-zero status: '%s'", err)
 		return nil, err
 	}
-	lineScanner := bufio.NewScanner(strings.NewReader(stdout))
 	result := make(map[string]interface{})
-	for lineScanner.Scan() {
-		line := lineScanner.Text()
+	for _, line := range strings.Split(string(out), "\n") {
 		if dfHeaderPattern.MatchString(line) {
 			continue
 		} else if matches := dfColumnsPattern.FindStringSubmatch(line); matches != nil {
