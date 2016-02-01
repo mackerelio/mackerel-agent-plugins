@@ -64,6 +64,10 @@ func (p InodePlugin) FetchMetrics() (map[string]interface{}, error) {
 			continue
 		} else if matches := dfColumnsPattern.FindStringSubmatch(line); matches != nil {
 			name := matches[1]
+			// https://github.com/docker/docker/blob/v1.5.0/daemon/graphdriver/devmapper/deviceset.go#L981
+			if regexp.MustCompile(`^/dev/mapper/docker-`).FindStringSubmatch(name) != nil {
+				continue
+			}
 			if nameMatches := devicePattern.FindStringSubmatch(name); nameMatches != nil {
 				device := deviceUnacceptablePattern.ReplaceAllString(nameMatches[1], "_")
 				iused, err := strconv.ParseInt(matches[2], 0, 64)
