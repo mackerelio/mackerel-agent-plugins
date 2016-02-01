@@ -2,6 +2,7 @@ package main
 
 import (
 	"flag"
+	"os"
 	"os/exec"
 	"regexp"
 	"strconv"
@@ -42,7 +43,7 @@ var deviceUnacceptablePattern = regexp.MustCompile(
 // FetchMetrics interface for mackerelplugin
 func (p InodePlugin) FetchMetrics() (map[string]interface{}, error) {
 	cmd := exec.Command("df", "-i")
-	cmd.Env = append(cmd.Env, "LANG=C")
+	cmd.Env = append(os.Environ(), "LANG=C")
 	out, err := cmd.Output()
 	if err != nil {
 		logger.Warningf("'df -i' command exited with a non-zero status: '%s'", err)
