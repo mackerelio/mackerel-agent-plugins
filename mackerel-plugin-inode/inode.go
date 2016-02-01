@@ -1,7 +1,6 @@
 package main
 
 import (
-	"flag"
 	"os"
 	"os/exec"
 	"regexp"
@@ -108,7 +107,6 @@ func (p InodePlugin) GraphDefinition() map[string]mp.Graphs {
 }
 
 func main() {
-	flag.Parse()
 	inode := InodePlugin{}
 	helper := mp.NewMackerelPlugin(inode)
 	helper.Run()
