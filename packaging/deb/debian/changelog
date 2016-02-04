@@ -1,3 +1,16 @@
+mackerel-agent-plugins (0.16.0-1) stable; urgency=low
+
+  * Add couple of metrics to Elasticsearch plugin (by ariarijp)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/166>
+  * [jvm] Add confirmation to error message (by tom--bo)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/168>
+  * Add scheme option to Elasticsearch plugin (by yano3)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/169>
+  * Add inode plugin (by itchyny)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/170>
+
+ -- Songmu <y.songmu@gmail.com>  Thu, 04 Feb 2016 11:34:00 +0900
+
 mackerel-agent-plugins (0.15.2-1) stable; urgency=low
 
   * add unicorn plugin to package (by yano3)

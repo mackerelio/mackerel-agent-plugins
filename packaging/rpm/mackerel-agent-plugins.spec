@@ -41,6 +41,12 @@ done
 %{__targetdir}
 
 %changelog
+* Thu Feb 04 2016 <y.songmu@gmail.com> - 0.16.0
+- Add couple of metrics to Elasticsearch plugin (by ariarijp)
+- [jvm] Add confirmation to error message (by tom--bo)
+- Add scheme option to Elasticsearch plugin (by yano3)
+- Add inode plugin (by itchyny)
+
 * Thu Jan 07 2016 <y.songmu@gmail.com> - 0.15.2
 - add unicorn plugin to package (by yano3)
 
