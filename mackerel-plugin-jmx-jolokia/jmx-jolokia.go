@@ -144,7 +144,6 @@ func (j JmxJolokiaPlugin) fetchOperatingSystem(stat map[string]interface{}) erro
 	if err != nil {
 		return err
 	}
-	fmt.Println(resp.Value)
 	stat["ProcessCpuLoad"] = resp.Value["ProcessCpuLoad"]
 	stat["SystemCpuLoad"] = resp.Value["SystemCpuLoad"]
 

@@ -22,6 +22,7 @@ Documentation for each plugin is located in its respective sub directory.
 * [mackerel-plugin-gostats](./mackerel-plugin-gostats/README.md)
 * [mackerel-plugin-haproxy](./mackerel-plugin-haproxy/README.md)
 * [mackerel-plugin-inode](./mackerel-plugin-inode/README.md)
+* [mackerel-plugin-jmx-jolokia](./mackerel-plugin-jmx-jolokia/README.md)
 * [mackerel-plugin-jvm](./mackerel-plugin-jvm/README.md)
 * [mackerel-plugin-linux](./mackerel-plugin-linux/README.md)
 * [mackerel-plugin-memcached](./mackerel-plugin-memcached/README.md)
