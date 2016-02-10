@@ -69,8 +69,8 @@ var graphdef = map[string](mp.Graphs){
 		Label: "CpuLoad",
 		Unit:  "percentage",
 		Metrics: [](mp.Metrics){
-			mp.Metrics{Name: "ProcessCpuLoad", Label: "process %", Diff: false, Type: "float64", Scale: 100},
-			mp.Metrics{Name: "SystemCpuLoad", Label: "system %", Diff: false, Type: "float64", Scale: 100},
+			mp.Metrics{Name: "ProcessCpuLoad", Label: "process", Diff: false, Type: "float64", Scale: 100},
+			mp.Metrics{Name: "SystemCpuLoad", Label: "system", Diff: false, Type: "float64", Scale: 100},
 		},
 	},
 }
