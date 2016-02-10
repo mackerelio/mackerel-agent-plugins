@@ -7,11 +7,13 @@ import (
 	"strconv"
 )
 
+// ConntrackCountPaths is paths to conntrack_count files.
 var ConntrackCountPaths = []string{
 	"/proc/sys/net/netfilter/nf_conntrack_count",
 	"/proc/sys/net/ipv4/netfilter/ip_conntrack_count",
 }
 
+// ConntrackMaxPaths is paths to conntrack_max files.
 var ConntrackMaxPaths = []string{
 	"/proc/sys/net/nf_conntrack_max",
 	"/proc/sys/net/netfilter/nf_conntrack_max",

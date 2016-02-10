@@ -35,19 +35,19 @@ func (c ConntrackPlugin) GraphDefinition() map[string](mp.Graphs) {
 
 // FetchMetrics interface for mackerelplugin.
 func (c ConntrackPlugin) FetchMetrics() (map[string]interface{}, error) {
-	conntrack_count, err := CurrentValue(ConntrackCountPaths)
+	conntrackCount, err := CurrentValue(ConntrackCountPaths)
 	if err != nil {
 		return nil, err
 	}
 
-	conntrack_max, err := CurrentValue(ConntrackMaxPaths)
+	conntrackMax, err := CurrentValue(ConntrackMaxPaths)
 	if err != nil {
 		return nil, err
 	}
 
 	stat := make(map[string]interface{})
-	stat["conntrack.count.used"] = conntrack_count
-	stat["conntrack.count.free"] = (conntrack_max - conntrack_count)
+	stat["conntrack.count.used"] = conntrackCount
+	stat["conntrack.count.free"] = (conntrackMax - conntrackCount)
 
 	return stat, nil
 }
@@ -57,7 +57,7 @@ type CLI struct {
 	outStream, errStream io.Writer
 }
 
-// Parse flags and Run helper (MackerelPlugin) with the given arguments.
+// Run is to parse flags and Run helper (MackerelPlugin) with the given arguments.
 func (c *CLI) Run(args []string) int {
 	// Flags
 	var (
