@@ -33,20 +33,20 @@ var graphdef = map[string](mp.Graphs){
 		Label: "Jmx HeapMemoryUsage",
 		Unit:  "bytes",
 		Metrics: [](mp.Metrics){
-			mp.Metrics{Name: "init", Label: "init", Diff: false, Type: "uint64"},
-			mp.Metrics{Name: "committed", Label: "committed", Diff: false, Type: "uint64"},
-			mp.Metrics{Name: "max", Label: "max", Diff: false, Type: "uint64"},
-			mp.Metrics{Name: "used", Label: "used", Diff: false, Type: "uint64"},
+			mp.Metrics{Name: "HeapMemoryInit", Label: "init", Diff: false, Type: "uint64"},
+			mp.Metrics{Name: "HeapMemoryCommitted", Label: "committed", Diff: false, Type: "uint64"},
+			mp.Metrics{Name: "HeapMemoryMax", Label: "max", Diff: false, Type: "uint64"},
+			mp.Metrics{Name: "HeapMemoryUsed", Label: "used", Diff: false, Type: "uint64"},
 		},
 	},
 	"jolokia.memory.non_heap_memory_usage": mp.Graphs{
 		Label: "Jmx NonHeapMemoryUsage",
 		Unit:  "bytes",
 		Metrics: [](mp.Metrics){
-			mp.Metrics{Name: "nonInit", Label: "init", Diff: false, Type: "uint64"},
-			mp.Metrics{Name: "nonCommitted", Label: "committed", Diff: false, Type: "uint64"},
-			mp.Metrics{Name: "nonMax", Label: "max", Diff: false, Type: "uint64"},
-			mp.Metrics{Name: "nonUsed", Label: "used", Diff: false, Type: "uint64"},
+			mp.Metrics{Name: "NonHeapMemoryInit", Label: "init", Diff: false, Type: "uint64"},
+			mp.Metrics{Name: "NonHeapMemoryCommitted", Label: "committed", Diff: false, Type: "uint64"},
+			mp.Metrics{Name: "NonHeapMemoryMax", Label: "max", Diff: false, Type: "uint64"},
+			mp.Metrics{Name: "NonHeapMemoryUsed", Label: "used", Diff: false, Type: "uint64"},
 		},
 	},
 	"jolokia.class_load": mp.Graphs{
@@ -103,16 +103,16 @@ func (j JmxJolokiaPlugin) fetchMemory(stat map[string]interface{}) error {
 		return err
 	}
 	heap := resp.Value["HeapMemoryUsage"].(map[string]interface{})
-	stat["init"] = heap["init"]
-	stat["committed"] = heap["committed"]
-	stat["max"] = heap["max"]
-	stat["used"] = heap["used"]
+	stat["HeapMemoryInit"] = heap["init"]
+	stat["HeapMemoryCommitted"] = heap["committed"]
+	stat["HeapMemoryMax"] = heap["max"]
+	stat["HeapMemoryUsed"] = heap["used"]
 
 	nonHeap := resp.Value["NonHeapMemoryUsage"].(map[string]interface{})
-	stat["nonInit"] = nonHeap["init"]
-	stat["nonCommitted"] = nonHeap["committed"]
-	stat["nonMax"] = nonHeap["max"]
-	stat["nonUsed"] = nonHeap["used"]
+	stat["NonHeapMemoryInit"] = nonHeap["init"]
+	stat["NonHeapMemoryCommitted"] = nonHeap["committed"]
+	stat["NonHeapMemoryMax"] = nonHeap["max"]
+	stat["NonHeapMemoryUsed"] = nonHeap["used"]
 
 	return nil
 }
