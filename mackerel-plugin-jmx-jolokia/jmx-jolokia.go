@@ -29,7 +29,7 @@ type JmxJolokiaResponse struct {
 }
 
 var graphdef = map[string](mp.Graphs){
-	"jolokia.memory.heap_memory_usage": mp.Graphs{
+	"jmx.jolokia.memory.heap_memory_usage": mp.Graphs{
 		Label: "Jmx HeapMemoryUsage",
 		Unit:  "bytes",
 		Metrics: [](mp.Metrics){
@@ -39,7 +39,7 @@ var graphdef = map[string](mp.Graphs){
 			mp.Metrics{Name: "HeapMemoryUsed", Label: "used", Diff: false, Type: "uint64"},
 		},
 	},
-	"jolokia.memory.non_heap_memory_usage": mp.Graphs{
+	"jmx.jolokia.memory.non_heap_memory_usage": mp.Graphs{
 		Label: "Jmx NonHeapMemoryUsage",
 		Unit:  "bytes",
 		Metrics: [](mp.Metrics){
@@ -49,7 +49,7 @@ var graphdef = map[string](mp.Graphs){
 			mp.Metrics{Name: "NonHeapMemoryUsed", Label: "used", Diff: false, Type: "uint64"},
 		},
 	},
-	"jolokia.class_load": mp.Graphs{
+	"jmx.jolokia.class_load": mp.Graphs{
 		Label: "Jmx ClassLoading",
 		Unit:  "integer",
 		Metrics: [](mp.Metrics){
@@ -58,14 +58,14 @@ var graphdef = map[string](mp.Graphs){
 			mp.Metrics{Name: "TotalLoadedClassCount", Label: "total", Diff: false, Type: "uint64"},
 		},
 	},
-	"jolokia.thread": mp.Graphs{
+	"jmx.jolokia.thread": mp.Graphs{
 		Label: "Jmx Threading",
 		Unit:  "integer",
 		Metrics: [](mp.Metrics){
 			mp.Metrics{Name: "ThreadCount", Label: "thread", Diff: false, Type: "uint64"},
 		},
 	},
-	"jolokia.ops.cpu_load": mp.Graphs{
+	"jmx.jolokia.ops.cpu_load": mp.Graphs{
 		Label: "Jmx CpuLoad",
 		Unit:  "percentage",
 		Metrics: [](mp.Metrics){
