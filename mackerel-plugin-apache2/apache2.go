@@ -11,7 +11,7 @@ import (
 	"strings"
 
 	"github.com/codegangsta/cli"
-	mp "github.com/mackerelio/go-mackerel-plugin"
+	mp "github.com/mackerelio/go-mackerel-plugin-helper"
 )
 
 // metric value structure
@@ -99,13 +99,13 @@ func doMain(c *cli.Context) {
 }
 
 // FetchMetrics fetch the metrics
-func (c Apache2Plugin) FetchMetrics() (map[string]float64, error) {
+func (c Apache2Plugin) FetchMetrics() (map[string]interface{}, error) {
 	data, err := getApache2Metrics(c.Host, c.Port, c.Path, c.Header)
 	if err != nil {
 		return nil, err
 	}
 
-	stat := make(map[string]float64)
+	stat := make(map[string]interface{})
 	errStat := parseApache2Status(data, &stat)
 	if errStat != nil {
 		return nil, errStat
@@ -119,7 +119,7 @@ func (c Apache2Plugin) FetchMetrics() (map[string]float64, error) {
 }
 
 // parsing scoreboard from server-status?auto
-func parseApache2Scoreboard(str string, p *map[string]float64) error {
+func parseApache2Scoreboard(str string, p *map[string]interface{}) error {
 	for _, line := range strings.Split(str, "\n") {
 		matched, err := regexp.MatchString("Scoreboard(.*)", line)
 		if err != nil {
@@ -131,11 +131,11 @@ func parseApache2Scoreboard(str string, p *map[string]float64) error {
 		record := strings.Split(line, ":")
 		for _, sb := range strings.Split(strings.Trim(record[1], " "), "") {
 			name := fmt.Sprintf("score-%s", sb)
-			c, assert := (*p)[name]
+			c, assert := (*p)[name].(float64)
 			if !assert {
-				c = 0
+				c = 0.0
 			}
-			(*p)[name] = c + 1
+			(*p)[name] = c + 1.0
 		}
 		return nil
 	}
@@ -144,7 +144,7 @@ func parseApache2Scoreboard(str string, p *map[string]float64) error {
 }
 
 // parsing metrics from server-status?auto
-func parseApache2Status(str string, p *map[string]float64) error {
+func parseApache2Status(str string, p *map[string]interface{}) error {
 	Params := map[string]string{
 		"Total Accesses": "requests",
 		"Total kBytes":   "bytes_sent",
