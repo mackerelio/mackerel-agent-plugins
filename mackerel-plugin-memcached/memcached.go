@@ -2,11 +2,11 @@ package main
 
 import (
 	"bufio"
+	"crypto/md5"
 	"flag"
 	"fmt"
 	"io"
 	"net"
-	"os"
 	"strings"
 
 	mp "github.com/mackerelio/go-mackerel-plugin-helper"
@@ -91,12 +91,19 @@ var graphdef = map[string](mp.Graphs){
 // MemcachedPlugin mackerel plugin for memchached
 type MemcachedPlugin struct {
 	Target   string
+	Socket   string
 	Tempfile string
 }
 
 // FetchMetrics interface for mackerelplugin
 func (m MemcachedPlugin) FetchMetrics() (map[string]interface{}, error) {
-	conn, err := net.Dial("tcp", m.Target)
+	network := "tcp"
+	target := m.Target
+	if m.Socket != "" {
+		network = "unix"
+		target = m.Socket
+	}
+	conn, err := net.Dial(network, target)
 	if err != nil {
 		return nil, err
 	}
@@ -134,23 +141,26 @@ func (m MemcachedPlugin) GraphDefinition() map[string](mp.Graphs) {
 func main() {
 	optHost := flag.String("host", "localhost", "Hostname")
 	optPort := flag.String("port", "11211", "Port")
+	optSocket := flag.String("socket", "", "Server oscket (overrides hosts and port)")
 	optTempfile := flag.String("tempfile", "", "Temp file name")
 	flag.Parse()
 
 	var memcached MemcachedPlugin
-
-	memcached.Target = fmt.Sprintf("%s:%s", *optHost, *optPort)
+	if *optSocket != "" {
+		memcached.Socket = *optSocket
+	} else {
+		memcached.Target = fmt.Sprintf("%s:%s", *optHost, *optPort)
+	}
 	helper := mp.NewMackerelPlugin(memcached)
 
 	if *optTempfile != "" {
 		helper.Tempfile = *optTempfile
 	} else {
-		helper.Tempfile = fmt.Sprintf("/tmp/mackerel-plugin-memcached-%s-%s", *optHost, *optPort)
+		if memcached.Socket != "" {
+			helper.Tempfile = fmt.Sprintf("/tmp/mackerel-plugin-memcached-%s", fmt.Sprintf("%x", md5.Sum([]byte(memcached.Socket))))
+		} else {
+			helper.Tempfile = fmt.Sprintf("/tmp/mackerel-plugin-memcached-%s-%s", *optHost, *optPort)
+		}
 	}
-
-	if os.Getenv("MACKEREL_AGENT_PLUGIN_META") != "" {
-		helper.OutputDefinitions()
-	} else {
-		helper.OutputValues()
-	}
+	helper.Run()
 }
