@@ -8,7 +8,7 @@
 
 Summary: Monitoring program plugins for Mackerel
 Name: mackerel-agent-plugins
-Version: 0.16.0
+Version: 0.17.0
 Release: %{revision}
 License: Apache-2
 Group: Applications/System
@@ -29,7 +29,7 @@ This package provides plugins for Mackerel.
 
 %{__mkdir} -p %{buildroot}%{__targetdir}
 
-for i in apache2 aws-ec2-cpucredit aws-elasticache aws-elasticsearch aws-elb aws-rds aws-ses elasticsearch gostats haproxy jvm linux memcached mongodb munin mysql nginx php-apc php-opcache plack postgres redis snmp squid td-table-count trafficserver varnish xentop aws-cloudfront aws-ec2-ebs fluentd docker unicorn inode;do \
+for i in apache2 aws-ec2-cpucredit aws-elasticache aws-elasticsearch aws-elb aws-rds aws-ses conntrack elasticsearch gostats haproxy jmx-jolokia jvm linux memcached mongodb munin mysql nginx php-apc php-opcache plack postgres rabbitmq redis snmp squid td-table-count trafficserver varnish xentop aws-cloudfront aws-ec2-ebs fluentd docker unicorn inode;do \
     %{__install} -m0755 %{_sourcedir}/build/mackerel-plugin-$i %{buildroot}%{__targetdir}/; \
 done
 
@@ -41,6 +41,15 @@ done
 %{__targetdir}
 
 %changelog
+* Thu Feb 18 2016 <stefafafan@hatena.ne.jp> - 0.17.0
+- Add mackerel-plugin-rabbitmq (by haramaki)
+- Add metric key and label prefix option to Elasticsearch plugin (by yano3)
+- Add jmx jolokia plugin (by y-kuno)
+- Add nf(ip)_conntrack plugin (by hfm)
+- [memcached] support unix socket (by Songmu)
+- use plugin-helper for mackerel-plugin-apache2 (by stanaka)
+- add conntrack, jmx-jolokia, rabbitmq into package (by Songmu)
+
 * Thu Feb 04 2016 <y.songmu@gmail.com> - 0.16.0
 - Add couple of metrics to Elasticsearch plugin (by ariarijp)
 - [jvm] Add confirmation to error message (by tom--bo)
