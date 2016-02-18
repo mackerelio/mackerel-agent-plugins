@@ -35,6 +35,7 @@ Documentation for each plugin is located in its respective sub directory.
 * [mackerel-plugin-php-opcache](./mackerel-plugin-php-opcache/README.md)
 * [mackerel-plugin-plack](./mackerel-plugin-plack/README.md)
 * [mackerel-plugin-postgres](./mackerel-plugin-postgres/README.md)
+* [mackerel-plugin-rabbitmq](./mackerel-plugin-rabbitmq/README.md)
 * [mackerel-plugin-redis](./mackerel-plugin-redis/README.md)
 * [mackerel-plugin-snmp](./mackerel-plugin-snmp/README.md)
 * [mackerel-plugin-solr](./mackerel-plugin-solr/README.md)
