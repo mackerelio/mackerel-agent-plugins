@@ -20,7 +20,10 @@ var testHandler = http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) 
 })
 
 func TestGraphDefinition(t *testing.T) {
-	var elasticsearch ElasticsearchPlugin
+	elasticsearch := ElasticsearchPlugin{
+		Prefix:      "elasticsearch",
+		LabelPrefix: "Elasticsearch",
+	}
 	graphdef := elasticsearch.GraphDefinition()
 
 	assert.EqualValues(t, "Elasticsearch HTTP", graphdef["elasticsearch.http"].Label)
