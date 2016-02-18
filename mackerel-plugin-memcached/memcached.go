@@ -141,7 +141,7 @@ func (m MemcachedPlugin) GraphDefinition() map[string](mp.Graphs) {
 func main() {
 	optHost := flag.String("host", "localhost", "Hostname")
 	optPort := flag.String("port", "11211", "Port")
-	optSocket := flag.String("socket", "", "Server oscket (overrides hosts and port)")
+	optSocket := flag.String("socket", "", "Server socket (overrides hosts and port)")
 	optTempfile := flag.String("tempfile", "", "Temp file name")
 	flag.Parse()
 
