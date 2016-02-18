@@ -28,7 +28,7 @@ var graphdef = map[string](mp.Graphs){
 		Label: "Apache Bytes",
 		Unit:  "bytes",
 		Metrics: [](mp.Metrics){
-			mp.Metrics{Name: "bytes_sent", Label: "Bytes Sent", Diff: true},
+			mp.Metrics{Name: "bytes_sent", Label: "Bytes Sent", Diff: true, Type: "uint64"},
 		},
 	},
 	"apache2.cpu": mp.Graphs{
@@ -42,7 +42,7 @@ var graphdef = map[string](mp.Graphs){
 		Label: "Apache Requests",
 		Unit:  "integer",
 		Metrics: [](mp.Metrics){
-			mp.Metrics{Name: "requests", Label: "Requests", Diff: true},
+			mp.Metrics{Name: "requests", Label: "Requests", Diff: true, Type: "uint64"},
 		},
 	},
 	"apache2.scoreboard": mp.Graphs{
