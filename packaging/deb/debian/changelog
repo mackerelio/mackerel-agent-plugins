@@ -1,3 +1,22 @@
+mackerel-agent-plugins (0.17.0-1) stable; urgency=low
+
+  * Add mackerel-plugin-rabbitmq (by haramaki)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/165>
+  * Add metric key and label prefix option to Elasticsearch plugin (by yano3)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/173>
+  * Add jmx jolokia plugin (by y-kuno)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/174>
+  * Add nf(ip)_conntrack plugin (by hfm)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/175>
+  * [memcached] support unix socket (by Songmu)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/176>
+  * use plugin-helper for mackerel-plugin-apache2 (by stanaka)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/177>
+  * add conntrack, jmx-jolokia, rabbitmq into package (by Songmu)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/178>
+
+ -- Stefan Utamaru <stefafafan@hatena.ne.jp>  Thu, 18 Feb 2016 17:08:55 +0900
+
 mackerel-agent-plugins (0.16.0-1) stable; urgency=low
 
   * Add couple of metrics to Elasticsearch plugin (by ariarijp)
