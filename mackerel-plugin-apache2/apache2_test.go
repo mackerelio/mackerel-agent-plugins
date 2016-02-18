@@ -13,7 +13,7 @@ import (
 
 func TestParseApache2Scoreboard(t *testing.T) {
 	stub := "Scoreboard: W._SRWKDCLGI...."
-	stat := make(map[string]float64)
+	stat := make(map[string]interface{})
 
 	err := parseApache2Scoreboard(stub, &stat)
 	assert.Nil(t, err)
@@ -41,7 +41,7 @@ BytesPerReq: 57.2067
 BusyWorkers: 1
 IdleWorkers: 4
 `
-	stat := make(map[string]float64)
+	stat := make(map[string]interface{})
 
 	err := parseApache2Status(stub, &stat)
 	assert.Nil(t, err)
