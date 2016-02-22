@@ -396,6 +396,13 @@ func setInnoDBMetrics() {
 	}
 }
 
+func setIfEmpty(p *map[string]float64, key string, val float64) {
+	_, ok := (*p)[key]
+	if !ok {
+		(*p)[key] = val
+	}
+}
+
 func parseInnodbStatus(str string, p *map[string]float64) error {
 	isTransaction := false
 	prevLine := ""
@@ -592,69 +599,94 @@ func parseInnodbStatus(str string, p *map[string]float64) error {
 		}
 
 		// Buffer Pool and Memory
+		// 5.6 or before
 		if strings.Index(line, "Total memory allocated") == 0 && strings.Index(line, "in additional pool allocated") > 0 {
 			(*p)["total_mem_alloc"], _ = atof(record[3])
 			(*p)["additional_pool_alloc"], _ = atof(record[8])
 			continue
 		}
+		// 5.7
+		if strings.Index(line, "Total large memory allocated") == 0 {
+			(*p)["total_mem_alloc"], _ = atof(record[4])
+			continue
+		}
+
 		if strings.Index(line, "Adaptive hash index ") == 0 {
-			(*p)["adaptive_hash_memory"], _ = atof(record[3])
+			v, _ := atof(record[3])
+			setIfEmpty(p, "adaptive_hash_memory", v)
 			continue
 		}
 		if strings.Index(line, "Page hash           ") == 0 {
-			(*p)["page_hash_memory"], _ = atof(record[2])
+			v, _ := atof(record[2])
+			setIfEmpty(p, "page_hash_memory", v)
 			continue
 		}
 		if strings.Index(line, "Dictionary cache    ") == 0 {
-			(*p)["dictionary_cache_memory"], _ = atof(record[2])
+			v, _ := atof(record[2])
+			setIfEmpty(p, "dictionary_cache_memory", v)
 			continue
 		}
 		if strings.Index(line, "File system         ") == 0 {
-			(*p)["file_system_memory"], _ = atof(record[2])
+			v, _ := atof(record[2])
+			setIfEmpty(p, "file_system_memory", v)
 			continue
 		}
 		if strings.Index(line, "Lock system         ") == 0 {
-			(*p)["lock_system_memory"], _ = atof(record[2])
+			v, _ := atof(record[2])
+			setIfEmpty(p, "lock_system_memory", v)
 			continue
 		}
 		if strings.Index(line, "Recovery system     ") == 0 {
-			(*p)["recovery_system_memory"], _ = atof(record[2])
+			v, _ := atof(record[2])
+			setIfEmpty(p, "recovery_system_memory", v)
 			continue
 		}
 		if strings.Index(line, "Threads             ") == 0 {
-			(*p)["thread_hash_memory"], _ = atof(record[1])
+			v, _ := atof(record[1])
+			setIfEmpty(p, "thread_hash_memory", v)
 			continue
 		}
 		if strings.Index(line, "innodb_io_pattern   ") == 0 {
-			(*p)["innodb_io_pattern_memory"], _ = atof(record[1])
+			v, _ := atof(record[1])
+			setIfEmpty(p, "innodb_io_pattern_memory", v)
 			continue
 		}
 		if strings.Index(line, "Buffer pool size ") == 0 {
-			(*p)["pool_size"], _ = atof(record[3])
+			v, _ := atof(record[3])
+			setIfEmpty(p, "pool_size", v)
 			continue
 		}
 		if strings.Index(line, "Free buffers") == 0 {
-			(*p)["free_pages"], _ = atof(record[2])
+			v, _ := atof(record[2])
+			setIfEmpty(p, "free_pages", v)
 			continue
 		}
 		if strings.Index(line, "Database pages") == 0 {
-			(*p)["database_pages"], _ = atof(record[2])
+			v, _ := atof(record[2])
+			setIfEmpty(p, "database_pages", v)
 			continue
 		}
 		if strings.Index(line, "Modified db pages") == 0 {
-			(*p)["modified_pages"], _ = atof(record[3])
+			v, _ := atof(record[3])
+			setIfEmpty(p, "modified_pages", v)
 			continue
 		}
 		if strings.Index(line, "Pages read ahead") == 0 {
-			(*p)["read_ahead"], _ = atof(record[3])
-			(*p)["read_evicted"], _ = atof(record[7])
-			(*p)["read_random_ahead"], _ = atof(record[11])
+			v, _ := atof(record[3])
+			setIfEmpty(p, "read_ahead", v)
+			v, _ = atof(record[7])
+			setIfEmpty(p, "read_evicted", v)
+			v, _ = atof(record[11])
+			setIfEmpty(p, "read_random_ahead", v)
 			continue
 		}
 		if strings.Index(line, "Pages read") == 0 {
-			(*p)["pages_read"], _ = atof(record[2])
-			(*p)["pages_created"], _ = atof(record[4])
-			(*p)["pages_written"], _ = atof(record[6])
+			v, _ := atof(record[2])
+			setIfEmpty(p, "pages_read", v)
+			v, _ = atof(record[4])
+			setIfEmpty(p, "pages_created", v)
+			v, _ = atof(record[6])
+			setIfEmpty(p, "pages_written", v)
 			continue
 		}
 

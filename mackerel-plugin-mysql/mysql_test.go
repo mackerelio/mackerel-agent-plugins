@@ -981,7 +981,7 @@ END OF INNODB MONITOR OUTPUT
 	assert.EqualValues(t, stat["last_checkpoint"], 379575310)
 	// Buffer Pool and Memory
 	assert.EqualValues(t, stat["total_mem_alloc"], 1099431936)
-	assert.EqualValues(t, stat["additional_pool_alloc"], 1048576)
+	assert.EqualValues(t, stat["additional_pool_alloc"], 0)
 	assert.EqualValues(t, stat["adaptive_hash_memory"], 0)     // empty
 	assert.EqualValues(t, stat["page_hash_memory"], 0)         // empty
 	assert.EqualValues(t, stat["dictionary_cache_memory"], 0)  // empty
@@ -1001,14 +1001,14 @@ END OF INNODB MONITOR OUTPUT
 	assert.EqualValues(t, stat["pages_created"], 34)
 	assert.EqualValues(t, stat["pages_written"], 36)
 	// Row Operations
-	assert.EqualValues(t, stat["rows_inserted"], 835)
-	assert.EqualValues(t, stat["rows_updated"], 104)
-	assert.EqualValues(t, stat["rows_deleted"], 2)
-	assert.EqualValues(t, stat["rows_read"], 226461457)
+	assert.EqualValues(t, stat["rows_inserted"], 0)
+	assert.EqualValues(t, stat["rows_updated"], 0)
+	assert.EqualValues(t, stat["rows_deleted"], 0)
+	assert.EqualValues(t, stat["rows_read"], 8)
 	assert.EqualValues(t, stat["queries_inside"], 0)
 	assert.EqualValues(t, stat["queries_queued"], 0)
 	// etc
 	assert.EqualValues(t, stat["unflushed_log"], 0)
-	assert.EqualValues(t, stat["uncheckpointed_bytes"], 0)
+	assert.EqualValues(t, stat["uncheckpointed_bytes"], 9)
 
 }
