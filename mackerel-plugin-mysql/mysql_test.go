@@ -757,3 +757,258 @@ END OF INNODB MONITOR OUTPUT
 	assert.EqualValues(t, stat["unflushed_log"], 0)
 	assert.EqualValues(t, stat["uncheckpointed_bytes"], 0)
 }
+
+func TestParseProcStat57(t *testing.T) {
+	stub := `
+=====================================
+2016-02-22 19:08:31 0x700000eda000 INNODB MONITOR OUTPUT
+=====================================
+Per second averages calculated from the last 4 seconds
+-----------------
+BACKGROUND THREAD
+-----------------
+srv_master_thread loops: 1 srv_active, 0 srv_shutdown, 2 srv_idle
+srv_master_thread log flush and writes: 3
+----------
+SEMAPHORES
+----------
+OS WAIT ARRAY INFO: reservation count 63
+OS WAIT ARRAY INFO: signal count 111
+RW-shared spins 0, rounds 85, OS waits 22
+RW-excl spins 0, rounds 4705, OS waits 17
+RW-sx spins 0, rounds 0, OS waits 0
+Spin rounds per wait: 85.00 RW-shared, 4705.00 RW-excl, 0.00 RW-sx
+------------
+TRANSACTIONS
+------------
+Trx id counter 49154
+Purge done for trx's n:o < 44675 undo n:o < 0 state: running but idle
+History list length 775
+LIST OF TRANSACTIONS FOR EACH SESSION:
+---TRANSACTION 281479529875248, not started
+0 lock struct(s), heap size 1136, 0 row lock(s)
+--------
+FILE I/O
+--------
+I/O thread 0 state: waiting for i/o request (insert buffer thread)
+I/O thread 1 state: waiting for i/o request (log thread)
+I/O thread 2 state: waiting for i/o request (read thread)
+I/O thread 3 state: waiting for i/o request (read thread)
+I/O thread 4 state: waiting for i/o request (read thread)
+I/O thread 5 state: waiting for i/o request (read thread)
+I/O thread 6 state: waiting for i/o request (write thread)
+I/O thread 7 state: waiting for i/o request (write thread)
+I/O thread 8 state: waiting for i/o request (write thread)
+I/O thread 9 state: waiting for i/o request (write thread)
+Pending normal aio reads: [0, 0, 0, 0] , aio writes: [0, 0, 0, 0] ,
+ ibuf aio reads:, log i/o's:, sync i/o's:
+Pending flushes (fsync) log: 0; buffer pool: 0
+516 OS file reads, 55 OS file writes, 9 OS fsyncs
+128.97 reads/s, 20393 avg bytes/read, 13.75 writes/s, 2.25 fsyncs/s
+-------------------------------------
+INSERT BUFFER AND ADAPTIVE HASH INDEX
+-------------------------------------
+Ibuf: size 1, free list len 0, seg size 2, 0 merges
+merged operations:
+ insert 0, delete mark 0, delete 0
+discarded operations:
+ insert 0, delete mark 0, delete 0
+Hash table size 276671, node heap has 2 buffer(s)
+Hash table size 276671, node heap has 0 buffer(s)
+Hash table size 276671, node heap has 0 buffer(s)
+Hash table size 276671, node heap has 0 buffer(s)
+Hash table size 276671, node heap has 1 buffer(s)
+Hash table size 276671, node heap has 1 buffer(s)
+Hash table size 276671, node heap has 0 buffer(s)
+Hash table size 276671, node heap has 4 buffer(s)
+276.93 hash searches/s, 835.29 non-hash searches/s
+---
+LOG
+---
+Log sequence number 379575319
+Log flushed up to   379575319
+Pages flushed up to 379575319
+Last checkpoint at  379575310
+0 pending log flushes, 0 pending chkp writes
+12 log i/o's done, 3.00 log i/o's/second
+----------------------
+BUFFER POOL AND MEMORY
+----------------------
+Total large memory allocated 1099431936
+Dictionary memory allocated 312184
+Buffer pool size   65528
+Free buffers       64999
+Database pages     521
+Old database pages 0
+Modified db pages  0
+Pending reads 0
+Pending writes: LRU 0, flush list 0, single page 0
+Pages made young 0, not young 0
+0.00 youngs/s, 0.00 non-youngs/s
+Pages read 487, created 34, written 36
+121.72 reads/s, 8.50 creates/s, 9.00 writes/s
+Buffer pool hit rate 974 / 1000, young-making rate 0 / 1000 not 0 / 1000
+Pages read ahead 0.00/s, evicted without access 0.00/s, Random read ahead 0.00/s
+LRU len: 521, unzip_LRU len: 0
+I/O sum[0]:cur[0], unzip sum[0]:cur[0]
+----------------------
+INDIVIDUAL BUFFER POOL INFO
+----------------------
+---BUFFER POOL 0
+Buffer pool size   16382
+Free buffers       16228
+Database pages     152
+Old database pages 0
+Modified db pages  0
+Pending reads 0
+Pending writes: LRU 0, flush list 0, single page 0
+Pages made young 0, not young 0
+0.00 youngs/s, 0.00 non-youngs/s
+Pages read 152, created 0, written 2
+37.99 reads/s, 0.00 creates/s, 0.50 writes/s
+Buffer pool hit rate 976 / 1000, young-making rate 0 / 1000 not 0 / 1000
+Pages read ahead 0.00/s, evicted without access 0.00/s, Random read ahead 0.00/s
+LRU len: 152, unzip_LRU len: 0
+I/O sum[0]:cur[0], unzip sum[0]:cur[0]
+---BUFFER POOL 1
+Buffer pool size   16382
+Free buffers       16244
+Database pages     136
+Old database pages 0
+Modified db pages  0
+Pending reads 0
+Pending writes: LRU 0, flush list 0, single page 0
+Pages made young 0, not young 0
+0.00 youngs/s, 0.00 non-youngs/s
+Pages read 136, created 0, written 0
+33.99 reads/s, 0.00 creates/s, 0.00 writes/s
+Buffer pool hit rate 978 / 1000, young-making rate 0 / 1000 not 0 / 1000
+Pages read ahead 0.00/s, evicted without access 0.00/s, Random read ahead 0.00/s
+LRU len: 136, unzip_LRU len: 0
+I/O sum[0]:cur[0], unzip sum[0]:cur[0]
+---BUFFER POOL 2
+Buffer pool size   16382
+Free buffers       16313
+Database pages     67
+Old database pages 0
+Modified db pages  0
+Pending reads 0
+Pending writes: LRU 0, flush list 0, single page 0
+Pages made young 0, not young 0
+0.00 youngs/s, 0.00 non-youngs/s
+Pages read 67, created 0, written 0
+16.75 reads/s, 0.00 creates/s, 0.00 writes/s
+Buffer pool hit rate 975 / 1000, young-making rate 0 / 1000 not 0 / 1000
+Pages read ahead 0.00/s, evicted without access 0.00/s, Random read ahead 0.00/s
+LRU len: 67, unzip_LRU len: 0
+I/O sum[0]:cur[0], unzip sum[0]:cur[0]
+---BUFFER POOL 3
+Buffer pool size   16382
+Free buffers       16214
+Database pages     166
+Old database pages 0
+Modified db pages  0
+Pending reads 0
+Pending writes: LRU 0, flush list 0, single page 0
+Pages made young 0, not young 0
+0.00 youngs/s, 0.00 non-youngs/s
+Pages read 132, created 34, written 34
+32.99 reads/s, 8.50 creates/s, 8.50 writes/s
+Buffer pool hit rate 963 / 1000, young-making rate 0 / 1000 not 0 / 1000
+Pages read ahead 0.00/s, evicted without access 0.00/s, Random read ahead 0.00/s
+LRU len: 166, unzip_LRU len: 0
+I/O sum[0]:cur[0], unzip sum[0]:cur[0]
+--------------
+ROW OPERATIONS
+--------------
+0 queries inside InnoDB, 0 queries in queue
+0 read views open inside InnoDB
+Process ID=28837, Main thread ID=123145312497664, state: sleeping
+Number of rows inserted 0, updated 0, deleted 0, read 8
+0.00 inserts/s, 0.00 updates/s, 0.00 deletes/s, 2.00 reads/s
+----------------------------
+END OF INNODB MONITOR OUTPUT
+============================
+`
+	stat := make(map[string]float64)
+	err := parseInnodbStatus(stub, &stat)
+	assert.Nil(t, err)
+
+	// Innodb Semaphores
+	assert.EqualValues(t, stat["spin_waits"], 0)
+	assert.EqualValues(t, stat["spin_rounds"], 0) // empty
+	assert.EqualValues(t, stat["os_waits"], 39)
+	assert.EqualValues(t, stat["innodb_sem_wait"], 0)         // empty
+	assert.EqualValues(t, stat["innodb_sem_wait_time_ms"], 0) // empty
+	// Innodb Transactions
+	assert.EqualValues(t, stat["innodb_transactions"], 299348) // empty
+	assert.EqualValues(t, stat["unpurged_txns"], 19167)
+	assert.EqualValues(t, stat["history_list"], 775)
+	assert.EqualValues(t, stat["current_transactions"], 1)
+	assert.EqualValues(t, stat["active_transactions"], 0)
+	assert.EqualValues(t, stat["innodb_lock_wait_secs"], 0) // empty
+	assert.EqualValues(t, stat["read_views"], 0)
+	assert.EqualValues(t, stat["innodb_tables_in_use"], 0) // empty
+	assert.EqualValues(t, stat["innodb_locked_tables"], 0) // empty
+	assert.EqualValues(t, stat["locked_transactions"], 0)  // empty
+	assert.EqualValues(t, stat["innodb_lock_structs"], 0)  // empty
+	// File I/O
+	assert.EqualValues(t, stat["file_reads"], 516)
+	assert.EqualValues(t, stat["file_writes"], 55)
+	assert.EqualValues(t, stat["file_fsyncs"], 9)
+	assert.EqualValues(t, stat["pending_normal_aio_reads"], 0)
+	assert.EqualValues(t, stat["pending_normal_aio_writes"], 0)
+	assert.EqualValues(t, stat["pending_ibuf_aio_reads"], 0)
+	assert.EqualValues(t, stat["pending_aio_log_ios"], 0)
+	assert.EqualValues(t, stat["pending_aio_sync_ios"], 0)
+	assert.EqualValues(t, stat["pending_log_flushes"], 0)
+	assert.EqualValues(t, stat["pending_buf_pool_flushes"], 0)
+	// Insert Buffer and Adaptive Hash Index
+	assert.EqualValues(t, stat["ibuf_used_cells"], 1)
+	assert.EqualValues(t, stat["ibuf_free_cells"], 0)
+	assert.EqualValues(t, stat["ibuf_cell_count"], 2)
+	assert.EqualValues(t, stat["ibuf_inserts"], 0)
+	assert.EqualValues(t, stat["ibuf_merges"], 0)
+	assert.EqualValues(t, stat["ibuf_merged"], 0)
+	assert.EqualValues(t, stat["hash_index_cells_total"], 276671)
+	assert.EqualValues(t, stat["hash_index_cells_used"], 0)
+	// Log
+	assert.EqualValues(t, stat["log_writes"], 12)
+	assert.EqualValues(t, stat["pending_log_writes"], 0)
+	assert.EqualValues(t, stat["pending_chkp_writes"], 0)
+	assert.EqualValues(t, stat["log_bytes_written"], 379575319)
+	assert.EqualValues(t, stat["log_bytes_flushed"], 379575319)
+	assert.EqualValues(t, stat["last_checkpoint"], 379575310)
+	// Buffer Pool and Memory
+	assert.EqualValues(t, stat["total_mem_alloc"], 1099431936)
+	assert.EqualValues(t, stat["additional_pool_alloc"], 1048576)
+	assert.EqualValues(t, stat["adaptive_hash_memory"], 0)     // empty
+	assert.EqualValues(t, stat["page_hash_memory"], 0)         // empty
+	assert.EqualValues(t, stat["dictionary_cache_memory"], 0)  // empty
+	assert.EqualValues(t, stat["file_system_memory"], 0)       // empty
+	assert.EqualValues(t, stat["lock_system_memory"], 0)       // empty
+	assert.EqualValues(t, stat["recovery_system_memory"], 0)   // empty
+	assert.EqualValues(t, stat["thread_hash_memory"], 0)       // empty
+	assert.EqualValues(t, stat["innodb_io_pattern_memory"], 0) // empty
+	assert.EqualValues(t, stat["pool_size"], 65528)
+	assert.EqualValues(t, stat["free_pages"], 64999)
+	assert.EqualValues(t, stat["database_pages"], 521)
+	assert.EqualValues(t, stat["modified_pages"], 0)
+	assert.EqualValues(t, stat["read_ahead"], 0.00)
+	assert.EqualValues(t, stat["read_evicted"], 0.00)
+	assert.EqualValues(t, stat["read_random_ahead"], 0.00)
+	assert.EqualValues(t, stat["pages_read"], 487)
+	assert.EqualValues(t, stat["pages_created"], 34)
+	assert.EqualValues(t, stat["pages_written"], 36)
+	// Row Operations
+	assert.EqualValues(t, stat["rows_inserted"], 835)
+	assert.EqualValues(t, stat["rows_updated"], 104)
+	assert.EqualValues(t, stat["rows_deleted"], 2)
+	assert.EqualValues(t, stat["rows_read"], 226461457)
+	assert.EqualValues(t, stat["queries_inside"], 0)
+	assert.EqualValues(t, stat["queries_queued"], 0)
+	// etc
+	assert.EqualValues(t, stat["unflushed_log"], 0)
+	assert.EqualValues(t, stat["uncheckpointed_bytes"], 0)
+
+}
