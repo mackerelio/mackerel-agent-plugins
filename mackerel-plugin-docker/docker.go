@@ -2,15 +2,20 @@ package main
 
 import (
 	"bytes"
+	"encoding/json"
 	"errors"
 	"flag"
 	"fmt"
+	"io"
 	"log"
+	"net"
+	"net/http"
 	"os"
 	"os/exec"
 	"regexp"
 	"strconv"
 	"strings"
+	"time"
 
 	mp "github.com/mackerelio/go-mackerel-plugin-helper"
 )
@@ -69,6 +74,7 @@ type DockerPlugin struct {
 	Host          string
 	DockerCommand string
 	Tempfile      string
+	Method        string
 	pathBuilder   *pathBuilder
 }
 
@@ -112,13 +118,17 @@ func (m DockerPlugin) getDockerPs() (string, error) {
 }
 
 func findPrefixPath() (string, error) {
-	pathCandidate := []string{"/host/cgroup/", "/cgroup", "/host/sys/fs/cgroup", "/sys/fs/cgroup"}
+	pathCandidate := []string{"/host/cgroup", "/cgroup", "/host/sys/fs/cgroup", "/sys/fs/cgroup"}
 	for _, path := range pathCandidate {
 		result, err := exists(path)
 		if err != nil {
 			return "", err
 		}
-		if result {
+		resultDeep, err := exists(path + "/cpuacct")
+		if err != nil {
+			return "", err
+		}
+		if result && resultDeep {
 			return path, nil
 		}
 	}
@@ -180,6 +190,39 @@ func guessPathType(prefix string) (pathType, error) {
 	return pathUnknown, fmt.Errorf("can't resolve runtime metrics path")
 }
 
+func guessMethod(docker string) (string, error) {
+	cmd := exec.Command(docker, "version")
+	var out bytes.Buffer
+	cmd.Stdout = &out
+	err := cmd.Run()
+	if err != nil {
+		return "", err
+	}
+
+	lines := strings.SplitAfterN(out.String(), "\n", 2)
+	// Client version: 1.6.2
+	re := regexp.MustCompile(`Client version: ([0-9]+)(?:\.([0-9]+))?(?:\.([0-9]+))?`)
+	res := re.FindAllStringSubmatch(lines[0], 1)
+	if len(res) < 1 || len(res[0]) < 2 {
+		return "", fmt.Errorf("can't recognize version numbers.")
+	}
+
+	majorVer, err := strconv.Atoi(res[0][1])
+	if err != nil {
+		return "", err
+	}
+
+	minorVer, err := strconv.Atoi(res[0][2])
+	if err != nil {
+		return "", err
+	}
+
+	if majorVer == 1 && minorVer < 9 {
+		return "File", nil
+	}
+	return "API", nil
+}
+
 // FetchMetrics interface for mackerel plugin
 func (m DockerPlugin) FetchMetrics() (map[string]interface{}, error) {
 	dockerStats := map[string][]string{}
@@ -197,6 +240,70 @@ func (m DockerPlugin) FetchMetrics() (map[string]interface{}, error) {
 			dockerStats[fields[0]] = []string{fields[1], fields[len(fields)-2]}
 		}
 	}
+	if m.Method == "API" {
+		return m.FetchMetricsWithAPI(&dockerStats)
+	} else {
+		return m.FetchMetricsWithFile(&dockerStats)
+	}
+}
+
+func fakeDial(proto, addr string) (conn net.Conn, err error) {
+	sock := "/var/run/docker.sock"
+	return net.Dial("unix", sock)
+}
+
+func (m DockerPlugin) FetchMetricsWithAPI(dockerStats *map[string][]string) (map[string]interface{}, error) {
+
+	res := map[string]interface{}{}
+	for _, name := range *dockerStats {
+
+		tr := &http.Transport{
+			Dial: fakeDial,
+		}
+		client := &http.Client{
+			Transport: tr,
+			Timeout:   time.Duration(5) * time.Second,
+		}
+
+		dummyPrefix := "http://localhost"
+		requestURI := dummyPrefix + "/containers/" + name[1] + "/stats"
+		req, err := http.NewRequest("GET", requestURI, nil)
+		if err != nil {
+			return nil, err
+		}
+
+		resp, err := client.Do(req)
+		if err != nil {
+			return nil, err
+		}
+		defer resp.Body.Close()
+
+		if resp.StatusCode != 200 {
+			return nil, fmt.Errorf("Request failed. Status: %s, URI: %s", resp.Status, requestURI)
+		}
+
+		m.parseStats(&res, resp.Body)
+	}
+	return res, nil
+}
+
+func (m DockerPlugin) parseStats(stats *map[string]interface{}, body io.Reader) error {
+
+	dec := json.NewDecoder(body)
+	for {
+		var m interface{}
+		if err := dec.Decode(&m); err == io.EOF {
+			break
+		} else if err != nil {
+			log.Fatal(err)
+		}
+		fmt.Printf("%q\n\n", m)
+	}
+
+	return nil
+}
+
+func (m DockerPlugin) FetchMetricsWithFile(dockerStats *map[string][]string) (map[string]interface{}, error) {
 	pb := m.pathBuilder
 
 	metrics := map[string][]string{
@@ -205,7 +312,7 @@ func (m DockerPlugin) FetchMetrics() (map[string]interface{}, error) {
 	}
 
 	res := map[string]interface{}{}
-	for id, name := range dockerStats {
+	for id, name := range *dockerStats {
 		for metric, stats := range metrics {
 			if ok, err := exists(pb.build(id, metric, "stat")); !ok || err != nil {
 				continue
@@ -259,6 +366,7 @@ func (m DockerPlugin) GraphDefinition() map[string](mp.Graphs) {
 func main() {
 	optHost := flag.String("host", "unix:///var/run/docker.sock", "Host for socket")
 	optCommand := flag.String("command", "docker", "Command path to docker")
+	optUseAPI := flag.String("method", "", "Specify the method to collect stats, 'API' or 'File'. If not specified, an appropriate method is choosen.")
 	optTempfile := flag.String("tempfile", "", "Temp file name")
 	flag.Parse()
 
@@ -271,11 +379,25 @@ func main() {
 		log.Fatalf("Docker command is not found: %s", docker.DockerCommand)
 	}
 
-	pb, err := newPathBuilder()
-	if err != nil {
-		log.Fatalf("failed to resolve docker metrics path: %s. It may be no Docker containers exists.", err)
+	if *optUseAPI == "" {
+		docker.Method, err = guessMethod(docker.DockerCommand)
+		if err != nil {
+			log.Fatalf("Fail to guess stats method: %s", err.Error())
+		}
+	} else {
+		if *optUseAPI != "API" && *optUseAPI != "File" {
+			log.Fatalf("Method should be 'API', 'File' or an empty string.")
+		}
+		docker.Method = *optUseAPI
 	}
-	docker.pathBuilder = pb
+
+	if docker.Method == "File" {
+		pb, err := newPathBuilder()
+		if err != nil {
+			log.Fatalf("failed to resolve docker metrics path: %s. It may be no Docker containers exists.", err)
+		}
+		docker.pathBuilder = pb
+	}
 
 	helper := mp.NewMackerelPlugin(docker)
 
