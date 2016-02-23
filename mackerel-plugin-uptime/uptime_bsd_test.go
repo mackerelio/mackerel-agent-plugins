@@ -1,3 +1,5 @@
+// +build freebsd netbsd darwin
+
 package main
 
 import (
