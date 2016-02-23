@@ -12,9 +12,11 @@ func fetchMetrics() (map[string]interface{}, error) {
 	if err != nil {
 		return nil, fmt.Errorf("Faild to fetch uptime metrics: %s", err)
 	}
-	content := string(contentbytes)
-	cols := strings.Split(content, " ")
+	return calcMetrics(string(contentbytes))
+}
 
+func calcMetrics(str string) (map[string]interface{}, error) {
+	cols := strings.Split(str, " ")
 	f, err := strconv.ParseFloat(cols[0], 64)
 	if err != nil {
 		return nil, fmt.Errorf("Faild to fetch uptime metrics: %s", err)
