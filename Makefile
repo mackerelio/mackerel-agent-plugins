@@ -46,7 +46,7 @@ lint: testdeps
 	test ! -s $(LINT_RET)
 
 cover: testdeps
-	gotestcover -v -covermode=count -coverprofile=.profile.cov ./...
+	gotestcover -v -covermode=count -coverprofile=.profile.cov -parallelpackages=4 ./...
 
 rpm: build
 	rpmbuild --define "_sourcedir `pwd`" -ba packaging/rpm/mackerel-agent-plugins.spec
