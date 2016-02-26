@@ -3,6 +3,7 @@ package main
 import (
 	"os"
 	"os/exec"
+	"fmt"
 	"regexp"
 	"strconv"
 	"strings"
@@ -32,12 +33,20 @@ var deviceUnacceptablePattern = regexp.MustCompile(
 	`[^A-Za-z0-9_-]`,
 )
 
+var dfMultiLinePattern = regexp.MustCompile(
+	`^\s+(.+)$`,
+)
+
 //  $ df -i
 // Filesystem      Inodes  IUsed   IFree IUse% Mounted on
 // /dev/xvda1     1310720 131197 1179523   11% /
 //  $ df -i # on Mac OSX (impossible to display only inode information)
 // Filesystem 512-blocks      Used Available Capacity  iused    ifree %iused  Mounted on
 // /dev/disk1  974737408 176727800 797497608    19% 22154973 99687201   18%   /
+//  $ df -i # df outputs multi lines if dev path was too long.
+// Filesystem            Inodes   IUsed   IFree IUse% Mounted on
+// /dev/mapper/VolGroup00-lv_root
+//                      2542736  244151 2298585   10% /
 
 // FetchMetrics interface for mackerelplugin
 func (p InodePlugin) FetchMetrics() (map[string]interface{}, error) {
@@ -49,7 +58,13 @@ func (p InodePlugin) FetchMetrics() (map[string]interface{}, error) {
 		return nil, err
 	}
 	result := make(map[string]interface{})
+        lastline := ""
 	for _, line := range strings.Split(string(out), "\n") {
+                // join multi lines
+		if matches := dfMultiLinePattern.FindStringSubmatch(line); matches != nil {
+			line = fmt.Sprintf("%s\t%s", lastline, matches[1])
+		}
+
 		if dfHeaderPattern.MatchString(line) {
 			continue
 		} else if matches := dfColumnsPattern.FindStringSubmatch(line); matches != nil {
@@ -80,6 +95,7 @@ func (p InodePlugin) FetchMetrics() (map[string]interface{}, error) {
 				result["inode.percentage."+device+".used"] = usedPercentage
 			}
 		}
+		lastline = line
 	}
 	return result, nil
 }
