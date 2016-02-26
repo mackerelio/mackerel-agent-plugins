@@ -1,6 +1,7 @@
 package main
 
 import (
+	"crypto/md5"
 	"flag"
 	"fmt"
 	"log"
@@ -782,10 +783,13 @@ func main() {
 	mysql.Password = *optPass
 	mysql.DisableInnoDB = *optInnoDB
 	helper := mp.NewMackerelPlugin(mysql)
-	if *optTempfile != "" {
-		helper.Tempfile = *optTempfile
-	} else {
-		helper.Tempfile = fmt.Sprintf("/tmp/mackerel-plugin-mysql-%s-%s", *optHost, *optPort)
+	helper.Tempfile = *optTempfile
+	if helper.Tempfile != "" {
+		if mysql.isUnixSocket {
+			helper.Tempfile = fmt.Sprintf("/tmp/mackerel-plugin-mysql-%s", fmt.Sprintf("%x", md5.Sum([]byte(mysql.Target))))
+		} else {
+			helper.Tempfile = fmt.Sprintf("/tmp/mackerel-plugin-mysql-%s-%s", *optHost, *optPort)
+		}
 	}
 	helper.Run()
 }
