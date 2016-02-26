@@ -4,6 +4,7 @@ import (
 	"os"
 	"os/exec"
 	"regexp"
+	"runtime"
 	"strconv"
 	"strings"
 
@@ -32,7 +33,7 @@ var deviceUnacceptablePattern = regexp.MustCompile(
 	`[^A-Za-z0-9_-]`,
 )
 
-//  $ df -i
+//  $ df -iP
 // Filesystem      Inodes  IUsed   IFree IUse% Mounted on
 // /dev/xvda1     1310720 131197 1179523   11% /
 //  $ df -i # on Mac OSX (impossible to display only inode information)
@@ -41,7 +42,11 @@ var deviceUnacceptablePattern = regexp.MustCompile(
 
 // FetchMetrics interface for mackerelplugin
 func (p InodePlugin) FetchMetrics() (map[string]interface{}, error) {
-	cmd := exec.Command("df", "-i")
+	dfOpt := "-i"
+	if runtime.GOOS == "linux" {
+		dfOpt = "-iP"
+	}
+	cmd := exec.Command("df", dfOpt)
 	cmd.Env = append(os.Environ(), "LANG=C")
 	out, err := cmd.Output()
 	if err != nil {
