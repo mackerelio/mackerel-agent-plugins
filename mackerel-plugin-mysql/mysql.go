@@ -1,10 +1,10 @@
 package main
 
 import (
+	"crypto/md5"
 	"flag"
 	"fmt"
 	"log"
-	"os"
 	"strconv"
 	"strings"
 
@@ -93,6 +93,7 @@ type MySQLPlugin struct {
 	Username      string
 	Password      string
 	DisableInnoDB bool
+	isUnixSocket  bool
 }
 
 func (m MySQLPlugin) fetchShowStatus(db mysql.Conn, stat map[string]float64) error {
@@ -174,7 +175,11 @@ func (m MySQLPlugin) fetchShowSlaveStatus(db mysql.Conn, stat map[string]float64
 
 // FetchMetrics interface for mackerelplugin
 func (m MySQLPlugin) FetchMetrics() (map[string]interface{}, error) {
-	db := mysql.New("tcp", "", m.Target, m.Username, m.Password, "")
+	proto := "tcp"
+	if m.isUnixSocket {
+		proto = "unix"
+	}
+	db := mysql.New(proto, "", m.Target, m.Username, m.Password, "")
 	err := db.Connect()
 	if err != nil {
 		log.Fatalln("FetchMetrics (DB Connect): ", err)
@@ -759,6 +764,7 @@ func makeBigint(hi string, lo string) int64 {
 func main() {
 	optHost := flag.String("host", "localhost", "Hostname")
 	optPort := flag.String("port", "3306", "Port")
+	optSocket := flag.String("socket", "", "Port")
 	optUser := flag.String("username", "root", "Username")
 	optPass := flag.String("password", "", "Password")
 	optTempfile := flag.String("tempfile", "", "Temp file name")
@@ -767,20 +773,23 @@ func main() {
 
 	var mysql MySQLPlugin
 
-	mysql.Target = fmt.Sprintf("%s:%s", *optHost, *optPort)
+	if *optSocket != "" {
+		mysql.Target = *optSocket
+		mysql.isUnixSocket = true
+	} else {
+		mysql.Target = fmt.Sprintf("%s:%s", *optHost, *optPort)
+	}
 	mysql.Username = *optUser
 	mysql.Password = *optPass
 	mysql.DisableInnoDB = *optInnoDB
 	helper := mp.NewMackerelPlugin(mysql)
-	if *optTempfile != "" {
-		helper.Tempfile = *optTempfile
-	} else {
-		helper.Tempfile = fmt.Sprintf("/tmp/mackerel-plugin-mysql-%s-%s", *optHost, *optPort)
+	helper.Tempfile = *optTempfile
+	if helper.Tempfile != "" {
+		if mysql.isUnixSocket {
+			helper.Tempfile = fmt.Sprintf("/tmp/mackerel-plugin-mysql-%s", fmt.Sprintf("%x", md5.Sum([]byte(mysql.Target))))
+		} else {
+			helper.Tempfile = fmt.Sprintf("/tmp/mackerel-plugin-mysql-%s-%s", *optHost, *optPort)
+		}
 	}
-
-	if os.Getenv("MACKEREL_AGENT_PLUGIN_META") != "" {
-		helper.OutputDefinitions()
-	} else {
-		helper.OutputValues()
-	}
+	helper.Run()
 }
