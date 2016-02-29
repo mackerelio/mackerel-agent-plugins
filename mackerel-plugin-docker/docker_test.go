@@ -1,6 +1,9 @@
 package main
 
 import (
+	"bytes"
+	"fmt"
+	"github.com/stretchr/testify/assert"
 	"testing"
 )
 
@@ -110,12 +113,12 @@ func TestParseStats121(t *testing.T) {
 
 	dockerStats := bytes.NewBufferString(stub)
 
-	res := map[string]interface{}{}
-	stat, err := docker.parseStats(&res, dockerStats)
+	stat := map[string]interface{}{}
+	err := docker.parseStats(&stat, "test", dockerStats)
 	fmt.Println(stat)
 	assert.Nil(t, err)
 	// Docker Stats
-	assert.EqualValues(t, stat["cpu_usage"], 36488948)
+	assert.EqualValues(t, stat["docker.cpuacct.test.user"], 10000000)
 
 }
 
@@ -171,7 +174,216 @@ func TestParseStats117(t *testing.T) {
 		"failcnt" : 0,
 		"limit" : 67108864
 	},
-	"blkio_stats" : {},
+	"blkio_stats" : {
+    "io_service_bytes_recursive": [
+      {
+        "major": 202,
+        "minor": 1,
+        "op": "Read",
+        "value": 0
+      },
+      {
+        "major": 202,
+        "minor": 1,
+        "op": "Write",
+        "value": 0
+      },
+      {
+        "major": 202,
+        "minor": 1,
+        "op": "Sync",
+        "value": 0
+      },
+      {
+        "major": 202,
+        "minor": 1,
+        "op": "Async",
+        "value": 0
+      },
+      {
+        "major": 202,
+        "minor": 1,
+        "op": "Total",
+        "value": 0
+      }
+    ],
+    "io_serviced_recursive": [
+      {
+        "major": 202,
+        "minor": 1,
+        "op": "Read",
+        "value": 0
+      },
+      {
+        "major": 202,
+        "minor": 1,
+        "op": "Write",
+        "value": 0
+      },
+      {
+        "major": 202,
+        "minor": 1,
+        "op": "Sync",
+        "value": 0
+      },
+      {
+        "major": 202,
+        "minor": 1,
+        "op": "Async",
+        "value": 0
+      },
+      {
+        "major": 202,
+        "minor": 1,
+        "op": "Total",
+        "value": 0
+      }
+    ],
+    "io_queue_recursive": [
+      {
+        "major": 202,
+        "minor": 1,
+        "op": "Read",
+        "value": 0
+      },
+      {
+        "major": 202,
+        "minor": 1,
+        "op": "Write",
+        "value": 0
+      },
+      {
+        "major": 202,
+        "minor": 1,
+        "op": "Sync",
+        "value": 0
+      },
+      {
+        "major": 202,
+        "minor": 1,
+        "op": "Async",
+        "value": 0
+      },
+      {
+        "major": 202,
+        "minor": 1,
+        "op": "Total",
+        "value": 0
+      }
+    ],
+    "io_service_time_recursive": [
+      {
+        "major": 202,
+        "minor": 1,
+        "op": "Read",
+        "value": 0
+      },
+      {
+        "major": 202,
+        "minor": 1,
+        "op": "Write",
+        "value": 0
+      },
+      {
+        "major": 202,
+        "minor": 1,
+        "op": "Sync",
+        "value": 0
+      },
+      {
+        "major": 202,
+        "minor": 1,
+        "op": "Async",
+        "value": 0
+      },
+      {
+        "major": 202,
+        "minor": 1,
+        "op": "Total",
+        "value": 0
+      }
+    ],
+    "io_wait_time_recursive": [
+      {
+        "major": 202,
+        "minor": 1,
+        "op": "Read",
+        "value": 0
+      },
+      {
+        "major": 202,
+        "minor": 1,
+        "op": "Write",
+        "value": 0
+      },
+      {
+        "major": 202,
+        "minor": 1,
+        "op": "Sync",
+        "value": 0
+      },
+      {
+        "major": 202,
+        "minor": 1,
+        "op": "Async",
+        "value": 0
+      },
+      {
+        "major": 202,
+        "minor": 1,
+        "op": "Total",
+        "value": 0
+      }
+    ],
+    "io_merged_recursive": [
+      {
+        "major": 202,
+        "minor": 1,
+        "op": "Read",
+        "value": 0
+      },
+      {
+        "major": 202,
+        "minor": 1,
+        "op": "Write",
+        "value": 0
+      },
+      {
+        "major": 202,
+        "minor": 1,
+        "op": "Sync",
+        "value": 0
+      },
+      {
+        "major": 202,
+        "minor": 1,
+        "op": "Async",
+        "value": 0
+      },
+      {
+        "major": 202,
+        "minor": 1,
+        "op": "Total",
+        "value": 0
+      }
+    ],
+    "io_time_recursive": [
+      {
+        "major": 202,
+        "minor": 1,
+        "op": "",
+        "value": 0
+      }
+    ],
+    "sectors_recursive": [
+      {
+        "major": 202,
+        "minor": 1,
+        "op": "",
+        "value": 0
+      }
+    ]
+  },
 	"cpu_stats" : {
 		"cpu_usage" : {
 			"percpu_usage" : [
@@ -180,21 +392,25 @@ func TestParseStats117(t *testing.T) {
 				7107380,
 				10571290
 			],
-			"usage_in_usermode" : 10000000,
-			"total_usage" : 36488948,
-			"usage_in_kernelmode" : 20000000
+      "usage_in_kernelmode": 13250000000,
+      "total_usage": 31574924337,
+      "usage_in_usermode": 6380000000
 		},
 		"system_cpu_usage" : 20091722000000000,
-		"throttling_data" : {}
+		"throttling_data" : {
+      "periods": 0,
+      "throttled_periods": 0,
+      "throttled_time": 0
+    }
 	}
 }`
 	dockerStats := bytes.NewBufferString(stub)
 
-	res := map[string]interface{}{}
-	stat, err := docker.parseStats(&res, dockerStats)
+	stat := map[string]interface{}{}
+	err := docker.parseStats(&stat, "test", dockerStats)
 	fmt.Println(stat)
 	assert.Nil(t, err)
 	// Docker Stats
-	assert.EqualValues(t, stat["cpu_usage"], 36488948)
-
+	assert.EqualValues(t, stat["docker.cpuacct.test.user"], 6380000000)
+	assert.EqualValues(t, stat["docker.cpuacct.test.system"], 13250000000)
 }

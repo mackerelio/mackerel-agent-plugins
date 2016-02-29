@@ -12,6 +12,7 @@ import (
 	"net/http"
 	"os"
 	"os/exec"
+	"reflect"
 	"regexp"
 	"strconv"
 	"strings"
@@ -252,6 +253,21 @@ func fakeDial(proto, addr string) (conn net.Conn, err error) {
 	return net.Dial("unix", sock)
 }
 
+func fetchFloat64FromInterfaceOfNestedMapOfString(stats interface{}, keys []string) (float64, error) {
+	var statsReflected map[string]interface{}
+	for _, key := range keys {
+		if reflect.TypeOf(stats) != reflect.TypeOf(map[string]interface{}{}) {
+			return 0.0, fmt.Errorf("failed to type reflection (%s).", reflect.TypeOf(stats).String())
+		}
+		statsReflected = stats.(map[string]interface{})
+		stats = statsReflected[key]
+	}
+	if reflect.TypeOf(stats).Kind() != reflect.Float64 {
+		return 0.0, fmt.Errorf("failed to type reflection (%s).", reflect.TypeOf(stats).String())
+	}
+	return stats.(float64), nil
+}
+
 func (m DockerPlugin) FetchMetricsWithAPI(dockerStats *map[string][]string) (map[string]interface{}, error) {
 
 	res := map[string]interface{}{}
@@ -266,7 +282,7 @@ func (m DockerPlugin) FetchMetricsWithAPI(dockerStats *map[string][]string) (map
 		}
 
 		dummyPrefix := "http://localhost"
-		requestURI := dummyPrefix + "/containers/" + name[1] + "/stats"
+		requestURI := dummyPrefix + "/containers/" + name[1] + "/stats?stream=0"
 		req, err := http.NewRequest("GET", requestURI, nil)
 		if err != nil {
 			return nil, err
@@ -281,13 +297,31 @@ func (m DockerPlugin) FetchMetricsWithAPI(dockerStats *map[string][]string) (map
 		if resp.StatusCode != 200 {
 			return nil, fmt.Errorf("Request failed. Status: %s, URI: %s", resp.Status, requestURI)
 		}
-
-		m.parseStats(&res, resp.Body)
+		m.parseStats(&res, name[1], resp.Body)
 	}
 	return res, nil
 }
 
-func (m DockerPlugin) parseStats(stats *map[string]interface{}, body io.Reader) error {
+func (m DockerPlugin) parseStats(stats *map[string]interface{}, name string, body io.Reader) error {
+
+	/*
+		docker.cpuacct.mackerel_mackerel-agent_latest_8b4bf2.user       12.272727       1456734427
+		docker.cpuacct.mackerel_mackerel-agent_latest_8b4bf2.system     27.272727       1456734427
+		docker.memory.mackerel_mackerel-agent_latest_8b4bf2.cache       31703040.000000 1456734427
+		docker.memory.mackerel_mackerel-agent_latest_8b4bf2.rss 9400320.000000  1456734427
+		docker.blkio.io_queued.mackerel_mackerel-agent_latest_8b4bf2.read       0.000000        1456734427
+		docker.blkio.io_queued.mackerel_mackerel-agent_latest_8b4bf2.write      0.000000        1456734427
+		docker.blkio.io_queued.mackerel_mackerel-agent_latest_8b4bf2.sync       0.000000        1456734427
+		docker.blkio.io_queued.mackerel_mackerel-agent_latest_8b4bf2.async      0.000000        1456734427
+		docker.blkio.io_serviced.mackerel_mackerel-agent_latest_8b4bf2.read     0.000000        1456734427
+		docker.blkio.io_serviced.mackerel_mackerel-agent_latest_8b4bf2.write    0.000000        1456734427
+		docker.blkio.io_serviced.mackerel_mackerel-agent_latest_8b4bf2.sync     0.000000        1456734427
+		docker.blkio.io_serviced.mackerel_mackerel-agent_latest_8b4bf2.async    0.000000        1456734427
+		docker.blkio.io_service_bytes.mackerel_mackerel-agent_latest_8b4bf2.read        0.000000        1456734427
+		docker.blkio.io_service_bytes.mackerel_mackerel-agent_latest_8b4bf2.write       0.000000        1456734427
+		docker.blkio.io_service_bytes.mackerel_mackerel-agent_latest_8b4bf2.sync        0.000000        1456734427
+		docker.blkio.io_service_bytes.mackerel_mackerel-agent_latest_8b4bf2.async       0.000000        1456734427
+	*/
 
 	dec := json.NewDecoder(body)
 	for {
@@ -297,7 +331,25 @@ func (m DockerPlugin) parseStats(stats *map[string]interface{}, body io.Reader) 
 		} else if err != nil {
 			log.Fatal(err)
 		}
-		fmt.Printf("%q\n\n", m)
+		//fmt.Printf("%q\n\n", m.(map[string]interface{}))
+		var err error
+		(*stats)["docker.cpuacct."+name+".user"], err = fetchFloat64FromInterfaceOfNestedMapOfString(m, []string{"cpu_stats", "cpu_usage", "usage_in_usermode"})
+		if err != nil {
+			log.Fatal(err)
+		}
+		(*stats)["docker.cpuacct."+name+".system"], err = fetchFloat64FromInterfaceOfNestedMapOfString(m, []string{"cpu_stats", "cpu_usage", "usage_in_kernelmode"})
+		if err != nil {
+			log.Fatal(err)
+		}
+		(*stats)["docker.memory."+name+".cache"], err = fetchFloat64FromInterfaceOfNestedMapOfString(m, []string{"memory_stats", "stats", "total_cache"})
+		(*stats)["docker.memory."+name+".rss"], err = fetchFloat64FromInterfaceOfNestedMapOfString(m, []string{"memory_stats", "stats", "total_rss"})
+		if err != nil {
+			log.Fatal(err)
+		}
+
+		// force to finish reading stream.
+		// The query parameter 'stream' is only supported Docker API v1.19 or later.
+		return nil
 	}
 
 	return nil
