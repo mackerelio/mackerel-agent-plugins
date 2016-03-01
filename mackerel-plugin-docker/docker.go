@@ -205,7 +205,7 @@ func guessMethod(docker string) (string, error) {
 	re := regexp.MustCompile(`Client version: ([0-9]+)(?:\.([0-9]+))?(?:\.([0-9]+))?`)
 	res := re.FindAllStringSubmatch(lines[0], 1)
 	if len(res) < 1 || len(res[0]) < 2 {
-		return "", fmt.Errorf("can't recognize version numbers.")
+		return "", fmt.Errorf("can't recognize version numbers")
 	}
 
 	majorVer, err := strconv.Atoi(res[0][1])
@@ -243,9 +243,8 @@ func (m DockerPlugin) FetchMetrics() (map[string]interface{}, error) {
 	}
 	if m.Method == "API" {
 		return m.FetchMetricsWithAPI(&dockerStats)
-	} else {
-		return m.FetchMetricsWithFile(&dockerStats)
 	}
+	return m.FetchMetricsWithFile(&dockerStats)
 }
 
 func fakeDial(proto, addr string) (conn net.Conn, err error) {
@@ -257,17 +256,18 @@ func fetchFloat64FromInterfaceOfNestedMapOfString(stats interface{}, keys []stri
 	var statsReflected map[string]interface{}
 	for _, key := range keys {
 		if reflect.TypeOf(stats) != reflect.TypeOf(map[string]interface{}{}) {
-			return 0.0, fmt.Errorf("failed to type reflection (%s).", reflect.TypeOf(stats).String())
+			return 0.0, fmt.Errorf("failed to type reflection (%s)", reflect.TypeOf(stats).String())
 		}
 		statsReflected = stats.(map[string]interface{})
 		stats = statsReflected[key]
 	}
 	if reflect.TypeOf(stats).Kind() != reflect.Float64 {
-		return 0.0, fmt.Errorf("failed to type reflection (%s).", reflect.TypeOf(stats).String())
+		return 0.0, fmt.Errorf("failed to type reflection (%s)", reflect.TypeOf(stats).String())
 	}
 	return stats.(float64), nil
 }
 
+// FetchMetricsWithAPI use docker API to fetch metrics
 func (m DockerPlugin) FetchMetricsWithAPI(dockerStats *map[string][]string) (map[string]interface{}, error) {
 
 	res := map[string]interface{}{}
@@ -355,6 +355,7 @@ func (m DockerPlugin) parseStats(stats *map[string]interface{}, name string, bod
 	return nil
 }
 
+// FetchMetricsWithFile use cgroup stats files to fetch metrics
 func (m DockerPlugin) FetchMetricsWithFile(dockerStats *map[string][]string) (map[string]interface{}, error) {
 	pb := m.pathBuilder
 
