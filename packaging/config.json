@@ -37,6 +37,7 @@
        "fluentd",
        "docker",
        "unicorn",
+       "uptime",
        "inode"
     ]
 }
