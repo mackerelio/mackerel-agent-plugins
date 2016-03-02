@@ -1,3 +1,16 @@
+mackerel-agent-plugins (0.18.0-1) stable; urgency=low
+
+  * [mysql] care innodb_buffer_pool_instances (by Songmu)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/182>
+  * Add uptime plugin (by Songmu)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/183>
+  * [inode] use `df -iP` on linux (care line break) (by Songmu)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/185>
+  * [mysql] support unix socket (by Songmu)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/186>
+
+ -- Songmu <y.songmu@gmail.com>  Wed, 02 Mar 2016 15:27:07 +0900
+
 mackerel-agent-plugins (0.17.0-1) stable; urgency=low
 
   * Add mackerel-plugin-rabbitmq (by haramaki)
