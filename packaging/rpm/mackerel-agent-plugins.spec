@@ -8,7 +8,7 @@
 
 Summary: Monitoring program plugins for Mackerel
 Name: mackerel-agent-plugins
-Version: 0.17.0
+Version: 0.18.0
 Release: %{revision}
 License: Apache-2
 Group: Applications/System
@@ -41,6 +41,12 @@ done
 %{__targetdir}
 
 %changelog
+* Wed Mar 02 2016 <y.songmu@gmail.com> - 0.18.0
+- [mysql] care innodb_buffer_pool_instances (by Songmu)
+- Add uptime plugin (by Songmu)
+- [inode] use `df -iP` on linux (care line break) (by Songmu)
+- [mysql] support unix socket (by Songmu)
+
 * Thu Feb 18 2016 <stefafafan@hatena.ne.jp> - 0.17.0
 - Add mackerel-plugin-rabbitmq (by haramaki)
 - Add metric key and label prefix option to Elasticsearch plugin (by yano3)
