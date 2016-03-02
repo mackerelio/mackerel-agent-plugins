@@ -8,7 +8,7 @@
 
 Summary: Monitoring program plugins for Mackerel
 Name: mackerel-agent-plugins
-Version: 0.17.0
+Version: 0.18.0
 Release: %{revision}
 License: Apache-2
 Group: Applications/System
