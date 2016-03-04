@@ -1,6 +1,7 @@
 package main
 
 import (
+	"os"
 	"strings"
 	"testing"
 )
@@ -213,6 +214,65 @@ func TestParseMailqExim(t *testing.T) {
 		}
 		if count != 42 {
 			t.Errorf("Incorrect parse result %d", count)
+		}
+	}
+}
+
+func TestGraphDefinition(t *testing.T) {
+	plugin := plugin{
+		mta:   "postfix",
+		mailq: mailqFormats["postfix"],
+	}
+
+	{
+		graphs := plugin.GraphDefinition()
+		graphMailq, ok := graphs["mailq"]
+		if !ok {
+			t.Errorf("No graph definition for mailq")
+		}
+
+		if graphMailq.Unit != "integer" {
+			t.Errorf("Mailq is expected to be an integral graph")
+		}
+
+		if graphMailq.Label == "" {
+			t.Errorf("Mailq is expected to have a label")
+		}
+
+		if len(graphMailq.Metrics) != 1 {
+			t.Errorf("Mailq is expected to have one definition of metrics")
+		}
+
+		if graphMailq.Metrics[0].Name != "postfix" {
+			t.Errorf("Mailq is expected to have postfix metrics")
+		}
+
+		if graphMailq.Metrics[0].Type != "uint64" {
+			t.Errorf("Mailq is expected to have uint64 metrics")
+		}
+	}
+}
+
+func TestFetchMetricsPostfix(t *testing.T) {
+	plugin := plugin{
+		mta:   "postfix",
+		mailq: mailqFormats["postfix"],
+	}
+
+	origPath := os.Getenv("PATH")
+	os.Setenv("PATH", "./fixtures:/bin:/usr/bin")
+	defer os.Setenv("PATH", origPath)
+
+	{
+		os.Setenv("TEST_MAILQ_COUNT", "42")
+		defer os.Unsetenv("TEST_MAILQ_COUNT")
+
+		metrics, err := plugin.FetchMetrics()
+		if err != nil {
+			t.Errorf("Error %s", err.Error())
+		}
+		if metrics["postfix"].(uint64) != 42 {
+			t.Errorf("Incorrect value: %d", metrics["postfix"].(uint64))
 		}
 	}
 }

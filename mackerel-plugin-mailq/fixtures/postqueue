@@ -1,0 +1,27 @@
+#!/bin/bash
+
+# This script generates a dummy queue information in the format of Postfix postqueue
+
+[[ $1 != -p ]] && exit 1
+
+TEST_MAILQ_COUNT=${TEST_MAILQ_COUNT:-0}
+if [[ $TEST_MAILQ_COUNT -ne 0 ]]; then
+    cat <<EOF
+-Queue ID- --Size-- ----Arrival Time---- -Sender/Recipient-------
+EOF
+    for i in $(seq 1 "$TEST_MAILQ_COUNT"); do
+        cat <<EOF
+DD0C740001C      274 Thu Mar  3 23:52:37  foobar@example.com
+          (connect to mail.invalid[192.0.2.100]:25: Connection timed out)
+                                         nyao@mail.invalid
+
+EOF
+    done
+    cat <<EOF
+-- 15 Kbytes in ${TEST_MAILQ_COUNT} Requests.
+EOF
+else
+    cat <<EOF
+Mail queue is empty
+EOF
+fi

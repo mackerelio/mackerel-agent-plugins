@@ -96,7 +96,7 @@ func (p *plugin) GraphDefinition() map[string]mp.Graphs {
 			Label: "Messages in Mail Queue",
 			Unit:  "integer",
 			Metrics: []mp.Metrics{
-				{Name: p.mta, Label: p.mta, Type: "uint32"},
+				{Name: p.mta, Label: p.mta, Type: "uint64"},
 			},
 		},
 	}
