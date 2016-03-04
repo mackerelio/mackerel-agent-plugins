@@ -2,22 +2,17 @@ package main
 
 import (
 	"bytes"
-	"encoding/json"
 	"errors"
 	"flag"
 	"fmt"
-	"io"
 	"log"
-	"net"
-	"net/http"
 	"os"
 	"os/exec"
-	"reflect"
 	"regexp"
 	"strconv"
 	"strings"
-	"time"
 
+	"github.com/fsouza/go-dockerclient"
 	mp "github.com/mackerelio/go-mackerel-plugin-helper"
 )
 
@@ -241,45 +236,12 @@ func (m DockerPlugin) FetchMetrics() (map[string]interface{}, error) {
 			dockerStats[fields[0]] = []string{fields[1], fields[len(fields)-2]}
 		}
 	}
+
 	if m.Method == "API" {
 		return m.FetchMetricsWithAPI(&dockerStats)
 	}
+
 	return m.FetchMetricsWithFile(&dockerStats)
-}
-
-func fakeDial(proto, addr string) (conn net.Conn, err error) {
-	sock := "/var/run/docker.sock"
-	return net.Dial("unix", sock)
-}
-
-func fetchFloat64FromInterfaceOfNestedMapOfString(stats interface{}, keys []string) (float64, error) {
-	var statsReflected map[string]interface{}
-	for _, key := range keys {
-		if reflect.TypeOf(stats) != reflect.TypeOf(map[string]interface{}{}) {
-			return 0.0, fmt.Errorf("failed to type reflection (%q)", reflect.TypeOf(stats))
-		}
-		statsReflected = stats.(map[string]interface{})
-		stats = statsReflected[key]
-	}
-	if stats == nil || reflect.TypeOf(stats).Kind() != reflect.Float64 {
-		return 0.0, fmt.Errorf("failed to type reflection (%q)", reflect.TypeOf(stats))
-	}
-	return stats.(float64), nil
-}
-
-func fetchArrayFromInterfaceOfNestedMapOfString(stats interface{}, keys []string) ([]interface{}, error) {
-	var statsReflected map[string]interface{}
-	for _, key := range keys {
-		if reflect.TypeOf(stats) != reflect.TypeOf(map[string]interface{}{}) {
-			return nil, fmt.Errorf("failed to type reflection (%s, %q)", key, reflect.TypeOf(stats))
-		}
-		statsReflected = stats.(map[string]interface{})
-		stats = statsReflected[key]
-	}
-	if reflect.TypeOf(stats) != reflect.TypeOf([]interface{}{}) {
-		return nil, fmt.Errorf("failed to type reflection (%q)", reflect.TypeOf(stats))
-	}
-	return stats.([]interface{}), nil
 }
 
 // FetchMetricsWithAPI use docker API to fetch metrics
@@ -287,111 +249,58 @@ func (m DockerPlugin) FetchMetricsWithAPI(dockerStats *map[string][]string) (map
 
 	res := map[string]interface{}{}
 	for _, name := range *dockerStats {
-
-		tr := &http.Transport{
-			Dial: fakeDial,
+		endpoint := "unix:///var/run/docker.sock"
+		clientd, _ := docker.NewClient(endpoint)
+		errC := make(chan error, 1)
+		statsC := make(chan *docker.Stats)
+		done := make(chan bool)
+		go func() {
+			errC <- clientd.Stats(docker.StatsOptions{name[1], statsC, false, done, 0})
+			close(errC)
+		}()
+		var resultStats []*docker.Stats
+		for {
+			stats, ok := <-statsC
+			if !ok {
+				break
+			}
+			resultStats = append(resultStats, stats)
 		}
-		client := &http.Client{
-			Transport: tr,
-			Timeout:   time.Duration(5) * time.Second,
-		}
-
-		dummyPrefix := "http://localhost"
-		requestURI := dummyPrefix + "/containers/" + name[1] + "/stats?stream=0"
-		req, err := http.NewRequest("GET", requestURI, nil)
+		err := <-errC
 		if err != nil {
-			return nil, err
+			log.Fatal(err)
 		}
-
-		resp, err := client.Do(req)
-		if err != nil {
-			return nil, err
+		if len(resultStats) == 0 {
+			log.Fatalf("Stats: Expected 1 result. Got %d.", len(resultStats))
 		}
-		defer resp.Body.Close()
-
-		if resp.StatusCode != 200 {
-			return nil, fmt.Errorf("Request failed. Status: %s, URI: %s", resp.Status, requestURI)
-		}
-		m.parseStats(&res, name[1], resp.Body)
+		m.parseStats(&res, name[1], resultStats[0])
 	}
 	return res, nil
 }
 
-func (m DockerPlugin) parseStats(stats *map[string]interface{}, name string, body io.Reader) error {
-
-	/*
-		docker.cpuacct.mackerel_mackerel-agent_latest_8b4bf2.user       12.272727       1456734427
-		docker.cpuacct.mackerel_mackerel-agent_latest_8b4bf2.system     27.272727       1456734427
-		docker.memory.mackerel_mackerel-agent_latest_8b4bf2.cache       31703040.000000 1456734427
-		docker.memory.mackerel_mackerel-agent_latest_8b4bf2.rss 9400320.000000  1456734427
-		docker.blkio.io_queued.mackerel_mackerel-agent_latest_8b4bf2.read       0.000000        1456734427
-		docker.blkio.io_queued.mackerel_mackerel-agent_latest_8b4bf2.write      0.000000        1456734427
-		docker.blkio.io_queued.mackerel_mackerel-agent_latest_8b4bf2.sync       0.000000        1456734427
-		docker.blkio.io_queued.mackerel_mackerel-agent_latest_8b4bf2.async      0.000000        1456734427
-		docker.blkio.io_serviced.mackerel_mackerel-agent_latest_8b4bf2.read     0.000000        1456734427
-		docker.blkio.io_serviced.mackerel_mackerel-agent_latest_8b4bf2.write    0.000000        1456734427
-		docker.blkio.io_serviced.mackerel_mackerel-agent_latest_8b4bf2.sync     0.000000        1456734427
-		docker.blkio.io_serviced.mackerel_mackerel-agent_latest_8b4bf2.async    0.000000        1456734427
-		docker.blkio.io_service_bytes.mackerel_mackerel-agent_latest_8b4bf2.read        0.000000        1456734427
-		docker.blkio.io_service_bytes.mackerel_mackerel-agent_latest_8b4bf2.write       0.000000        1456734427
-		docker.blkio.io_service_bytes.mackerel_mackerel-agent_latest_8b4bf2.sync        0.000000        1456734427
-		docker.blkio.io_service_bytes.mackerel_mackerel-agent_latest_8b4bf2.async       0.000000        1456734427
-	*/
-
-	dec := json.NewDecoder(body)
-	for {
-		var m interface{}
-		if err := dec.Decode(&m); err == io.EOF {
-			break
-		} else if err != nil {
-			log.Fatal(err)
-		}
-		//fmt.Printf("%q\n\n", m.(map[string]interface{}))
-		var err error
-		(*stats)["docker.cpuacct."+name+".user"], err = fetchFloat64FromInterfaceOfNestedMapOfString(m, []string{"cpu_stats", "cpu_usage", "usage_in_usermode"})
-		if err != nil {
-			log.Printf("Error while fetcing cpuacct.user: %s", err)
-		}
-		(*stats)["docker.cpuacct."+name+".system"], err = fetchFloat64FromInterfaceOfNestedMapOfString(m, []string{"cpu_stats", "cpu_usage", "usage_in_kernelmode"})
-		if err != nil {
-			log.Printf("Error while fetcing cpuacct.system: %s", err)
-		}
-		(*stats)["docker.memory."+name+".cache"], err = fetchFloat64FromInterfaceOfNestedMapOfString(m, []string{"memory_stats", "stats", "total_cache"})
-		if err != nil {
-			log.Printf("Error while fetcing cpuacct.cache: %s", err)
-		}
-		(*stats)["docker.memory."+name+".rss"], err = fetchFloat64FromInterfaceOfNestedMapOfString(m, []string{"memory_stats", "stats", "total_rss"})
-		if err != nil {
-			log.Printf("Error while fetcing cpuacct.rss: %s", err)
-		}
-		ioTypes := map[string]string{
-			"io_queued":        "io_queue_recursive",
-			"io_serviced":      "io_serviced_recursive",
-			"io_service_bytes": "io_service_bytes_recursive",
-		}
-		fields := []string{"read", "write", "sync", "async"}
-		for typeOutput, typeStats := range ioTypes {
-			statsArray, err := fetchArrayFromInterfaceOfNestedMapOfString(m, []string{"blkio_stats", typeStats})
-			if err != nil {
-				log.Printf("Error while fetcing blkio_stats (%s: %s): %s", typeOutput, typeStats, err)
-			}
-			for _, field := range fields {
-				for _, s := range statsArray {
-					if reflect.TypeOf(s) == reflect.TypeOf(map[string]interface{}{}) {
-						sTyped := s.(map[string]interface{})
-						if sTyped["op"] == strings.Title(field) {
-							(*stats)["docker.blkio."+typeOutput+"."+name+"."+field] = sTyped["value"]
-						}
-					}
-				}
+func (m DockerPlugin) parseStats(stats *map[string]interface{}, name string, result *docker.Stats) error {
+	(*stats)["docker.cpuacct."+name+".user"] = (*result).CPUStats.CPUUsage.UsageInUsermode
+	(*stats)["docker.cpuacct."+name+".system"] = (*result).CPUStats.CPUUsage.UsageInKernelmode
+	(*stats)["docker.memory."+name+".cache"] = (*result).MemoryStats.Stats.TotalCache
+	(*stats)["docker.memory."+name+".rss"] = (*result).MemoryStats.Stats.TotalRss
+	fields := []string{"read", "write", "sync", "async"}
+	for _, field := range fields {
+		for _, s := range (*result).BlkioStats.IOQueueRecursive {
+			if s.Op == strings.Title(field) {
+				(*stats)["docker.blkio.io_queued."+name+"."+field] = s.Value
 			}
 		}
-
-		// force to finish reading stream.
-		// The query parameter 'stream' is only supported Docker API v1.19 or later.
-		return nil
+		for _, s := range (*result).BlkioStats.IOServicedRecursive {
+			if s.Op == strings.Title(field) {
+				(*stats)["docker.blkio.io_serviced."+name+"."+field] = s.Value
+			}
+		}
+		for _, s := range (*result).BlkioStats.IOServiceBytesRecursive {
+			if s.Op == strings.Title(field) {
+				(*stats)["docker.blkio.io_service_bytes."+name+"."+field] = s.Value
+			}
+		}
 	}
-
 	return nil
 }
 
