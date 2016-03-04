@@ -1,9 +1,6 @@
 package main
 
 import (
-	"bytes"
-	"fmt"
-	"github.com/stretchr/testify/assert"
 	"testing"
 )
 
