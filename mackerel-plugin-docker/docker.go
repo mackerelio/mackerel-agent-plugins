@@ -267,6 +267,21 @@ func fetchFloat64FromInterfaceOfNestedMapOfString(stats interface{}, keys []stri
 	return stats.(float64), nil
 }
 
+func fetchArrayFromInterfaceOfNestedMapOfString(stats interface{}, keys []string) ([]interface{}, error) {
+	var statsReflected map[string]interface{}
+	for _, key := range keys {
+		if reflect.TypeOf(stats) != reflect.TypeOf(map[string]interface{}{}) {
+			return nil, fmt.Errorf("failed to type reflection (%s, %s)", key, reflect.TypeOf(stats).String())
+		}
+		statsReflected = stats.(map[string]interface{})
+		stats = statsReflected[key]
+	}
+	if reflect.TypeOf(stats) != reflect.TypeOf([]interface{}{}) {
+		return nil, fmt.Errorf("failed to type reflection (%s)", reflect.TypeOf(stats).String())
+	}
+	return stats.([]interface{}), nil
+}
+
 // FetchMetricsWithAPI use docker API to fetch metrics
 func (m DockerPlugin) FetchMetricsWithAPI(dockerStats *map[string][]string) (map[string]interface{}, error) {
 
@@ -335,16 +350,41 @@ func (m DockerPlugin) parseStats(stats *map[string]interface{}, name string, bod
 		var err error
 		(*stats)["docker.cpuacct."+name+".user"], err = fetchFloat64FromInterfaceOfNestedMapOfString(m, []string{"cpu_stats", "cpu_usage", "usage_in_usermode"})
 		if err != nil {
-			log.Fatal(err)
+			log.Printf("Error while fetcing cpuacct.user: %s", err)
 		}
 		(*stats)["docker.cpuacct."+name+".system"], err = fetchFloat64FromInterfaceOfNestedMapOfString(m, []string{"cpu_stats", "cpu_usage", "usage_in_kernelmode"})
 		if err != nil {
-			log.Fatal(err)
+			log.Printf("Error while fetcing cpuacct.system: %s", err)
 		}
 		(*stats)["docker.memory."+name+".cache"], err = fetchFloat64FromInterfaceOfNestedMapOfString(m, []string{"memory_stats", "stats", "total_cache"})
+		if err != nil {
+			log.Printf("Error while fetcing cpuacct.cache: %s", err)
+		}
 		(*stats)["docker.memory."+name+".rss"], err = fetchFloat64FromInterfaceOfNestedMapOfString(m, []string{"memory_stats", "stats", "total_rss"})
 		if err != nil {
-			log.Fatal(err)
+			log.Printf("Error while fetcing cpuacct.rss: %s", err)
+		}
+		ioTypes := map[string]string{
+			"io_queued":        "io_queue_recursive",
+			"io_serviced":      "io_serviced_recursive",
+			"io_service_bytes": "io_service_bytes_recursive",
+		}
+		fields := []string{"read", "write", "sync", "async"}
+		for typeOutput, typeStats := range ioTypes {
+			statsArray, err := fetchArrayFromInterfaceOfNestedMapOfString(m, []string{"blkio_stats", typeStats})
+			if err != nil {
+				log.Printf("Error while fetcing blkio_stats (%s: %s): %s", typeOutput, typeStats, err)
+			}
+			for _, field := range fields {
+				for _, s := range statsArray {
+					if reflect.TypeOf(s) == reflect.TypeOf(map[string]interface{}{}) {
+						sTyped := s.(map[string]interface{})
+						if sTyped["op"] == strings.Title(field) {
+							(*stats)["docker.blkio."+typeOutput+"."+name+"."+field] = sTyped["value"]
+						}
+					}
+				}
+			}
 		}
 
 		// force to finish reading stream.
