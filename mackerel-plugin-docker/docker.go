@@ -256,13 +256,13 @@ func fetchFloat64FromInterfaceOfNestedMapOfString(stats interface{}, keys []stri
 	var statsReflected map[string]interface{}
 	for _, key := range keys {
 		if reflect.TypeOf(stats) != reflect.TypeOf(map[string]interface{}{}) {
-			return 0.0, fmt.Errorf("failed to type reflection (%s)", reflect.TypeOf(stats).String())
+			return 0.0, fmt.Errorf("failed to type reflection (%q)", reflect.TypeOf(stats))
 		}
 		statsReflected = stats.(map[string]interface{})
 		stats = statsReflected[key]
 	}
-	if reflect.TypeOf(stats).Kind() != reflect.Float64 {
-		return 0.0, fmt.Errorf("failed to type reflection (%s)", reflect.TypeOf(stats).String())
+	if stats == nil || reflect.TypeOf(stats).Kind() != reflect.Float64 {
+		return 0.0, fmt.Errorf("failed to type reflection (%q)", reflect.TypeOf(stats))
 	}
 	return stats.(float64), nil
 }
@@ -271,13 +271,13 @@ func fetchArrayFromInterfaceOfNestedMapOfString(stats interface{}, keys []string
 	var statsReflected map[string]interface{}
 	for _, key := range keys {
 		if reflect.TypeOf(stats) != reflect.TypeOf(map[string]interface{}{}) {
-			return nil, fmt.Errorf("failed to type reflection (%s, %s)", key, reflect.TypeOf(stats).String())
+			return nil, fmt.Errorf("failed to type reflection (%s, %q)", key, reflect.TypeOf(stats))
 		}
 		statsReflected = stats.(map[string]interface{})
 		stats = statsReflected[key]
 	}
 	if reflect.TypeOf(stats) != reflect.TypeOf([]interface{}{}) {
-		return nil, fmt.Errorf("failed to type reflection (%s)", reflect.TypeOf(stats).String())
+		return nil, fmt.Errorf("failed to type reflection (%q)", reflect.TypeOf(stats))
 	}
 	return stats.([]interface{}), nil
 }
