@@ -220,8 +220,9 @@ func TestParseMailqExim(t *testing.T) {
 
 func TestGraphDefinition(t *testing.T) {
 	plugin := plugin{
-		mta:   "postfix",
-		mailq: mailqFormats["postfix"],
+		mailq:       mailqFormats["postfix"],
+		keyPrefix:   "mailq",
+		labelPrefix: "Mailq",
 	}
 
 	{
@@ -243,20 +244,21 @@ func TestGraphDefinition(t *testing.T) {
 			t.Errorf("Mailq is expected to have one definition of metrics")
 		}
 
-		if graphMailq.Metrics[0].Name != "postfix" {
-			t.Errorf("Mailq is expected to have postfix metrics")
+		if graphMailq.Metrics[0].Name != "count" {
+			t.Errorf("Mailq is expected to have count metric")
 		}
 
 		if graphMailq.Metrics[0].Type != "uint64" {
-			t.Errorf("Mailq is expected to have uint64 metrics")
+			t.Errorf("Mailq is expected to have type uint64")
 		}
 	}
 }
 
 func TestFetchMetricsPostfix(t *testing.T) {
 	plugin := plugin{
-		mta:   "postfix",
-		mailq: mailqFormats["postfix"],
+		mailq:       mailqFormats["postfix"],
+		keyPrefix:   "mailq",
+		labelPrefix: "Mailq",
 	}
 
 	origPath := os.Getenv("PATH")
@@ -271,8 +273,8 @@ func TestFetchMetricsPostfix(t *testing.T) {
 		if err != nil {
 			t.Errorf("Error %s", err.Error())
 		}
-		if metrics["postfix"].(uint64) != 42 {
-			t.Errorf("Incorrect value: %d", metrics["postfix"].(uint64))
+		if metrics["count"].(uint64) != 42 {
+			t.Errorf("Incorrect value: %d", metrics["count"].(uint64))
 		}
 	}
 }

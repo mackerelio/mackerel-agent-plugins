@@ -40,9 +40,9 @@ var mailqFormats = map[string]mailq{
 }
 
 type plugin struct {
-	path  string
-	mailq mailq
-	mta   string
+	path                   string
+	mailq                  mailq
+	keyPrefix, labelPrefix string
 }
 
 func (format *mailq) parse(rd io.Reader) (count uint64, err error) {
@@ -87,16 +87,16 @@ func (p *plugin) FetchMetrics() (map[string]interface{}, error) {
 		return nil, err
 	}
 
-	return map[string]interface{}{p.mta: count}, nil
+	return map[string]interface{}{"count": count}, nil
 }
 
 func (p *plugin) GraphDefinition() map[string]mp.Graphs {
 	return map[string]mp.Graphs{
-		"mailq": {
-			Label: "Messages in Mail Queue",
+		p.keyPrefix: {
+			Label: p.labelPrefix + " Count",
 			Unit:  "integer",
 			Metrics: []mp.Metrics{
-				{Name: p.mta, Label: p.mta, Type: "uint64"},
+				{Name: "count", Label: "count", Type: "uint64"},
 			},
 		},
 	}
@@ -156,6 +156,8 @@ func main() {
 	command := flag.String("command", "", "path to queue-printing command (guessed by -M flag if not given)")
 	flag.StringVar(command, "c", "", "shorthand for -command")
 	tempfile := flag.String("tempfile", "/tmp/mackerel-plugin-mailq", "path to tempfile")
+	keyPrefix := flag.String("metric-key-prefix", "mailq", "prefix to metric key")
+	labelPrefix := flag.String("metric-label-prefix", "Mailq", "prefix to metric label")
 
 	flag.Parse()
 
@@ -165,9 +167,10 @@ func main() {
 		os.Exit(1)
 	} else {
 		plugin := &plugin{
-			mta:   *mta,
-			path:  *command,
-			mailq: format,
+			path:        *command,
+			mailq:       format,
+			keyPrefix:   *keyPrefix,
+			labelPrefix: *labelPrefix,
 		}
 		helper := mp.NewMackerelPlugin(plugin)
 		helper.Tempfile = *tempfile

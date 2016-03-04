@@ -6,7 +6,7 @@ This plugin collects the number of messages in the processing queue of MTAs.
 ### Usage
 
 ```
-mackerel-plugin-mailq -M <mta>
+mackerel-plugin-mailq -M <mta> [-metric-key-prefix <prefix>] [-metric-label-prefix <prefix>]
 ```
 
 #### Options
@@ -21,4 +21,3 @@ mackerel-plugin-mailq -M <mta>
 [plugin.metrics.mailq]
 command = "/usr/local/bin/mackerel-plugin-mailq -M postfix"
 ```
-
