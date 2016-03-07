@@ -69,6 +69,7 @@ var graphdef = map[string](mp.Graphs){
 type DockerPlugin struct {
 	Host          string
 	DockerCommand string
+	Endpoint      string
 	Tempfile      string
 	Method        string
 	pathBuilder   *pathBuilder
@@ -266,7 +267,7 @@ func (m DockerPlugin) FetchMetricsWithAPI(containers []docker.APIContainers) (ma
 	res := map[string]interface{}{}
 	for _, container := range containers {
 		name := strings.Replace(container.Names[0], "/", "", 1)
-		endpoint := "unix:///var/run/docker.sock"
+		endpoint := m.Endpoint
 		client, _ := docker.NewClient(endpoint)
 		errC := make(chan error, 1)
 		statsC := make(chan *docker.Stats)
@@ -386,6 +387,7 @@ func main() {
 	optHost := flag.String("host", "unix:///var/run/docker.sock", "Host for socket")
 	optCommand := flag.String("command", "docker", "Command path to docker")
 	optUseAPI := flag.String("method", "", "Specify the method to collect stats, 'API' or 'File'. If not specified, an appropriate method is choosen.")
+	optEndpoint := flag.String("endpoint", "unix:///var/run/docker.sock", "API endpoint for fetching metrics with API. default: 'unix:///var/run/docker.sock'")
 	optTempfile := flag.String("tempfile", "", "Temp file name")
 	flag.Parse()
 
@@ -397,6 +399,7 @@ func main() {
 	if err != nil {
 		log.Fatalf("Docker command is not found: %s", docker.DockerCommand)
 	}
+	docker.Endpoint = *optEndpoint
 
 	if *optUseAPI == "" {
 		docker.Method, err = guessMethod(docker.DockerCommand)
