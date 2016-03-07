@@ -113,6 +113,16 @@ func (m DockerPlugin) getDockerPs() (string, error) {
 	return out.String(), nil
 }
 
+func (m DockerPlugin) listContainer() ([]docker.APIContainers, error) {
+	endpoint := "unix:///var/run/docker.sock"
+	client, _ := docker.NewClient(endpoint)
+	containers, err := client.ListContainers(docker.ListContainersOptions{})
+	if err != nil {
+		return nil, err
+	}
+	return containers, nil
+}
+
 func findPrefixPath() (string, error) {
 	pathCandidate := []string{"/host/cgroup", "/cgroup", "/host/sys/fs/cgroup", "/sys/fs/cgroup"}
 	for _, path := range pathCandidate {
@@ -200,17 +210,20 @@ func guessMethod(docker string) (string, error) {
 	re := regexp.MustCompile(`Client version: ([0-9]+)(?:\.([0-9]+))?(?:\.([0-9]+))?`)
 	res := re.FindAllStringSubmatch(lines[0], 1)
 	if len(res) < 1 || len(res[0]) < 2 {
-		return "", fmt.Errorf("can't recognize version numbers")
+		log.Printf("Use API because of failing to recognize version")
+		return "API", nil
 	}
 
 	majorVer, err := strconv.Atoi(res[0][1])
 	if err != nil {
-		return "", err
+		log.Printf("Use API because of failing to recognize version")
+		return "API", nil
 	}
 
 	minorVer, err := strconv.Atoi(res[0][2])
 	if err != nil {
-		return "", err
+		log.Printf("Use API because of failing to recognize version")
+		return "API", nil
 	}
 
 	if majorVer == 1 && minorVer < 9 {
@@ -222,6 +235,14 @@ func guessMethod(docker string) (string, error) {
 // FetchMetrics interface for mackerel plugin
 func (m DockerPlugin) FetchMetrics() (map[string]interface{}, error) {
 	dockerStats := map[string][]string{}
+	if m.Method == "API" {
+		containers, err := m.listContainer()
+		if err != nil {
+			return nil, err
+		}
+		return m.FetchMetricsWithAPI(containers)
+	}
+
 	data, err := m.getDockerPs()
 	if err != nil {
 		return nil, err
@@ -237,25 +258,21 @@ func (m DockerPlugin) FetchMetrics() (map[string]interface{}, error) {
 		}
 	}
 
-	if m.Method == "API" {
-		return m.FetchMetricsWithAPI(&dockerStats)
-	}
-
 	return m.FetchMetricsWithFile(&dockerStats)
 }
 
 // FetchMetricsWithAPI use docker API to fetch metrics
-func (m DockerPlugin) FetchMetricsWithAPI(dockerStats *map[string][]string) (map[string]interface{}, error) {
-
+func (m DockerPlugin) FetchMetricsWithAPI(containers []docker.APIContainers) (map[string]interface{}, error) {
 	res := map[string]interface{}{}
-	for _, name := range *dockerStats {
+	for _, container := range containers {
+		name := strings.Replace(container.Names[0], "/", "", 1)
 		endpoint := "unix:///var/run/docker.sock"
-		clientd, _ := docker.NewClient(endpoint)
+		client, _ := docker.NewClient(endpoint)
 		errC := make(chan error, 1)
 		statsC := make(chan *docker.Stats)
 		done := make(chan bool)
 		go func() {
-			errC <- clientd.Stats(docker.StatsOptions{name[1], statsC, false, done, 0})
+			errC <- client.Stats(docker.StatsOptions{name, statsC, false, done, 0})
 			close(errC)
 		}()
 		var resultStats []*docker.Stats
@@ -273,7 +290,7 @@ func (m DockerPlugin) FetchMetricsWithAPI(dockerStats *map[string][]string) (map
 		if len(resultStats) == 0 {
 			log.Fatalf("Stats: Expected 1 result. Got %d.", len(resultStats))
 		}
-		m.parseStats(&res, name[1], resultStats[0])
+		m.parseStats(&res, name, resultStats[0])
 	}
 	return res, nil
 }
