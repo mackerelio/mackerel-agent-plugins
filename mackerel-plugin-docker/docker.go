@@ -204,10 +204,8 @@ func guessMethod(docker string) (string, error) {
 		return "", err
 	}
 
-	lines := strings.SplitAfterN(out.String(), "\n", 2)
-	// Client version: 1.6.2
-	re := regexp.MustCompile(`Client version: ([0-9]+)(?:\.([0-9]+))?(?:\.([0-9]+))?`)
-	res := re.FindAllStringSubmatch(lines[0], 1)
+	re := regexp.MustCompile(`Server API version: ([0-9]+)(?:\.([0-9]+))?`)
+	res := re.FindAllStringSubmatch(out.String(), 1)
 	if len(res) < 1 || len(res[0]) < 2 {
 		log.Printf("Use API because of failing to recognize version")
 		return "API", nil
@@ -225,7 +223,8 @@ func guessMethod(docker string) (string, error) {
 		return "API", nil
 	}
 
-	if majorVer == 1 && minorVer < 9 {
+	if majorVer == 1 && minorVer < 17 {
+		//log.Printf("Use File for fetching Metrics")
 		return "File", nil
 	}
 	return "API", nil
