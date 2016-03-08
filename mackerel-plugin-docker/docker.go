@@ -71,6 +71,8 @@ type DockerPlugin struct {
 	DockerCommand string
 	Tempfile      string
 	Method        string
+	NameFormat    string
+	Label         string
 	pathBuilder   *pathBuilder
 }
 
@@ -259,11 +261,32 @@ func (m DockerPlugin) FetchMetrics() (map[string]interface{}, error) {
 	return m.FetchMetricsWithFile(&dockerStats)
 }
 
+func (m DockerPlugin) generateName(container docker.APIContainers) string {
+	switch m.NameFormat {
+	case "name_id":
+		return fmt.Sprintf("%s_%s", strings.Replace(container.Names[0], "/", "", 1), container.ID[0:6])
+	case "name":
+		return strings.Replace(container.Names[0], "/", "", 1)
+	case "id":
+		return container.ID
+	case "image":
+		return container.Image
+	case "image_id":
+		return fmt.Sprintf("%s_%s", container.Image, container.ID[0:6])
+	case "image_name":
+		return fmt.Sprintf("%s_%s", container.Image, strings.Replace(container.Names[0], "/", "", 1))
+	case "label":
+		return container.Labels[m.Label]
+	}
+	return strings.Replace(container.Names[0], "/", "", 1)
+}
+
 // FetchMetricsWithAPI use docker API to fetch metrics
 func (m DockerPlugin) FetchMetricsWithAPI(containers []docker.APIContainers) (map[string]interface{}, error) {
 	res := map[string]interface{}{}
 	for _, container := range containers {
 		name := strings.Replace(container.Names[0], "/", "", 1)
+		metricName := normalizeMetricName(m.generateName(container))
 		client, _ := docker.NewClient(m.Host)
 		errC := make(chan error, 1)
 		statsC := make(chan *docker.Stats)
@@ -287,7 +310,7 @@ func (m DockerPlugin) FetchMetricsWithAPI(containers []docker.APIContainers) (ma
 		if len(resultStats) == 0 {
 			log.Fatalf("Stats: Expected 1 result. Got %d.", len(resultStats))
 		}
-		m.parseStats(&res, name, resultStats[0])
+		m.parseStats(&res, metricName, resultStats[0])
 	}
 	return res, nil
 }
@@ -380,10 +403,18 @@ func (m DockerPlugin) GraphDefinition() map[string](mp.Graphs) {
 }
 
 func main() {
+	candidateNameFormat := []string{"name", "name_id", "id", "image", "image_id", "image_name", "label"}
+	setCandidateNameFormat := make(map[string]bool)
+	for _, v := range candidateNameFormat {
+		setCandidateNameFormat[v] = true
+	}
+
 	optHost := flag.String("host", "unix:///var/run/docker.sock", "Host for socket")
 	optCommand := flag.String("command", "docker", "Command path to docker")
 	optUseAPI := flag.String("method", "", "Specify the method to collect stats, 'API' or 'File'. If not specified, an appropriate method is choosen.")
 	optTempfile := flag.String("tempfile", "", "Temp file name")
+	optNameFormat := flag.String("name-format", "name_id", "Set the name format from "+strings.Join(candidateNameFormat, ", "))
+	optLabel := flag.String("label", "", "Use the value of the key as name in case that name-format is label.")
 	flag.Parse()
 
 	var docker DockerPlugin
@@ -393,6 +424,15 @@ func main() {
 	_, err := exec.LookPath(docker.DockerCommand)
 	if err != nil {
 		log.Fatalf("Docker command is not found: %s", docker.DockerCommand)
+	}
+
+	docker.NameFormat = *optNameFormat
+	docker.Label = *optLabel
+	if !setCandidateNameFormat[docker.NameFormat] {
+		log.Fatalf("Name flag should be each of '%s'", strings.Join(candidateNameFormat, ","))
+	}
+	if docker.NameFormat == "label" && docker.Label == "" {
+		log.Fatalf("Label flag should be set when name flag is 'label'.")
 	}
 
 	if *optUseAPI == "" {

@@ -13,6 +13,8 @@ mackerel-plugin-docker [-method=<method>] [-host=<host>] [-command=<docker>] [-t
 - `-host` Socket path. This option is same as `--host` option of docker command. The default value is `unix:///var/run/docker.sock`.
 - `-command` Path to docker command. Without path, binary is searched in the directories named by the PATH environment variable. The default value is `docker`.
 - `-tempfile` Temporary file stored metric values for calculating differentials.
+- `-name-format` Set the name format from name, name_id, id, image, image_id, image_name or label (default "name_id")
+- `-label` Use the value of the key as name in case that name-format is label.
 
 ## Example of mackerel-agent.conf
 
