@@ -784,7 +784,7 @@ func main() {
 	mysql.DisableInnoDB = *optInnoDB
 	helper := mp.NewMackerelPlugin(mysql)
 	helper.Tempfile = *optTempfile
-	if helper.Tempfile != "" {
+	if helper.Tempfile == "" {
 		if mysql.isUnixSocket {
 			helper.Tempfile = fmt.Sprintf("/tmp/mackerel-plugin-mysql-%s", fmt.Sprintf("%x", md5.Sum([]byte(mysql.Target))))
 		} else {
