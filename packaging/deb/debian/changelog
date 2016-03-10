@@ -1,3 +1,10 @@
+mackerel-agent-plugins (0.18.1-1) stable; urgency=low
+
+  * Fix helper.Tempfile in mysql.go (by hfm)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/191>
+
+ -- Songmu <y.songmu@gmail.com>  Thu, 10 Mar 2016 15:58:49 +0900
+
 mackerel-agent-plugins (0.18.0-1) stable; urgency=low
 
   * [mysql] care innodb_buffer_pool_instances (by Songmu)

@@ -8,7 +8,7 @@
 
 Summary: Monitoring program plugins for Mackerel
 Name: mackerel-agent-plugins
-Version: 0.18.0
+Version: 0.18.1
 Release: %{revision}
 License: Apache-2
 Group: Applications/System
@@ -41,6 +41,9 @@ done
 %{__targetdir}
 
 %changelog
+* Thu Mar 10 2016 <y.songmu@gmail.com> - 0.18.1
+- Fix helper.Tempfile in mysql.go (by hfm)
+
 * Wed Mar 02 2016 <y.songmu@gmail.com> - 0.18.0
 - [mysql] care innodb_buffer_pool_instances (by Songmu)
 - Add uptime plugin (by Songmu)
