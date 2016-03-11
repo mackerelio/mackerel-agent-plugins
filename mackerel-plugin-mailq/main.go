@@ -60,7 +60,22 @@ func (format *mailq) parse(rd io.Reader) (count uint64, err error) {
 }
 
 func (p *plugin) fetchMailqCount() (count uint64, err error) {
-	cmd := exec.Command(p.mailq.command, p.mailq.args...)
+
+	var path string
+	if p.path != "" {
+		path = p.path
+	} else {
+		path, err = exec.LookPath(p.mailq.command)
+		if err != nil {
+			return
+		}
+	}
+
+	cmd := exec.Cmd{
+		Path: path,
+		Args: append([]string{p.mailq.command}, p.mailq.args...),
+	}
+
 	if p.path != "" {
 		cmd.Path = p.path
 	}
@@ -69,7 +84,11 @@ func (p *plugin) fetchMailqCount() (count uint64, err error) {
 	if err != nil {
 		return
 	}
-	cmd.Start()
+
+	err = cmd.Start()
+	if err != nil {
+		return
+	}
 
 	count, err = p.mailq.parse(stdout)
 	if err != nil {
