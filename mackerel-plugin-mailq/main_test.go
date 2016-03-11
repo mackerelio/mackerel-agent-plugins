@@ -278,3 +278,31 @@ func TestFetchMetricsPostfix(t *testing.T) {
 		}
 	}
 }
+
+func TestFetchMetricsQmail(t *testing.T) {
+	cwd, _ := os.Getwd()
+
+	plugin := plugin{
+		mailq:       mailqFormats["qmail"],
+		path:        cwd + "/fixtures/qmail/qmail-qstat",
+		keyPrefix:   "mailq",
+		labelPrefix: "Mailq",
+	}
+
+	origPath := os.Getenv("PATH")
+	os.Setenv("PATH", "/bin:/usr/bin")
+	defer os.Setenv("PATH", origPath)
+
+	{
+		os.Setenv("TEST_MAILQ_COUNT", "42")
+		defer os.Unsetenv("TEST_MAILQ_COUNT")
+
+		metrics, err := plugin.FetchMetrics()
+		if err != nil {
+			t.Errorf("Error %s", err.Error())
+		}
+		if metrics["count"].(uint64) != 42 {
+			t.Errorf("Incorrect value: %d", metrics["count"].(uint64))
+		}
+	}
+}
