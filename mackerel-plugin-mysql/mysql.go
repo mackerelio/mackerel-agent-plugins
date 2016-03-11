@@ -84,6 +84,14 @@ var graphdef = map[string](mp.Graphs){
 			mp.Metrics{Name: "Bytes_received", Label: "Received Bytes", Diff: true, Stacked: false},
 		},
 	},
+	"mysql.capacity": mp.Graphs{
+		Label: "MySQL Capacity",
+		Unit:  "percentage",
+		Metrics: [](mp.Metrics){
+			mp.Metrics{Name: "PercentageOfConnections", Label: "Percentage Of Connections", Diff: false, Stacked: false},
+			mp.Metrics{Name: "PercentageOfBufferPool", Label: "Percentage Of Buffer Pool", Diff: false, Stacked: false},
+		},
+	},
 }
 
 // MySQLPlugin mackerel plugin for MySQL
@@ -173,6 +181,11 @@ func (m MySQLPlugin) fetchShowSlaveStatus(db mysql.Conn, stat map[string]float64
 	return nil
 }
 
+func (m MySQLPlugin) calculateCapacity(stat map[string]float64) {
+	stat["PercentageOfConnections"] = 100.0 * stat["Threads_connected"] / stat["max_connections"];
+	stat["PercentageOfBufferPool"]  = 100.0 * stat["database_pages"] / stat["pool_size"];
+}
+
 // FetchMetrics interface for mackerelplugin
 func (m MySQLPlugin) FetchMetrics() (map[string]interface{}, error) {
 	proto := "tcp"
@@ -196,6 +209,7 @@ func (m MySQLPlugin) FetchMetrics() (map[string]interface{}, error) {
 	}
 
 	m.fetchShowSlaveStatus(db, stat)
+	m.calculateCapacity(stat)
 
 	statRet := make(map[string]interface{})
 	for key, value := range stat {
