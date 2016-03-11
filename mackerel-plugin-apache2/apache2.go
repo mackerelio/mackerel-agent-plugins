@@ -52,7 +52,7 @@ var graphdef = map[string](mp.Graphs){
 			mp.Metrics{Name: "score-_", Label: "Waiting for connection", Diff: false, Stacked: true},
 			mp.Metrics{Name: "score-S", Label: "Starting up", Diff: false, Stacked: true},
 			mp.Metrics{Name: "score-R", Label: "Reading request", Diff: false, Stacked: true},
-			mp.Metrics{Name: "scpre-W", Label: "Sending reply", Diff: false, Stacked: true},
+			mp.Metrics{Name: "score-W", Label: "Sending reply", Diff: false, Stacked: true},
 			mp.Metrics{Name: "score-K", Label: "Keepalive", Diff: false, Stacked: true},
 			mp.Metrics{Name: "score-D", Label: "DNS lookup", Diff: false, Stacked: true},
 			mp.Metrics{Name: "score-C", Label: "Closing connection", Diff: false, Stacked: true},
