@@ -131,11 +131,7 @@ func findPrefixPath() (string, error) {
 		if err != nil {
 			return "", err
 		}
-		resultDeep, err := exists(path + "/cpuacct")
-		if err != nil {
-			return "", err
-		}
-		if result && resultDeep {
+		if result {
 			return path, nil
 		}
 	}
@@ -152,6 +148,7 @@ type pathType uint8
 const (
 	pathUnknown pathType = iota
 	pathDocker
+	pathDockerShort
 	pathLxc
 	pathSlice
 )
@@ -173,6 +170,8 @@ func newPathBuilder() (*pathBuilder, error) {
 
 func (pb *pathBuilder) build(id, metric, postfix string) string {
 	switch pb.pathType {
+	case pathDockerShort:
+		return fmt.Sprintf("%s/docker/%s/%s.%s", pb.prefix, id, metric, postfix)
 	case pathDocker:
 		return fmt.Sprintf("%s/%s/docker/%s/%s.%s", pb.prefix, metric, id, metric, postfix)
 	case pathLxc:
@@ -193,6 +192,9 @@ func guessPathType(prefix string) (pathType, error) {
 	}
 	if ok, err := exists(prefix + "/memory/lxc/"); ok && err == nil {
 		return pathLxc, nil
+	}
+	if ok, err := exists(prefix + "/docker/"); ok && err == nil {
+		return pathDockerShort, nil
 	}
 	return pathUnknown, fmt.Errorf("can't resolve runtime metrics path")
 }
