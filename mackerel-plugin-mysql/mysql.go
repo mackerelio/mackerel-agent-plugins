@@ -182,8 +182,8 @@ func (m MySQLPlugin) fetchShowSlaveStatus(db mysql.Conn, stat map[string]float64
 }
 
 func (m MySQLPlugin) calculateCapacity(stat map[string]float64) {
-	stat["PercentageOfConnections"] = 100.0 * stat["Threads_connected"] / stat["max_connections"];
-	stat["PercentageOfBufferPool"]  = 100.0 * stat["database_pages"] / stat["pool_size"];
+	stat["PercentageOfConnections"] = 100.0 * stat["Threads_connected"] / stat["max_connections"]
+	stat["PercentageOfBufferPool"] = 100.0 * stat["database_pages"] / stat["pool_size"]
 }
 
 // FetchMetrics interface for mackerelplugin
