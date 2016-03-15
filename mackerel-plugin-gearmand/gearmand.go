@@ -2,14 +2,14 @@ package main
 
 import (
 	"bufio"
-	"errors"
 	"crypto/md5"
+	"errors"
 	"flag"
 	"fmt"
 	"io"
 	"net"
-	"strings"
 	"strconv"
+	"strings"
 
 	mp "github.com/mackerelio/go-mackerel-plugin-helper"
 )
@@ -29,10 +29,10 @@ var graphdef = map[string](mp.Graphs){
 }
 
 type gearmandFunction struct {
-	function string
+	function  string
 	available uint32
-	running uint32
-	total uint32
+	running   uint32
+	total     uint32
 }
 
 func (f *gearmandFunction) key(key string) string {
@@ -44,11 +44,11 @@ func (f *gearmandFunction) name() string {
 	// XXX: escape invalid characters
 	// Characters which can be used in custom metric names include any alphanumeric characters as well as hyphens (-), underscores (_), and dots (.).
 	name = strings.Replace(name, "\t", "-", -1)
-	name = strings.Replace(name, ":",  "-", -1)
-	name = strings.Replace(name, "+",  "-", -1)
-	name = strings.Replace(name, "=",  "-", -1)
-	name = strings.Replace(name, "#",  "-", -1)
-	name = strings.Replace(name, "$",  "-", -1)
+	name = strings.Replace(name, ":", "-", -1)
+	name = strings.Replace(name, "+", "-", -1)
+	name = strings.Replace(name, "=", "-", -1)
+	name = strings.Replace(name, "#", "-", -1)
+	name = strings.Replace(name, "$", "-", -1)
 	return name
 }
 
@@ -129,10 +129,10 @@ func parseLine(line string) (*gearmandFunction, error) {
 
 	name := strings.Join(reverse(res[3:]), "\t")
 	return &gearmandFunction{
-		function: name,
+		function:  name,
 		available: uint32(available),
-		running: uint32(running),
-		total: uint32(total),
+		running:   uint32(running),
+		total:     uint32(total),
 	}, nil
 }
 
