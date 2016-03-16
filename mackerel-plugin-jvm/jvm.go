@@ -31,14 +31,7 @@ type JVMPlugin struct {
 // 26547 NettyServer
 // 6438 Jps
 func fetchLvmidByAppname(appname, target, jpsPath string) (string, error) {
-	var TimeoutDuration = 10 * time.Second
-	var TimeoutKillAfter = 5 * time.Second
-	tio := &timeout.Timeout{
-		Cmd:       exec.Command(jpsPath, target),
-		Duration:  TimeoutDuration,
-		KillAfter: TimeoutKillAfter,
-	}
-	exitStatus, stdout, _, err := tio.Run()
+    stdout, _, exitStatus, err := RunTimeoutCommand(jpsPath, target)
 
 	if err == nil && exitStatus.IsTimedOut() {
 		err = fmt.Errorf("jps command timed out")
@@ -62,14 +55,7 @@ func fetchLvmidByAppname(appname, target, jpsPath string) (string, error) {
 }
 
 func fetchJstatMetrics(lvmid, option, jstatPath string) (map[string]float64, error) {
-	var TimeoutDuration = 10 * time.Second
-	var TimeoutKillAfter = 5 * time.Second
-	tio := &timeout.Timeout{
-		Cmd:       exec.Command(jstatPath, option, lvmid),
-		Duration:  TimeoutDuration,
-		KillAfter: TimeoutKillAfter,
-	}
-	exitStatus, stdout, _, err := tio.Run()
+    stdout, _, exitStatus, err := RunTimeoutCommand(jstatPath, option, lvmid)
 
 	if err == nil && exitStatus.IsTimedOut() {
 		err = fmt.Errorf("jstat command timed out")
@@ -107,14 +93,7 @@ func calculateMemorySpaceRate(gcStat map[string]float64, m JVMPlugin) (map[strin
 }
 
 func checkCMSGC(lvmid, JinfoPath string) bool {
-	var TimeoutDuration = 10 * time.Second
-	var TimeoutKillAfter = 5 * time.Second
-	tio := &timeout.Timeout{
-		Cmd:       exec.Command(JinfoPath, "-flag", "UseConcMarkSweepGC", lvmid),
-		Duration:  TimeoutDuration,
-		KillAfter: TimeoutKillAfter,
-	}
-	exitStatus, stdout, _, err := tio.Run()
+    stdout, _, exitStatus, err := RunTimeoutCommand(JinfoPath, "-flag", "UseConcMarkSweepGC", lvmid)
 
 	if err == nil && exitStatus.IsTimedOut() {
 		err = fmt.Errorf("jinfo command timed out")
@@ -129,14 +108,8 @@ func checkCMSGC(lvmid, JinfoPath string) bool {
 
 func fetchCMSInitiatingOccupancyFraction(lvmid, JinfoPath string) float64 {
 	var fraction float64
-	var TimeoutDuration = 10 * time.Second
-	var TimeoutKillAfter = 5 * time.Second
-	tio := &timeout.Timeout{
-		Cmd:       exec.Command(JinfoPath, "-flag", "CMSInitiatingOccupancyFraction", lvmid),
-		Duration:  TimeoutDuration,
-		KillAfter: TimeoutKillAfter,
-	}
-	exitStatus, stdout, _, err := tio.Run()
+
+    stdout, _, exitStatus, err := RunTimeoutCommand(JinfoPath, "-flag", "CMSInitiatingOccupancyFraction", lvmid)
 
 	if err == nil && exitStatus.IsTimedOut() {
 		err = fmt.Errorf("jinfo command timed out")
@@ -157,6 +130,18 @@ func mergeStat(dst, src map[string]float64) {
 	for k, v := range src {
 		dst[k] = v
 	}
+}
+
+func RunTimeoutCommand(Path string, Args ...string) (string, string, timeout.ExitStatus, error) {
+	var TimeoutDuration = 10 * time.Second
+	var TimeoutKillAfter = 5 * time.Second
+	tio := &timeout.Timeout{
+		Cmd:       exec.Command(Path, Args...),
+		Duration:  TimeoutDuration,
+		KillAfter: TimeoutKillAfter,
+	}
+	exitStatus, stdout, stderr, err := tio.Run()
+	return stdout, stderr, exitStatus, err
 }
 
 // <Java8> https://docs.oracle.com/javase/8/docs/technotes/tools/unix/jstat.html
