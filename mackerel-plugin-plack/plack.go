@@ -155,8 +155,8 @@ func main() {
 	optHost := flag.String("host", "localhost", "Hostname")
 	optPort := flag.String("port", "5000", "Port")
 	optPath := flag.String("path", "/server-status?json", "Path")
-	optPrefix := flag.String("prefix", "plack", "Prefix")
-	optLabelPrefix := flag.String("label-prefix", "", "Label Prefix")
+	optPrefix := flag.String("metric-key-prefix", "plack", "Prefix")
+	optLabelPrefix := flag.String("metric-label-prefix", "", "Label Prefix")
 	optTempfile := flag.String("tempfile", "", "Temp file name")
 	flag.Parse()
 
