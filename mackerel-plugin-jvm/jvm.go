@@ -8,7 +8,9 @@ import (
 	"os/exec"
 	"strconv"
 	"strings"
+	"time"
 
+	"github.com/Songmu/timeout"
 	mp "github.com/mackerelio/go-mackerel-plugin-helper"
 	"github.com/mackerelio/mackerel-agent/logging"
 )
@@ -29,12 +31,17 @@ type JVMPlugin struct {
 // 26547 NettyServer
 // 6438 Jps
 func fetchLvmidByAppname(appname, target, jpsPath string) (string, error) {
-	out, err := exec.Command(jpsPath, target).Output()
+	stdout, _, exitStatus, err := runTimeoutCommand(jpsPath, target)
+
+	if err == nil && exitStatus.IsTimedOut() {
+		err = fmt.Errorf("jps command timed out")
+	}
 	if err != nil {
 		logger.Errorf("Failed to run exec jps. %s. Please run with the java process user.", err)
 		return "", err
 	}
-	for _, line := range strings.Split(string(out), "\n") {
+
+	for _, line := range strings.Split(string(stdout), "\n") {
 		words := strings.Split(line, " ")
 		if len(words) != 2 {
 			continue
@@ -48,13 +55,17 @@ func fetchLvmidByAppname(appname, target, jpsPath string) (string, error) {
 }
 
 func fetchJstatMetrics(lvmid, option, jstatPath string) (map[string]float64, error) {
-	out, err := exec.Command(jstatPath, option, lvmid).Output()
+	stdout, _, exitStatus, err := runTimeoutCommand(jstatPath, option, lvmid)
+
+	if err == nil && exitStatus.IsTimedOut() {
+		err = fmt.Errorf("jstat command timed out")
+	}
 	if err != nil {
 		logger.Errorf("Failed to run exec jstat. %s. Please run with the java process user.", err)
 		return nil, err
 	}
 
-	lines := strings.Split(string(out), "\n")
+	lines := strings.Split(string(stdout), "\n")
 	keys := strings.Fields(lines[0])
 	values := strings.Fields(lines[1])
 
@@ -82,22 +93,33 @@ func calculateMemorySpaceRate(gcStat map[string]float64, m JVMPlugin) (map[strin
 }
 
 func checkCMSGC(lvmid, JinfoPath string) bool {
-	output, err := exec.Command(JinfoPath, "-flag", "UseConcMarkSweepGC", lvmid).Output()
+	stdout, _, exitStatus, err := runTimeoutCommand(JinfoPath, "-flag", "UseConcMarkSweepGC", lvmid)
+
+	if err == nil && exitStatus.IsTimedOut() {
+		err = fmt.Errorf("jinfo command timed out")
+		os.Exit(1)
+	}
 	if err != nil {
 		logger.Errorf("Failed to run exec jinfo. %s. Please run with the java process user.", err)
 		os.Exit(1)
 	}
-	return strings.Index(string(output), "+UseConcMarkSweepGC") != -1
+	return strings.Index(string(stdout), "+UseConcMarkSweepGC") != -1
 }
 
 func fetchCMSInitiatingOccupancyFraction(lvmid, JinfoPath string) float64 {
 	var fraction float64
-	output, err := exec.Command(JinfoPath, "-flag", "CMSInitiatingOccupancyFraction", lvmid).Output()
+
+	stdout, _, exitStatus, err := runTimeoutCommand(JinfoPath, "-flag", "CMSInitiatingOccupancyFraction", lvmid)
+
+	if err == nil && exitStatus.IsTimedOut() {
+		err = fmt.Errorf("jinfo command timed out")
+	}
 	if err != nil {
 		logger.Errorf("Failed to run exec jinfo. %s. Please run with the java process user.", err)
 		os.Exit(1)
 	}
-	out := strings.Trim(string(output), "\n")
+
+	out := strings.Trim(string(stdout), "\n")
 	tmp := strings.Split(out, "=")
 	fraction, _ = strconv.ParseFloat(tmp[1], 64)
 
@@ -108,6 +130,18 @@ func mergeStat(dst, src map[string]float64) {
 	for k, v := range src {
 		dst[k] = v
 	}
+}
+
+func runTimeoutCommand(Path string, Args ...string) (string, string, timeout.ExitStatus, error) {
+	var TimeoutDuration = 10 * time.Second
+	var TimeoutKillAfter = 5 * time.Second
+	tio := &timeout.Timeout{
+		Cmd:       exec.Command(Path, Args...),
+		Duration:  TimeoutDuration,
+		KillAfter: TimeoutKillAfter,
+	}
+	exitStatus, stdout, stderr, err := tio.Run()
+	return stdout, stderr, exitStatus, err
 }
 
 // <Java8> https://docs.oracle.com/javase/8/docs/technotes/tools/unix/jstat.html
