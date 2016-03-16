@@ -1,0 +1,9 @@
+#!/bin/bash
+
+# This script generates a dummy queue information in the format of qmail-qstat
+
+TEST_MAILQ_COUNT=${TEST_MAILQ_COUNT:-0}
+cat <<EOF
+messages in queue: ${TEST_MAILQ_COUNT}
+messages in queue but not yet preprocessed: 0
+EOF
