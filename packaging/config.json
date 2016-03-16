@@ -15,6 +15,7 @@
        "jmx-jolokia",
        "jvm",
        "linux",
+       "mailq",
        "memcached",
        "mongodb",
        "munin",
