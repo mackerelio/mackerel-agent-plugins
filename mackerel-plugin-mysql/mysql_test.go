@@ -11,7 +11,7 @@ func TestGraphDefinition_DisableInnoDB(t *testing.T) {
 
 	mysql.DisableInnoDB = true
 	graphdef := mysql.GraphDefinition()
-	if len(graphdef) != 7 {
+	if len(graphdef) != 8 {
 		t.Errorf("GetTempfilename: %d should be 7", len(graphdef))
 	}
 }
@@ -20,7 +20,7 @@ func TestGraphDefinition(t *testing.T) {
 	var mysql MySQLPlugin
 
 	graphdef := mysql.GraphDefinition()
-	if len(graphdef) != 28 {
+	if len(graphdef) != 29 {
 		t.Errorf("GetTempfilename: %d should be 28", len(graphdef))
 	}
 }
