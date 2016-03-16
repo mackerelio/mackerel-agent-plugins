@@ -41,6 +41,16 @@ done
 %{__targetdir}
 
 %changelog
+* Thu Mar 17 2016 <y.songmu@gmail.com> - 0.19.0
+- [docker] Use Docker stats API (by stanaka)
+- Add mailq plugin (by hanazuki)
+- added mackerel-plugin-gearmand (by karupanerura)
+- added capacity metrics for mysql (by karupanerura)
+- added capacity metrics for redis (by karupanerura)
+- support to metric-key-prefix/metric-label-prefix option for mackerel-plugin-plack (by karupanerura)
+- Time out if jps,jinfo,jstat is hanged up (by tom--bo)
+- add mailq into package (by Songmu)
+
 * Thu Mar 10 2016 <y.songmu@gmail.com> - 0.18.1
 - Fix helper.Tempfile in mysql.go (by hfm)
 
