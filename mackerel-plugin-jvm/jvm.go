@@ -31,7 +31,7 @@ type JVMPlugin struct {
 // 26547 NettyServer
 // 6438 Jps
 func fetchLvmidByAppname(appname, target, jpsPath string) (string, error) {
-    stdout, _, exitStatus, err := RunTimeoutCommand(jpsPath, target)
+	stdout, _, exitStatus, err := runTimeoutCommand(jpsPath, target)
 
 	if err == nil && exitStatus.IsTimedOut() {
 		err = fmt.Errorf("jps command timed out")
@@ -55,7 +55,7 @@ func fetchLvmidByAppname(appname, target, jpsPath string) (string, error) {
 }
 
 func fetchJstatMetrics(lvmid, option, jstatPath string) (map[string]float64, error) {
-    stdout, _, exitStatus, err := RunTimeoutCommand(jstatPath, option, lvmid)
+	stdout, _, exitStatus, err := runTimeoutCommand(jstatPath, option, lvmid)
 
 	if err == nil && exitStatus.IsTimedOut() {
 		err = fmt.Errorf("jstat command timed out")
@@ -93,7 +93,7 @@ func calculateMemorySpaceRate(gcStat map[string]float64, m JVMPlugin) (map[strin
 }
 
 func checkCMSGC(lvmid, JinfoPath string) bool {
-    stdout, _, exitStatus, err := RunTimeoutCommand(JinfoPath, "-flag", "UseConcMarkSweepGC", lvmid)
+	stdout, _, exitStatus, err := runTimeoutCommand(JinfoPath, "-flag", "UseConcMarkSweepGC", lvmid)
 
 	if err == nil && exitStatus.IsTimedOut() {
 		err = fmt.Errorf("jinfo command timed out")
@@ -109,7 +109,7 @@ func checkCMSGC(lvmid, JinfoPath string) bool {
 func fetchCMSInitiatingOccupancyFraction(lvmid, JinfoPath string) float64 {
 	var fraction float64
 
-    stdout, _, exitStatus, err := RunTimeoutCommand(JinfoPath, "-flag", "CMSInitiatingOccupancyFraction", lvmid)
+	stdout, _, exitStatus, err := runTimeoutCommand(JinfoPath, "-flag", "CMSInitiatingOccupancyFraction", lvmid)
 
 	if err == nil && exitStatus.IsTimedOut() {
 		err = fmt.Errorf("jinfo command timed out")
@@ -132,7 +132,7 @@ func mergeStat(dst, src map[string]float64) {
 	}
 }
 
-func RunTimeoutCommand(Path string, Args ...string) (string, string, timeout.ExitStatus, error) {
+func runTimeoutCommand(Path string, Args ...string) (string, string, timeout.ExitStatus, error) {
 	var TimeoutDuration = 10 * time.Second
 	var TimeoutKillAfter = 5 * time.Second
 	tio := &timeout.Timeout{
