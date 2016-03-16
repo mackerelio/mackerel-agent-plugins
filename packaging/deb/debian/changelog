@@ -1,3 +1,24 @@
+mackerel-agent-plugins (0.19.0-1) stable; urgency=low
+
+  * [docker] Use Docker stats API (by stanaka)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/187>
+  * Add mailq plugin (by hanazuki)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/190>
+  * added mackerel-plugin-gearmand (by karupanerura)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/194>
+  * added capacity metrics for mysql (by karupanerura)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/195>
+  * added capacity metrics for redis (by karupanerura)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/196>
+  * support to metric-key-prefix/metric-label-prefix option for mackerel-plugin-plack (by karupanerura)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/197>
+  * Time out if jps,jinfo,jstat is hanged up (by tom--bo)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/198>
+  * add mailq into package (by Songmu)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/199>
+
+ -- Songmu <y.songmu@gmail.com>  Thu, 17 Mar 2016 01:44:21 +0900
+
 mackerel-agent-plugins (0.18.1-1) stable; urgency=low
 
   * Fix helper.Tempfile in mysql.go (by hfm)

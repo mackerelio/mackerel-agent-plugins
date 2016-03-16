@@ -8,7 +8,7 @@
 
 Summary: Monitoring program plugins for Mackerel
 Name: mackerel-agent-plugins
-Version: 0.18.1
+Version: 0.19.0
 Release: %{revision}
 License: Apache-2
 Group: Applications/System
@@ -29,7 +29,7 @@ This package provides plugins for Mackerel.
 
 %{__mkdir} -p %{buildroot}%{__targetdir}
 
-for i in apache2 aws-ec2-cpucredit aws-elasticache aws-elasticsearch aws-elb aws-rds aws-ses conntrack elasticsearch gostats haproxy jmx-jolokia jvm linux memcached mongodb munin mysql nginx php-apc php-opcache plack postgres rabbitmq redis snmp squid td-table-count trafficserver varnish xentop aws-cloudfront aws-ec2-ebs fluentd docker unicorn uptime inode;do \
+for i in apache2 aws-ec2-cpucredit aws-elasticache aws-elasticsearch aws-elb aws-rds aws-ses conntrack elasticsearch gostats haproxy jmx-jolokia jvm linux mailq memcached mongodb munin mysql nginx php-apc php-opcache plack postgres rabbitmq redis snmp squid td-table-count trafficserver varnish xentop aws-cloudfront aws-ec2-ebs fluentd docker unicorn uptime inode;do \
     %{__install} -m0755 %{_sourcedir}/build/mackerel-plugin-$i %{buildroot}%{__targetdir}/; \
 done
 
@@ -41,6 +41,16 @@ done
 %{__targetdir}
 
 %changelog
+* Thu Mar 17 2016 <y.songmu@gmail.com> - 0.19.0
+- [docker] Use Docker stats API (by stanaka)
+- Add mailq plugin (by hanazuki)
+- added mackerel-plugin-gearmand (by karupanerura)
+- added capacity metrics for mysql (by karupanerura)
+- added capacity metrics for redis (by karupanerura)
+- support to metric-key-prefix/metric-label-prefix option for mackerel-plugin-plack (by karupanerura)
+- Time out if jps,jinfo,jstat is hanged up (by tom--bo)
+- add mailq into package (by Songmu)
+
 * Thu Mar 10 2016 <y.songmu@gmail.com> - 0.18.1
 - Fix helper.Tempfile in mysql.go (by hfm)
 
