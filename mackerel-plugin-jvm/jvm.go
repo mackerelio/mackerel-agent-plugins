@@ -10,9 +10,9 @@ import (
 	"strings"
 	"time"
 
+	"github.com/Songmu/timeout"
 	mp "github.com/mackerelio/go-mackerel-plugin-helper"
 	"github.com/mackerelio/mackerel-agent/logging"
-	"github.com/Songmu/timeout"
 )
 
 var logger = logging.GetLogger("metrics.plugin.jvm")
@@ -31,18 +31,18 @@ type JVMPlugin struct {
 // 26547 NettyServer
 // 6438 Jps
 func fetchLvmidByAppname(appname, target, jpsPath string) (string, error) {
-    var TimeoutDuration = 10 * time.Second
-    var TimeoutKillAfter = 5 * time.Second
-    tio := &timeout.Timeout {
-        Cmd: exec.Command(jpsPath, target),
-        Duration: TimeoutDuration,
-        KillAfter: TimeoutKillAfter,
-    }
-    exitStatus, stdout, _, err := tio.Run()
+	var TimeoutDuration = 10 * time.Second
+	var TimeoutKillAfter = 5 * time.Second
+	tio := &timeout.Timeout{
+		Cmd:       exec.Command(jpsPath, target),
+		Duration:  TimeoutDuration,
+		KillAfter: TimeoutKillAfter,
+	}
+	exitStatus, stdout, _, err := tio.Run()
 
-    if err == nil && exitStatus.IsTimedOut() {
-        err = fmt.Errorf("jps command timed out")
-    }
+	if err == nil && exitStatus.IsTimedOut() {
+		err = fmt.Errorf("jps command timed out")
+	}
 	if err != nil {
 		logger.Errorf("Failed to run exec jps. %s", err)
 		return "", err
@@ -62,18 +62,18 @@ func fetchLvmidByAppname(appname, target, jpsPath string) (string, error) {
 }
 
 func fetchJstatMetrics(lvmid, option, jstatPath string) (map[string]float64, error) {
-    var TimeoutDuration = 10 * time.Second
-    var TimeoutKillAfter = 5 * time.Second
-    tio := &timeout.Timeout {
-        Cmd: exec.Command(jstatPath, option, lvmid),
-        Duration: TimeoutDuration,
-        KillAfter: TimeoutKillAfter,
-    }
-    exitStatus, stdout, _, err := tio.Run()
+	var TimeoutDuration = 10 * time.Second
+	var TimeoutKillAfter = 5 * time.Second
+	tio := &timeout.Timeout{
+		Cmd:       exec.Command(jstatPath, option, lvmid),
+		Duration:  TimeoutDuration,
+		KillAfter: TimeoutKillAfter,
+	}
+	exitStatus, stdout, _, err := tio.Run()
 
-    if err == nil && exitStatus.IsTimedOut() {
-        err = fmt.Errorf("jstat command timed out")
-    }
+	if err == nil && exitStatus.IsTimedOut() {
+		err = fmt.Errorf("jstat command timed out")
+	}
 	if err != nil {
 		logger.Errorf("Failed to run exec jstat. %s", err)
 		return nil, err
@@ -107,19 +107,19 @@ func calculateMemorySpaceRate(gcStat map[string]float64, m JVMPlugin) (map[strin
 }
 
 func checkCMSGC(lvmid, JinfoPath string) bool {
-    var TimeoutDuration = 10 * time.Second
-    var TimeoutKillAfter = 5 * time.Second
-    tio := &timeout.Timeout {
-        Cmd: exec.Command(JinfoPath, "-flag", "UseConcMarkSweepGC", lvmid),
-        Duration: TimeoutDuration,
-        KillAfter: TimeoutKillAfter,
-    }
-    exitStatus, stdout, _, err := tio.Run()
+	var TimeoutDuration = 10 * time.Second
+	var TimeoutKillAfter = 5 * time.Second
+	tio := &timeout.Timeout{
+		Cmd:       exec.Command(JinfoPath, "-flag", "UseConcMarkSweepGC", lvmid),
+		Duration:  TimeoutDuration,
+		KillAfter: TimeoutKillAfter,
+	}
+	exitStatus, stdout, _, err := tio.Run()
 
-    if err == nil && exitStatus.IsTimedOut() {
-        err = fmt.Errorf("jinfo command timed out")
+	if err == nil && exitStatus.IsTimedOut() {
+		err = fmt.Errorf("jinfo command timed out")
 		os.Exit(1)
-    }
+	}
 	if err != nil {
 		logger.Errorf("Failed to run exec jinfo. %s", err)
 		os.Exit(1)
@@ -129,18 +129,18 @@ func checkCMSGC(lvmid, JinfoPath string) bool {
 
 func fetchCMSInitiatingOccupancyFraction(lvmid, JinfoPath string) float64 {
 	var fraction float64
-    var TimeoutDuration = 10 * time.Second
-    var TimeoutKillAfter = 5 * time.Second
-    tio := &timeout.Timeout {
-        Cmd: exec.Command(JinfoPath, "-flag", "CMSInitiatingOccupancyFraction", lvmid),
-        Duration: TimeoutDuration,
-        KillAfter: TimeoutKillAfter,
-    }
-    exitStatus, stdout, _, err := tio.Run()
+	var TimeoutDuration = 10 * time.Second
+	var TimeoutKillAfter = 5 * time.Second
+	tio := &timeout.Timeout{
+		Cmd:       exec.Command(JinfoPath, "-flag", "CMSInitiatingOccupancyFraction", lvmid),
+		Duration:  TimeoutDuration,
+		KillAfter: TimeoutKillAfter,
+	}
+	exitStatus, stdout, _, err := tio.Run()
 
-    if err == nil && exitStatus.IsTimedOut() {
-        err = fmt.Errorf("jinfo command timed out")
-    }
+	if err == nil && exitStatus.IsTimedOut() {
+		err = fmt.Errorf("jinfo command timed out")
+	}
 	if err != nil {
 		logger.Errorf("Failed to run exec jinfo. %s", err)
 		os.Exit(1)
