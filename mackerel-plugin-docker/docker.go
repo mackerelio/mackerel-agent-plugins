@@ -12,6 +12,7 @@ import (
 	"strconv"
 	"strings"
 
+	"github.com/fsouza/go-dockerclient"
 	mp "github.com/mackerelio/go-mackerel-plugin-helper"
 )
 
@@ -69,6 +70,9 @@ type DockerPlugin struct {
 	Host          string
 	DockerCommand string
 	Tempfile      string
+	Method        string
+	NameFormat    string
+	Label         string
 	pathBuilder   *pathBuilder
 }
 
@@ -111,8 +115,17 @@ func (m DockerPlugin) getDockerPs() (string, error) {
 	return out.String(), nil
 }
 
+func (m DockerPlugin) listContainer() ([]docker.APIContainers, error) {
+	client, _ := docker.NewClient(m.Host)
+	containers, err := client.ListContainers(docker.ListContainersOptions{})
+	if err != nil {
+		return nil, err
+	}
+	return containers, nil
+}
+
 func findPrefixPath() (string, error) {
-	pathCandidate := []string{"/host/cgroup/", "/cgroup", "/host/sys/fs/cgroup", "/sys/fs/cgroup"}
+	pathCandidate := []string{"/host/cgroup", "/cgroup", "/host/sys/fs/cgroup", "/sys/fs/cgroup"}
 	for _, path := range pathCandidate {
 		result, err := exists(path)
 		if err != nil {
@@ -135,6 +148,7 @@ type pathType uint8
 const (
 	pathUnknown pathType = iota
 	pathDocker
+	pathDockerShort
 	pathLxc
 	pathSlice
 )
@@ -156,6 +170,8 @@ func newPathBuilder() (*pathBuilder, error) {
 
 func (pb *pathBuilder) build(id, metric, postfix string) string {
 	switch pb.pathType {
+	case pathDockerShort:
+		return fmt.Sprintf("%s/docker/%s/%s.%s", pb.prefix, id, metric, postfix)
 	case pathDocker:
 		return fmt.Sprintf("%s/%s/docker/%s/%s.%s", pb.prefix, metric, id, metric, postfix)
 	case pathLxc:
@@ -177,12 +193,58 @@ func guessPathType(prefix string) (pathType, error) {
 	if ok, err := exists(prefix + "/memory/lxc/"); ok && err == nil {
 		return pathLxc, nil
 	}
+	if ok, err := exists(prefix + "/docker/"); ok && err == nil {
+		return pathDockerShort, nil
+	}
 	return pathUnknown, fmt.Errorf("can't resolve runtime metrics path")
+}
+
+func guessMethod(docker string) (string, error) {
+	cmd := exec.Command(docker, "version")
+	var out bytes.Buffer
+	cmd.Stdout = &out
+	err := cmd.Run()
+	if err != nil {
+		return "", err
+	}
+
+	re := regexp.MustCompile(`Server API version: ([0-9]+)(?:\.([0-9]+))?`)
+	res := re.FindAllStringSubmatch(out.String(), 1)
+	if len(res) < 1 || len(res[0]) < 2 {
+		log.Printf("Use API because of failing to recognize version")
+		return "API", nil
+	}
+
+	majorVer, err := strconv.Atoi(res[0][1])
+	if err != nil {
+		log.Printf("Use API because of failing to recognize version")
+		return "API", nil
+	}
+
+	minorVer, err := strconv.Atoi(res[0][2])
+	if err != nil {
+		log.Printf("Use API because of failing to recognize version")
+		return "API", nil
+	}
+
+	if majorVer == 1 && minorVer < 17 {
+		//log.Printf("Use File for fetching Metrics")
+		return "File", nil
+	}
+	return "API", nil
 }
 
 // FetchMetrics interface for mackerel plugin
 func (m DockerPlugin) FetchMetrics() (map[string]interface{}, error) {
 	dockerStats := map[string][]string{}
+	if m.Method == "API" {
+		containers, err := m.listContainer()
+		if err != nil {
+			return nil, err
+		}
+		return m.FetchMetricsWithAPI(containers)
+	}
+
 	data, err := m.getDockerPs()
 	if err != nil {
 		return nil, err
@@ -197,6 +259,92 @@ func (m DockerPlugin) FetchMetrics() (map[string]interface{}, error) {
 			dockerStats[fields[0]] = []string{fields[1], fields[len(fields)-2]}
 		}
 	}
+
+	return m.FetchMetricsWithFile(&dockerStats)
+}
+
+func (m DockerPlugin) generateName(container docker.APIContainers) string {
+	switch m.NameFormat {
+	case "name_id":
+		return fmt.Sprintf("%s_%s", strings.Replace(container.Names[0], "/", "", 1), container.ID[0:6])
+	case "name":
+		return strings.Replace(container.Names[0], "/", "", 1)
+	case "id":
+		return container.ID
+	case "image":
+		return container.Image
+	case "image_id":
+		return fmt.Sprintf("%s_%s", container.Image, container.ID[0:6])
+	case "image_name":
+		return fmt.Sprintf("%s_%s", container.Image, strings.Replace(container.Names[0], "/", "", 1))
+	case "label":
+		return container.Labels[m.Label]
+	}
+	return strings.Replace(container.Names[0], "/", "", 1)
+}
+
+// FetchMetricsWithAPI use docker API to fetch metrics
+func (m DockerPlugin) FetchMetricsWithAPI(containers []docker.APIContainers) (map[string]interface{}, error) {
+	res := map[string]interface{}{}
+	for _, container := range containers {
+		name := strings.Replace(container.Names[0], "/", "", 1)
+		metricName := normalizeMetricName(m.generateName(container))
+		client, _ := docker.NewClient(m.Host)
+		errC := make(chan error, 1)
+		statsC := make(chan *docker.Stats)
+		done := make(chan bool)
+		go func() {
+			errC <- client.Stats(docker.StatsOptions{name, statsC, false, done, 0})
+			close(errC)
+		}()
+		var resultStats []*docker.Stats
+		for {
+			stats, ok := <-statsC
+			if !ok {
+				break
+			}
+			resultStats = append(resultStats, stats)
+		}
+		err := <-errC
+		if err != nil {
+			log.Fatal(err)
+		}
+		if len(resultStats) == 0 {
+			log.Fatalf("Stats: Expected 1 result. Got %d.", len(resultStats))
+		}
+		m.parseStats(&res, metricName, resultStats[0])
+	}
+	return res, nil
+}
+
+func (m DockerPlugin) parseStats(stats *map[string]interface{}, name string, result *docker.Stats) error {
+	(*stats)["docker.cpuacct."+name+".user"] = (*result).CPUStats.CPUUsage.UsageInUsermode
+	(*stats)["docker.cpuacct."+name+".system"] = (*result).CPUStats.CPUUsage.UsageInKernelmode
+	(*stats)["docker.memory."+name+".cache"] = (*result).MemoryStats.Stats.TotalCache
+	(*stats)["docker.memory."+name+".rss"] = (*result).MemoryStats.Stats.TotalRss
+	fields := []string{"read", "write", "sync", "async"}
+	for _, field := range fields {
+		for _, s := range (*result).BlkioStats.IOQueueRecursive {
+			if s.Op == strings.Title(field) {
+				(*stats)["docker.blkio.io_queued."+name+"."+field] = s.Value
+			}
+		}
+		for _, s := range (*result).BlkioStats.IOServicedRecursive {
+			if s.Op == strings.Title(field) {
+				(*stats)["docker.blkio.io_serviced."+name+"."+field] = s.Value
+			}
+		}
+		for _, s := range (*result).BlkioStats.IOServiceBytesRecursive {
+			if s.Op == strings.Title(field) {
+				(*stats)["docker.blkio.io_service_bytes."+name+"."+field] = s.Value
+			}
+		}
+	}
+	return nil
+}
+
+// FetchMetricsWithFile use cgroup stats files to fetch metrics
+func (m DockerPlugin) FetchMetricsWithFile(dockerStats *map[string][]string) (map[string]interface{}, error) {
 	pb := m.pathBuilder
 
 	metrics := map[string][]string{
@@ -205,7 +353,7 @@ func (m DockerPlugin) FetchMetrics() (map[string]interface{}, error) {
 	}
 
 	res := map[string]interface{}{}
-	for id, name := range dockerStats {
+	for id, name := range *dockerStats {
 		for metric, stats := range metrics {
 			if ok, err := exists(pb.build(id, metric, "stat")); !ok || err != nil {
 				continue
@@ -257,9 +405,18 @@ func (m DockerPlugin) GraphDefinition() map[string](mp.Graphs) {
 }
 
 func main() {
+	candidateNameFormat := []string{"name", "name_id", "id", "image", "image_id", "image_name", "label"}
+	setCandidateNameFormat := make(map[string]bool)
+	for _, v := range candidateNameFormat {
+		setCandidateNameFormat[v] = true
+	}
+
 	optHost := flag.String("host", "unix:///var/run/docker.sock", "Host for socket")
 	optCommand := flag.String("command", "docker", "Command path to docker")
+	optUseAPI := flag.String("method", "", "Specify the method to collect stats, 'API' or 'File'. If not specified, an appropriate method is choosen.")
 	optTempfile := flag.String("tempfile", "", "Temp file name")
+	optNameFormat := flag.String("name-format", "name_id", "Set the name format from "+strings.Join(candidateNameFormat, ", "))
+	optLabel := flag.String("label", "", "Use the value of the key as name in case that name-format is label.")
 	flag.Parse()
 
 	var docker DockerPlugin
@@ -271,11 +428,34 @@ func main() {
 		log.Fatalf("Docker command is not found: %s", docker.DockerCommand)
 	}
 
-	pb, err := newPathBuilder()
-	if err != nil {
-		log.Fatalf("failed to resolve docker metrics path: %s. It may be no Docker containers exists.", err)
+	docker.NameFormat = *optNameFormat
+	docker.Label = *optLabel
+	if !setCandidateNameFormat[docker.NameFormat] {
+		log.Fatalf("Name flag should be each of '%s'", strings.Join(candidateNameFormat, ","))
 	}
-	docker.pathBuilder = pb
+	if docker.NameFormat == "label" && docker.Label == "" {
+		log.Fatalf("Label flag should be set when name flag is 'label'.")
+	}
+
+	if *optUseAPI == "" {
+		docker.Method, err = guessMethod(docker.DockerCommand)
+		if err != nil {
+			log.Fatalf("Fail to guess stats method: %s", err.Error())
+		}
+	} else {
+		if *optUseAPI != "API" && *optUseAPI != "File" {
+			log.Fatalf("Method should be 'API', 'File' or an empty string.")
+		}
+		docker.Method = *optUseAPI
+	}
+
+	if docker.Method == "File" {
+		pb, err := newPathBuilder()
+		if err != nil {
+			log.Fatalf("failed to resolve docker metrics path: %s. It may be no Docker containers exists.", err)
+		}
+		docker.pathBuilder = pb
+	}
 
 	helper := mp.NewMackerelPlugin(docker)
 
