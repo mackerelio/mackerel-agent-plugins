@@ -4,7 +4,8 @@
 
 %define __buildroot %{_builddir}/%{name}
 #%define __targetdir %{_libexecdir}/mackerel/plugins
-%define __targetdir /usr/local/bin
+%define __targetdir /usr/bin
+%define __oldtargetdir /usr/local/bin
 
 Summary: Monitoring program plugins for Mackerel
 Name: mackerel-agent-plugins
@@ -33,12 +34,19 @@ for i in apache2 aws-ec2-cpucredit aws-elasticache aws-elasticsearch aws-elb aws
     %{__install} -m0755 %{_sourcedir}/build/mackerel-plugin-$i %{buildroot}%{__targetdir}/; \
 done
 
+%{__install} -d -m755 %{buildroot}%{__oldtargetdir}
+for i in apache2 aws-ec2-cpucredit aws-elasticache aws-elasticsearch aws-elb aws-rds aws-ses conntrack elasticsearch gostats haproxy jmx-jolokia jvm linux mailq memcached mongodb munin mysql nginx php-apc php-opcache plack postgres rabbitmq redis snmp squid td-table-count trafficserver varnish xentop aws-cloudfront aws-ec2-ebs fluentd docker unicorn uptime inode; \
+do \
+    ln -s ../../bin/mackerel-plugin-$i %{buildroot}%{__oldtargetdir}/mackerel-plugin-$i; \
+done
+
 %clean
 %{__rm} -rf %{buildroot}
 
 %files
 %defattr(-, root, root, 0755)
 %{__targetdir}
+%{__oldtargetdir}
 
 %changelog
 * Thu Mar 17 2016 <y.songmu@gmail.com> - 0.19.0
