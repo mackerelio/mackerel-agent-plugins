@@ -148,11 +148,7 @@ func (u RackStatsPlugin) GraphDefinition() map[string](mp.Graphs) {
 	}
 
 	return map[string](mp.Graphs){
-<<<<<<< HEAD
-		fmt.Sprintf("%s.rack.stats", u.MetricKey): mp.Graphs{
-=======
 		fmt.Sprintf("rack.%s.stats", u.MetricKey): mp.Graphs{
->>>>>>> Add mackerel-plugin-rack-stats
 			Label: label,
 			Unit:  "integer",
 			Metrics: [](mp.Metrics){
@@ -168,11 +164,7 @@ func (u RackStatsPlugin) GraphDefinition() map[string](mp.Graphs) {
 func main() {
 	optAddress := flag.String("address", "http://localhost:8080", "URL or Unix Domain Socket")
 	optPath := flag.String("path", "/_raindrops", "Path")
-<<<<<<< HEAD
-	optMetricKey := flag.String("metric-key", "", "Metric Key")
-=======
 	optMetricKey := flag.String("metric-key-prefix", "", "Metric Key Prefix")
->>>>>>> Add mackerel-plugin-rack-stats
 	optVersion := flag.Bool("version", false, "Version")
 	optTempfile := flag.String("tempfile", "", "Temp file name")
 	flag.Parse()
