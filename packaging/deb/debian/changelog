@@ -1,3 +1,10 @@
+mackerel-agent-plugins (0.19.2-1) stable; urgency=low
+
+  * Revert "use /usr/bin/mackerel-plugin-*" (by Songmu)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/205>
+
+ -- Songmu <y.songmu@gmail.com>  Fri, 25 Mar 2016 12:09:37 +0900
+
 mackerel-agent-plugins (0.19.1-1) stable; urgency=low
 
   * use /usr/bin/mackerel-plugin-* (by naokibtn)

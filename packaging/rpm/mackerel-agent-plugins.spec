@@ -8,7 +8,7 @@
 
 Summary: Monitoring program plugins for Mackerel
 Name: mackerel-agent-plugins
-Version: 0.19.1
+Version: 0.19.2
 Release: %{revision}
 License: Apache-2
 Group: Applications/System
@@ -41,6 +41,9 @@ done
 %{__targetdir}
 
 %changelog
+* Fri Mar 25 2016 <y.songmu@gmail.com> - 0.19.2
+- Revert "use /usr/bin/mackerel-plugin-*" (by Songmu)
+
 * Fri Mar 25 2016 <y.songmu@gmail.com> - 0.19.1
 - use /usr/bin/mackerel-plugin-* (by naokibtn)
 - use GOARCH=amd64 for now (by Songmu)
