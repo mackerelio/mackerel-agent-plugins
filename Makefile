@@ -7,7 +7,7 @@ BUILD_FLAGS = -ldflags "\
 	      -X main.Version \"$(VERSION)\" \
 	      "
 
-TARGET_OSARCH="linux/386"
+TARGET_OSARCH="linux/amd64"
 
 all: lint cover testtool rpm deb
 
