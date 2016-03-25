@@ -9,7 +9,7 @@
 
 Summary: Monitoring program plugins for Mackerel
 Name: mackerel-agent-plugins
-Version: 0.19.0
+Version: 0.19.1
 Release: %{revision}
 License: Apache-2
 Group: Applications/System
@@ -49,6 +49,10 @@ done
 %{__oldtargetdir}
 
 %changelog
+* Fri Mar 25 2016 <y.songmu@gmail.com> - 0.19.1
+- use /usr/bin/mackerel-plugin-* (by naokibtn)
+- use GOARCH=amd64 for now (by Songmu)
+
 * Thu Mar 17 2016 <y.songmu@gmail.com> - 0.19.0
 - [docker] Use Docker stats API (by stanaka)
 - Add mailq plugin (by hanazuki)
