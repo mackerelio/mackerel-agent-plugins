@@ -16,12 +16,14 @@ import (
 
 var logger = logging.GetLogger("metrics.plugin.proc-fd")
 
+// ProcfdPlugin for fetching metrics
 type ProcfdPlugin struct {
 	Process           string
 	NormalizedProcess string
 	MetricName        string
 }
 
+// FetchMetrics fetch the metrics
 func (p ProcfdPlugin) FetchMetrics() (map[string]interface{}, error) {
 	fds, err := p.getNumOpenFileDesc()
 	if err != nil {
@@ -42,6 +44,7 @@ func (p ProcfdPlugin) FetchMetrics() (map[string]interface{}, error) {
 	return stat, nil
 }
 
+// GraphDefinition Graph definition
 func (p ProcfdPlugin) GraphDefinition() map[string](mp.Graphs) {
 	return map[string](mp.Graphs){
 		fmt.Sprintf("proc-fd.%s", p.NormalizedProcess): mp.Graphs{
