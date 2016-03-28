@@ -45,8 +45,8 @@ done
 
 %files
 %defattr(-, root, root, 0755)
-%{__targetdir}
-%{__oldtargetdir}
+%{__targetdir}/*
+%{__oldtargetdir}/*
 
 %changelog
 * Fri Mar 25 2016 <y.songmu@gmail.com> - 0.19.2
