@@ -98,6 +98,10 @@ func (m RedisPlugin) FetchMetrics() (map[string]float64, error) {
 		network = "unix"
 	}
 	c, err := redis.DialTimeout(network, target, time.Duration(m.Timeout)*time.Second)
+	if err != nil {
+		logger.Errorf("Failed to connect redis. %s", err)
+		return nil, err
+	}
 	defer c.Close()
 
 	r := c.Cmd("info")

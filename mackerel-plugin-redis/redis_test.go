@@ -15,7 +15,8 @@ var metrics = []string{
 func TestFetchMetricsUnixSocket(t *testing.T) {
 	s, err := redistest.NewServer(true, nil)
 	if err != nil {
-		t.Errorf("something went wrong")
+		t.Errorf("Failed to invoke testserver. %s", err)
+		return
 	}
 	defer s.Stop()
 	redis := RedisPlugin{
@@ -43,7 +44,8 @@ func TestFetchMetrics(t *testing.T) {
 		"port": portStr,
 	})
 	if err != nil {
-		t.Errorf("something went wrong")
+		t.Errorf("Failed to invoke testserver. %s", err)
+		return
 	}
 	defer s.Stop()
 	redis := RedisPlugin{
