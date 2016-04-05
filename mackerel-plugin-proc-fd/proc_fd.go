@@ -1,7 +1,6 @@
 package main
 
 import (
-	"errors"
 	"flag"
 	"fmt"
 	"os"
@@ -70,8 +69,7 @@ func (p ProcfdPlugin) getNumOpenFileDesc() (map[string]uint64, error) {
 	)
 	if err != nil {
 		// No matching with p.Process invokes this case
-		logger.Errorf("No matching with process")
-		return nil, errors.New("No matching with process")
+		return nil, err
 	}
 
 	// List the number of all open files beloging to each pid
@@ -83,8 +81,7 @@ func (p ProcfdPlugin) getNumOpenFileDesc() (map[string]uint64, error) {
 		)
 		if err != nil {
 			// The process with pid terminates"
-			logger.Errorf("The process terminates")
-			return nil, errors.New("The process terminates")
+			return nil, err
 		}
 
 		num, err := strconv.ParseUint(strings.TrimSpace(string(out)), 10, 32)
