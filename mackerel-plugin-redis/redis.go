@@ -89,15 +89,19 @@ func calculateCapacity(c *redis.Client, stat map[string]float64) error {
 	return nil
 }
 
-// FetchMetrics interface for mackerelplugin
-func (m RedisPlugin) FetchMetrics() (map[string]float64, error) {
+func (m RedisPlugin) getConn() (*redis.Client, error) {
 	network := "tcp"
 	target := fmt.Sprintf("%s:%s", m.Host, m.Port)
 	if m.Socket != "" {
 		target = m.Socket
 		network = "unix"
 	}
-	c, err := redis.DialTimeout(network, target, time.Duration(m.Timeout)*time.Second)
+	return redis.DialTimeout(network, target, time.Duration(m.Timeout)*time.Second)
+}
+
+// FetchMetrics interface for mackerelplugin
+func (m RedisPlugin) FetchMetrics() (map[string]float64, error) {
+	c, err := m.getConn()
 	if err != nil {
 		logger.Errorf("Failed to connect redis. %s", err)
 		return nil, err
@@ -166,7 +170,7 @@ func (m RedisPlugin) FetchMetrics() (map[string]float64, error) {
 	}
 
 	if err := calculateCapacity(c, stat); err != nil {
-		return nil, err
+		logger.Infof("Failed to calculate capacity. Skip these metrics. %s", err)
 	}
 
 	return stat, nil
@@ -227,16 +231,28 @@ func (m RedisPlugin) GraphDefinition() map[string](mp.Graphs) {
 				mp.Metrics{Name: "used_memory_lua", Label: "Used Memory Lua engine", Diff: false},
 			},
 		},
-		(m.Prefix + ".capacity"): mp.Graphs{
-			Label: (labelPrefix + " Capacity"),
-			Unit:  "percentage",
-			Metrics: [](mp.Metrics){
-				mp.Metrics{Name: "percentage_of_memory", Label: "Percentage of memory", Diff: false},
-				mp.Metrics{Name: "percentage_of_clients", Label: "Percentage of clients", Diff: false},
-			},
-		},
 	}
 
+	c, err := m.getConn()
+	if err != nil {
+		logger.Warningf("Failed to connect redis. %s", err)
+	} else {
+		defer c.Close()
+		// elasticache for redis has no config command. so, check if the command exists.
+		r := c.Cmd("CONFIG", "GET", "maxmemory")
+		if r.Err != nil {
+			logger.Infof("Failed to run `CONFIG GET maxmemory` command. %s", r.Err)
+		} else {
+			graphdef[m.Prefix+".capacity"] = mp.Graphs{
+				Label: (labelPrefix + " Capacity"),
+				Unit:  "percentage",
+				Metrics: [](mp.Metrics){
+					mp.Metrics{Name: "percentage_of_memory", Label: "Percentage of memory", Diff: false},
+					mp.Metrics{Name: "percentage_of_clients", Label: "Percentage of clients", Diff: false},
+				},
+			}
+		}
+	}
 	return graphdef
 }
 
