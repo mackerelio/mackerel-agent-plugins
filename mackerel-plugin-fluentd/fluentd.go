@@ -57,6 +57,9 @@ func (f *FluentdMetrics) parseStats(body []byte) (map[string]interface{}, error)
 
 	metrics := make(map[string]interface{})
 	for _, p := range f.plugins {
+		if p.PluginCategory != "output" {
+			continue
+		}
 		pid := p.getNormalizedPluginID()
 		metrics["fluentd.retry_count."+pid] = float64(p.RetryCount)
 		metrics["fluentd.buffer_queue_length."+pid] = float64(p.BufferQueueLength)
