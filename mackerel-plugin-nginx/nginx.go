@@ -157,7 +157,7 @@ func (n NginxPlugin) parseStats(body io.Reader) (map[string]interface{}, error) 
 	if err != nil {
 		return nil, errors.New("cannot get values")
 	}
-	stat["wating"], err = strconv.ParseFloat(res[3], 64)
+	stat["waiting"], err = strconv.ParseFloat(res[3], 64)
 	if err != nil {
 		return nil, errors.New("cannot get values")
 	}
