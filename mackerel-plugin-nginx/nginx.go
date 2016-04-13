@@ -8,7 +8,6 @@ import (
 
 	"errors"
 	"net/http"
-	"os"
 	"regexp"
 	"strconv"
 	"strings"
@@ -157,7 +156,7 @@ func (n NginxPlugin) parseStats(body io.Reader) (map[string]interface{}, error) 
 	if err != nil {
 		return nil, errors.New("cannot get values")
 	}
-	stat["wating"], err = strconv.ParseFloat(res[3], 64)
+	stat["waiting"], err = strconv.ParseFloat(res[3], 64)
 	if err != nil {
 		return nil, errors.New("cannot get values")
 	}
@@ -194,10 +193,5 @@ func main() {
 	} else {
 		helper.Tempfile = fmt.Sprintf("/tmp/mackerel-plugin-nginx")
 	}
-
-	if os.Getenv("MACKEREL_AGENT_PLUGIN_META") != "" {
-		helper.OutputDefinitions()
-	} else {
-		helper.OutputValues()
-	}
+	helper.Run()
 }

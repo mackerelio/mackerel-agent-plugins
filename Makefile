@@ -33,7 +33,6 @@ deps:
 testdeps:
 	go get -d -v -t $(VERBOSE_FLAG) ./...
 	go get github.com/golang/lint/golint
-	go get golang.org/x/tools/cmd/vet
 	go get golang.org/x/tools/cmd/cover
 	go get github.com/pierrre/gotestcover
 	go get github.com/mattn/goveralls
