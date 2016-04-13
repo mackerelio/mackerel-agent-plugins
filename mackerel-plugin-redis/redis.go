@@ -166,7 +166,7 @@ func (m RedisPlugin) FetchMetrics() (map[string]float64, error) {
 	}
 
 	if err := calculateCapacity(c, stat); err != nil {
-		return nil, err
+		logger.Infof("Failed to calculate capacity. (The cause may be that AWS Elasticache Redis has no `CONFIG` command.) Skip these metrics. %s", err)
 	}
 
 	return stat, nil
