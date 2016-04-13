@@ -1,7 +1,10 @@
 language: go
 go:
 - 1.5
-env: PATH=/home/travis/gopath/bin:$PATH
+env:
+  global:
+  - PATH=~/gopath/bin:$PATH DEBIAN_FRONTEND=noninteractive
+  - secure: "mu+SPSJgiSl/2m2FTcF6RMtl6K8Wl49iNuz3UXF6xqgH2Q/W5qgCKzQG+k4iSwuI3UihPPzIF7wJNEIALqemHx7LYRHoUU5KhF4fdcW21ur1XLALwEEaxmUbLI4BSDNPyh0EQHCY6bmKeDTqScW/WR5f+KZrT5lpopZGFQmjDoqjDQnKmHhyjky2fcIo0A510gzVhJKPh3wnfiSbgojK5ojvoW9JCCrp830ON0v9+GbIkRQqY/co/WDEMIEPFQ8cAIFMPYF5joXXg6tXiwABEfO5sNfBdYPdQCbnXI7GyWDaO3g2c7EQn7uKn7muPTS1vbtpuWjX8e5pp6K2Y2hhBEEVOqCbZrPHCxd47GN/Zu9LHcJf4QKifTww9CtGuMHiftnAIk2EtpD9/hqyJAt7fLYR7wfqfhUatjzdEg+sanl/WIzhclwmtpHjEpe10cAILVW4m3rlJ92l6H4e0aWhpO3SURLB2ayoA7BfSxf9STFqBbnHr+/dBYoJ9d5JwE6uDKRx3ZfAeOr9isNkALApHGzZr9N20FODhZAaP8auKEjA4tOQrR1+Pr87WnRmxyrkS/ZJYtW8luEbcenfB2u5TOBCP8r07pUfG0FgsPN8EI6oeWH8RZ0/dFXbZsYY2OFDp1yJIgLPtwGhSg7aAgi0pi2kSd1juCZUpyA9WDTGHZM="
 install:
 - go get github.com/mitchellh/gox
 - sudo apt-get update
@@ -11,27 +14,26 @@ script:
 - make all
 after_script:
 - goveralls -coverprofile=.profile.cov
-after_success:
-- echo -e "Host github.com\n\tStrictHostKeyChecking no\nIdentityFile ~/.ssh/deploy.key\n" >> ~/.ssh/config
-- openssl aes-256-cbc -K $encrypted_7f4c34587607_key -iv $encrypted_7f4c34587607_iv -in tool/travis/autotag_deploy_key.enc -out ../deploy.key -d
-- cp ../deploy.key ~/.ssh/
-- chmod 600 ~/.ssh/deploy.key
-- git config --global user.email "mackerel-developers@hatena.ne.jp"
-- git config --global user.name  "mackerel"
-- git remote set-url origin git@github.com:mackerelio/mackerel-agent-plugins.git
-- tool/autotag
+before_deploy:
+- go get github.com/aktau/github-release
+- mkdir -p ~/bin
+- git clone https://github.com/github/hub.git && cd hub && script/build -o ~/bin/hub && cd ..
+- echo $TRAVIS_BRANCH
+- git config --add remote.origin.fetch '+refs/heads/*:refs/remotes/origin/*'
+- git fetch
+- git checkout master || git checkout -b master origin/master
+- git checkout $TRAVIS_BRANCH
+- git fetch --depth=1000
+- git fetch --tags --depth=1000 || true
 deploy:
-  provider: releases
-  api_key:
-    secure: c2pLKkM2leWMIzakVisNf3kAK6TBYslDM8SFEVrTTHpHnTI/6jUFnDLuL9cKuq9c76QcgYfqdLDn/hP+uFHf5WdtdJR00R+bX8cCx6NfOe7Kk9GlqGinUcXKAVs0kQHaYtQrN/rCOIG92kYFdbRHMD8uMrADJVRySePTMMhMX9o=
-  file:
-  - "/home/travis/rpmbuild/RPMS/noarch/mackerel-agent-plugins-0.19.2-1.noarch.rpm"
-  - "/home/travis/gopath/src/github.com/mackerelio/mackerel-agent-plugins/packaging/mackerel-agent-plugins_0.19.2-1_all.deb"
+- provider: script
+  script: tool/releng --task=upload-to-github-release -v
   skip_cleanup: true
   on:
-    repo: mackerelio/mackerel-agent-plugins
+    branch: master
+- provider: script
+  script: tool/releng --task=create-pullrequest --current-branch=$TRAVIS_BRANCH -v
+  skip_cleanup: true
+  on:
     all_branches: true
-    tags: true
-notifications:
-  slack:
-    secure: cPeJRg+ouTlemEV5UM4muhDwtIM0dktcs3mnfB73oZ2MGOimv/DFpL+VTRLlkWau8l0dT4ngLlGPcveLrXQXwps2LsJMr+gS6Az/CAQCIl21oj4bnjs5uGYTG8hM8ymVzGINPNnj5Fnn5DUMunA2sow30qxfuCnSUMGot2nFRKw=
+    condition: "$TRAVIS_BRANCH =~ ^bump-version-.*$"
