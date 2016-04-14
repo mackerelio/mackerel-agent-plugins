@@ -1,3 +1,18 @@
+mackerel-agent-plugins (0.19.3-1) stable; urgency=low
+
+  * Revert "Revert "use /usr/bin/mackerel-plugin-*"" (by Songmu)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/208>
+  * fix: redis plugin panics when redis-server is not installed. (by stanaka)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/209>
+  * fix: rpm should not include dir (by stanaka)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/210>
+  * [nginx] fix typo (by y-kuno)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/215>
+  * Refactoring the release process (by stanaka)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/217>
+
+ -- mackerel <mackerel-developers@hatena.ne.jp>  Thu, 14 Apr 2016 08:19:38 +0000
+
 mackerel-agent-plugins (0.19.2-1) stable; urgency=low
 
   * Revert "use /usr/bin/mackerel-plugin-*" (by Songmu)

@@ -49,6 +49,13 @@ done
 %{__oldtargetdir}/*
 
 %changelog
+* Thu Apr 14 2016 <mackerel-developers@hatena.ne.jp> - 0.19.3-1
+- Revert "Revert "use /usr/bin/mackerel-plugin-*"" (by Songmu)
+- fix: redis plugin panics when redis-server is not installed. (by stanaka)
+- fix: rpm should not include dir (by stanaka)
+- [nginx] fix typo (by y-kuno)
+- Refactoring the release process (by stanaka)
+
 * Fri Mar 25 2016 <y.songmu@gmail.com> - 0.19.2
 - Revert "use /usr/bin/mackerel-plugin-*" (by Songmu)
 
