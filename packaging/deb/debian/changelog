@@ -1,5 +1,7 @@
 mackerel-agent-plugins (0.19.3-1) stable; urgency=low
 
+  * [redis] skip to calculate capacity when CONFIG command failed (by Songmu)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/214>
   * Revert "Revert "use /usr/bin/mackerel-plugin-*"" (by Songmu)
     <https://github.com/mackerelio/mackerel-agent-plugins/pull/208>
   * fix: redis plugin panics when redis-server is not installed. (by stanaka)

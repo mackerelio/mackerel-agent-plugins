@@ -50,6 +50,7 @@ done
 
 %changelog
 * Thu Apr 14 2016 <mackerel-developers@hatena.ne.jp> - 0.19.3-1
+- [redis] skip to calculate capacity when CONFIG command failed (by Songmu)
 - Revert "Revert "use /usr/bin/mackerel-plugin-*"" (by Songmu)
 - fix: redis plugin panics when redis-server is not installed. (by stanaka)
 - fix: rpm should not include dir (by stanaka)
