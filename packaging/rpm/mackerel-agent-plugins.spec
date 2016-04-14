@@ -9,7 +9,7 @@
 
 Summary: Monitoring program plugins for Mackerel
 Name: mackerel-agent-plugins
-Version: 0.19.2
+Version: %{_version}
 Release: %{revision}
 License: Apache-2
 Group: Applications/System
@@ -17,7 +17,7 @@ URL: https://mackerel.io/
 
 Source0: README.md
 Packager:  Hatena
-BuildArch: noarch
+BuildArch: %{buildarch}
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root
 
 %description
