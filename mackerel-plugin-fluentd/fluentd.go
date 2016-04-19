@@ -14,8 +14,9 @@ import (
 
 // FluentdMetrics plugin for fluentd
 type FluentdMetrics struct {
-	Target   string
-	Tempfile string
+	Target     string
+	Tempfile   string
+	pluginType string
 
 	plugins []FluentdPluginMetrics
 }
@@ -57,7 +58,7 @@ func (f *FluentdMetrics) parseStats(body []byte) (map[string]interface{}, error)
 
 	metrics := make(map[string]interface{})
 	for _, p := range f.plugins {
-		if p.PluginCategory != "output" {
+		if f.nonTargetPlugin(p) {
 			continue
 		}
 		pid := p.getNormalizedPluginID()
@@ -66,6 +67,16 @@ func (f *FluentdMetrics) parseStats(body []byte) (map[string]interface{}, error)
 		metrics["fluentd.buffer_total_queued_size."+pid] = float64(p.BufferTotalQueuedSize)
 	}
 	return metrics, err
+}
+
+func (f *FluentdMetrics) nonTargetPlugin(plugin FluentdPluginMetrics) bool {
+	if plugin.PluginCategory != "output" {
+		return true
+	}
+	if f.pluginType != "" && f.pluginType != plugin.Type {
+		return true
+	}
+	return false
 }
 
 // FetchMetrics interface for mackerelplugin
@@ -112,17 +123,21 @@ func (f FluentdMetrics) GraphDefinition() map[string](mp.Graphs) {
 func main() {
 	host := flag.String("host", "localhost", "fluentd monitor_agent port")
 	port := flag.String("port", "24220", "fluentd monitor_agent port")
+	pluginType := flag.String("plugin-type", "", "Gets the metric that matches this plugin type")
 	tempFile := flag.String("tempfile", "", "Temp file name")
 	flag.Parse()
 
 	f := FluentdMetrics{
-		Target:   fmt.Sprintf("http://%s:%s/api/plugins.json", *host, *port),
-		Tempfile: *tempFile,
+		Target:     fmt.Sprintf("http://%s:%s/api/plugins.json", *host, *port),
+		Tempfile:   *tempFile,
+		pluginType: *pluginType,
 	}
 	helper := mp.NewMackerelPlugin(f)
 
 	if *tempFile != "" {
 		helper.Tempfile = *tempFile
+	} else if *pluginType != "" {
+		helper.Tempfile = fmt.Sprintf("/tmp/mackerel-plugin-fluentd-%s-%s-%s", *host, *port, *pluginType)
 	} else {
 		helper.Tempfile = fmt.Sprintf("/tmp/mackerel-plugin-fluentd-%s-%s", *host, *port)
 	}
