@@ -1,22 +1,26 @@
 package main
 
 import (
+	"crypto/md5"
 	"encoding/json"
 	"flag"
 	"fmt"
 	"io/ioutil"
+	"log"
 	"net/http"
 	"os"
 	"regexp"
+	"strings"
 
 	mp "github.com/mackerelio/go-mackerel-plugin-helper"
 )
 
 // FluentdMetrics plugin for fluentd
 type FluentdMetrics struct {
-	Target     string
-	Tempfile   string
-	pluginType string
+	Target          string
+	Tempfile        string
+	pluginType      string
+	pluginIDPattern regexp.Regexp
 
 	plugins []FluentdPluginMetrics
 }
@@ -76,6 +80,9 @@ func (f *FluentdMetrics) nonTargetPlugin(plugin FluentdPluginMetrics) bool {
 	if f.pluginType != "" && f.pluginType != plugin.Type {
 		return true
 	}
+	if f.pluginIDPattern.String() != "" && f.pluginIDPattern.MatchString(plugin.PluginID) == false {
+		return true
+	}
 	return false
 }
 
@@ -124,6 +131,7 @@ func main() {
 	host := flag.String("host", "localhost", "fluentd monitor_agent port")
 	port := flag.String("port", "24220", "fluentd monitor_agent port")
 	pluginType := flag.String("plugin-type", "", "Gets the metric that matches this plugin type")
+	pluginIDPatternString := flag.String("plugin-id-pattern", "", "Gets the metric that matches this plugin id pattern")
 	tempFile := flag.String("tempfile", "", "Temp file name")
 	flag.Parse()
 
@@ -132,14 +140,26 @@ func main() {
 		Tempfile:   *tempFile,
 		pluginType: *pluginType,
 	}
+
+	if *pluginIDPatternString != "" {
+		pluginIDPattern, err := regexp.Compile(*pluginIDPatternString)
+		if err != nil {
+			log.Fatalf("Invalid plugin id pattern: %s", err.Error())
+		}
+		f.pluginIDPattern = *pluginIDPattern
+	}
 	helper := mp.NewMackerelPlugin(f)
 
-	if *tempFile != "" {
-		helper.Tempfile = *tempFile
-	} else if *pluginType != "" {
-		helper.Tempfile = fmt.Sprintf("/tmp/mackerel-plugin-fluentd-%s-%s-%s", *host, *port, *pluginType)
-	} else {
-		helper.Tempfile = fmt.Sprintf("/tmp/mackerel-plugin-fluentd-%s-%s", *host, *port)
+	helper.Tempfile = *tempFile
+	if *tempFile == "" {
+		tempFileSuffix := []string{*host, *port}
+		if *pluginType != "" {
+			tempFileSuffix = append(tempFileSuffix, *pluginType)
+		}
+		if *pluginIDPatternString != "" {
+			tempFileSuffix = append(tempFileSuffix, fmt.Sprintf("%x", md5.Sum([]byte(*pluginIDPatternString))))
+		}
+		helper.Tempfile = fmt.Sprintf("/tmp/mackerel-plugin-fluentd-%s", strings.Join(tempFileSuffix, "-"))
 	}
 
 	if os.Getenv("MACKEREL_AGENT_PLUGIN_META") != "" {
