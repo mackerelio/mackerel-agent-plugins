@@ -53,13 +53,13 @@ cover: testdeps
 	gotestcover -v -covermode=count -coverprofile=.profile.cov -parallelpackages=4 ./...
 
 rpm: build
-	TARGET_OSARCH="linux/386" make build
+	make build TARGET_OSARCH="linux/386"
 	rpmbuild --define "_sourcedir `pwd`"  --define "_version ${CURRENT_VERSION}" --define "buildarch noarch" -bb packaging/rpm/mackerel-agent-plugins.spec
-	TARGET_OSARCH="linux/amd64" make build
+	make build TARGET_OSARCH="linux/amd64"
 	rpmbuild --define "_sourcedir `pwd`"  --define "_version ${CURRENT_VERSION}" --define "buildarch x86_64" -bb packaging/rpm/mackerel-agent-plugins.spec
 
 deb: build
-	TARGET_OSARCH="linux/386" make build
+	make build TARGET_OSARCH="linux/386"
 	cp build/mackerel-plugin-* packaging/deb/debian/
 	cd packaging/deb && debuild --no-tgz-check -rfakeroot -uc -us
 
