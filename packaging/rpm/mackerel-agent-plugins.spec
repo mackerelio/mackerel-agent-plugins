@@ -49,6 +49,11 @@ done
 %{__oldtargetdir}/*
 
 %changelog
+* Wed Apr 20 2016 <mackerel-developers@hatena.ne.jp> - 0.19.4-1
+- Add mackerel-plugin-graphite (#216) (by taku-k)
+- Add mackerel plugin proc fd (#207) (by taku-k)
+- Do not send fluentd metrics of other than the output plugin (#213) (by waniji)
+
 * Thu Apr 14 2016 <mackerel-developers@hatena.ne.jp> - 0.19.3-1
 - [redis] skip to calculate capacity when CONFIG command failed (by Songmu)
 - Revert "Revert "use /usr/bin/mackerel-plugin-*"" (by Songmu)

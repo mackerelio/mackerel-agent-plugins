@@ -1,3 +1,14 @@
+mackerel-agent-plugins (0.19.4-1) stable; urgency=low
+
+  * Add mackerel-plugin-graphite (by taku-k)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/216>
+  * Add mackerel plugin proc fd (by taku-k)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/207>
+  * Do not send fluentd metrics of other than the output plugin (by waniji)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/213>
+
+ -- mackerel <mackerel-developers@hatena.ne.jp>  Wed, 20 Apr 2016 06:15:30 +0000
+
 mackerel-agent-plugins (0.19.3-1) stable; urgency=low
 
   * [redis] skip to calculate capacity when CONFIG command failed (by Songmu)
