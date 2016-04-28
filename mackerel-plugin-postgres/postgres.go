@@ -7,7 +7,7 @@ import (
 	"os"
 
 	_ "github.com/lib/pq"
-	mp "github.com/mackerelio/go-mackerel-plugin"
+	mp "github.com/mackerelio/go-mackerel-plugin-helper"
 	"github.com/mackerelio/mackerel-agent/logging"
 )
 
@@ -56,6 +56,13 @@ var graphdef = map[string](mp.Graphs){
 			mp.Metrics{Name: "total_size", Label: "Total Size", Diff: false, Stacked: false},
 		},
 	},
+	"postgres.relpages.#": mp.Graphs{
+		Label: "Postgres Relpages",
+		Unit:  "integer",
+		Metrics: [](mp.Metrics){
+			mp.Metrics{Name: "*", Label: "%1", Diff: false, Stacked: false},
+		},
+	},
 	"postgres.deadlocks": mp.Graphs{
 		Label: "Postgres Dead Locks",
 		Unit:  "integer",
@@ -82,14 +89,15 @@ var graphdef = map[string](mp.Graphs){
 
 // PostgresPlugin mackerel plugin for PostgreSQL
 type PostgresPlugin struct {
-	Host     string
-	Port     string
-	Username string
-	Password string
-	SSLmode  string
-	Timeout  int
-	Tempfile string
-	Option   string
+	Host          string
+	Port          string
+	Username      string
+	Password      string
+	SSLmode       string
+	Timeout       int
+	Tempfile      string
+	Database      string
+	RelpagesLimit int
 }
 
 func fetchStatDatabase(db *sql.DB) (map[string]float64, error) {
@@ -180,15 +188,52 @@ func fetchDatabaseSize(db *sql.DB) (map[string]float64, error) {
 	return stat, nil
 }
 
-func mergeStat(dst, src map[string]float64) {
+func (p PostgresPlugin) fetchRelpages(db *sql.DB) (map[string]float64, error) {
+	if p.RelpagesLimit <= 0 {
+		return nil, nil
+	}
+	_, err := db.Query("analyze")
+	if err != nil {
+		logger.Warningf("Failed to ANALYZE", err)
+		return nil, err
+	}
+	rows, err := db.Query("select relname, relpages from pg_class order by relpages desc limit $1", p.RelpagesLimit)
+	if err != nil {
+		logger.Errorf("Failed to SELECT pg_class.relpages. %s", err)
+		return nil, err
+	}
+
+	stat := make(map[string]float64)
+
+	for rows.Next() {
+		var relname string
+		var relpages int64
+		if err := rows.Scan(&relname, &relpages); err != nil {
+			logger.Warningf("Failed to scan %s", err)
+			continue
+		}
+		stat["postgres.relpages."+p.Database+"."+relname] = float64(relpages)
+	}
+
+	return stat, nil
+}
+func mergeStat(dst map[string]interface{}, src map[string]float64) {
 	for k, v := range src {
 		dst[k] = v
 	}
 }
 
+func (p PostgresPlugin) option() string {
+	option := ""
+	if p.Database != "" {
+		option = fmt.Sprintf("dbname=%s", p.Database)
+	}
+	return option
+}
+
 // FetchMetrics interface for mackerelplugin
-func (p PostgresPlugin) FetchMetrics() (map[string]float64, error) {
-	db, err := sql.Open("postgres", fmt.Sprintf("user=%s password=%s host=%s port=%s sslmode=%s connect_timeout=%d %s", p.Username, p.Password, p.Host, p.Port, p.SSLmode, p.Timeout, p.Option))
+func (p PostgresPlugin) FetchMetrics() (map[string]interface{}, error) {
+	db, err := sql.Open("postgres", fmt.Sprintf("user=%s password=%s host=%s port=%s sslmode=%s connect_timeout=%d %s", p.Username, p.Password, p.Host, p.Port, p.SSLmode, p.Timeout, p.option()))
 	if err != nil {
 		logger.Errorf("FetchMetrics: %s", err)
 		return nil, err
@@ -207,11 +252,16 @@ func (p PostgresPlugin) FetchMetrics() (map[string]float64, error) {
 	if err != nil {
 		return nil, err
 	}
+	statRelpages, err := p.fetchRelpages(db)
+	if err != nil {
+		return nil, err
+	}
 
-	stat := make(map[string]float64)
+	stat := make(map[string]interface{})
 	mergeStat(stat, statStatDatabase)
 	mergeStat(stat, statConnections)
 	mergeStat(stat, statDatabaseSize)
+	mergeStat(stat, statRelpages)
 
 	return stat, err
 }
@@ -230,6 +280,7 @@ func main() {
 	optSSLmode := flag.String("sslmode", "disable", "Whether or not to use SSL")
 	optConnectTimeout := flag.Int("connect_timeout", 5, "Maximum wait for connection, in seconds.")
 	optTempfile := flag.String("tempfile", "", "Temp file name")
+	optRelpagesLimit := flag.Int("relpages_limit", 0, "Outputs only top `relpages_limit` relations with the highest relpages.")
 	flag.Parse()
 
 	if *optUser == "" {
@@ -242,10 +293,6 @@ func main() {
 		flag.PrintDefaults()
 		os.Exit(1)
 	}
-	option := ""
-	if *optDatabase != "" {
-		option = fmt.Sprintf("dbname=%s", *optDatabase)
-	}
 
 	var postgres PostgresPlugin
 	postgres.Host = *optHost
@@ -254,7 +301,8 @@ func main() {
 	postgres.Password = *optPass
 	postgres.SSLmode = *optSSLmode
 	postgres.Timeout = *optConnectTimeout
-	postgres.Option = option
+	postgres.Database = *optDatabase
+	postgres.RelpagesLimit = *optRelpagesLimit
 
 	helper := mp.NewMackerelPlugin(postgres)
 
