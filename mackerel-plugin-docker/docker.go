@@ -11,6 +11,7 @@ import (
 	"regexp"
 	"strconv"
 	"strings"
+	"sync"
 
 	"github.com/fsouza/go-dockerclient"
 	mp "github.com/mackerelio/go-mackerel-plugin-helper"
@@ -285,35 +286,41 @@ func (m DockerPlugin) generateName(container docker.APIContainers) string {
 
 // FetchMetricsWithAPI use docker API to fetch metrics
 func (m DockerPlugin) FetchMetricsWithAPI(containers []docker.APIContainers) (map[string]interface{}, error) {
+	var wg sync.WaitGroup
 	res := map[string]interface{}{}
 	for _, container := range containers {
-		name := strings.Replace(container.Names[0], "/", "", 1)
-		metricName := normalizeMetricName(m.generateName(container))
-		client, _ := docker.NewClient(m.Host)
-		errC := make(chan error, 1)
-		statsC := make(chan *docker.Stats)
-		done := make(chan bool)
-		go func() {
-			errC <- client.Stats(docker.StatsOptions{name, statsC, false, done, 0})
-			close(errC)
-		}()
-		var resultStats []*docker.Stats
-		for {
-			stats, ok := <-statsC
-			if !ok {
-				break
+		wg.Add(1)
+		go func(cont docker.APIContainers) {
+			defer wg.Done()
+			name := strings.Replace(cont.Names[0], "/", "", 1)
+			metricName := normalizeMetricName(m.generateName(cont))
+			client, _ := docker.NewClient(m.Host)
+			errC := make(chan error, 1)
+			statsC := make(chan *docker.Stats)
+			done := make(chan bool)
+			go func() {
+				errC <- client.Stats(docker.StatsOptions{ID: name, Stats: statsC, Stream: false, Done: done, Timeout: 0})
+				close(errC)
+			}()
+			var resultStats []*docker.Stats
+			for {
+				stats, ok := <-statsC
+				if !ok {
+					break
+				}
+				resultStats = append(resultStats, stats)
 			}
-			resultStats = append(resultStats, stats)
-		}
-		err := <-errC
-		if err != nil {
-			log.Fatal(err)
-		}
-		if len(resultStats) == 0 {
-			log.Fatalf("Stats: Expected 1 result. Got %d.", len(resultStats))
-		}
-		m.parseStats(&res, metricName, resultStats[0])
+			err := <-errC
+			if err != nil {
+				log.Fatal(err)
+			}
+			if len(resultStats) == 0 {
+				log.Fatalf("Stats: Expected 1 result. Got %d.", len(resultStats))
+			}
+			m.parseStats(&res, metricName, resultStats[0])
+		}(container)
 	}
+	wg.Wait()
 	return res, nil
 }
 
