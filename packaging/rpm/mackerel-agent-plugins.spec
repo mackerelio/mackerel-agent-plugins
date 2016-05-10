@@ -49,6 +49,10 @@ done
 %{__oldtargetdir}/*
 
 %changelog
+* Tue May 10 2016 <mackerel-developers@hatena.ne.jp> - 0.20.0-1
+- [docker] use goroutine for fetching metrics via API (by stanaka)
+- add graphite and proc-fd into package (by Songmu)
+
 * Wed Apr 20 2016 <mackerel-developers@hatena.ne.jp> - 0.19.4-1
 - Add mackerel-plugin-graphite (#216) (by taku-k)
 - Add mackerel plugin proc fd (#207) (by taku-k)
