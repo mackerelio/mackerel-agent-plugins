@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.20.0 (2016-05-10)
+
+* [docker] use goroutine for fetching metrics via API #220 (stanaka)
+* add graphite and proc-fd into package #223 (Songmu)
+
+
 ## 0.19.4 (2016-04-20)
 
 * Add mackerel-plugin-graphite (#216) (taku-k)
