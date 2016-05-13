@@ -64,7 +64,7 @@ func (c PhpApcPlugin) GraphDefinition() map[string](mp.Graphs) {
 }
 
 // main function
-func doMain(c *cli.Context) {
+func doMain(c *cli.Context) error {
 
 	var phpapc PhpApcPlugin
 
@@ -80,6 +80,7 @@ func doMain(c *cli.Context) {
 	} else {
 		helper.OutputValues()
 	}
+	return nil
 }
 
 // FetchMetrics interface for mackerelplugin

@@ -79,7 +79,7 @@ func (c Apache2Plugin) GraphDefinition() map[string](mp.Graphs) {
 }
 
 // main function
-func doMain(c *cli.Context) {
+func doMain(c *cli.Context) error {
 
 	var apache2 Apache2Plugin
 
@@ -91,11 +91,8 @@ func doMain(c *cli.Context) {
 	helper := mp.NewMackerelPlugin(apache2)
 	helper.Tempfile = c.String("tempfile")
 
-	if os.Getenv("MACKEREL_AGENT_PLUGIN_META") != "" {
-		helper.OutputDefinitions()
-	} else {
-		helper.OutputValues()
-	}
+	helper.Run()
+	return nil
 }
 
 // FetchMetrics fetch the metrics
