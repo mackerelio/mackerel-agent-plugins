@@ -7,9 +7,14 @@ package=mackerel-agent-plugins
 
 override_dh_auto_install:
 	dh_auto_install
+	install -d -m 755 debian/tmp/usr/bin
+	for i in apache2 aws-ec2-cpucredit aws-elasticache aws-elasticsearch aws-elb aws-rds aws-ses conntrack elasticsearch gostats haproxy jmx-jolokia jvm linux mailq memcached mongodb munin mysql nginx php-apc php-opcache plack postgres rabbitmq redis snmp squid td-table-count trafficserver varnish xentop aws-cloudfront aws-ec2-ebs fluentd docker unicorn uptime inode;do \
+	    install -m755 debian/mackerel-plugin-$$i debian/tmp/usr/bin; \
+	done
 	install -d -m 755 debian/tmp/usr/local/bin
-	for i in apache2 aws-ec2-cpucredit aws-elasticache aws-elb aws-rds aws-ses elasticsearch haproxy jvm linux memcached mongodb munin mysql nginx php-apc php-opcache plack postgres redis snmp squid td-table-count varnish xentop aws-cloudfront;do \
-	    install -m755 debian/mackerel-plugin-$$i debian/tmp/usr/local/bin; \
+	for i in apache2 aws-ec2-cpucredit aws-elasticache aws-elasticsearch aws-elb aws-rds aws-ses conntrack elasticsearch gostats haproxy jmx-jolokia jvm linux mailq memcached mongodb munin mysql nginx php-apc php-opcache plack postgres rabbitmq redis snmp squid td-table-count trafficserver varnish xentop aws-cloudfront aws-ec2-ebs fluentd docker unicorn uptime inode; \
+	do \
+	    ln -s ../../bin/mackerel-plugin-$$i debian/tmp/usr/local/bin/mackerel-plugin-$$i; \
 	done
 
 override_dh_usrlocal:

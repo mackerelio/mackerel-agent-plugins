@@ -17,6 +17,7 @@ import (
 
 var logger = logging.GetLogger("metrics.plugin.redis")
 
+// RedisPlugin mackerel plugin for Redis
 type RedisPlugin struct {
 	Host     string
 	Port     string
@@ -26,6 +27,69 @@ type RedisPlugin struct {
 	Tempfile string
 }
 
+func fetchPercentageOfMemory(c *redis.Client, stat map[string]float64) error {
+	r := c.Cmd("CONFIG", "GET", "maxmemory")
+	if r.Err != nil {
+		logger.Errorf("Failed to run `CONFIG GET maxmemory` command. %s", r.Err)
+		return r.Err
+	}
+
+	res, err := r.Hash()
+	if err != nil {
+		logger.Errorf("Failed to fetch maxmemory. %s", err)
+		return err
+	}
+
+	maxsize, err := strconv.ParseFloat(res["maxmemory"], 64)
+	if err != nil {
+		logger.Errorf("Failed to parse maxmemory. %s", err)
+		return err
+	}
+
+	if maxsize == 0.0 {
+		stat["percentage_of_memory"] = 0.0
+	} else {
+		stat["percentage_of_memory"] = 100.0 * stat["used_memory"] / maxsize
+	}
+
+	return nil
+}
+
+func fetchPercentageOfClients(c *redis.Client, stat map[string]float64) error {
+	r := c.Cmd("CONFIG", "GET", "maxclients")
+	if r.Err != nil {
+		logger.Errorf("Failed to run `CONFIG GET maxclients` command. %s", r.Err)
+		return r.Err
+	}
+
+	res, err := r.Hash()
+	if err != nil {
+		logger.Errorf("Failed to fetch maxclients. %s", err)
+		return err
+	}
+
+	maxsize, err := strconv.ParseFloat(res["maxclients"], 64)
+	if err != nil {
+		logger.Errorf("Failed to parse maxclients. %s", err)
+		return err
+	}
+
+	stat["percentage_of_clients"] = 100.0 * stat["connected_clients"] / maxsize
+
+	return nil
+}
+
+func calculateCapacity(c *redis.Client, stat map[string]float64) error {
+	if err := fetchPercentageOfMemory(c, stat); err != nil {
+		return err
+	}
+	if err := fetchPercentageOfClients(c, stat); err != nil {
+		return err
+	}
+	return nil
+}
+
+// FetchMetrics interface for mackerelplugin
 func (m RedisPlugin) FetchMetrics() (map[string]float64, error) {
 	network := "tcp"
 	target := fmt.Sprintf("%s:%s", m.Host, m.Port)
@@ -34,6 +98,10 @@ func (m RedisPlugin) FetchMetrics() (map[string]float64, error) {
 		network = "unix"
 	}
 	c, err := redis.DialTimeout(network, target, time.Duration(m.Timeout)*time.Second)
+	if err != nil {
+		logger.Errorf("Failed to connect redis. %s", err)
+		return nil, err
+	}
 	defer c.Close()
 
 	r := c.Cmd("info")
@@ -67,19 +135,19 @@ func (m RedisPlugin) FetchMetrics() (map[string]float64, error) {
 			kv := strings.SplitN(value, ",", 3)
 			keys, expired := kv[0], kv[1]
 
-			keys_kv := strings.SplitN(keys, "=", 2)
-			keys_fv, err := strconv.ParseFloat(keys_kv[1], 64)
+			keysKv := strings.SplitN(keys, "=", 2)
+			keysFv, err := strconv.ParseFloat(keysKv[1], 64)
 			if err != nil {
 				logger.Warningf("Failed to parse db keys. %s", err)
 			}
-			stat["keys"] += keys_fv
+			stat["keys"] += keysFv
 
-			expired_kv := strings.SplitN(expired, "=", 2)
-			expired_fv, err := strconv.ParseFloat(expired_kv[1], 64)
+			expiredKv := strings.SplitN(expired, "=", 2)
+			expiredFv, err := strconv.ParseFloat(expiredKv[1], 64)
 			if err != nil {
 				logger.Warningf("Failed to parse db expired. %s", err)
 			}
-			stat["expired"] += expired_fv
+			stat["expired"] += expiredFv
 
 			continue
 		}
@@ -97,13 +165,18 @@ func (m RedisPlugin) FetchMetrics() (map[string]float64, error) {
 		stat["expired"] = 0
 	}
 
+	if err := calculateCapacity(c, stat); err != nil {
+		logger.Infof("Failed to calculate capacity. (The cause may be that AWS Elasticache Redis has no `CONFIG` command.) Skip these metrics. %s", err)
+	}
+
 	return stat, nil
 }
 
+// GraphDefinition interface for mackerelplugin
 func (m RedisPlugin) GraphDefinition() map[string](mp.Graphs) {
 	labelPrefix := strings.Title(m.Prefix)
 
-	var graphdef map[string](mp.Graphs) = map[string](mp.Graphs){
+	var graphdef = map[string](mp.Graphs){
 		(m.Prefix + ".queries"): mp.Graphs{
 			Label: (labelPrefix + " Queries"),
 			Unit:  "integer",
@@ -152,6 +225,14 @@ func (m RedisPlugin) GraphDefinition() map[string](mp.Graphs) {
 				mp.Metrics{Name: "used_memory_rss", Label: "Used Memory RSS", Diff: false},
 				mp.Metrics{Name: "used_memory_peak", Label: "Used Memory Peak", Diff: false},
 				mp.Metrics{Name: "used_memory_lua", Label: "Used Memory Lua engine", Diff: false},
+			},
+		},
+		(m.Prefix + ".capacity"): mp.Graphs{
+			Label: (labelPrefix + " Capacity"),
+			Unit:  "percentage",
+			Metrics: [](mp.Metrics){
+				mp.Metrics{Name: "percentage_of_memory", Label: "Percentage of memory", Diff: false},
+				mp.Metrics{Name: "percentage_of_clients", Label: "Percentage of clients", Diff: false},
 			},
 		},
 	}

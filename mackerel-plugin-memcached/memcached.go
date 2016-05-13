@@ -2,18 +2,18 @@ package main
 
 import (
 	"bufio"
+	"crypto/md5"
 	"flag"
 	"fmt"
 	"io"
 	"net"
-	"os"
 	"strings"
 
 	mp "github.com/mackerelio/go-mackerel-plugin-helper"
 )
 
 // https://github.com/memcached/memcached/blob/master/doc/protocol.txt
-var graphdef map[string](mp.Graphs) = map[string](mp.Graphs){
+var graphdef = map[string](mp.Graphs){
 	"memcached.connections": mp.Graphs{
 		Label: "Memcached Connections",
 		Unit:  "integer",
@@ -78,23 +78,40 @@ var graphdef map[string](mp.Graphs) = map[string](mp.Graphs){
 			mp.Metrics{Name: "bytes_written", Label: "Write", Diff: true, Type: "uint64"},
 		},
 	},
+	"memcached.cachesize": mp.Graphs{
+		Label: "Memcached Cache Size",
+		Unit:  "bytes",
+		Metrics: [](mp.Metrics){
+			mp.Metrics{Name: "limit_maxbytes", Label: "Total", Diff: false},
+			mp.Metrics{Name: "bytes", Label: "Used", Diff: false, Type: "uint64"},
+		},
+	},
 }
 
+// MemcachedPlugin mackerel plugin for memchached
 type MemcachedPlugin struct {
 	Target   string
+	Socket   string
 	Tempfile string
 }
 
+// FetchMetrics interface for mackerelplugin
 func (m MemcachedPlugin) FetchMetrics() (map[string]interface{}, error) {
-	conn, err := net.Dial("tcp", m.Target)
+	network := "tcp"
+	target := m.Target
+	if m.Socket != "" {
+		network = "unix"
+		target = m.Socket
+	}
+	conn, err := net.Dial(network, target)
 	if err != nil {
 		return nil, err
 	}
 	fmt.Fprintln(conn, "stats")
-	return m.ParseStats(conn)
+	return m.parseStats(conn)
 }
 
-func (m MemcachedPlugin) ParseStats(conn io.Reader) (map[string]interface{}, error) {
+func (m MemcachedPlugin) parseStats(conn io.Reader) (map[string]interface{}, error) {
 	scanner := bufio.NewScanner(conn)
 	stat := make(map[string]interface{})
 
@@ -116,6 +133,7 @@ func (m MemcachedPlugin) ParseStats(conn io.Reader) (map[string]interface{}, err
 	return nil, nil
 }
 
+// GraphDefinition interface for mackerelplugin
 func (m MemcachedPlugin) GraphDefinition() map[string](mp.Graphs) {
 	return graphdef
 }
@@ -123,23 +141,26 @@ func (m MemcachedPlugin) GraphDefinition() map[string](mp.Graphs) {
 func main() {
 	optHost := flag.String("host", "localhost", "Hostname")
 	optPort := flag.String("port", "11211", "Port")
+	optSocket := flag.String("socket", "", "Server socket (overrides hosts and port)")
 	optTempfile := flag.String("tempfile", "", "Temp file name")
 	flag.Parse()
 
 	var memcached MemcachedPlugin
-
-	memcached.Target = fmt.Sprintf("%s:%s", *optHost, *optPort)
+	if *optSocket != "" {
+		memcached.Socket = *optSocket
+	} else {
+		memcached.Target = fmt.Sprintf("%s:%s", *optHost, *optPort)
+	}
 	helper := mp.NewMackerelPlugin(memcached)
 
 	if *optTempfile != "" {
 		helper.Tempfile = *optTempfile
 	} else {
-		helper.Tempfile = fmt.Sprintf("/tmp/mackerel-plugin-memcached-%s-%s", *optHost, *optPort)
+		if memcached.Socket != "" {
+			helper.Tempfile = fmt.Sprintf("/tmp/mackerel-plugin-memcached-%s", fmt.Sprintf("%x", md5.Sum([]byte(memcached.Socket))))
+		} else {
+			helper.Tempfile = fmt.Sprintf("/tmp/mackerel-plugin-memcached-%s-%s", *optHost, *optPort)
+		}
 	}
-
-	if os.Getenv("MACKEREL_AGENT_PLUGIN_META") != "" {
-		helper.OutputDefinitions()
-	} else {
-		helper.OutputValues()
-	}
+	helper.Run()
 }

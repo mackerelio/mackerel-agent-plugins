@@ -11,11 +11,11 @@ import (
 	"strings"
 
 	"github.com/codegangsta/cli"
-	mp "github.com/mackerelio/go-mackerel-plugin"
+	mp "github.com/mackerelio/go-mackerel-plugin-helper"
 )
 
 // metric value structure
-var graphdef map[string](mp.Graphs) = map[string](mp.Graphs){
+var graphdef = map[string](mp.Graphs){
 	"apache2.workers": mp.Graphs{
 		Label: "Apache Workers",
 		Unit:  "integer",
@@ -28,7 +28,7 @@ var graphdef map[string](mp.Graphs) = map[string](mp.Graphs){
 		Label: "Apache Bytes",
 		Unit:  "bytes",
 		Metrics: [](mp.Metrics){
-			mp.Metrics{Name: "bytes_sent", Label: "Bytes Sent", Diff: true},
+			mp.Metrics{Name: "bytes_sent", Label: "Bytes Sent", Diff: true, Type: "uint64"},
 		},
 	},
 	"apache2.cpu": mp.Graphs{
@@ -42,7 +42,7 @@ var graphdef map[string](mp.Graphs) = map[string](mp.Graphs){
 		Label: "Apache Requests",
 		Unit:  "integer",
 		Metrics: [](mp.Metrics){
-			mp.Metrics{Name: "requests", Label: "Requests", Diff: true},
+			mp.Metrics{Name: "requests", Label: "Requests", Diff: true, Type: "uint64"},
 		},
 	},
 	"apache2.scoreboard": mp.Graphs{
@@ -64,7 +64,7 @@ var graphdef map[string](mp.Graphs) = map[string](mp.Graphs){
 	},
 }
 
-// for fetching metrics
+// Apache2Plugin for fetching metrics
 type Apache2Plugin struct {
 	Host     string
 	Port     uint16
@@ -73,7 +73,7 @@ type Apache2Plugin struct {
 	Tempfile string
 }
 
-// Graph definition
+// GraphDefinition Graph definition
 func (c Apache2Plugin) GraphDefinition() map[string](mp.Graphs) {
 	return graphdef
 }
@@ -98,28 +98,28 @@ func doMain(c *cli.Context) {
 	}
 }
 
-// fetch metrics
-func (c Apache2Plugin) FetchMetrics() (map[string]float64, error) {
+// FetchMetrics fetch the metrics
+func (c Apache2Plugin) FetchMetrics() (map[string]interface{}, error) {
 	data, err := getApache2Metrics(c.Host, c.Port, c.Path, c.Header)
 	if err != nil {
 		return nil, err
 	}
 
-	stat := make(map[string]float64)
-	err_stat := parseApache2Status(data, &stat)
-	if err_stat != nil {
-		return nil, err_stat
+	stat := make(map[string]interface{})
+	errStat := parseApache2Status(data, &stat)
+	if errStat != nil {
+		return nil, errStat
 	}
-	err_score := parseApache2Scoreboard(data, &stat)
-	if err_score != nil {
-		return nil, err_score
+	errScore := parseApache2Scoreboard(data, &stat)
+	if errScore != nil {
+		return nil, errScore
 	}
 
 	return stat, nil
 }
 
 // parsing scoreboard from server-status?auto
-func parseApache2Scoreboard(str string, p *map[string]float64) error {
+func parseApache2Scoreboard(str string, p *map[string]interface{}) error {
 	for _, line := range strings.Split(str, "\n") {
 		matched, err := regexp.MatchString("Scoreboard(.*)", line)
 		if err != nil {
@@ -131,11 +131,11 @@ func parseApache2Scoreboard(str string, p *map[string]float64) error {
 		record := strings.Split(line, ":")
 		for _, sb := range strings.Split(strings.Trim(record[1], " "), "") {
 			name := fmt.Sprintf("score-%s", sb)
-			c, assert := (*p)[name]
+			c, assert := (*p)[name].(float64)
 			if !assert {
-				c = 0
+				c = 0.0
 			}
-			(*p)[name] = c + 1
+			(*p)[name] = c + 1.0
 		}
 		return nil
 	}
@@ -144,7 +144,7 @@ func parseApache2Scoreboard(str string, p *map[string]float64) error {
 }
 
 // parsing metrics from server-status?auto
-func parseApache2Status(str string, p *map[string]float64) error {
+func parseApache2Status(str string, p *map[string]interface{}) error {
 	Params := map[string]string{
 		"Total Accesses": "requests",
 		"Total kBytes":   "bytes_sent",
@@ -158,10 +158,10 @@ func parseApache2Status(str string, p *map[string]float64) error {
 		if !assert {
 			continue
 		}
-		var err_parse error
-		(*p)[Params[record[0]]], err_parse = strconv.ParseFloat(strings.Trim(record[1], " "), 64)
-		if err_parse != nil {
-			return err_parse
+		var errParse error
+		(*p)[Params[record[0]]], errParse = strconv.ParseFloat(strings.Trim(record[1], " "), 64)
+		if errParse != nil {
+			return errParse
 		}
 	}
 
@@ -197,7 +197,7 @@ func getApache2Metrics(host string, port uint16, path string, header []string) (
 		return "", err
 	}
 	if resp.StatusCode != http.StatusOK {
-		return "", errors.New(fmt.Sprintf("HTTP status error: %d", resp.StatusCode))
+		return "", fmt.Errorf("HTTP status error: %d", resp.StatusCode)
 	}
 	body, err := ioutil.ReadAll(resp.Body)
 	resp.Body.Close()
@@ -211,11 +211,11 @@ func getApache2Metrics(host string, port uint16, path string, header []string) (
 func main() {
 	app := cli.NewApp()
 	app.Name = "apache2_metrics"
-	app.Version = Version
+	app.Version = version
 	app.Usage = "Get metrics from apache2."
 	app.Author = "Yuichiro Saito"
 	app.Email = "saito@heartbeats.jp"
-	app.Flags = Flags
+	app.Flags = flags
 	app.Action = doMain
 
 	app.Run(os.Args)

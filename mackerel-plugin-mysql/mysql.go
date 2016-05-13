@@ -1,10 +1,10 @@
 package main
 
 import (
+	"crypto/md5"
 	"flag"
 	"fmt"
 	"log"
-	"os"
 	"strconv"
 	"strings"
 
@@ -13,7 +13,7 @@ import (
 	_ "github.com/ziutek/mymysql/native"
 )
 
-var graphdef map[string](mp.Graphs) = map[string](mp.Graphs){
+var graphdef = map[string](mp.Graphs){
 	"mysql.cmd": mp.Graphs{
 		Label: "MySQL Command",
 		Unit:  "float",
@@ -84,17 +84,27 @@ var graphdef map[string](mp.Graphs) = map[string](mp.Graphs){
 			mp.Metrics{Name: "Bytes_received", Label: "Received Bytes", Diff: true, Stacked: false},
 		},
 	},
+	"mysql.capacity": mp.Graphs{
+		Label: "MySQL Capacity",
+		Unit:  "percentage",
+		Metrics: [](mp.Metrics){
+			mp.Metrics{Name: "PercentageOfConnections", Label: "Percentage Of Connections", Diff: false, Stacked: false},
+			mp.Metrics{Name: "PercentageOfBufferPool", Label: "Percentage Of Buffer Pool", Diff: false, Stacked: false},
+		},
+	},
 }
 
+// MySQLPlugin mackerel plugin for MySQL
 type MySQLPlugin struct {
 	Target        string
 	Tempfile      string
 	Username      string
 	Password      string
 	DisableInnoDB bool
+	isUnixSocket  bool
 }
 
-func (m MySQLPlugin) FetchShowStatus(db mysql.Conn, stat map[string]float64) error {
+func (m MySQLPlugin) fetchShowStatus(db mysql.Conn, stat map[string]float64) error {
 	rows, _, err := db.Query("show /*!50002 global */ status")
 	if err != nil {
 		log.Fatalln("FetchMetrics (Status): ", err)
@@ -103,13 +113,12 @@ func (m MySQLPlugin) FetchShowStatus(db mysql.Conn, stat map[string]float64) err
 
 	for _, row := range rows {
 		if len(row) > 1 {
-			Variable_name := string(row[0].([]byte))
+			variableName := string(row[0].([]byte))
 			if err != nil {
 				log.Fatalln("FetchMetrics (Status Fetch): ", err)
 				return err
 			}
-			//fmt.Println(Variable_name, Value)
-			stat[Variable_name], _ = _atof(string(row[1].([]byte)))
+			stat[variableName], _ = atof(string(row[1].([]byte)))
 		} else {
 			log.Fatalln("FetchMetrics (Status): row length is too small: ", len(row))
 		}
@@ -117,7 +126,7 @@ func (m MySQLPlugin) FetchShowStatus(db mysql.Conn, stat map[string]float64) err
 	return nil
 }
 
-func (m MySQLPlugin) FetchShowInnodbStatus(db mysql.Conn, stat map[string]float64) error {
+func (m MySQLPlugin) fetchShowInnodbStatus(db mysql.Conn, stat map[string]float64) error {
 	row, _, err := db.QueryFirst("SHOW /*!50000 ENGINE*/ INNODB STATUS")
 	if err != nil {
 		log.Fatalln("FetchMetrics (InnoDB Status): ", err)
@@ -132,7 +141,7 @@ func (m MySQLPlugin) FetchShowInnodbStatus(db mysql.Conn, stat map[string]float6
 	return nil
 }
 
-func (m MySQLPlugin) FetchShowVariables(db mysql.Conn, stat map[string]float64) error {
+func (m MySQLPlugin) fetchShowVariables(db mysql.Conn, stat map[string]float64) error {
 	rows, _, err := db.Query("SHOW VARIABLES")
 	if err != nil {
 		log.Fatalln("FetchMetrics (Variables): ", err)
@@ -140,12 +149,11 @@ func (m MySQLPlugin) FetchShowVariables(db mysql.Conn, stat map[string]float64) 
 
 	for _, row := range rows {
 		if len(row) > 1 {
-			Variable_name := string(row[0].([]byte))
+			variableName := string(row[0].([]byte))
 			if err != nil {
 				log.Println("FetchMetrics (Fetch Variables): ", err)
 			}
-			//fmt.Println(Variable_name, Value)
-			stat[Variable_name], _ = _atof(string(row[1].([]byte)))
+			stat[variableName], _ = atof(string(row[1].([]byte)))
 		} else {
 			log.Fatalln("FetchMetrics (Variables): row length is too small: ", len(row))
 		}
@@ -153,7 +161,7 @@ func (m MySQLPlugin) FetchShowVariables(db mysql.Conn, stat map[string]float64) 
 	return nil
 }
 
-func (m MySQLPlugin) FetchShowSlaveStatus(db mysql.Conn, stat map[string]float64) error {
+func (m MySQLPlugin) fetchShowSlaveStatus(db mysql.Conn, stat map[string]float64) error {
 	rows, res, err := db.Query("show slave status")
 	if err != nil {
 		log.Fatalln("FetchMetrics (Slave Status): ", err)
@@ -162,14 +170,29 @@ func (m MySQLPlugin) FetchShowSlaveStatus(db mysql.Conn, stat map[string]float64
 
 	for _, row := range rows {
 		idx := res.Map("Seconds_Behind_Master")
-		Value := row.Int(idx)
-		stat["Seconds_Behind_Master"] = float64(Value)
+		switch row[idx].(type) {
+		case nil:
+			// nop
+		default:
+			Value := row.Int(idx)
+			stat["Seconds_Behind_Master"] = float64(Value)
+		}
 	}
 	return nil
 }
 
+func (m MySQLPlugin) calculateCapacity(stat map[string]float64) {
+	stat["PercentageOfConnections"] = 100.0 * stat["Threads_connected"] / stat["max_connections"]
+	stat["PercentageOfBufferPool"] = 100.0 * stat["database_pages"] / stat["pool_size"]
+}
+
+// FetchMetrics interface for mackerelplugin
 func (m MySQLPlugin) FetchMetrics() (map[string]interface{}, error) {
-	db := mysql.New("tcp", "", m.Target, m.Username, m.Password, "")
+	proto := "tcp"
+	if m.isUnixSocket {
+		proto = "unix"
+	}
+	db := mysql.New(proto, "", m.Target, m.Username, m.Password, "")
 	err := db.Connect()
 	if err != nil {
 		log.Fatalln("FetchMetrics (DB Connect): ", err)
@@ -178,14 +201,15 @@ func (m MySQLPlugin) FetchMetrics() (map[string]interface{}, error) {
 	defer db.Close()
 
 	stat := make(map[string]float64)
-	m.FetchShowStatus(db, stat)
+	m.fetchShowStatus(db, stat)
 
 	if m.DisableInnoDB != true {
-		m.FetchShowInnodbStatus(db, stat)
-		m.FetchShowVariables(db, stat)
+		m.fetchShowInnodbStatus(db, stat)
+		m.fetchShowVariables(db, stat)
 	}
 
-	m.FetchShowSlaveStatus(db, stat)
+	m.fetchShowSlaveStatus(db, stat)
+	m.calculateCapacity(stat)
 
 	statRet := make(map[string]interface{})
 	for key, value := range stat {
@@ -195,11 +219,11 @@ func (m MySQLPlugin) FetchMetrics() (map[string]interface{}, error) {
 	return statRet, err
 }
 
+// GraphDefinition interface for mackerelplugin
 func (m MySQLPlugin) GraphDefinition() map[string](mp.Graphs) {
 	if m.DisableInnoDB != true {
 		setInnoDBMetrics()
 	}
-
 	return graphdef
 }
 
@@ -391,161 +415,167 @@ func setInnoDBMetrics() {
 	}
 }
 
-func parseInnodbStatus(str string, p *map[string]float64) error {
+func setIfEmpty(p *map[string]float64, key string, val float64) {
+	_, ok := (*p)[key]
+	if !ok {
+		(*p)[key] = val
+	}
+}
 
-	is_transaction := false
-	prev_line := ""
+func parseInnodbStatus(str string, p *map[string]float64) error {
+	isTransaction := false
+	prevLine := ""
 
 	for _, line := range strings.Split(str, "\n") {
 		record := strings.Fields(line)
 
 		// Innodb Semaphores
 		if strings.Index(line, "Mutex spin waits") == 0 {
-			_increase_map(p, "spin_waits", record[3])
-			_increase_map(p, "spin_rounds", record[5])
-			_increase_map(p, "os_waits", record[8])
+			increaseMap(p, "spin_waits", record[3])
+			increaseMap(p, "spin_rounds", record[5])
+			increaseMap(p, "os_waits", record[8])
 			continue
 		}
 		if strings.Index(line, "RW-shared spins") == 0 && strings.Index(line, ";") > 0 {
 			// 5.5, 5.6
-			_increase_map(p, "spin_waits", record[2])
-			_increase_map(p, "os_waits", record[5])
-			_increase_map(p, "spin_waits", record[8])
-			_increase_map(p, "os_waits", record[11])
+			increaseMap(p, "spin_waits", record[2])
+			increaseMap(p, "os_waits", record[5])
+			increaseMap(p, "spin_waits", record[8])
+			increaseMap(p, "os_waits", record[11])
 			continue
 		}
 		if strings.Index(line, "RW-shared spins") == 0 && strings.Index(line, "; RW-excl spins") < 0 {
 			// 5.1
-			_increase_map(p, "spin_waits", record[2])
-			_increase_map(p, "os_waits", record[7])
+			increaseMap(p, "spin_waits", record[2])
+			increaseMap(p, "os_waits", record[7])
 			continue
 		}
 		if strings.Index(line, "RW-excl spins") == 0 {
 			// 5.5, 5.6
-			_increase_map(p, "spin_waits", record[2])
-			_increase_map(p, "os_waits", record[7])
+			increaseMap(p, "spin_waits", record[2])
+			increaseMap(p, "os_waits", record[7])
 			continue
 		}
 		if strings.Index(line, "seconds the semaphore:") > 0 {
-			_increase_map(p, "innodb_sem_waits", "1")
-			wait, _ := _atof(record[9])
+			increaseMap(p, "innodb_sem_waits", "1")
+			wait, _ := atof(record[9])
 			wait = wait * 1000
-			_increase_map(p, "innodb_sem_wait_time_ms", fmt.Sprintf("%.f", wait))
+			increaseMap(p, "innodb_sem_wait_time_ms", fmt.Sprintf("%.f", wait))
 			continue
 		}
 
 		// Innodb Transactions
 		if strings.Index(line, "Trx id counter") == 0 {
-			lo_val := ""
+			loVal := ""
 			if len(record) >= 5 {
-				lo_val = record[4]
+				loVal = record[4]
 			}
-			val := _make_bigint(record[3], lo_val)
-			_increase_map(p, "innodb_transactions", fmt.Sprintf("%d", val))
-			is_transaction = true
+			val := makeBigint(record[3], loVal)
+			increaseMap(p, "innodb_transactions", fmt.Sprintf("%d", val))
+			isTransaction = true
 			continue
 		}
 		if strings.Index(line, "Purge done for trx") == 0 {
 			if record[7] == "undo" {
 				record[7] = ""
 			}
-			val := _make_bigint(record[6], record[7])
+			val := makeBigint(record[6], record[7])
 			trx := (*p)["innodb_transactions"] - float64(val)
-			_increase_map(p, "unpurged_txns", fmt.Sprintf("%.f", trx))
+			increaseMap(p, "unpurged_txns", fmt.Sprintf("%.f", trx))
 			continue
 		}
 		if strings.Index(line, "History list length") == 0 {
-			_increase_map(p, "history_list", record[3])
+			increaseMap(p, "history_list", record[3])
 			continue
 		}
-		if is_transaction && strings.Index(line, "---TRANSACTION") == 0 {
-			_increase_map(p, "current_transactions", "1")
+		if isTransaction && strings.Index(line, "---TRANSACTION") == 0 {
+			increaseMap(p, "current_transactions", "1")
 			if strings.Index(line, "ACTIVE") > 0 {
-				_increase_map(p, "active_transactions", "1")
+				increaseMap(p, "active_transactions", "1")
 			}
 			continue
 		}
-		if is_transaction && strings.Index(line, "------- TRX HAS BEEN") == 0 {
-			_increase_map(p, "innodb_lock_wait_secs", "1")
+		if isTransaction && strings.Index(line, "------- TRX HAS BEEN") == 0 {
+			increaseMap(p, "innodb_lock_wait_secs", "1")
 			continue
 		}
 		if strings.Index(line, "read views open inside InnoDB") > 0 {
-			(*p)["read_views"], _ = _atof(record[0])
+			(*p)["read_views"], _ = atof(record[0])
 			continue
 		}
 		if strings.Index(line, "------- TRX HAS BEEN") == 0 {
-			_increase_map(p, "innodb_tables_in_use", record[4])
-			_increase_map(p, "innodb_locked_tables", record[6])
+			increaseMap(p, "innodb_tables_in_use", record[4])
+			increaseMap(p, "innodb_locked_tables", record[6])
 			continue
 		}
-		if is_transaction && strings.Index(line, "lock struct(s)") == 0 {
+		if isTransaction && strings.Index(line, "lock struct(s)") == 0 {
 			if strings.Index(line, "LOCK WAIT") > 0 {
-				_increase_map(p, "innodb_lock_structs", record[2])
-				_increase_map(p, "locked_transactions", "1")
+				increaseMap(p, "innodb_lock_structs", record[2])
+				increaseMap(p, "locked_transactions", "1")
 			} else {
-				_increase_map(p, "innodb_lock_structs", record[0])
+				increaseMap(p, "innodb_lock_structs", record[0])
 			}
 			continue
 		}
 
 		// File I/O
 		if strings.Index(line, " OS file reads, ") > 0 {
-			(*p)["file_reads"], _ = _atof(record[0])
-			(*p)["file_writes"], _ = _atof(record[4])
-			(*p)["file_fsyncs"], _ = _atof(record[8])
+			(*p)["file_reads"], _ = atof(record[0])
+			(*p)["file_writes"], _ = atof(record[4])
+			(*p)["file_fsyncs"], _ = atof(record[8])
 			continue
 		}
 		if strings.Index(line, "Pending normal aio reads:") == 0 {
-			(*p)["pending_normal_aio_reads"], _ = _atof(record[4])
-			(*p)["pending_normal_aio_writes"], _ = _atof(record[7])
+			(*p)["pending_normal_aio_reads"], _ = atof(record[4])
+			(*p)["pending_normal_aio_writes"], _ = atof(record[7])
 			continue
 		}
 		if strings.Index(line, "ibuf aio reads") == 0 {
-			(*p)["pending_ibuf_aio_reads"], _ = _atof(record[3])
-			(*p)["pending_aio_log_ios"], _ = _atof(record[6])
-			(*p)["pending_aio_sync_ios"], _ = _atof(record[9])
+			(*p)["pending_ibuf_aio_reads"], _ = atof(record[3])
+			(*p)["pending_aio_log_ios"], _ = atof(record[6])
+			(*p)["pending_aio_sync_ios"], _ = atof(record[9])
 			continue
 		}
 		if strings.Index(line, "Pending flushes (fsync)") == 0 {
-			(*p)["pending_log_flushes"], _ = _atof(record[4])
-			(*p)["pending_buf_pool_flushes"], _ = _atof(record[7])
+			(*p)["pending_log_flushes"], _ = atof(record[4])
+			(*p)["pending_buf_pool_flushes"], _ = atof(record[7])
 			continue
 		}
 
 		// Insert Buffer and Adaptive Hash Index
 		if strings.Index(line, "Ibuf for space 0: size ") == 0 {
-			(*p)["ibuf_used_cells"], _ = _atof(record[5])
-			(*p)["ibuf_free_cells"], _ = _atof(record[9])
-			(*p)["ibuf_cell_count"], _ = _atof(record[12])
+			(*p)["ibuf_used_cells"], _ = atof(record[5])
+			(*p)["ibuf_free_cells"], _ = atof(record[9])
+			(*p)["ibuf_cell_count"], _ = atof(record[12])
 			continue
 		}
 		if strings.Index(line, "Ibuf: size ") == 0 {
-			(*p)["ibuf_used_cells"], _ = _atof(record[2])
-			(*p)["ibuf_free_cells"], _ = _atof(record[6])
-			(*p)["ibuf_cell_count"], _ = _atof(record[9])
+			(*p)["ibuf_used_cells"], _ = atof(record[2])
+			(*p)["ibuf_free_cells"], _ = atof(record[6])
+			(*p)["ibuf_cell_count"], _ = atof(record[9])
 			if strings.Index(line, "merges") > 0 {
-				(*p)["ibuf_merges"], _ = _atof(record[10])
+				(*p)["ibuf_merges"], _ = atof(record[10])
 			}
 			continue
 		}
-		if strings.Index(line, ", delete mark ") > 0 && strings.Index(prev_line, "merged operations:") == 0 {
-			(*p)["ibuf_inserts"], _ = _atof(record[1])
-			v1, _ := _atof(record[1])
-			v2, _ := _atof(record[4])
-			v3, _ := _atof(record[6])
+		if strings.Index(line, ", delete mark ") > 0 && strings.Index(prevLine, "merged operations:") == 0 {
+			(*p)["ibuf_inserts"], _ = atof(record[1])
+			v1, _ := atof(record[1])
+			v2, _ := atof(record[4])
+			v3, _ := atof(record[6])
 			(*p)["ibuf_merged"] = v1 + v2 + v3
 			continue
 		}
 		if strings.Index(line, " merged recs, ") > 0 {
-			(*p)["ibuf_inserts"], _ = _atof(record[0])
-			(*p)["ibuf_merged"], _ = _atof(record[2])
-			(*p)["ibuf_merges"], _ = _atof(record[5])
+			(*p)["ibuf_inserts"], _ = atof(record[0])
+			(*p)["ibuf_merged"], _ = atof(record[2])
+			(*p)["ibuf_merges"], _ = atof(record[5])
 			continue
 		}
 		if strings.Index(line, "Hash table size ") == 0 {
-			(*p)["hash_index_cells_total"], _ = _atof(record[3])
+			(*p)["hash_index_cells_total"], _ = atof(record[3])
 			if strings.Index(line, "used cells") > 0 {
-				(*p)["hash_index_cells_used"], _ = _atof(record[6])
+				(*p)["hash_index_cells_used"], _ = atof(record[6])
 			} else {
 				(*p)["hash_index_cells_used"] = 0
 			}
@@ -554,122 +584,147 @@ func parseInnodbStatus(str string, p *map[string]float64) error {
 
 		// Log
 		if strings.Index(line, " log i/o's done, ") > 0 {
-			(*p)["log_writes"], _ = _atof(record[0])
+			(*p)["log_writes"], _ = atof(record[0])
 			continue
 		}
 		if strings.Index(line, " pending log writes, ") > 0 {
-			(*p)["pending_log_writes"], _ = _atof(record[0])
-			(*p)["pending_chkp_writes"], _ = _atof(record[4])
+			(*p)["pending_log_writes"], _ = atof(record[0])
+			(*p)["pending_chkp_writes"], _ = atof(record[4])
 			continue
 		}
 		if strings.Index(line, "Log sequence number") == 0 {
-			val, _ := _atof(record[3])
+			val, _ := atof(record[3])
 			if len(record) >= 5 {
-				val = float64(_make_bigint(record[3], record[4]))
+				val = float64(makeBigint(record[3], record[4]))
 			}
 			(*p)["log_bytes_written"] = val
 			continue
 		}
 		if strings.Index(line, "Log flushed up to") == 0 {
-			val, _ := _atof(record[4])
+			val, _ := atof(record[4])
 			if len(record) >= 6 {
-				val = float64(_make_bigint(record[4], record[5]))
+				val = float64(makeBigint(record[4], record[5]))
 			}
 			(*p)["log_bytes_flushed"] = val
 			continue
 		}
 		if strings.Index(line, "Last checkpoint at") == 0 {
-			val, _ := _atof(record[3])
+			val, _ := atof(record[3])
 			if len(record) >= 5 {
-				val = float64(_make_bigint(record[3], record[4]))
+				val = float64(makeBigint(record[3], record[4]))
 			}
 			(*p)["last_checkpoint"] = val
 			continue
 		}
 
 		// Buffer Pool and Memory
+		// 5.6 or before
 		if strings.Index(line, "Total memory allocated") == 0 && strings.Index(line, "in additional pool allocated") > 0 {
-			(*p)["total_mem_alloc"], _ = _atof(record[3])
-			(*p)["additional_pool_alloc"], _ = _atof(record[8])
+			(*p)["total_mem_alloc"], _ = atof(record[3])
+			(*p)["additional_pool_alloc"], _ = atof(record[8])
 			continue
 		}
+		// 5.7
+		if strings.Index(line, "Total large memory allocated") == 0 {
+			(*p)["total_mem_alloc"], _ = atof(record[4])
+			continue
+		}
+
 		if strings.Index(line, "Adaptive hash index ") == 0 {
-			(*p)["adaptive_hash_memory"], _ = _atof(record[3])
+			v, _ := atof(record[3])
+			setIfEmpty(p, "adaptive_hash_memory", v)
 			continue
 		}
 		if strings.Index(line, "Page hash           ") == 0 {
-			(*p)["page_hash_memory"], _ = _atof(record[2])
+			v, _ := atof(record[2])
+			setIfEmpty(p, "page_hash_memory", v)
 			continue
 		}
 		if strings.Index(line, "Dictionary cache    ") == 0 {
-			(*p)["dictionary_cache_memory"], _ = _atof(record[2])
+			v, _ := atof(record[2])
+			setIfEmpty(p, "dictionary_cache_memory", v)
 			continue
 		}
 		if strings.Index(line, "File system         ") == 0 {
-			(*p)["file_system_memory"], _ = _atof(record[2])
+			v, _ := atof(record[2])
+			setIfEmpty(p, "file_system_memory", v)
 			continue
 		}
 		if strings.Index(line, "Lock system         ") == 0 {
-			(*p)["lock_system_memory"], _ = _atof(record[2])
+			v, _ := atof(record[2])
+			setIfEmpty(p, "lock_system_memory", v)
 			continue
 		}
 		if strings.Index(line, "Recovery system     ") == 0 {
-			(*p)["recovery_system_memory"], _ = _atof(record[2])
+			v, _ := atof(record[2])
+			setIfEmpty(p, "recovery_system_memory", v)
 			continue
 		}
 		if strings.Index(line, "Threads             ") == 0 {
-			(*p)["thread_hash_memory"], _ = _atof(record[1])
+			v, _ := atof(record[1])
+			setIfEmpty(p, "thread_hash_memory", v)
 			continue
 		}
 		if strings.Index(line, "innodb_io_pattern   ") == 0 {
-			(*p)["innodb_io_pattern_memory"], _ = _atof(record[1])
+			v, _ := atof(record[1])
+			setIfEmpty(p, "innodb_io_pattern_memory", v)
 			continue
 		}
 		if strings.Index(line, "Buffer pool size ") == 0 {
-			(*p)["pool_size"], _ = _atof(record[3])
+			v, _ := atof(record[3])
+			setIfEmpty(p, "pool_size", v)
 			continue
 		}
 		if strings.Index(line, "Free buffers") == 0 {
-			(*p)["free_pages"], _ = _atof(record[2])
+			v, _ := atof(record[2])
+			setIfEmpty(p, "free_pages", v)
 			continue
 		}
 		if strings.Index(line, "Database pages") == 0 {
-			(*p)["database_pages"], _ = _atof(record[2])
+			v, _ := atof(record[2])
+			setIfEmpty(p, "database_pages", v)
 			continue
 		}
 		if strings.Index(line, "Modified db pages") == 0 {
-			(*p)["modified_pages"], _ = _atof(record[3])
+			v, _ := atof(record[3])
+			setIfEmpty(p, "modified_pages", v)
 			continue
 		}
 		if strings.Index(line, "Pages read ahead") == 0 {
-			(*p)["read_ahead"], _ = _atof(record[3])
-			(*p)["read_evicted"], _ = _atof(record[7])
-			(*p)["read_random_ahead"], _ = _atof(record[11])
+			v, _ := atof(record[3])
+			setIfEmpty(p, "read_ahead", v)
+			v, _ = atof(record[7])
+			setIfEmpty(p, "read_evicted", v)
+			v, _ = atof(record[11])
+			setIfEmpty(p, "read_random_ahead", v)
 			continue
 		}
 		if strings.Index(line, "Pages read") == 0 {
-			(*p)["pages_read"], _ = _atof(record[2])
-			(*p)["pages_created"], _ = _atof(record[4])
-			(*p)["pages_written"], _ = _atof(record[6])
+			v, _ := atof(record[2])
+			setIfEmpty(p, "pages_read", v)
+			v, _ = atof(record[4])
+			setIfEmpty(p, "pages_created", v)
+			v, _ = atof(record[6])
+			setIfEmpty(p, "pages_written", v)
 			continue
 		}
 
 		// Row Operations
 		if strings.Index(line, "Number of rows inserted") == 0 {
-			(*p)["rows_inserted"], _ = _atof(record[4])
-			(*p)["rows_updated"], _ = _atof(record[6])
-			(*p)["rows_deleted"], _ = _atof(record[8])
-			(*p)["rows_read"], _ = _atof(record[10])
+			(*p)["rows_inserted"], _ = atof(record[4])
+			(*p)["rows_updated"], _ = atof(record[6])
+			(*p)["rows_deleted"], _ = atof(record[8])
+			(*p)["rows_read"], _ = atof(record[10])
 			continue
 		}
 		if strings.Index(line, " queries inside InnoDB, ") == 0 {
-			(*p)["queries_inside"], _ = _atof(record[0])
-			(*p)["queries_queued"], _ = _atof(record[4])
+			(*p)["queries_inside"], _ = atof(record[0])
+			(*p)["queries_queued"], _ = atof(record[4])
 			continue
 		}
 
 		// for next loop
-		prev_line = line
+		prevLine = line
 	}
 
 	// finalize
@@ -679,8 +734,7 @@ func parseInnodbStatus(str string, p *map[string]float64) error {
 	return nil
 }
 
-// atof
-func _atof(str string) (float64, error) {
+func atof(str string) (float64, error) {
 	str = strings.Replace(str, ",", "", -1)
 	str = strings.Replace(str, ";", "", -1)
 	str = strings.Replace(str, "/s", "", -1)
@@ -688,8 +742,8 @@ func _atof(str string) (float64, error) {
 	return strconv.ParseFloat(str, 64)
 }
 
-func _increase_map(p *map[string]float64, key string, src string) {
-	val, err := _atof(src)
+func increaseMap(p *map[string]float64, key string, src string) {
+	val, err := atof(src)
 	if err != nil {
 		val = 0
 	}
@@ -701,26 +755,22 @@ func _increase_map(p *map[string]float64, key string, src string) {
 	(*p)[key] = (*p)[key] + val
 }
 
-func _increase(src *float64, data float64) {
-	*src = *src + data
-}
-
-func _make_bigint(hi string, lo string) int64 {
+func makeBigint(hi string, lo string) int64 {
 	if lo == "" {
 		val, _ := strconv.ParseInt(hi, 16, 64)
 		return val
 	}
 
-	var hi_val int64 = 0
-	var lo_val int64 = 0
+	var hiVal int64
+	var loVal int64
 	if hi != "" {
-		hi_val, _ = strconv.ParseInt(hi, 10, 64)
+		hiVal, _ = strconv.ParseInt(hi, 10, 64)
 	}
 	if lo != "" {
-		lo_val, _ = strconv.ParseInt(lo, 10, 64)
+		loVal, _ = strconv.ParseInt(lo, 10, 64)
 	}
 
-	val := hi_val * lo_val
+	val := hiVal * loVal
 
 	return val
 }
@@ -728,6 +778,7 @@ func _make_bigint(hi string, lo string) int64 {
 func main() {
 	optHost := flag.String("host", "localhost", "Hostname")
 	optPort := flag.String("port", "3306", "Port")
+	optSocket := flag.String("socket", "", "Port")
 	optUser := flag.String("username", "root", "Username")
 	optPass := flag.String("password", "", "Password")
 	optTempfile := flag.String("tempfile", "", "Temp file name")
@@ -736,20 +787,23 @@ func main() {
 
 	var mysql MySQLPlugin
 
-	mysql.Target = fmt.Sprintf("%s:%s", *optHost, *optPort)
+	if *optSocket != "" {
+		mysql.Target = *optSocket
+		mysql.isUnixSocket = true
+	} else {
+		mysql.Target = fmt.Sprintf("%s:%s", *optHost, *optPort)
+	}
 	mysql.Username = *optUser
 	mysql.Password = *optPass
 	mysql.DisableInnoDB = *optInnoDB
 	helper := mp.NewMackerelPlugin(mysql)
-	if *optTempfile != "" {
-		helper.Tempfile = *optTempfile
-	} else {
-		helper.Tempfile = fmt.Sprintf("/tmp/mackerel-plugin-mysql-%s-%s", *optHost, *optPort)
+	helper.Tempfile = *optTempfile
+	if helper.Tempfile == "" {
+		if mysql.isUnixSocket {
+			helper.Tempfile = fmt.Sprintf("/tmp/mackerel-plugin-mysql-%s", fmt.Sprintf("%x", md5.Sum([]byte(mysql.Target))))
+		} else {
+			helper.Tempfile = fmt.Sprintf("/tmp/mackerel-plugin-mysql-%s-%s", *optHost, *optPort)
+		}
 	}
-
-	if os.Getenv("MACKEREL_AGENT_PLUGIN_META") != "" {
-		helper.OutputDefinitions()
-	} else {
-		helper.OutputValues()
-	}
+	helper.Run()
 }

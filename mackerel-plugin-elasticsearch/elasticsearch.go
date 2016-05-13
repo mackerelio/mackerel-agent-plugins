@@ -5,109 +5,17 @@ import (
 	"errors"
 	"flag"
 	"fmt"
-	mp "github.com/mackerelio/go-mackerel-plugin"
-	"github.com/mackerelio/mackerel-agent/logging"
 	"net/http"
 	"os"
+	"strings"
+
+	mp "github.com/mackerelio/go-mackerel-plugin"
+	"github.com/mackerelio/mackerel-agent/logging"
 )
 
 var logger = logging.GetLogger("metrics.plugin.elasticsearch")
 
-var graphdef map[string](mp.Graphs) = map[string](mp.Graphs){
-	"elasticsearch.http": mp.Graphs{
-		Label: "Elasticsearch HTTP",
-		Unit:  "integer",
-		Metrics: [](mp.Metrics){
-			mp.Metrics{Name: "http_opened", Label: "Opened", Diff: true},
-		},
-	},
-	"elasticsearch.indices": mp.Graphs{
-		Label: "Elasticsearch Indices",
-		Unit:  "integer",
-		Metrics: [](mp.Metrics){
-			mp.Metrics{Name: "total_indexing_index", Label: "Indexing-Index", Diff: true, Stacked: true},
-			mp.Metrics{Name: "total_indexing_delete", Label: "Indexing-Delete", Diff: true, Stacked: true},
-			mp.Metrics{Name: "total_get", Label: "Get", Diff: true, Stacked: true},
-			mp.Metrics{Name: "total_search_query", Label: "Search-Query", Diff: true, Stacked: true},
-			mp.Metrics{Name: "total_search_fetch", Label: "Search-fetch", Diff: true, Stacked: true},
-			mp.Metrics{Name: "total_merges", Label: "Merges", Diff: true, Stacked: true},
-			mp.Metrics{Name: "total_refresh", Label: "Refresh", Diff: true, Stacked: true},
-			mp.Metrics{Name: "total_flush", Label: "Flush", Diff: true, Stacked: true},
-			mp.Metrics{Name: "total_warmer", Label: "Warmer", Diff: true, Stacked: true},
-			mp.Metrics{Name: "total_percolate", Label: "Percolate", Diff: true, Stacked: true},
-			mp.Metrics{Name: "total_suggest", Label: "Suggest", Diff: true, Stacked: true},
-		},
-	},
-	"elasticsearch.indices.docs": mp.Graphs{
-		Label: "Elasticsearch Indices Docs",
-		Unit:  "integer",
-		Metrics: [](mp.Metrics){
-			mp.Metrics{Name: "docs_count", Label: "Count", Stacked: true},
-			mp.Metrics{Name: "docs_deleted", Label: "Deleted", Stacked: true},
-		},
-	},
-	"elasticsearch.indices.memory_size": mp.Graphs{
-		Label: "Elasticsearch Indices Memory Size",
-		Unit:  "bytes",
-		Metrics: [](mp.Metrics){
-			mp.Metrics{Name: "fielddata_size", Label: "Fielddata", Stacked: true},
-			mp.Metrics{Name: "filter_cache_size", Label: "Filter Cache", Stacked: true},
-			mp.Metrics{Name: "segments_size", Label: "Lucene Segments", Stacked: true},
-			mp.Metrics{Name: "segments_index_writer_size", Label: "Lucene Segments Index Writer", Stacked: true},
-			mp.Metrics{Name: "segments_version_map_size", Label: "Lucene Segments Version Map", Stacked: true},
-			mp.Metrics{Name: "segments_fixed_bit_set_size", Label: "Lucene Segments Fixed Bit Set", Stacked: true},
-		},
-	},
-	"elasticsearch.indices.evictions": mp.Graphs{
-		Label: "Elasticsearch Indices Evictions",
-		Unit: "integer",
-		Metrics: [](mp.Metrics){
-			mp.Metrics{Name: "evictions_fielddata", Label: "Fielddata", Diff: true},
-			mp.Metrics{Name: "evictions_filter_cache", Label: "Filter Cache", Diff: true},
-		},
-
-	},
-	"elasticsearch.jvm.heap": mp.Graphs{
-		Label: "Elasticsearch JVM Heap Mem",
-		Unit:  "bytes",
-		Metrics: [](mp.Metrics){
-			mp.Metrics{Name: "heap_used", Label: "Used"},
-			mp.Metrics{Name: "heap_max", Label: "Max"},
-		},
-	},
-	"elasticsearch.thread_pool.threads": mp.Graphs{
-		Label: "Elasticsearch Thread-Pool Threads",
-		Unit:  "integer",
-		Metrics: [](mp.Metrics){
-			mp.Metrics{Name: "threads_generic", Label: "Generic", Stacked: true},
-			mp.Metrics{Name: "threads_index", Label: "Index", Stacked: true},
-			mp.Metrics{Name: "threads_snapshot_data", Label: "Snapshot Data", Stacked: true},
-			mp.Metrics{Name: "threads_get", Label: "Get", Stacked: true},
-			mp.Metrics{Name: "threads_bench", Label: "Bench", Stacked: true},
-			mp.Metrics{Name: "threads_snapshot", Label: "Snapshot", Stacked: true},
-			mp.Metrics{Name: "threads_merge", Label: "Merge", Stacked: true},
-			mp.Metrics{Name: "threads_suggest", Label: "Suggest", Stacked: true},
-			mp.Metrics{Name: "threads_bulk", Label: "Bulk", Stacked: true},
-			mp.Metrics{Name: "threads_optimize", Label: "Optimize", Stacked: true},
-			mp.Metrics{Name: "threads_warmer", Label: "Warmer", Stacked: true},
-			mp.Metrics{Name: "threads_flush", Label: "Flush", Stacked: true},
-			mp.Metrics{Name: "threads_search", Label: "Search", Stacked: true},
-			mp.Metrics{Name: "threads_percolate", Label: "Percolate", Stacked: true},
-			mp.Metrics{Name: "threads_refresh", Label: "Refresh", Stacked: true},
-			mp.Metrics{Name: "threads_management", Label: "Management", Stacked: true},
-		},
-	},
-	"elasticsearch.transport.count": mp.Graphs{
-		Label: "Elasticsearch Transport Count",
-		Unit:  "integer",
-		Metrics: [](mp.Metrics){
-			mp.Metrics{Name: "count_rx", Label: "TX", Diff: true},
-			mp.Metrics{Name: "count_tx", Label: "RX", Diff: true},
-		},
-	},
-}
-
-var metricPlace map[string][]string = map[string][]string{
+var metricPlace = map[string][]string{
 	"http_opened":                 []string{"http", "total_opened"},
 	"total_indexing_index":        []string{"indices", "indexing", "index_total"},
 	"total_indexing_delete":       []string{"indices", "indexing", "delete_total"},
@@ -148,11 +56,14 @@ var metricPlace map[string][]string = map[string][]string{
 	"threads_percolate":           []string{"thread_pool", "percolate", "threads"},
 	"threads_refresh":             []string{"thread_pool", "refresh", "threads"},
 	"threads_management":          []string{"thread_pool", "management", "threads"},
+	"threads_fetch_shard_started": []string{"thread_pool", "fetch_shard_started", "threads"},
+	"threads_fetch_shard_store":   []string{"thread_pool", "fetch_shard_store", "threads"},
+	"threads_listener":            []string{"thread_pool", "listener", "threads"},
 	"count_rx":                    []string{"transport", "rx_count"},
 	"count_tx":                    []string{"transport", "tx_count"},
 }
 
-func GetFloatValue(s map[string]interface{}, keys []string) (float64, error) {
+func getFloatValue(s map[string]interface{}, keys []string) (float64, error) {
 	var val float64
 	sm := s
 	for i, k := range keys {
@@ -176,12 +87,16 @@ func GetFloatValue(s map[string]interface{}, keys []string) (float64, error) {
 	return val, nil
 }
 
+// ElasticsearchPlugin mackerel plugin for Elasticsearch
 type ElasticsearchPlugin struct {
-	Uri string
+	URI         string
+	Prefix      string
+	LabelPrefix string
 }
 
+// FetchMetrics interface for mackerelplugin
 func (p ElasticsearchPlugin) FetchMetrics() (map[string]float64, error) {
-	resp, err := http.Get(p.Uri + "/_nodes/_local/stats")
+	resp, err := http.Get(p.URI + "/_nodes/_local/stats")
 	if err != nil {
 		return nil, err
 	}
@@ -198,7 +113,7 @@ func (p ElasticsearchPlugin) FetchMetrics() (map[string]float64, error) {
 
 	nodes := s["nodes"].(map[string]interface{})
 	n := ""
-	for k, _ := range nodes {
+	for k := range nodes {
 		if n != "" {
 			return nil, errors.New("Multiple node found")
 		}
@@ -207,7 +122,7 @@ func (p ElasticsearchPlugin) FetchMetrics() (map[string]float64, error) {
 	node := nodes[n].(map[string]interface{})
 
 	for k, v := range metricPlace {
-		val, err := GetFloatValue(node, v)
+		val, err := getFloatValue(node, v)
 		if err != nil {
 			logger.Errorf("Failed to find '%s': %s", k, err)
 			continue
@@ -219,18 +134,124 @@ func (p ElasticsearchPlugin) FetchMetrics() (map[string]float64, error) {
 	return stat, nil
 }
 
-func (n ElasticsearchPlugin) GraphDefinition() map[string](mp.Graphs) {
+// GraphDefinition interface for mackerelplugin
+func (p ElasticsearchPlugin) GraphDefinition() map[string](mp.Graphs) {
+	var graphdef = map[string](mp.Graphs){
+		p.Prefix + ".http": mp.Graphs{
+			Label: (p.LabelPrefix + " HTTP"),
+			Unit:  "integer",
+			Metrics: [](mp.Metrics){
+				mp.Metrics{Name: "http_opened", Label: "Opened", Diff: true},
+			},
+		},
+		p.Prefix + ".indices": mp.Graphs{
+			Label: (p.LabelPrefix + " Indices"),
+			Unit:  "integer",
+			Metrics: [](mp.Metrics){
+				mp.Metrics{Name: "total_indexing_index", Label: "Indexing-Index", Diff: true, Stacked: true},
+				mp.Metrics{Name: "total_indexing_delete", Label: "Indexing-Delete", Diff: true, Stacked: true},
+				mp.Metrics{Name: "total_get", Label: "Get", Diff: true, Stacked: true},
+				mp.Metrics{Name: "total_search_query", Label: "Search-Query", Diff: true, Stacked: true},
+				mp.Metrics{Name: "total_search_fetch", Label: "Search-fetch", Diff: true, Stacked: true},
+				mp.Metrics{Name: "total_merges", Label: "Merges", Diff: true, Stacked: true},
+				mp.Metrics{Name: "total_refresh", Label: "Refresh", Diff: true, Stacked: true},
+				mp.Metrics{Name: "total_flush", Label: "Flush", Diff: true, Stacked: true},
+				mp.Metrics{Name: "total_warmer", Label: "Warmer", Diff: true, Stacked: true},
+				mp.Metrics{Name: "total_percolate", Label: "Percolate", Diff: true, Stacked: true},
+				mp.Metrics{Name: "total_suggest", Label: "Suggest", Diff: true, Stacked: true},
+			},
+		},
+		p.Prefix + ".indices.docs": mp.Graphs{
+			Label: (p.LabelPrefix + " Indices Docs"),
+			Unit:  "integer",
+			Metrics: [](mp.Metrics){
+				mp.Metrics{Name: "docs_count", Label: "Count", Stacked: true},
+				mp.Metrics{Name: "docs_deleted", Label: "Deleted", Stacked: true},
+			},
+		},
+		p.Prefix + ".indices.memory_size": mp.Graphs{
+			Label: (p.LabelPrefix + " Indices Memory Size"),
+			Unit:  "bytes",
+			Metrics: [](mp.Metrics){
+				mp.Metrics{Name: "fielddata_size", Label: "Fielddata", Stacked: true},
+				mp.Metrics{Name: "filter_cache_size", Label: "Filter Cache", Stacked: true},
+				mp.Metrics{Name: "segments_size", Label: "Lucene Segments", Stacked: true},
+				mp.Metrics{Name: "segments_index_writer_size", Label: "Lucene Segments Index Writer", Stacked: true},
+				mp.Metrics{Name: "segments_version_map_size", Label: "Lucene Segments Version Map", Stacked: true},
+				mp.Metrics{Name: "segments_fixed_bit_set_size", Label: "Lucene Segments Fixed Bit Set", Stacked: true},
+			},
+		},
+		p.Prefix + ".indices.evictions": mp.Graphs{
+			Label: (p.LabelPrefix + " Indices Evictions"),
+			Unit:  "integer",
+			Metrics: [](mp.Metrics){
+				mp.Metrics{Name: "evictions_fielddata", Label: "Fielddata", Diff: true},
+				mp.Metrics{Name: "evictions_filter_cache", Label: "Filter Cache", Diff: true},
+			},
+		},
+		p.Prefix + ".jvm.heap": mp.Graphs{
+			Label: (p.LabelPrefix + " JVM Heap Mem"),
+			Unit:  "bytes",
+			Metrics: [](mp.Metrics){
+				mp.Metrics{Name: "heap_used", Label: "Used"},
+				mp.Metrics{Name: "heap_max", Label: "Max"},
+			},
+		},
+		p.Prefix + ".thread_pool.threads": mp.Graphs{
+			Label: (p.LabelPrefix + " Thread-Pool Threads"),
+			Unit:  "integer",
+			Metrics: [](mp.Metrics){
+				mp.Metrics{Name: "threads_generic", Label: "Generic", Stacked: true},
+				mp.Metrics{Name: "threads_index", Label: "Index", Stacked: true},
+				mp.Metrics{Name: "threads_snapshot_data", Label: "Snapshot Data", Stacked: true},
+				mp.Metrics{Name: "threads_get", Label: "Get", Stacked: true},
+				mp.Metrics{Name: "threads_bench", Label: "Bench", Stacked: true},
+				mp.Metrics{Name: "threads_snapshot", Label: "Snapshot", Stacked: true},
+				mp.Metrics{Name: "threads_merge", Label: "Merge", Stacked: true},
+				mp.Metrics{Name: "threads_suggest", Label: "Suggest", Stacked: true},
+				mp.Metrics{Name: "threads_bulk", Label: "Bulk", Stacked: true},
+				mp.Metrics{Name: "threads_optimize", Label: "Optimize", Stacked: true},
+				mp.Metrics{Name: "threads_warmer", Label: "Warmer", Stacked: true},
+				mp.Metrics{Name: "threads_flush", Label: "Flush", Stacked: true},
+				mp.Metrics{Name: "threads_search", Label: "Search", Stacked: true},
+				mp.Metrics{Name: "threads_percolate", Label: "Percolate", Stacked: true},
+				mp.Metrics{Name: "threads_refresh", Label: "Refresh", Stacked: true},
+				mp.Metrics{Name: "threads_management", Label: "Management", Stacked: true},
+				mp.Metrics{Name: "threads_fetch_shard_started", Label: "Fetch Shard Started", Stacked: true},
+				mp.Metrics{Name: "threads_fetch_shard_store", Label: "Fetch Shard Store", Stacked: true},
+				mp.Metrics{Name: "threads_listener", Label: "Listener", Stacked: true},
+			},
+		},
+		p.Prefix + ".transport.count": mp.Graphs{
+			Label: (p.LabelPrefix + " Transport Count"),
+			Unit:  "integer",
+			Metrics: [](mp.Metrics){
+				mp.Metrics{Name: "count_rx", Label: "TX", Diff: true},
+				mp.Metrics{Name: "count_tx", Label: "RX", Diff: true},
+			},
+		},
+	}
+
 	return graphdef
 }
 
 func main() {
+	optScheme := flag.String("scheme", "http", "Scheme")
 	optHost := flag.String("host", "localhost", "Host")
 	optPort := flag.String("port", "9200", "Port")
+	optPrefix := flag.String("metric-key-prefix", "elasticsearch", "Metric key prefix")
+	optLabelPrefix := flag.String("metric-label-prefix", "", "Metric Label prefix")
 	optTempfile := flag.String("tempfile", "", "Temp file name")
 	flag.Parse()
 
 	var elasticsearch ElasticsearchPlugin
-	elasticsearch.Uri = fmt.Sprintf("http://%s:%s", *optHost, *optPort)
+	elasticsearch.URI = fmt.Sprintf("%s://%s:%s", *optScheme, *optHost, *optPort)
+	elasticsearch.Prefix = *optPrefix
+	if *optLabelPrefix == "" {
+		elasticsearch.LabelPrefix = strings.Title(*optPrefix)
+	} else {
+		elasticsearch.LabelPrefix = *optLabelPrefix
+	}
 
 	helper := mp.NewMackerelPlugin(elasticsearch)
 	if *optTempfile != "" {

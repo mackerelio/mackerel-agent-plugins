@@ -10,31 +10,33 @@ import (
 	"strings"
 
 	"github.com/codegangsta/cli"
-	mp "github.com/mackerelio/go-mackerel-plugin"
+	mp "github.com/mackerelio/go-mackerel-plugin-helper"
 )
 
-const PathVmstat = "/proc/vmstat"
-const PathDiskstats = "/proc/diskstats"
-const PathStat = "/proc/stat"
+const (
+	pathVmstat    = "/proc/vmstat"
+	pathDiskstats = "/proc/diskstats"
+	pathStat      = "/proc/stat"
+)
 
 // metric value structure
 // note: all metrics are add dynamic at collect*().
-var graphdef map[string](mp.Graphs) = map[string](mp.Graphs){}
+var graphdef = map[string](mp.Graphs){}
 
-// for fetching metrics
+// LinuxPlugin mackerel plugin for linux
 type LinuxPlugin struct {
 	Tempfile string
 	Type     string
 }
 
-// Graph definition
+// GraphDefinition interface for mackerelplugin
 func (c LinuxPlugin) GraphDefinition() map[string](mp.Graphs) {
 	var err error
 
-	p := make(map[string]float64)
+	p := make(map[string]interface{})
 
 	if c.Type == "all" || c.Type == "swap" {
-		err = collectProcVmstat(PathVmstat, &p)
+		err = collectProcVmstat(pathVmstat, &p)
 		if err != nil {
 			return nil
 		}
@@ -48,14 +50,14 @@ func (c LinuxPlugin) GraphDefinition() map[string](mp.Graphs) {
 	}
 
 	if c.Type == "all" || c.Type == "diskstats" {
-		err = collectProcDiskstats(PathDiskstats, &p)
+		err = collectProcDiskstats(pathDiskstats, &p)
 		if err != nil {
 			return nil
 		}
 	}
 
 	if c.Type == "all" || c.Type == "proc_stat" {
-		err = collectProcStat(PathStat, &p)
+		err = collectProcStat(pathStat, &p)
 		if err != nil {
 			return nil
 		}
@@ -86,14 +88,14 @@ func doMain(c *cli.Context) {
 	}
 }
 
-// fetch metrics
-func (c LinuxPlugin) FetchMetrics() (map[string]float64, error) {
+// FetchMetrics interface for mackerelplugin
+func (c LinuxPlugin) FetchMetrics() (map[string]interface{}, error) {
 	var err error
 
-	p := make(map[string]float64)
+	p := make(map[string]interface{})
 
 	if c.Type == "all" || c.Type == "swap" {
-		err = collectProcVmstat(PathVmstat, &p)
+		err = collectProcVmstat(pathVmstat, &p)
 		if err != nil {
 			return nil, err
 		}
@@ -107,14 +109,14 @@ func (c LinuxPlugin) FetchMetrics() (map[string]float64, error) {
 	}
 
 	if c.Type == "all" || c.Type == "diskstats" {
-		err = collectProcDiskstats(PathDiskstats, &p)
+		err = collectProcDiskstats(pathDiskstats, &p)
 		if err != nil {
 			return nil, err
 		}
 	}
 
 	if c.Type == "all" || c.Type == "proc_stat" {
-		err = collectProcStat(PathStat, &p)
+		err = collectProcStat(pathStat, &p)
 		if err != nil {
 			return nil, err
 		}
@@ -131,7 +133,7 @@ func (c LinuxPlugin) FetchMetrics() (map[string]float64, error) {
 }
 
 // collect who
-func collectWho(p *map[string]float64) error {
+func collectWho(p *map[string]interface{}) error {
 	var err error
 	var data string
 
@@ -156,7 +158,7 @@ func collectWho(p *map[string]float64) error {
 }
 
 // parsing metrics from /proc/stat
-func parseWho(str string, p *map[string]float64) error {
+func parseWho(str string, p *map[string]interface{}) error {
 	str = strings.TrimSpace(str)
 	if str == "" {
 		(*p)["users"] = 0
@@ -181,7 +183,7 @@ func getWho() (string, error) {
 }
 
 // collect /proc/stat
-func collectProcStat(path string, p *map[string]float64) error {
+func collectProcStat(path string, p *map[string]interface{}) error {
 	var err error
 	var data string
 
@@ -220,16 +222,16 @@ func collectProcStat(path string, p *map[string]float64) error {
 }
 
 // parsing metrics from /proc/stat
-func parseProcStat(str string, p *map[string]float64) error {
+func parseProcStat(str string, p *map[string]interface{}) error {
 	for _, line := range strings.Split(str, "\n") {
 		record := strings.Fields(line)
 		if len(record) < 2 {
 			continue
 		}
 		name := record[0]
-		value, err_parse := _atof(record[1])
-		if err_parse != nil {
-			return err_parse
+		value, errParse := atof(record[1])
+		if errParse != nil {
+			return errParse
 		}
 
 		if name == "intr" {
@@ -245,7 +247,7 @@ func parseProcStat(str string, p *map[string]float64) error {
 }
 
 // collect /proc/diskstats
-func collectProcDiskstats(path string, p *map[string]float64) error {
+func collectProcDiskstats(path string, p *map[string]interface{}) error {
 	var err error
 	var data string
 
@@ -262,10 +264,10 @@ func collectProcDiskstats(path string, p *map[string]float64) error {
 }
 
 // parsing metrics from diskstats
-func parseProcDiskstats(str string, p *map[string]float64) error {
+func parseProcDiskstats(str string, p *map[string]interface{}) error {
 
-	var elapsed_data []mp.Metrics
-	var rwtime_data []mp.Metrics
+	var elapsedData []mp.Metrics
+	var rwtimeData []mp.Metrics
 
 	for _, line := range strings.Split(str, "\n") {
 		// See also: https://www.kernel.org/doc/Documentation/ABI/testing/procfs-diskstats
@@ -279,34 +281,34 @@ func parseProcDiskstats(str string, p *map[string]float64) error {
 			continue
 		}
 
-		(*p)[fmt.Sprintf("iotime_%s", device)], _ = _atof(record[12])
-		(*p)[fmt.Sprintf("iotime_weighted_%s", device)], _ = _atof(record[13])
-		elapsed_data = append(elapsed_data, mp.Metrics{Name: fmt.Sprintf("iotime_%s", device), Label: fmt.Sprintf("%s IO Time", device), Diff: true})
-		elapsed_data = append(elapsed_data, mp.Metrics{Name: fmt.Sprintf("iotime_weighted_%s", device), Label: fmt.Sprintf("%s IO Time Weighted", device), Diff: true})
+		(*p)[fmt.Sprintf("iotime_%s", device)], _ = atof(record[12])
+		(*p)[fmt.Sprintf("iotime_weighted_%s", device)], _ = atof(record[13])
+		elapsedData = append(elapsedData, mp.Metrics{Name: fmt.Sprintf("iotime_%s", device), Label: fmt.Sprintf("%s IO Time", device), Diff: true})
+		elapsedData = append(elapsedData, mp.Metrics{Name: fmt.Sprintf("iotime_weighted_%s", device), Label: fmt.Sprintf("%s IO Time Weighted", device), Diff: true})
 
-		(*p)[fmt.Sprintf("tsreading_%s", device)], _ = _atof(record[6])
-		(*p)[fmt.Sprintf("tswriting_%s", device)], _ = _atof(record[10])
-		rwtime_data = append(rwtime_data, mp.Metrics{Name: fmt.Sprintf("tsreading_%s", device), Label: fmt.Sprintf("%s Read", device), Diff: true})
-		rwtime_data = append(rwtime_data, mp.Metrics{Name: fmt.Sprintf("tswriting_%s", device), Label: fmt.Sprintf("%s Write", device), Diff: true})
+		(*p)[fmt.Sprintf("tsreading_%s", device)], _ = atof(record[6])
+		(*p)[fmt.Sprintf("tswriting_%s", device)], _ = atof(record[10])
+		rwtimeData = append(rwtimeData, mp.Metrics{Name: fmt.Sprintf("tsreading_%s", device), Label: fmt.Sprintf("%s Read", device), Diff: true})
+		rwtimeData = append(rwtimeData, mp.Metrics{Name: fmt.Sprintf("tswriting_%s", device), Label: fmt.Sprintf("%s Write", device), Diff: true})
 	}
 
 	graphdef["linux.disk.elapsed"] = mp.Graphs{
 		Label:   "Disk Elapsed IO Time",
 		Unit:    "integer",
-		Metrics: elapsed_data,
+		Metrics: elapsedData,
 	}
 
 	graphdef["linux.disk.rwtime"] = mp.Graphs{
 		Label:   "Disk Read/Write Time",
 		Unit:    "integer",
-		Metrics: rwtime_data,
+		Metrics: rwtimeData,
 	}
 
 	return nil
 }
 
 // collect ss
-func collectSs(p *map[string]float64) error {
+func collectSs(p *map[string]interface{}) error {
 	var err error
 	var data string
 
@@ -341,7 +343,7 @@ func collectSs(p *map[string]float64) error {
 }
 
 // parsing metrics from ss
-func parseSs(str string, p *map[string]float64) error {
+func parseSs(str string, p *map[string]interface{}) error {
 	status := 0
 	for i, line := range strings.Split(str, "\n") {
 		record := strings.Fields(line)
@@ -357,7 +359,8 @@ func parseSs(str string, p *map[string]float64) error {
 				status = 1
 			}
 		}
-		(*p)[record[status]] = (*p)[record[status]] + 1
+		v, _ := (*p)[record[status]].(float64)
+		(*p)[record[status]] = v + 1
 	}
 
 	return nil
@@ -376,7 +379,7 @@ func getSs() (string, error) {
 }
 
 // collect /proc/vmstat
-func collectProcVmstat(path string, p *map[string]float64) error {
+func collectProcVmstat(path string, p *map[string]interface{}) error {
 	var err error
 	var data string
 
@@ -402,16 +405,16 @@ func collectProcVmstat(path string, p *map[string]float64) error {
 }
 
 // parsing metrics from /proc/vmstat
-func parseProcVmstat(str string, p *map[string]float64) error {
+func parseProcVmstat(str string, p *map[string]interface{}) error {
 	for _, line := range strings.Split(str, "\n") {
 		record := strings.Fields(line)
 		if len(record) != 2 {
 			continue
 		}
-		var err_parse error
-		(*p)[record[0]], err_parse = _atof(record[1])
-		if err_parse != nil {
-			return err_parse
+		var errParse error
+		(*p)[record[0]], errParse = atof(record[1])
+		if errParse != nil {
+			return errParse
 		}
 	}
 
@@ -431,7 +434,7 @@ func getProc(path string) (string, error) {
 }
 
 // atof
-func _atof(str string) (float64, error) {
+func atof(str string) (float64, error) {
 	return strconv.ParseFloat(strings.Trim(str, " "), 64)
 }
 
@@ -439,11 +442,11 @@ func _atof(str string) (float64, error) {
 func main() {
 	app := cli.NewApp()
 	app.Name = "mackerel-plugin-linux"
-	app.Version = Version
+	app.Version = version
 	app.Usage = "Get metrics from Linux."
 	app.Author = "Yuichiro Saito"
 	app.Email = "saito@heartbeats.jp"
-	app.Flags = Flags
+	app.Flags = flags
 	app.Action = doMain
 
 	app.Run(os.Args)

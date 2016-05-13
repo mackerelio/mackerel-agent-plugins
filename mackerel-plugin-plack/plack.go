@@ -9,37 +9,16 @@ import (
 	"net/http"
 	"os"
 	"strconv"
+	"strings"
 
 	mp "github.com/mackerelio/go-mackerel-plugin-helper"
 )
 
-var graphdef map[string](mp.Graphs) = map[string](mp.Graphs){
-	"plack.workers": mp.Graphs{
-		Label: "Plack Workers",
-		Unit:  "integer",
-		Metrics: [](mp.Metrics){
-			mp.Metrics{Name: "busy_workers", Label: "Busy Workers", Diff: false, Stacked: true},
-			mp.Metrics{Name: "idle_workers", Label: "Idle Workers", Diff: false, Stacked: true},
-		},
-	},
-	"plack.req": mp.Graphs{
-		Label: "Plack Requests",
-		Unit:  "integer",
-		Metrics: [](mp.Metrics){
-			mp.Metrics{Name: "requests", Label: "Requests", Diff: true, Type: "uint64"},
-		},
-	},
-	"plack.bytes": mp.Graphs{
-		Label: "Plack Bytes",
-		Unit:  "integer",
-		Metrics: [](mp.Metrics){
-			mp.Metrics{Name: "bytes_sent", Label: "Bytes Sent", Diff: true, Type: "uint64"},
-		},
-	},
-}
-
+// PlackPlugin mackerel plugin for Plack
 type PlackPlugin struct {
-	Uri string
+	URI         string
+	Prefix      string
+	LabelPrefix string
 }
 
 // {
@@ -83,7 +62,11 @@ type PlackPlugin struct {
 // }
 
 // field types vary between versions
+
+// PlackRequest request
 type PlackRequest struct{}
+
+// PlackServerStatus sturct for server-status's json
 type PlackServerStatus struct {
 	Uptime        string         `json:"Uptime"`
 	TotalAccesses string         `json:"TotalAccesses"`
@@ -93,17 +76,18 @@ type PlackServerStatus struct {
 	Stats         []PlackRequest `json:"stats"`
 }
 
+// FetchMetrics interface for mackerelplugin
 func (p PlackPlugin) FetchMetrics() (map[string]interface{}, error) {
-	resp, err := http.Get(p.Uri)
+	resp, err := http.Get(p.URI)
 	if err != nil {
 		return nil, err
 	}
 	defer resp.Body.Close()
 
-	return p.ParseStats(resp.Body)
+	return p.parseStats(resp.Body)
 }
 
-func (p PlackPlugin) ParseStats(body io.Reader) (map[string]interface{}, error) {
+func (p PlackPlugin) parseStats(body io.Reader) (map[string]interface{}, error) {
 	stat := make(map[string]interface{})
 	decoder := json.NewDecoder(body)
 
@@ -135,24 +119,53 @@ func (p PlackPlugin) ParseStats(body io.Reader) (map[string]interface{}, error) 
 	return stat, nil
 }
 
-func (n PlackPlugin) GraphDefinition() map[string](mp.Graphs) {
+// GraphDefinition interface for mackerelplugin
+func (p PlackPlugin) GraphDefinition() map[string](mp.Graphs) {
+	var graphdef = map[string](mp.Graphs){
+		(p.Prefix + ".workers"): mp.Graphs{
+			Label: p.LabelPrefix + " Workers",
+			Unit:  "integer",
+			Metrics: [](mp.Metrics){
+				mp.Metrics{Name: "busy_workers", Label: "Busy Workers", Diff: false, Stacked: true},
+				mp.Metrics{Name: "idle_workers", Label: "Idle Workers", Diff: false, Stacked: true},
+			},
+		},
+		(p.Prefix + ".req"): mp.Graphs{
+			Label: p.LabelPrefix + " Requests",
+			Unit:  "integer",
+			Metrics: [](mp.Metrics){
+				mp.Metrics{Name: "requests", Label: "Requests", Diff: true, Type: "uint64"},
+			},
+		},
+		(p.Prefix + ".bytes"): mp.Graphs{
+			Label: p.LabelPrefix + " Bytes",
+			Unit:  "integer",
+			Metrics: [](mp.Metrics){
+				mp.Metrics{Name: "bytes_sent", Label: "Bytes Sent", Diff: true, Type: "uint64"},
+			},
+		},
+	}
+
 	return graphdef
 }
 
 func main() {
-	optUri := flag.String("uri", "", "URI")
+	optURI := flag.String("uri", "", "URI")
 	optScheme := flag.String("scheme", "http", "Scheme")
 	optHost := flag.String("host", "localhost", "Hostname")
 	optPort := flag.String("port", "5000", "Port")
 	optPath := flag.String("path", "/server-status?json", "Path")
+	optPrefix := flag.String("metric-key-prefix", "plack", "Prefix")
+	optLabelPrefix := flag.String("metric-label-prefix", "", "Label Prefix")
 	optTempfile := flag.String("tempfile", "", "Temp file name")
 	flag.Parse()
 
-	var plack PlackPlugin
-	if *optUri != "" {
-		plack.Uri = *optUri
-	} else {
-		plack.Uri = fmt.Sprintf("%s://%s:%s%s", *optScheme, *optHost, *optPort, *optPath)
+	plack := PlackPlugin{URI: *optURI, Prefix: *optPrefix, LabelPrefix: *optLabelPrefix}
+	if plack.URI == "" {
+		plack.URI = fmt.Sprintf("%s://%s:%s%s", *optScheme, *optHost, *optPort, *optPath)
+	}
+	if plack.LabelPrefix == "" {
+		plack.LabelPrefix = strings.Title(plack.Prefix)
 	}
 
 	helper := mp.NewMackerelPlugin(plack)

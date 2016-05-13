@@ -13,8 +13,8 @@ func TestGraphDefinition(t *testing.T) {
 	var memcached MemcachedPlugin
 
 	graphdef := memcached.GraphDefinition()
-	if len(graphdef) != 7 {
-		t.Errorf("GetTempfilename: %d should be 3", len(graphdef))
+	if len(graphdef) != 8 {
+		t.Errorf("GetTempfilename: %d should be 8", len(graphdef))
 	}
 }
 
@@ -60,7 +60,7 @@ END
 
 	memcachedStats := bytes.NewBufferString(stub)
 
-	stat, err := memcached.ParseStats(memcachedStats)
+	stat, err := memcached.parseStats(memcachedStats)
 	fmt.Println(stat)
 	assert.Nil(t, err)
 	// Memcached Stats

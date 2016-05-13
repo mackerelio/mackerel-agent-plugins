@@ -4,7 +4,7 @@ import (
 	"github.com/codegangsta/cli"
 )
 
-var Flags = []cli.Flag{
+var flags = []cli.Flag{
 	cliTempFile,
 	cliType,
 }

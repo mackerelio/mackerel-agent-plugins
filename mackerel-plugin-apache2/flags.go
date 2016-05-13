@@ -4,22 +4,22 @@ import (
 	"github.com/codegangsta/cli"
 )
 
-var Flags = []cli.Flag{
-	cliHttpHost,
-	cliHttpPort,
+var flags = []cli.Flag{
+	cliHTTPHost,
+	cliHTTPPort,
 	cliHeader,
 	cliStatusPage,
 	cliTempFile,
 }
 
-var cliHttpHost = cli.StringFlag{
+var cliHTTPHost = cli.StringFlag{
 	Name:   "http_host, o",
 	Value:  "127.0.0.1",
 	Usage:  "Set apache2 listeing ip.",
 	EnvVar: "ENVVAR_HTTP_HOST",
 }
 
-var cliHttpPort = cli.IntFlag{
+var cliHTTPPort = cli.IntFlag{
 	Name:   "http_port, p",
 	Value:  80,
 	Usage:  "Set apache2 listeing port.",

@@ -1,3 +1,253 @@
+mackerel-agent-plugins (0.20.0-1) stable; urgency=low
+
+  * [docker] use goroutine for fetching metrics via API (by stanaka)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/220>
+  * add graphite and proc-fd into package (by Songmu)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/223>
+
+ -- mackerel <mackerel-developers@hatena.ne.jp>  Tue, 10 May 2016 09:43:43 +0000
+
+mackerel-agent-plugins (0.19.4-1) stable; urgency=low
+
+  * Add mackerel-plugin-graphite (by taku-k)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/216>
+  * Add mackerel plugin proc fd (by taku-k)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/207>
+  * Do not send fluentd metrics of other than the output plugin (by waniji)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/213>
+
+ -- mackerel <mackerel-developers@hatena.ne.jp>  Wed, 20 Apr 2016 06:15:30 +0000
+
+mackerel-agent-plugins (0.19.3-1) stable; urgency=low
+
+  * [redis] skip to calculate capacity when CONFIG command failed (by Songmu)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/214>
+  * Revert "Revert "use /usr/bin/mackerel-plugin-*"" (by Songmu)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/208>
+  * fix: redis plugin panics when redis-server is not installed. (by stanaka)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/209>
+  * fix: rpm should not include dir (by stanaka)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/210>
+  * [nginx] fix typo (by y-kuno)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/215>
+  * Refactoring the release process (by stanaka)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/217>
+
+ -- mackerel <mackerel-developers@hatena.ne.jp>  Thu, 14 Apr 2016 08:19:38 +0000
+
+mackerel-agent-plugins (0.19.2-1) stable; urgency=low
+
+  * Revert "use /usr/bin/mackerel-plugin-*" (by Songmu)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/205>
+
+ -- Songmu <y.songmu@gmail.com>  Fri, 25 Mar 2016 12:09:37 +0900
+
+mackerel-agent-plugins (0.19.1-1) stable; urgency=low
+
+  * use /usr/bin/mackerel-plugin-* (by naokibtn)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/201>
+  * use GOARCH=amd64 for now (by Songmu)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/203>
+
+ -- Songmu <y.songmu@gmail.com>  Fri, 25 Mar 2016 11:09:43 +0900
+
+mackerel-agent-plugins (0.19.0-1) stable; urgency=low
+
+  * [docker] Use Docker stats API (by stanaka)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/187>
+  * Add mailq plugin (by hanazuki)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/190>
+  * added mackerel-plugin-gearmand (by karupanerura)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/194>
+  * added capacity metrics for mysql (by karupanerura)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/195>
+  * added capacity metrics for redis (by karupanerura)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/196>
+  * support to metric-key-prefix/metric-label-prefix option for mackerel-plugin-plack (by karupanerura)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/197>
+  * Time out if jps,jinfo,jstat is hanged up (by tom--bo)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/198>
+  * add mailq into package (by Songmu)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/199>
+
+ -- Songmu <y.songmu@gmail.com>  Thu, 17 Mar 2016 01:44:21 +0900
+
+mackerel-agent-plugins (0.18.1-1) stable; urgency=low
+
+  * Fix helper.Tempfile in mysql.go (by hfm)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/191>
+
+ -- Songmu <y.songmu@gmail.com>  Thu, 10 Mar 2016 15:58:49 +0900
+
+mackerel-agent-plugins (0.18.0-1) stable; urgency=low
+
+  * [mysql] care innodb_buffer_pool_instances (by Songmu)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/182>
+  * Add uptime plugin (by Songmu)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/183>
+  * [inode] use `df -iP` on linux (care line break) (by Songmu)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/185>
+  * [mysql] support unix socket (by Songmu)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/186>
+
+ -- Songmu <y.songmu@gmail.com>  Wed, 02 Mar 2016 15:27:07 +0900
+
+mackerel-agent-plugins (0.17.0-1) stable; urgency=low
+
+  * Add mackerel-plugin-rabbitmq (by haramaki)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/165>
+  * Add metric key and label prefix option to Elasticsearch plugin (by yano3)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/173>
+  * Add jmx jolokia plugin (by y-kuno)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/174>
+  * Add nf(ip)_conntrack plugin (by hfm)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/175>
+  * [memcached] support unix socket (by Songmu)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/176>
+  * use plugin-helper for mackerel-plugin-apache2 (by stanaka)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/177>
+  * add conntrack, jmx-jolokia, rabbitmq into package (by Songmu)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/178>
+
+ -- Stefan Utamaru <stefafafan@hatena.ne.jp>  Thu, 18 Feb 2016 17:08:55 +0900
+
+mackerel-agent-plugins (0.16.0-1) stable; urgency=low
+
+  * Add couple of metrics to Elasticsearch plugin (by ariarijp)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/166>
+  * [jvm] Add confirmation to error message (by tom--bo)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/168>
+  * Add scheme option to Elasticsearch plugin (by yano3)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/169>
+  * Add inode plugin (by itchyny)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/170>
+
+ -- Songmu <y.songmu@gmail.com>  Thu, 04 Feb 2016 11:34:00 +0900
+
+mackerel-agent-plugins (0.15.2-1) stable; urgency=low
+
+  * add unicorn plugin to package (by yano3)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/162>
+
+ -- Songmu <y.songmu@gmail.com>  Thu, 07 Jan 2016 18:13:30 +0900
+
+mackerel-agent-plugins (0.15.1-1) stable; urgency=low
+
+  * use mackerel-plugin-helper for mackerel-plugin-linux (by stanaka)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/159>
+
+ -- Songmu <y.songmu@gmail.com>  Thu, 07 Jan 2016 11:27:43 +0900
+
+mackerel-agent-plugins (0.15.0-1) stable; urgency=low
+
+  * Add mackerel-plugin-unicorn (by linyows)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/141>
+  * Update README (by y-kuno)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/142>
+  * Add mackerel-plugin-solr [not into package] (by supercaracal)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/143>
+  * Add mackerel-plugin-murmur (not into package) (by mikoim)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/145>
+  * add mackerel-plugin-gostats (by Songmu)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/146>
+  * Add graph definition for memcached cache size (by y-kuno)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/148>
+  * Squid: work with squid v3 (by naokibtn)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/151>
+  * add graphs to varnish plugin (by naokibtn)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/152>
+  * When Seconds_Behind_Master is NULL, agent-plugin doesn't send the Seconds_Behind_Master metric. (by norisu0313)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/154>
+  * support mongodb 3.2 (by stanaka)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/155>
+  * rename goserver2gostats and add README (by Songmu)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/156>
+
+ -- Songmu <y.songmu@gmail.com>  Wed, 06 Jan 2016 20:39:55 +0900
+
+mackerel-agent-plugins (0.14.2-1) stable; urgency=low
+
+  * Fix document (by tkuchiki)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/137>
+  * Get memory usage percentage and CMSInitiatingOccupancyFraction when CMS GC is running (by tom--bo)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/138>
+  * follow latest aws-sdk-go (by Songmu)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/139>
+
+ -- Songmu <y.songmu@gmail.com>  Wed, 25 Nov 2015 19:06:34 +0900
+
+mackerel-agent-plugins (0.14.1-1) stable; urgency=low
+
+  * fix index bug in plugin-xentop (by Songmu)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/135>
+
+ -- Songmu <y.songmu@gmail.com>  Mon, 26 Oct 2015 19:20:45 +0900
+
+mackerel-agent-plugins (0.14.0-1) stable; urgency=low
+
+  * Apache Traffic Server Plugin (by naokibtn)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/126>
+  * added plugin for AWS Elasticsearch Service (by hiroakis)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/127>
+  * use wildcard definition & normalize xen names (by naokibtn)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/128>
+  * add graph definition for java8 metaspace (by Songmu)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/129>
+  * add plugins (aws-elasticsearch and trafficserver) into package (by Songmu)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/132>
+
+ -- daiksy <daiksy@hatena.ne.jp>  Mon, 26 Oct 2015 15:30:26 +0900
+
+mackerel-agent-plugins (0.13.2-1) stable; urgency=low
+
+  * reduce binary size (by Songmu)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/120>
+  * remove Config field from FluentPluginMetrics (by Songmu)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/121>
+  * support coreos and amazon linux for docker plugin (by stanaka)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/122>
+  * Add Key prefix option for AWS RDS plugin (by stanaka)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/124>
+
+ -- itchyny <itchyny@hatena.ne.jp>  Thu, 15 Oct 2015 12:24:35 +0900
+
+mackerel-agent-plugins (0.13.1-1) stable; urgency=low
+
+  * [docker] resolve cgroup path in systemd environment (by Songmu)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/118>
+
+ -- Songmu <y.songmu@gmail.com>  Fri, 25 Sep 2015 15:17:44 +0900
+
+mackerel-agent-plugins (0.13.0-1) stable; urgency=low
+
+  * add mackerel-plugin-fluentd (by stanaka)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/114>
+  * add mackerel-plugin-docker (by stanaka)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/115>
+
+ -- itchyny <itchyny@hatena.ne.jp>  Wed, 16 Sep 2015 10:57:37 +0900
+
+mackerel-agent-plugins (0.12.0-1) stable; urgency=low
+
+  * Plugin for AWS-EC2 EBS (by naokibtn)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/110>
+
+ -- Tomohiro Nishimura <tomohiro68@gmail.com>  Wed, 02 Sep 2015 11:59:38 +0900
+
+mackerel-agent-plugins (0.11.2-1) stable; urgency=low
+
+  * Fix/mongodb 2.4 or later (by stanaka)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/108>
+
+ -- Songmu <y.songmu@gmail.com>  Thu, 20 Aug 2015 12:08:53 +0900
+
+mackerel-agent-plugins (0.11.1-1) stable; urgency=low
+
+  * [nginx] specify types of nginx metrics (by stanaka)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/106>
+
+ -- Tomohiro Nishimura <tomohiro68@gmail.com>  Thu, 13 Aug 2015 15:57:19 +0900
+
 mackerel-agent-plugins (0.11.0-1) stable; urgency=low
 
   * [redis] support multiple redis instances on one server by using -metric-key-prefix option (by xorphitus)

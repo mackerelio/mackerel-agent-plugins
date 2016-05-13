@@ -3,15 +3,16 @@ package main
 import (
 	"errors"
 	"flag"
-	"github.com/crowdmob/goamz/aws"
-	"github.com/crowdmob/goamz/cloudwatch"
-	mp "github.com/mackerelio/go-mackerel-plugin"
 	"log"
 	"os"
 	"time"
+
+	"github.com/crowdmob/goamz/aws"
+	"github.com/crowdmob/goamz/cloudwatch"
+	mp "github.com/mackerelio/go-mackerel-plugin"
 )
 
-var graphdef map[string](mp.Graphs) = map[string](mp.Graphs){
+var graphdef = map[string](mp.Graphs){
 	"elb.latency": mp.Graphs{
 		Label: "Whole ELB Latency",
 		Unit:  "float",
@@ -29,38 +30,38 @@ var graphdef map[string](mp.Graphs) = map[string](mp.Graphs){
 			mp.Metrics{Name: "HTTPCode_Backend_5XX", Label: "5XX", Stacked: true},
 		},
 	},
-
 	// "elb.healthy_host_count", "elb.unhealthy_host_count" will be generated dynamically
 }
 
-type StatType int
+type statType int
 
 const (
-	Average StatType = iota
-	Sum
+	stAve statType = iota
+	stSum
 )
 
-func (s StatType) String() string {
+func (s statType) String() string {
 	switch s {
-	case Average:
+	case stAve:
 		return "Average"
-	case Sum:
+	case stSum:
 		return "Sum"
 	}
 	return ""
 }
 
+// ELBPlugin elb plugin for mackerel
 type ELBPlugin struct {
 	Region          string
-	AccessKeyId     string
+	AccessKeyID     string
 	SecretAccessKey string
 	AZs             []string
 	CloudWatch      *cloudwatch.CloudWatch
 	Lbname          string
 }
 
-func (p *ELBPlugin) Prepare() error {
-	auth, err := aws.GetAuth(p.AccessKeyId, p.SecretAccessKey, "", time.Now())
+func (p *ELBPlugin) prepare() error {
+	auth, err := aws.GetAuth(p.AccessKeyID, p.SecretAccessKey, "", time.Now())
 	if err != nil {
 		return err
 	}
@@ -98,7 +99,7 @@ func (p *ELBPlugin) Prepare() error {
 	return nil
 }
 
-func (p ELBPlugin) GetLastPoint(dimensions *[]cloudwatch.Dimension, metricName string, statType StatType) (float64, error) {
+func (p ELBPlugin) getLastPoint(dimensions *[]cloudwatch.Dimension, metricName string, sTyp statType) (float64, error) {
 	now := time.Now()
 
 	response, err := p.CloudWatch.GetMetricStatistics(&cloudwatch.GetMetricStatisticsRequest{
@@ -107,7 +108,7 @@ func (p ELBPlugin) GetLastPoint(dimensions *[]cloudwatch.Dimension, metricName s
 		EndTime:    now,
 		MetricName: metricName,
 		Period:     60,
-		Statistics: []string{statType.String()},
+		Statistics: []string{sTyp.String()},
 		Namespace:  "AWS/ELB",
 	})
 	if err != nil {
@@ -127,10 +128,10 @@ func (p ELBPlugin) GetLastPoint(dimensions *[]cloudwatch.Dimension, metricName s
 		}
 
 		latest = dp.Timestamp
-		switch statType {
-		case Average:
+		switch sTyp {
+		case stAve:
 			latestVal = dp.Average
-		case Sum:
+		case stSum:
 			latestVal = dp.Sum
 		}
 	}
@@ -138,6 +139,7 @@ func (p ELBPlugin) GetLastPoint(dimensions *[]cloudwatch.Dimension, metricName s
 	return latestVal, nil
 }
 
+// FetchMetrics fetch elb metrics
 func (p ELBPlugin) FetchMetrics() (map[string]float64, error) {
 	stat := make(map[string]float64)
 
@@ -157,7 +159,7 @@ func (p ELBPlugin) FetchMetrics() (map[string]float64, error) {
 			d = append(d, d2)
 		}
 		for _, met := range []string{"HealthyHostCount", "UnHealthyHostCount"} {
-			v, err := p.GetLastPoint(&d, met, Average)
+			v, err := p.getLastPoint(&d, met, stAve)
 			if err == nil {
 				stat[met+"_"+az] = v
 			}
@@ -178,13 +180,13 @@ func (p ELBPlugin) FetchMetrics() (map[string]float64, error) {
 		glb = append(glb, g2)
 	}
 
-	v, err := p.GetLastPoint(&glb, "Latency", Average)
+	v, err := p.getLastPoint(&glb, "Latency", stAve)
 	if err == nil {
 		stat["Latency"] = v
 	}
 
 	for _, met := range [...]string{"HTTPCode_Backend_2XX", "HTTPCode_Backend_3XX", "HTTPCode_Backend_4XX", "HTTPCode_Backend_5XX"} {
-		v, err := p.GetLastPoint(&glb, met, Sum)
+		v, err := p.getLastPoint(&glb, met, stSum)
 		if err == nil {
 			stat[met] = v
 		}
@@ -193,22 +195,23 @@ func (p ELBPlugin) FetchMetrics() (map[string]float64, error) {
 	return stat, nil
 }
 
+// GraphDefinition for Mackerel
 func (p ELBPlugin) GraphDefinition() map[string](mp.Graphs) {
 	for _, grp := range [...]string{"elb.healthy_host_count", "elb.unhealthy_host_count"} {
-		var name_pre string
+		var namePre string
 		var label string
 		switch grp {
 		case "elb.healthy_host_count":
-			name_pre = "HealthyHostCount_"
+			namePre = "HealthyHostCount_"
 			label = "ELB Healthy Host Count"
 		case "elb.unhealthy_host_count":
-			name_pre = "UnHealthyHostCount_"
+			namePre = "UnHealthyHostCount_"
 			label = "ELB Unhealthy Host Count"
 		}
 
 		var metrics [](mp.Metrics)
 		for _, az := range p.AZs {
-			metrics = append(metrics, mp.Metrics{Name: name_pre + az, Label: az, Stacked: true})
+			metrics = append(metrics, mp.Metrics{Name: namePre + az, Label: az, Stacked: true})
 		}
 		graphdef[grp] = mp.Graphs{
 			Label:   label,
@@ -223,7 +226,7 @@ func (p ELBPlugin) GraphDefinition() map[string](mp.Graphs) {
 func main() {
 	optRegion := flag.String("region", "", "AWS Region")
 	optLbname := flag.String("lbname", "", "ELB Name")
-	optAccessKeyId := flag.String("access-key-id", "", "AWS Access Key ID")
+	optAccessKeyID := flag.String("access-key-id", "", "AWS Access Key ID")
 	optSecretAccessKey := flag.String("secret-access-key", "", "AWS Secret Access Key")
 	optTempfile := flag.String("tempfile", "", "Temp file name")
 	flag.Parse()
@@ -236,11 +239,11 @@ func main() {
 		elb.Region = *optRegion
 	}
 
-	elb.AccessKeyId = *optAccessKeyId
+	elb.AccessKeyID = *optAccessKeyID
 	elb.SecretAccessKey = *optSecretAccessKey
 	elb.Lbname = *optLbname
 
-	err := elb.Prepare()
+	err := elb.prepare()
 	if err != nil {
 		log.Fatalln(err)
 	}

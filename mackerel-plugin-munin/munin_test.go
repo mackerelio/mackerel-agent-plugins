@@ -2,13 +2,14 @@ package main
 
 import (
 	"bytes"
-	"github.com/stretchr/testify/assert"
 	"testing"
+
+	"github.com/stretchr/testify/assert"
 )
 
-var plg string = "swap"
-var muninms map[string](*MuninMetric) = map[string](*MuninMetric){}
-var ss Services = Services{}
+var plg = "swap"
+var muninms = map[string](*MuninMetric){}
+var ss = services{}
 
 func TestParsePluginConfig(t *testing.T) {
 	stub := `graph_title Swap in/out
@@ -114,7 +115,7 @@ env.foo2 bar2
 
 	assert.Nil(t, ss["snap"])
 
-	var s ServiceEnvs
+	var s serviceEnvs
 
 	s = ss["*"]
 	assert.EqualValues(t, s["hoge"], "wwww")
