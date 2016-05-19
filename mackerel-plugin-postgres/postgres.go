@@ -89,15 +89,16 @@ var graphdef = map[string](mp.Graphs){
 
 // PostgresPlugin mackerel plugin for PostgreSQL
 type PostgresPlugin struct {
-	Host          string
-	Port          string
-	Username      string
-	Password      string
-	SSLmode       string
-	Timeout       int
-	Tempfile      string
-	Database      string
-	RelpagesLimit int
+	Host            string
+	Port            string
+	Username        string
+	Password        string
+	SSLmode         string
+	Timeout         int
+	Tempfile        string
+	Database        string
+	RelpagesLimit   int
+	RelpagesAnalyze bool
 }
 
 func fetchStatDatabase(db *sql.DB) (map[string]float64, error) {
@@ -192,10 +193,12 @@ func (p PostgresPlugin) fetchRelpages(db *sql.DB) (map[string]float64, error) {
 	if p.RelpagesLimit <= 0 {
 		return nil, nil
 	}
-	_, err := db.Query("analyze")
-	if err != nil {
-		logger.Warningf("Failed to ANALYZE", err)
-		return nil, err
+	if p.RelpagesAnalyze {
+		_, err := db.Query("analyze")
+		if err != nil {
+			logger.Warningf("Failed to ANALYZE", err)
+			return nil, err
+		}
 	}
 	rows, err := db.Query("select relname, relpages from pg_class order by relpages desc limit $1", p.RelpagesLimit)
 	if err != nil {
@@ -280,7 +283,8 @@ func main() {
 	optSSLmode := flag.String("sslmode", "disable", "Whether or not to use SSL")
 	optConnectTimeout := flag.Int("connect_timeout", 5, "Maximum wait for connection, in seconds.")
 	optTempfile := flag.String("tempfile", "", "Temp file name")
-	optRelpagesLimit := flag.Int("relpages_limit", 0, "Outputs only top `relpages_limit` relations with the highest relpages.")
+	optRelpagesLimit := flag.Int("relpages_limit", 0, "Outputs only top relpages_limit relations with the highest relpages.")
+	optRelpagesAnalyze := flag.Bool("relpages_analyze", false, "Do ANALYZE before SELECT relpages.")
 	flag.Parse()
 
 	if *optUser == "" {
@@ -303,6 +307,7 @@ func main() {
 	postgres.Timeout = *optConnectTimeout
 	postgres.Database = *optDatabase
 	postgres.RelpagesLimit = *optRelpagesLimit
+	postgres.RelpagesAnalyze = *optRelpagesAnalyze
 
 	helper := mp.NewMackerelPlugin(postgres)
 
