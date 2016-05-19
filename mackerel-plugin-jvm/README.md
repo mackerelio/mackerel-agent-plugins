@@ -17,7 +17,7 @@ mackerel-plugin-jvm -javaname=<javaname> [-pidfile=</path/to/pidfile>] [-jstatpa
 
 ```
 [plugin.metrics.jvm]
-command = "/path/to/mackerel-plugin-jvm -javaname=NettyServer -jstatpath=/usr/bin/jstat -jpspath=/usr/bin/jps -jinfo=/usr/bin/jinfo"
+command = "/path/to/mackerel-plugin-jvm -javaname=NettyServer -jstatpath=/usr/bin/jstat -jpspath=/usr/bin/jps -jinfopath=/usr/bin/jinfo"
 ```
 
 ## About javaname
