@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.20.1 (2016-05-25)
+
+* change signatures of doMain to follow recent codegangsta/cli #227 (Songmu)
+* fix README.md of mackerel-plugin-jvm #228 (azusa)
+
+
 ## 0.20.0 (2016-05-10)
 
 * [docker] use goroutine for fetching metrics via API #220 (stanaka)
