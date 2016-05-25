@@ -423,11 +423,11 @@ sub upload_to_github_release {
             qw/--name/, $filename,
             qw/--file/, $path;
     }
-    my @args = qw/edit --user/, $REPO_USER,
+    my @args = (qw/edit --user/, $REPO_USER,
         qw/--repo/, $REPO,
         qw/--tag/, $tag,
-        qw/--description/, $description;
-    push @args, "--pre-release" if @erase_if_exist;
+        qw/--description/, $description);
+    push @args, "--pre-release" if $erase_if_exist;
     github_release @args;
 }
 
