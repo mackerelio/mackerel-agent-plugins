@@ -74,18 +74,15 @@ func (c LinuxPlugin) GraphDefinition() map[string](mp.Graphs) {
 }
 
 // main function
-func doMain(c *cli.Context) {
+func doMain(c *cli.Context) error {
 	var linux LinuxPlugin
 
 	linux.Type = c.String("type")
 	helper := mp.NewMackerelPlugin(linux)
 	helper.Tempfile = c.String("tempfile")
 
-	if os.Getenv("MACKEREL_AGENT_PLUGIN_META") != "" {
-		helper.OutputDefinitions()
-	} else {
-		helper.OutputValues()
-	}
+	helper.Run()
+	return nil
 }
 
 // FetchMetrics interface for mackerelplugin

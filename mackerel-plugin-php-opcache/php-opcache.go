@@ -118,7 +118,7 @@ func getPhpOpcacheMetrics(host string, port uint16, path string) (string, error)
 	return string(body[:]), nil
 }
 
-func doMain(c *cli.Context) {
+func doMain(c *cli.Context) error {
 	var phpopcache PhpOpcachePlugin
 
 	phpopcache.Host = c.String("http_host")
@@ -133,6 +133,7 @@ func doMain(c *cli.Context) {
 	} else {
 		helper.OutputValues()
 	}
+	return nil
 }
 
 func main() {
