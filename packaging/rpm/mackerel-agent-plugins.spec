@@ -49,6 +49,10 @@ done
 %{__oldtargetdir}/*
 
 %changelog
+* Wed May 25 2016 <mackerel-developers@hatena.ne.jp> - 0.20.1-1
+- change signatures of doMain to follow recent codegangsta/cli (by Songmu)
+- fix README.md of mackerel-plugin-jvm (by azusa)
+
 * Tue May 10 2016 <mackerel-developers@hatena.ne.jp> - 0.20.0-1
 - [docker] use goroutine for fetching metrics via API (by stanaka)
 - add graphite and proc-fd into package (by Songmu)
