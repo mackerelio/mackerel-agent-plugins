@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.20.2 (2016-06-09)
+
+* aws-ec2-ebs: Use wildcard in the graph definitions #230 (itchyny)
+
+
 ## 0.20.1 (2016-05-25)
 
 * change signatures of doMain to follow recent codegangsta/cli #227 (Songmu)

@@ -49,6 +49,9 @@ done
 %{__oldtargetdir}/*
 
 %changelog
+* Thu Jun 09 2016 <mackerel-developers@hatena.ne.jp> - 0.20.2-1
+- aws-ec2-ebs: Use wildcard in the graph definitions (by itchyny)
+
 * Wed May 25 2016 <mackerel-developers@hatena.ne.jp> - 0.20.1-1
 - change signatures of doMain to follow recent codegangsta/cli (by Songmu)
 - fix README.md of mackerel-plugin-jvm (by azusa)
