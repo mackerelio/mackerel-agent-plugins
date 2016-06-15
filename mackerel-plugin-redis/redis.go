@@ -21,10 +21,19 @@ var logger = logging.GetLogger("metrics.plugin.redis")
 type RedisPlugin struct {
 	Host     string
 	Port     string
+	Password string
 	Socket   string
 	Prefix   string
 	Timeout  int
 	Tempfile string
+}
+
+func authenticateByPassword(c *redis.Client, password string) error {
+	if r := c.Cmd("AUTH", password); r.Err != nil {
+		logger.Errorf("Faild to authenticate. %s", r.Err)
+		return r.Err
+	}
+	return nil
 }
 
 func fetchPercentageOfMemory(c *redis.Client, stat map[string]float64) error {
@@ -103,6 +112,12 @@ func (m RedisPlugin) FetchMetrics() (map[string]float64, error) {
 		return nil, err
 	}
 	defer c.Close()
+
+	if m.Password != "" {
+		if err = authenticateByPassword(c, m.Password); err != nil {
+			return nil, err
+		}
+	}
 
 	r := c.Cmd("info")
 	if r.Err != nil {
@@ -243,6 +258,7 @@ func (m RedisPlugin) GraphDefinition() map[string](mp.Graphs) {
 func main() {
 	optHost := flag.String("host", "localhost", "Hostname")
 	optPort := flag.String("port", "6379", "Port")
+	optPassowrd := flag.String("password", "", "Password")
 	optSocket := flag.String("socket", "", "Server socket (overrides host and port)")
 	optPrefix := flag.String("metric-key-prefix", "redis", "Metric key prefix")
 	optTimeout := flag.Int("timeout", 5, "Timeout")
@@ -258,6 +274,7 @@ func main() {
 	} else {
 		redis.Host = *optHost
 		redis.Port = *optPort
+		redis.Password = *optPassowrd
 	}
 	helper := mp.NewMackerelPlugin(redis)
 
