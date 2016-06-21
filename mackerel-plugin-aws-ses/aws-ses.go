@@ -33,8 +33,8 @@ var graphdef = map[string](mp.Graphs){
 		Metrics: [](mp.Metrics){
 			mp.Metrics{Name: "Complaints", Label: "Complaints"},
 			mp.Metrics{Name: "DeliveryAttempts", Label: "DeliveryAttempts"},
-			mp.Metrics{Name: "Bounces int", Label: "Bounces"},
-			mp.Metrics{Name: "Rejects int", Label: "Rejects"},
+			mp.Metrics{Name: "Bounces", Label: "Bounces"},
+			mp.Metrics{Name: "Rejects", Label: "Rejects"},
 		},
 	},
 }
