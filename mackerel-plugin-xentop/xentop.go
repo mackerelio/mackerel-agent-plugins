@@ -111,10 +111,11 @@ func (m XentopPlugin) FetchMetrics() (map[string]interface{}, error) {
 		var errParse error
 		var tmpval float64 // avoid `stat[*] *= 1000` because of go interface bug
 
-		stat[fmt.Sprintf("xentop.cpu.%s.cpu", name)], errParse = strconv.ParseFloat(sf[index["CPU(sec)"]], 64)
+		tmpval, errParse = strconv.ParseFloat(sf[index["CPU(sec)"]], 64)
 		if errParse != nil {
 			return nil, errParse
 		}
+		stat[fmt.Sprintf("xentop.cpu.%s.cpu", name)] = tmpval * 100 / 60
 		stat[fmt.Sprintf("xentop.memory.%s.memory", name)], errParse = strconv.ParseFloat(sf[index["MEM(%)"]], 64)
 		if errParse != nil {
 			return nil, errParse
