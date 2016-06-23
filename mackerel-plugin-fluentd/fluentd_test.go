@@ -79,8 +79,9 @@ func TestPluginIDPatternOption(t *testing.T) {
 	fluentdStats := []byte(stub)
 
 	// Specify type option
-	pluginIDPattern = *regexp.MustCompile("^match")
-	var fluentd = FluentdMetrics{}
+	var fluentd = FluentdMetrics{
+		pluginIDPattern: regexp.MustCompile("^match"),
+	}
 	stat, err := fluentd.parseStats(fluentdStats)
 
 	assert.Nil(t, err)
@@ -92,7 +93,6 @@ func TestPluginIDPatternOption(t *testing.T) {
 
 	// Not specify type option
 	fluentd = FluentdMetrics{}
-	pluginIDPattern = regexp.Regexp{}
 	stat, err = fluentd.parseStats(fluentdStats)
 
 	assert.Nil(t, err)
