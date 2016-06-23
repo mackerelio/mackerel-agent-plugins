@@ -1,3 +1,22 @@
+mackerel-agent-plugins (0.21.0-1) stable; urgency=low
+
+  * Add PHP-FPM plugin (by ariarijp)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/226>
+  * Support password authentication of Redis (by hico-horiuchi)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/232>
+  * Add an option to specify type and id pattern to fluentd plugin (by waniji)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/233>
+  * Fix bug:aws-ses (by tjinjin)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/234>
+  * fix help link (by daiksy)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/235>
+  * xentop: get CPU %, not CPU time/min (by hagihala)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/236>
+  * add mackerel-plugin-php-fpm into package (by Songmu)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/238>
+
+ -- mackerel <mackerel-developers@hatena.ne.jp>  Thu, 23 Jun 2016 05:58:01 +0000
+
 mackerel-agent-plugins (0.20.2-1) stable; urgency=low
 
   * aws-ec2-ebs: Use wildcard in the graph definitions (by itchyny)

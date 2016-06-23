@@ -1,5 +1,16 @@
 # Changelog
 
+## 0.21.0 (2016-06-23)
+
+* Add PHP-FPM plugin #226 (ariarijp)
+* Support password authentication of Redis #232 (hico-horiuchi)
+* Add an option to specify type and id pattern to fluentd plugin #233 (waniji)
+* Fix bug:aws-ses #234 (tjinjin)
+* fix help link #235 (daiksy)
+* xentop: get CPU %, not CPU time/min #236 (hagihala)
+* add mackerel-plugin-php-fpm into package #238 (Songmu)
+
+
 ## 0.20.2 (2016-06-09)
 
 * aws-ec2-ebs: Use wildcard in the graph definitions #230 (itchyny)
