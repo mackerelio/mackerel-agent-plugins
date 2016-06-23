@@ -16,9 +16,10 @@ import (
 
 // FluentdMetrics plugin for fluentd
 type FluentdMetrics struct {
-	Target     string
-	Tempfile   string
-	pluginType string
+	Target          string
+	Tempfile        string
+	pluginType      string
+	pluginIDPattern *regexp.Regexp
 
 	plugins []FluentdPluginMetrics
 }
@@ -71,8 +72,6 @@ func (f *FluentdMetrics) parseStats(body []byte) (map[string]interface{}, error)
 	return metrics, err
 }
 
-var pluginIDPattern regexp.Regexp
-
 func (f *FluentdMetrics) nonTargetPlugin(plugin FluentdPluginMetrics) bool {
 	if plugin.PluginCategory != "output" {
 		return true
@@ -80,7 +79,7 @@ func (f *FluentdMetrics) nonTargetPlugin(plugin FluentdPluginMetrics) bool {
 	if f.pluginType != "" && f.pluginType != plugin.Type {
 		return true
 	}
-	if pluginIDPattern.String() != "" && pluginIDPattern.MatchString(plugin.PluginID) == false {
+	if f.pluginIDPattern != nil && !f.pluginIDPattern.MatchString(plugin.PluginID) {
 		return true
 	}
 	return false
@@ -135,15 +134,23 @@ func main() {
 	tempFile := flag.String("tempfile", "", "Temp file name")
 	flag.Parse()
 
-	f := FluentdMetrics{
-		Target:     fmt.Sprintf("http://%s:%s/api/plugins.json", *host, *port),
-		Tempfile:   *tempFile,
-		pluginType: *pluginType,
+	var pluginIDPattern *regexp.Regexp
+	var err error
+	if *pluginIDPatternString != "" {
+		pluginIDPattern, err = regexp.Compile(*pluginIDPatternString)
+		if err != nil {
+			fmt.Fprintf(os.Stderr, "failed to exec mackerel-plugin-fluentd: invalid plugin-id-pattern: %s\n", err)
+			os.Exit(1)
+		}
 	}
 
-	if *pluginIDPatternString != "" {
-		pluginIDPattern = *regexp.MustCompile(*pluginIDPatternString)
+	f := FluentdMetrics{
+		Target:          fmt.Sprintf("http://%s:%s/api/plugins.json", *host, *port),
+		Tempfile:        *tempFile,
+		pluginType:      *pluginType,
+		pluginIDPattern: pluginIDPattern,
 	}
+
 	helper := mp.NewMackerelPlugin(f)
 
 	helper.Tempfile = *tempFile
@@ -158,9 +165,5 @@ func main() {
 		helper.Tempfile = fmt.Sprintf("/tmp/mackerel-plugin-fluentd-%s", strings.Join(tempFileSuffix, "-"))
 	}
 
-	if os.Getenv("MACKEREL_AGENT_PLUGIN_META") != "" {
-		helper.OutputDefinitions()
-	} else {
-		helper.OutputValues()
-	}
+	helper.Run()
 }
