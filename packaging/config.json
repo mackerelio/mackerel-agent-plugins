@@ -23,6 +23,7 @@
        "mysql",
        "nginx",
        "php-apc",
+       "php-fpm",
        "php-opcache",
        "plack",
        "postgres",
