@@ -49,6 +49,15 @@ done
 %{__oldtargetdir}/*
 
 %changelog
+* Thu Jun 23 2016 <mackerel-developers@hatena.ne.jp> - 0.21.0-1
+- Add PHP-FPM plugin (by ariarijp)
+- Support password authentication of Redis (by hico-horiuchi)
+- Add an option to specify type and id pattern to fluentd plugin (by waniji)
+- Fix bug:aws-ses (by tjinjin)
+- fix help link (by daiksy)
+- xentop: get CPU %, not CPU time/min (by hagihala)
+- add mackerel-plugin-php-fpm into package (by Songmu)
+
 * Thu Jun 09 2016 <mackerel-developers@hatena.ne.jp> - 0.20.2-1
 - aws-ec2-ebs: Use wildcard in the graph definitions (by itchyny)
 
