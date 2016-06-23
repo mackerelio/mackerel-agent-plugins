@@ -158,9 +158,5 @@ func main() {
 		helper.Tempfile = fmt.Sprintf("/tmp/mackerel-plugin-fluentd-%s", strings.Join(tempFileSuffix, "-"))
 	}
 
-	if os.Getenv("MACKEREL_AGENT_PLUGIN_META") != "" {
-		helper.OutputDefinitions()
-	} else {
-		helper.OutputValues()
-	}
+	helper.Run()
 }
