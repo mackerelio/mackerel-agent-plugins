@@ -50,7 +50,6 @@ done
 
 %changelog
 * Tue Jun 28 2016 <mackerel-developers@hatena.ne.jp> - 0.21.1-1
-- fix to use config.json to list up plugins for packaging (by stanaka)
 - build with go 1.6.2 (by Songmu)
 
 * Thu Jun 23 2016 <mackerel-developers@hatena.ne.jp> - 0.21.0-1

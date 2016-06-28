@@ -1,7 +1,5 @@
 mackerel-agent-plugins (0.21.1-1) stable; urgency=low
 
-  * fix to use config.json to list up plugins for packaging (by stanaka)
-    <https://github.com/mackerelio/mackerel-agent-plugins/pull/240>
   * build with go 1.6.2 (by Songmu)
     <https://github.com/mackerelio/mackerel-agent-plugins/pull/241>
 
