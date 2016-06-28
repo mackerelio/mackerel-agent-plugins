@@ -1,3 +1,10 @@
+mackerel-agent-plugins (0.21.1-1) stable; urgency=low
+
+  * build with go 1.6.2 (by Songmu)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/241>
+
+ -- mackerel <mackerel-developers@hatena.ne.jp>  Tue, 28 Jun 2016 09:23:23 +0000
+
 mackerel-agent-plugins (0.21.0-1) stable; urgency=low
 
   * Add PHP-FPM plugin (by ariarijp)
