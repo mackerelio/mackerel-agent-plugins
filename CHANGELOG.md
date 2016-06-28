@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.21.1 (2016-06-28)
+
+* fix to use config.json to list up plugins for packaging #240 (stanaka)
+* build with go 1.6.2 #241 (Songmu)
+
+
 ## 0.21.0 (2016-06-23)
 
 * Add PHP-FPM plugin #226 (ariarijp)
