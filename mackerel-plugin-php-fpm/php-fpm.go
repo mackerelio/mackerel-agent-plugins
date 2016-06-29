@@ -131,7 +131,7 @@ func getStatus(p PhpFpmPlugin) (*PhpFpmStatus, error) {
 }
 
 func main() {
-	optURL := flag.String("url", "http://localhost/status?json", "Metric key prefix")
+	optURL := flag.String("url", "http://localhost/status?json", "PHP-FPM status page URL")
 	optPrefix := flag.String("metric-key-prefix", "php-fpm", "Metric key prefix")
 	optTimeout := flag.Uint("timeout", 5, "Timeout")
 	optTempfile := flag.String("tempfile", "", "Temp file name")
