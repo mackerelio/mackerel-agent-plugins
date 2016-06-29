@@ -12,9 +12,13 @@ Get apache "server-status" metrics for Mackerel and Sensu.
 First, you should enabled mod_status module, and configure apache config file. For example is below.
 
 ```
+ExtendedStatus On
 <VirtualHost 127.0.0.1:1080>
     <Location /server-status>
         SetHandler server-status
+        Order deny,allow
+        Deny from all
+        Allow from localhost
     </Location>
 </VirtualHost>
 ```
