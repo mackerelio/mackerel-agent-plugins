@@ -60,7 +60,7 @@ var graphDef = map[string](mp.Graphs){
 
 type saveItem struct {
 	LastTime       time.Time
-	ProcStatsByCpu map[string]*procStats
+	ProcStatsByCPU map[string]*procStats
 }
 
 type procStats struct {
@@ -173,8 +173,8 @@ func saveValues(tempFileName string, values map[string]*procStats, now time.Time
 	defer f.Close()
 
 	s := saveItem{
-		LastTime:    time.Now(),
-		ProcStatsByCpu: values,
+		LastTime:       time.Now(),
+		ProcStatsByCPU: values,
 	}
 
 	encoder := json.NewEncoder(f)
@@ -197,9 +197,9 @@ func fetchLastValues(tempFileName string) (map[string]*procStats, time.Time, err
 	decoder := json.NewDecoder(f)
 	err = decoder.Decode(&stat)
 	if err != nil {
-		return stat.ProcStatsByCpu, stat.LastTime, err
+		return stat.ProcStatsByCPU, stat.LastTime, err
 	}
-	return stat.ProcStatsByCpu, stat.LastTime, nil
+	return stat.ProcStatsByCPU, stat.LastTime, nil
 }
 
 func calcCPUUsage(currentValues map[string]*procStats, now time.Time, lastValues map[string]*procStats, lastTime time.Time) (map[string]*cpuPercentages, error) {
