@@ -22,6 +22,7 @@ Documentation for each plugin is located in its respective sub directory.
 * [mackerel-plugin-fluentd](./mackerel-plugin-fluentd/README.md)
 * [mackerel-plugin-gearmand](./mackerel-plugin-gearmand/README.md)
 * [mackerel-plugin-gostats](./mackerel-plugin-gostats/README.md)
+* [mackerel-plugin-graphite](./mackerel-plugin-graphite/README.md)
 * [mackerel-plugin-haproxy](./mackerel-plugin-haproxy/README.md)
 * [mackerel-plugin-inode](./mackerel-plugin-inode/README.md)
 * [mackerel-plugin-jmx-jolokia](./mackerel-plugin-jmx-jolokia/README.md)
@@ -35,9 +36,11 @@ Documentation for each plugin is located in its respective sub directory.
 * [mackerel-plugin-mysql](./mackerel-plugin-mysql/README.md)
 * [mackerel-plugin-nginx](./mackerel-plugin-nginx/README.md)
 * [mackerel-plugin-php-apc](./mackerel-plugin-php-apc/README.md)
+* [mackerel-plugin-php-fpm](./mackerel-plugin-php-fpm/README.md)
 * [mackerel-plugin-php-opcache](./mackerel-plugin-php-opcache/README.md)
 * [mackerel-plugin-plack](./mackerel-plugin-plack/README.md)
 * [mackerel-plugin-postgres](./mackerel-plugin-postgres/README.md)
+* [mackerel-plugin-proc-fd](./mackerel-plugin-proc-fd/README.md)
 * [mackerel-plugin-rabbitmq](./mackerel-plugin-rabbitmq/README.md)
 * [mackerel-plugin-redis](./mackerel-plugin-redis/README.md)
 * [mackerel-plugin-snmp](./mackerel-plugin-snmp/README.md)
@@ -92,6 +95,3 @@ Contribution
 * fork it
 * develop the plugin you want
 * create a pullrequest!
-
-
-
