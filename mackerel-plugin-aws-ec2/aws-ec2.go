@@ -17,6 +17,14 @@ import (
 	mp "github.com/mackerelio/go-mackerel-plugin"
 )
 
+// EC2Plugin is a mackerel plugin for ec2
+type EC2Plugin struct {
+	InstanceID  string
+	Region      string
+	Credentials *credentials.Credentials
+	CloudWatch  *cloudwatch.CloudWatch
+}
+
 var graphdef = map[string](mp.Graphs){
 	"ec2.CPUUtilization": mp.Graphs{
 		Label: "CPU Utilization",
@@ -68,12 +76,9 @@ var graphdef = map[string](mp.Graphs){
 	},
 }
 
-// EC2Plugin is a mackerel plugin for ec2
-type EC2Plugin struct {
-	Region      string
-	Credentials *credentials.Credentials
-	InstanceID  string
-	CloudWatch  *cloudwatch.CloudWatch
+// GraphDefinition returns graphdef
+func (p EC2Plugin) GraphDefinition() map[string](mp.Graphs) {
+	return graphdef
 }
 
 func getLastPoint(cloudWatch *cloudwatch.CloudWatch, dimension *cloudwatch.Dimension, metricName string) (float64, error) {
@@ -113,7 +118,11 @@ func getLastPoint(cloudWatch *cloudwatch.CloudWatch, dimension *cloudwatch.Dimen
 // FetchMetrics fetches metrics from CloudWatch
 func (p EC2Plugin) FetchMetrics() (map[string]float64, error) {
 	stat := make(map[string]float64)
-	p.CloudWatch = cloudwatch.New(session.New(&aws.Config{Credentials: p.Credentials, Region: &p.Region}))
+	p.CloudWatch = cloudwatch.New(session.New(
+		&aws.Config{
+			Credentials: p.Credentials,
+			Region:      &p.Region,
+		}))
 	dimension := &cloudwatch.Dimension{
 		Name:  aws.String("InstanceId"),
 		Value: aws.String(p.InstanceID),
@@ -142,11 +151,6 @@ func (p EC2Plugin) FetchMetrics() (map[string]float64, error) {
 	}
 
 	return stat, nil
-}
-
-// GraphDefinition returns graphdef
-func (p EC2Plugin) GraphDefinition() map[string](mp.Graphs) {
-	return graphdef
 }
 
 func main() {
@@ -179,7 +183,7 @@ func main() {
 	if *optTempfile != "" {
 		helper.Tempfile = *optTempfile
 	} else {
-		helper.Tempfile = fmt.Sprintf("/tmp/mackerel-plugin-aws-ec2-%s", *optInstanceID)
+		helper.Tempfile = fmt.Sprintf("/tmp/mackerel-plugin-aws-ec2-%s", ec2.InstanceID)
 	}
 
 	if os.Getenv("MACKEREL_AGENT_PLUGIN_META") != "" {

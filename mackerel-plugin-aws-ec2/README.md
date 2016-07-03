@@ -8,8 +8,10 @@ AWS EC2 custom metrics plugin for mackerel.io agent.
 ```shell
 mackerel-plugin-aws-ec2 [-instance-id=<id>] [-region=<aws-region>] [-access-key-id=<id>] [-secret-access-key=<key>] [-tempfile=<tempfile>]
 ```
-* if you run on an ec2-instance, you probably don't have to specify `-instance-id` & `-region`
-* if you run on an ec2-instance and the instance is associated with an appropriate IAM Role, you probably don't have to specify `-access-key-id` & `-secret-access-key`
+* if you run on an ec2-instance, you don't have to specify `-instance-id` & `-region`
+* if you configure credentials (by using the `~/.aws/credentials` file or by setting the environment variables), you don't have to specify `-access-key-id` & `-secret-access-key`
+
+※ For more information about credentials, see the [AWS SDK for Go](https://github.com/aws/aws-sdk-go#configuring-credentials).
 
 ## AWS IAM Policy
 the credential provided manually or fetched automatically by IAM Role should have the policy that includes an action, 'cloudwatch:GetMetricStatistics'
