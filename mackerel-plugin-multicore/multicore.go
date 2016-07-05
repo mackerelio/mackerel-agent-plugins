@@ -296,12 +296,14 @@ func fetchLoadavg5() (float64, error) {
 	content := string(contentbytes)
 	cols := strings.Fields(content)
 
-	f, err := strconv.ParseFloat(cols[1], 64)
-	if err != nil {
-		return 0.0, err
+	if len(cols) > 2 {
+		f, err := strconv.ParseFloat(cols[1], 64)
+		if err != nil {
+			return 0.0, err
+		}
+		return f, nil
 	}
-
-	return f, nil
+	return 0.0, errors.New("cannot fetch loadavg5.")
 }
 
 func printValue(key string, value float64, time time.Time) {
