@@ -119,8 +119,9 @@ func parseProcStat(str string) (map[string]*procStats, error) {
 	var result = make(map[string]*procStats)
 	for _, line := range strings.Split(str, "\n") {
 		if strings.HasPrefix(line, "cpu") {
-			var key = strings.Fields(line)[0]
-			var values = strings.Fields(line)[1:]
+			fields := strings.Fields(line)
+			key := fields[0]
+			values := fields[1:]
 
 			floatValues, err := parseFloats(values)
 			if err != nil {
