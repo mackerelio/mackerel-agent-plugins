@@ -291,7 +291,7 @@ func fetchLoadavg5() (float64, error) {
 		}
 		return f, nil
 	}
-	return 0.0, errors.New("cannot fetch loadavg5.")
+	return 0.0, errors.New("cannot fetch loadavg5")
 }
 
 func printValue(key string, value float64, time time.Time) {
