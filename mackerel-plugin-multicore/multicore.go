@@ -59,15 +59,16 @@ type procStats struct {
 }
 
 type cpuPercentages struct {
-	User    float64
-	Nice    float64
-	System  float64
-	Idle    float64
-	IoWait  float64
-	Irq     float64
-	SoftIrq float64
-	Steal   float64
-	Guest   float64
+	GroupName string
+	User      float64
+	Nice      float64
+	System    float64
+	Idle      float64
+	IoWait    float64
+	Irq       float64
+	SoftIrq   float64
+	Steal     float64
+	Guest     float64
 }
 
 func getProcStat() (string, error) {
@@ -185,9 +186,9 @@ func fetchLastValues(tempFileName string) (map[string]*procStats, time.Time, err
 	return stat.ProcStatsByCPU, stat.LastTime, nil
 }
 
-func calcCPUUsage(currentValues map[string]*procStats, now time.Time, lastValues map[string]*procStats, lastTime time.Time) (map[string]*cpuPercentages, error) {
+func calcCPUUsage(currentValues map[string]*procStats, now time.Time, lastValues map[string]*procStats, lastTime time.Time) ([]*cpuPercentages, error) {
 
-	result := make(map[string]*cpuPercentages)
+	var result []*cpuPercentages
 	for key, current := range currentValues {
 		last, ok := lastValues[key]
 		if ok {
@@ -229,17 +230,18 @@ func calcCPUUsage(currentValues map[string]*procStats, now time.Time, lastValues
 			}
 
 			p := &cpuPercentages{
-				User:    user,
-				Nice:    nice,
-				System:  system,
-				Idle:    idle,
-				IoWait:  iowait,
-				Irq:     irq,
-				SoftIrq: softirq,
-				Steal:   steal,
-				Guest:   guest,
+				GroupName: key,
+				User:      user,
+				Nice:      nice,
+				System:    system,
+				Idle:      idle,
+				IoWait:    iowait,
+				Irq:       irq,
+				SoftIrq:   softirq,
+				Steal:     steal,
+				Guest:     guest,
 			}
-			result[key] = p
+			result = append(result, p)
 		}
 
 	}
@@ -297,19 +299,19 @@ func printValue(key string, value float64, time time.Time) {
 	fmt.Printf("%s\t%f\t%d\n", key, value, time.Unix())
 }
 
-func outputCPUUsage(cpuUsage map[string]*cpuPercentages, now time.Time) {
+func outputCPUUsage(cpuUsage []*cpuPercentages, now time.Time) {
 	if cpuUsage != nil {
-		for key, values := range cpuUsage {
-			if key != "cpu" {
-				printValue(fmt.Sprintf("multicore.cpu.%s.user", key), values.User, now)
-				printValue(fmt.Sprintf("multicore.cpu.%s.nice", key), values.Nice, now)
-				printValue(fmt.Sprintf("multicore.cpu.%s.system", key), values.System, now)
-				printValue(fmt.Sprintf("multicore.cpu.%s.idle", key), values.Idle, now)
-				printValue(fmt.Sprintf("multicore.cpu.%s.iowait", key), values.IoWait, now)
-				printValue(fmt.Sprintf("multicore.cpu.%s.irq", key), values.Irq, now)
-				printValue(fmt.Sprintf("multicore.cpu.%s.softirq", key), values.SoftIrq, now)
-				printValue(fmt.Sprintf("multicore.cpu.%s.steal", key), values.Steal, now)
-				printValue(fmt.Sprintf("multicore.cpu.%s.guest", key), values.Guest, now)
+		for _, u := range cpuUsage {
+			if u.GroupName != "cpu" {
+				printValue(fmt.Sprintf("multicore.cpu.%s.user", u.GroupName), u.User, now)
+				printValue(fmt.Sprintf("multicore.cpu.%s.nice", u.GroupName), u.Nice, now)
+				printValue(fmt.Sprintf("multicore.cpu.%s.system", u.GroupName), u.System, now)
+				printValue(fmt.Sprintf("multicore.cpu.%s.idle", u.GroupName), u.Idle, now)
+				printValue(fmt.Sprintf("multicore.cpu.%s.iowait", u.GroupName), u.IoWait, now)
+				printValue(fmt.Sprintf("multicore.cpu.%s.irq", u.GroupName), u.Irq, now)
+				printValue(fmt.Sprintf("multicore.cpu.%s.softirq", u.GroupName), u.SoftIrq, now)
+				printValue(fmt.Sprintf("multicore.cpu.%s.steal", u.GroupName), u.Steal, now)
+				printValue(fmt.Sprintf("multicore.cpu.%s.guest", u.GroupName), u.Guest, now)
 			}
 		}
 	}
@@ -349,7 +351,7 @@ func main() {
 		log.Fatalln("fetchLastValues: ", err)
 	}
 
-	cpuUsage := make(map[string]*cpuPercentages)
+	var cpuUsage []*cpuPercentages
 	if lastValues != nil {
 		var err error
 		cpuUsage, err = calcCPUUsage(currentValues, now, lastValues, lastTime)
