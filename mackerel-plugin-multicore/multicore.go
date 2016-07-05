@@ -35,7 +35,7 @@ var graphDef = map[string](mp.Graphs){
 		Label: "MultiCore loadavg5 per core",
 		Unit:  "float",
 		Metrics: [](mp.Metrics){
-			mp.Metrics{Name: "loadavg5", Label: "loadavg5", Diff: false, Stacked: true},
+			mp.Metrics{Name: "loadavg5", Label: "loadavg5", Diff: false, Stacked: false},
 		},
 	},
 }
