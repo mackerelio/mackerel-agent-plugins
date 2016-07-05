@@ -335,6 +335,7 @@ func outputDefinitions() {
 // main function
 func main() {
 	optTempfile := flag.String("tempfile", "", "Temp file name")
+	flag.Parse()
 	var tempFileName string
 	if *optTempfile != "" {
 		tempFileName = *optTempfile
