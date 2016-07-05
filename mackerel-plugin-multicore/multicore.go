@@ -346,7 +346,9 @@ func main() {
 
 	currentValues, _ := collectProcStatValues()
 	lastValues, lastTime, err := fetchLastValues(tempFileName)
-	saveValues(tempFileName, currentValues, now)
+	if currentValues != nil {
+		saveValues(tempFileName, currentValues, now)
+	}
 	if err != nil {
 		log.Fatalln("fetchLastValues: ", err)
 	}
