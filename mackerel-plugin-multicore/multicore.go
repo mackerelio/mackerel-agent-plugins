@@ -93,7 +93,7 @@ func parseFloats(values []string) ([]float64, error) {
 
 func fill(arr []float64, elementCount int) []float64 {
 	if len(arr) < elementCount {
-		zeroArr := make([]float64, elementCount - len(arr))
+		zeroArr := make([]float64, elementCount-len(arr))
 		filled := append(arr, zeroArr...)
 		return filled
 	}
