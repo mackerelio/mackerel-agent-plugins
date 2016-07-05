@@ -31,21 +31,6 @@ var graphDef = map[string](mp.Graphs){
 			mp.Metrics{Name: "guest", Label: "guest", Diff: false, Stacked: true},
 		},
 	},
-	"multicore.average_per_core": mp.Graphs{
-		Label: "MultiCore CPU Average per core",
-		Unit:  "percentage",
-		Metrics: [](mp.Metrics){
-			mp.Metrics{Name: "user", Label: "user", Diff: false, Stacked: true},
-			mp.Metrics{Name: "nice", Label: "nice", Diff: false, Stacked: true},
-			mp.Metrics{Name: "system", Label: "system", Diff: false, Stacked: true},
-			mp.Metrics{Name: "idle", Label: "idle", Diff: false, Stacked: true},
-			mp.Metrics{Name: "iowait", Label: "ioWait", Diff: false, Stacked: true},
-			mp.Metrics{Name: "irq", Label: "irq", Diff: false, Stacked: true},
-			mp.Metrics{Name: "softirq", Label: "softirq", Diff: false, Stacked: true},
-			mp.Metrics{Name: "steal", Label: "steal", Diff: false, Stacked: true},
-			mp.Metrics{Name: "guest", Label: "guest", Diff: false, Stacked: true},
-		},
-	},
 	"multicore.loadavg_per_core": mp.Graphs{
 		Label: "MultiCore loadavg5 per core",
 		Unit:  "float",
@@ -330,21 +315,6 @@ func outputCPUUsage(cpuUsage map[string]*cpuPercentages, now time.Time) {
 	}
 }
 
-func outputAverageCPUUsage(cpuUsage map[string]*cpuPercentages, now time.Time) {
-	if cpuUsage != nil {
-		values := cpuUsage["cpu"]
-		printValue("multicore.average_per_core.user", values.User, now)
-		printValue("multicore.average_per_core.nice", values.Nice, now)
-		printValue("multicore.average_per_core.system", values.System, now)
-		printValue("multicore.average_per_core.idle", values.Idle, now)
-		printValue("multicore.average_per_core.iowait", values.IoWait, now)
-		printValue("multicore.average_per_core.irq", values.Irq, now)
-		printValue("multicore.average_per_core.softirq", values.SoftIrq, now)
-		printValue("multicore.average_per_core.steal", values.Steal, now)
-		printValue("multicore.average_per_core.guest", values.Guest, now)
-	}
-}
-
 func outputLoadavgPerCore(loadavgPerCore float64, now time.Time) {
 	printValue("multicore.loadavg_per_core.loadavg5", loadavgPerCore, now)
 }
@@ -398,7 +368,6 @@ func main() {
 		outputDefinitions()
 	} else {
 		outputCPUUsage(cpuUsage, now)
-		outputAverageCPUUsage(cpuUsage, now)
 		outputLoadavgPerCore(loadPerCPUCount, now)
 	}
 }
