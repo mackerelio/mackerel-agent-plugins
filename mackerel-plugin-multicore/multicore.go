@@ -8,15 +8,12 @@ import (
 	"io/ioutil"
 	"log"
 	"os"
-	"regexp"
 	"strconv"
 	"strings"
 	"time"
 
 	mp "github.com/mackerelio/go-mackerel-plugin"
 )
-
-var cpuNumberPattern = regexp.MustCompile(`^cpu*`)
 
 var graphDef = map[string](mp.Graphs){
 	"multicore.cpu.#": mp.Graphs{
@@ -121,7 +118,7 @@ func fill(arr []float64, elementCount int) []float64 {
 func parseProcStat(str string) (map[string]*procStats, error) {
 	var result = make(map[string]*procStats)
 	for _, line := range strings.Split(str, "\n") {
-		if cpuNumberPattern.MatchString(line) {
+		if strings.HasPrefix(line, "cpu") {
 			var key = strings.Fields(line)[0]
 			var values = strings.Fields(line)[1:]
 
