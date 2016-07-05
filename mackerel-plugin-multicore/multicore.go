@@ -294,7 +294,7 @@ func fetchLoadavg5() (float64, error) {
 		return 0.0, err
 	}
 	content := string(contentbytes)
-	cols := strings.Split(content, " ")
+	cols := strings.Fields(content)
 
 	f, err := strconv.ParseFloat(cols[1], 64)
 	if err != nil {
