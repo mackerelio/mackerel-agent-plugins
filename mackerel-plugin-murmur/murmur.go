@@ -6,8 +6,8 @@ import (
 	"os"
 	"time"
 
-	mp "github.com/mackerelio/go-mackerel-plugin-helper"
 	mumble "github.com/layeh/gumble/gumble"
+	mp "github.com/mackerelio/go-mackerel-plugin-helper"
 )
 
 var graphdef = map[string](mp.Graphs){
@@ -29,15 +29,15 @@ type MurmurPlugin struct {
 
 // FetchMetrics interface for mackerelplugin
 func (m MurmurPlugin) FetchMetrics() (map[string]interface{}, error) {
-	resp, err := mumble.Ping(m.Host, 0, time.Millisecond * time.Duration(m.Timeout))
+	resp, err := mumble.Ping(m.Host, 0, time.Millisecond*time.Duration(m.Timeout))
 
 	if err != nil {
 		return nil, err
 	}
 
 	metrics := map[string]interface{}{
-		"con_cur":uint32(resp.ConnectedUsers),
-		"con_max":uint32(resp.MaximumUsers),
+		"con_cur": uint32(resp.ConnectedUsers),
+		"con_max": uint32(resp.MaximumUsers),
 	}
 
 	return metrics, nil

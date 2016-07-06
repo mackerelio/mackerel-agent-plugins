@@ -92,20 +92,20 @@ func (p InodePlugin) FetchMetrics() (map[string]interface{}, error) {
 // GraphDefinition interface for mackerelplugin
 func (p InodePlugin) GraphDefinition() map[string]mp.Graphs {
 	return map[string]mp.Graphs{
-		"inode.count.#": mp.Graphs{
+		"inode.count.#": {
 			Label: "Inode",
 			Unit:  "integer",
 			Metrics: []mp.Metrics{
-				mp.Metrics{Name: "used", Label: "used"},
-				mp.Metrics{Name: "free", Label: "free"},
-				mp.Metrics{Name: "total", Label: "total"},
+				{Name: "used", Label: "used"},
+				{Name: "free", Label: "free"},
+				{Name: "total", Label: "total"},
 			},
 		},
-		"inode.percentage.#": mp.Graphs{
+		"inode.percentage.#": {
 			Label: "Inode Percentage",
 			Unit:  "percentage",
 			Metrics: []mp.Metrics{
-				mp.Metrics{Name: "used", Label: "used %"},
+				{Name: "used", Label: "used %"},
 			},
 		},
 	}

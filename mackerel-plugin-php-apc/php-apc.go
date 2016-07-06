@@ -9,8 +9,8 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/urfave/cli"
 	mp "github.com/mackerelio/go-mackerel-plugin"
+	"github.com/urfave/cli"
 )
 
 // metric value structure

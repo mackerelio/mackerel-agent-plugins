@@ -3,31 +3,31 @@ package main
 var relayPrefix = "graphite-carbon.relay."
 
 var relayMeta = map[string]meta{
-	"cpuUsage": meta{
+	"cpuUsage": {
 		label: " CPU Usage",
 		unit:  "float",
 	},
-	"memUsage": meta{
+	"memUsage": {
 		label: " Memory Usage",
 		unit:  "integer",
 	},
-	"metricsRecieved": meta{
+	"metricsRecieved": {
 		label: " Metrics Recieved",
 		unit:  "integer",
 	},
-	"destinations_attemptedRelays": meta{
+	"destinations_attemptedRelays": {
 		label: " Attempted Relays",
 		unit:  "integer",
 	},
-	"destinations_queuedUntilConnected": meta{
+	"destinations_queuedUntilConnected": {
 		label: " Queued Until Connected",
 		unit:  "integer",
 	},
-	"destinations_queuedUntilReady": meta{
+	"destinations_queuedUntilReady": {
 		label: " Queued Until Ready",
 		unit:  "integer",
 	},
-	"destinations_sent": meta{
+	"destinations_sent": {
 		label: " Sent",
 		unit:  "integer",
 	},

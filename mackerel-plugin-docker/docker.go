@@ -355,8 +355,8 @@ func (m DockerPlugin) FetchMetricsWithFile(dockerStats *map[string][]string) (ma
 	pb := m.pathBuilder
 
 	metrics := map[string][]string{
-		"cpuacct": []string{"user", "system"},
-		"memory":  []string{"cache", "rss"},
+		"cpuacct": {"user", "system"},
+		"memory":  {"cache", "rss"},
 	}
 
 	res := map[string]interface{}{}

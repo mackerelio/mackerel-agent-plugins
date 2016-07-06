@@ -3,55 +3,55 @@ package main
 var cachePrefix = "graphite-carbon.cache."
 
 var cacheMeta = map[string]meta{
-	"avgUpdateTime": meta{
+	"avgUpdateTime": {
 		label: " Average Update Time",
 		unit:  "float",
 	},
-	"committedPoints": meta{
+	"committedPoints": {
 		label: " Committed Points",
 		unit:  "integer",
 	},
-	"cpuUsage": meta{
+	"cpuUsage": {
 		label: " CPU Usage",
 		unit:  "float",
 	},
-	"creates": meta{
+	"creates": {
 		label: " Creates",
 		unit:  "integer",
 	},
-	"errors": meta{
+	"errors": {
 		label: " Errors",
 		unit:  "integer",
 	},
-	"memUsage": meta{
+	"memUsage": {
 		label: " Memory Usage",
 		unit:  "integer",
 	},
-	"metricsReceived": meta{
+	"metricsReceived": {
 		label: " Metrics Received",
 		unit:  "integer",
 	},
-	"pointsPerUpdate": meta{
+	"pointsPerUpdate": {
 		label: " Points Per Update",
 		unit:  "float",
 	},
-	"updateOperations": meta{
+	"updateOperations": {
 		label: " Update Operations",
 		unit:  "integer",
 	},
-	"cache_overflow": meta{
+	"cache_overflow": {
 		label: " Overflow",
 		unit:  "integer",
 	},
-	"cache_queries": meta{
+	"cache_queries": {
 		label: " Queries",
 		unit:  "integer",
 	},
-	"cache_queues": meta{
+	"cache_queues": {
 		label: " Queues",
 		unit:  "integer",
 	},
-	"cache_size": meta{
+	"cache_size": {
 		label: " Size",
 		unit:  "integer",
 	},

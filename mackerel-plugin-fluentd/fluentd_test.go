@@ -19,8 +19,8 @@ func TestGraphDefinition(t *testing.T) {
 
 func TestNormalizePluginID(t *testing.T) {
 	testSets := [][]string{
-		[]string{"foo/bar", "foo_bar"},
-		[]string{"foo:bar", "foo_bar"},
+		{"foo/bar", "foo_bar"},
+		{"foo:bar", "foo_bar"},
 	}
 
 	for _, testSet := range testSets {

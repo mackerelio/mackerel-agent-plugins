@@ -1,13 +1,14 @@
 package main
 
 import (
-	"github.com/stretchr/testify/assert"
-	"testing"
-	"github.com/michaelklishin/rabbit-hole"
 	"reflect"
+	"testing"
+
+	"github.com/michaelklishin/rabbit-hole"
+	"github.com/stretchr/testify/assert"
 )
 
-func TestGraphDefinition(t *testing.T){
+func TestGraphDefinition(t *testing.T) {
 	var rabbitmq RabbitMQPlugin
 
 	graphdef := rabbitmq.GraphDefinition()
@@ -16,7 +17,7 @@ func TestGraphDefinition(t *testing.T){
 	}
 }
 
-func TestParse(t *testing.T){
+func TestParse(t *testing.T) {
 	var rabbitmq RabbitMQPlugin
 
 	var stub rabbithole.Overview

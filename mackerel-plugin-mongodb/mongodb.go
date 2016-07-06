@@ -105,53 +105,53 @@ var graphdef32 = map[string](mp.Graphs){
 }
 
 var metricPlace22 = map[string][]string{
-	"duration_ms":         []string{"backgroundFlushing", "total_ms"},
-	"connections_current": []string{"connections", "current"},
-	"btree_hits":          []string{"indexCounters", "btree", "hits"},
-	"opcounters_insert":   []string{"opcounters", "insert"},
-	"opcounters_query":    []string{"opcounters", "query"},
-	"opcounters_update":   []string{"opcounters", "update"},
-	"opcounters_delete":   []string{"opcounters", "delete"},
-	"opcounters_getmore":  []string{"opcounters", "getmore"},
-	"opcounters_command":  []string{"opcounters", "command"},
+	"duration_ms":         {"backgroundFlushing", "total_ms"},
+	"connections_current": {"connections", "current"},
+	"btree_hits":          {"indexCounters", "btree", "hits"},
+	"opcounters_insert":   {"opcounters", "insert"},
+	"opcounters_query":    {"opcounters", "query"},
+	"opcounters_update":   {"opcounters", "update"},
+	"opcounters_delete":   {"opcounters", "delete"},
+	"opcounters_getmore":  {"opcounters", "getmore"},
+	"opcounters_command":  {"opcounters", "command"},
 }
 
 var metricPlace24 = map[string][]string{
-	"duration_ms":         []string{"backgroundFlushing", "total_ms"},
-	"connections_current": []string{"connections", "current"},
-	"btree_hits":          []string{"indexCounters", "hits"},
-	"opcounters_insert":   []string{"opcounters", "insert"},
-	"opcounters_query":    []string{"opcounters", "query"},
-	"opcounters_update":   []string{"opcounters", "update"},
-	"opcounters_delete":   []string{"opcounters", "delete"},
-	"opcounters_getmore":  []string{"opcounters", "getmore"},
-	"opcounters_command":  []string{"opcounters", "command"},
+	"duration_ms":         {"backgroundFlushing", "total_ms"},
+	"connections_current": {"connections", "current"},
+	"btree_hits":          {"indexCounters", "hits"},
+	"opcounters_insert":   {"opcounters", "insert"},
+	"opcounters_query":    {"opcounters", "query"},
+	"opcounters_update":   {"opcounters", "update"},
+	"opcounters_delete":   {"opcounters", "delete"},
+	"opcounters_getmore":  {"opcounters", "getmore"},
+	"opcounters_command":  {"opcounters", "command"},
 }
 
 // indexCounters is removed from mongodb 3.0.
 // ref. http://stackoverflow.com/questions/29428793/where-is-the-indexcounter-in-db-serverstatus-on-mongodb-3-0
 var metricPlace30 = map[string][]string{
-	"duration_ms":         []string{"backgroundFlushing", "total_ms"},
-	"connections_current": []string{"connections", "current"},
-	"opcounters_insert":   []string{"opcounters", "insert"},
-	"opcounters_query":    []string{"opcounters", "query"},
-	"opcounters_update":   []string{"opcounters", "update"},
-	"opcounters_delete":   []string{"opcounters", "delete"},
-	"opcounters_getmore":  []string{"opcounters", "getmore"},
-	"opcounters_command":  []string{"opcounters", "command"},
+	"duration_ms":         {"backgroundFlushing", "total_ms"},
+	"connections_current": {"connections", "current"},
+	"opcounters_insert":   {"opcounters", "insert"},
+	"opcounters_query":    {"opcounters", "query"},
+	"opcounters_update":   {"opcounters", "update"},
+	"opcounters_delete":   {"opcounters", "delete"},
+	"opcounters_getmore":  {"opcounters", "getmore"},
+	"opcounters_command":  {"opcounters", "command"},
 }
 
 // backgroundFlushing information only appears for instances that use the MMAPv1 storage engine.
 // and the MMAPv1 is no longer the default storage engine in MongoDB 3.2
 // ref. https://docs.mongodb.org/manual/reference/command/serverStatus/#server-status-backgroundflushing
 var metricPlace32 = map[string][]string{
-	"connections_current": []string{"connections", "current"},
-	"opcounters_insert":   []string{"opcounters", "insert"},
-	"opcounters_query":    []string{"opcounters", "query"},
-	"opcounters_update":   []string{"opcounters", "update"},
-	"opcounters_delete":   []string{"opcounters", "delete"},
-	"opcounters_getmore":  []string{"opcounters", "getmore"},
-	"opcounters_command":  []string{"opcounters", "command"},
+	"connections_current": {"connections", "current"},
+	"opcounters_insert":   {"opcounters", "insert"},
+	"opcounters_query":    {"opcounters", "query"},
+	"opcounters_update":   {"opcounters", "update"},
+	"opcounters_delete":   {"opcounters", "delete"},
+	"opcounters_getmore":  {"opcounters", "getmore"},
+	"opcounters_command":  {"opcounters", "command"},
 }
 
 func getFloatValue(s map[string]interface{}, keys []string) (float64, error) {
