@@ -13,7 +13,7 @@ import (
 )
 
 var graphdef = map[string](mp.Graphs){
-	"mysql.cmd": mp.Graphs{
+	"cmd": mp.Graphs{
 		Label: "MySQL Command",
 		Unit:  "float",
 		Metrics: [](mp.Metrics){
@@ -29,7 +29,7 @@ var graphdef = map[string](mp.Graphs){
 			mp.Metrics{Name: "Questions", Label: "Questions", Diff: true, Stacked: false, Type: "uint64"},
 		},
 	},
-	"mysql.join": mp.Graphs{
+	"join": mp.Graphs{
 		Label: "MySQL Join/Scan",
 		Unit:  "float",
 		Metrics: [](mp.Metrics){
@@ -39,7 +39,7 @@ var graphdef = map[string](mp.Graphs){
 			mp.Metrics{Name: "Sort_scan", Label: "Sort SCAN", Diff: true, Stacked: false},
 		},
 	},
-	"mysql.threads": mp.Graphs{
+	"threads": mp.Graphs{
 		Label: "MySQL Threads",
 		Unit:  "integer",
 		Metrics: [](mp.Metrics){
@@ -49,7 +49,7 @@ var graphdef = map[string](mp.Graphs){
 			mp.Metrics{Name: "Threads_cached", Label: "Cached", Diff: false, Stacked: false},
 		},
 	},
-	"mysql.connections": mp.Graphs{
+	"connections": mp.Graphs{
 		Label: "MySQL Connections",
 		Unit:  "float",
 		Metrics: [](mp.Metrics){
@@ -59,14 +59,14 @@ var graphdef = map[string](mp.Graphs){
 			mp.Metrics{Name: "Aborted_connects", Label: "Aborted Connects", Diff: true, Stacked: false},
 		},
 	},
-	"mysql.seconds_behind_master": mp.Graphs{
+	"seconds_behind_master": mp.Graphs{
 		Label: "MySQL Slave status",
 		Unit:  "integer",
 		Metrics: [](mp.Metrics){
 			mp.Metrics{Name: "Seconds_Behind_Master", Label: "Seconds Behind Master", Diff: false, Stacked: false},
 		},
 	},
-	"mysql.table_locks": mp.Graphs{
+	"table_locks": mp.Graphs{
 		Label: "MySQL Table Locks/Slow Queries",
 		Unit:  "float",
 		Metrics: [](mp.Metrics){
@@ -75,7 +75,7 @@ var graphdef = map[string](mp.Graphs){
 			mp.Metrics{Name: "Slow_queries", Label: "Slow Queries", Diff: true, Stacked: false},
 		},
 	},
-	"mysql.traffic": mp.Graphs{
+	"traffic": mp.Graphs{
 		Label: "MySQL Traffic",
 		Unit:  "bytes/sec",
 		Metrics: [](mp.Metrics){
@@ -83,7 +83,7 @@ var graphdef = map[string](mp.Graphs){
 			mp.Metrics{Name: "Bytes_received", Label: "Received Bytes", Diff: true, Stacked: false},
 		},
 	},
-	"mysql.capacity": mp.Graphs{
+	"capacity": mp.Graphs{
 		Label: "MySQL Capacity",
 		Unit:  "percentage",
 		Metrics: [](mp.Metrics){
@@ -235,7 +235,7 @@ func (m MySQLPlugin) GraphDefinition() map[string](mp.Graphs) {
 }
 
 func setInnoDBMetrics() {
-	graphdef["mysql.innodb_rows"] = mp.Graphs{
+	graphdef["innodb_rows"] = mp.Graphs{
 		Label: "mysql.innodb Rows",
 		Unit:  "float",
 		Metrics: [](mp.Metrics){
@@ -245,21 +245,21 @@ func setInnoDBMetrics() {
 			mp.Metrics{Name: "Innodb_rows_deleted", Label: "Deleted", Diff: true, Stacked: false},
 		},
 	}
-	graphdef["mysql.innodb_row_lock_time"] = mp.Graphs{
+	graphdef["innodb_row_lock_time"] = mp.Graphs{
 		Label: "mysql.innodb Row Lock Time",
 		Unit:  "float",
 		Metrics: [](mp.Metrics){
 			mp.Metrics{Name: "Innodb_row_lock_time", Label: "Lock Time", Diff: true, Stacked: false},
 		},
 	}
-	graphdef["mysql.innodb_row_lock_waits"] = mp.Graphs{
+	graphdef["innodb_row_lock_waits"] = mp.Graphs{
 		Label: "mysql.innodb Row Lock Waits",
 		Unit:  "float",
 		Metrics: [](mp.Metrics){
 			mp.Metrics{Name: "Innodb_row_lock_waits", Label: "Lock Waits", Diff: true, Stacked: false},
 		},
 	}
-	graphdef["mysql.innodb_adaptive_hash_index"] = mp.Graphs{
+	graphdef["innodb_adaptive_hash_index"] = mp.Graphs{
 		Label: "mysql.innodb Adaptive Hash Index",
 		Unit:  "integer",
 		Metrics: [](mp.Metrics){
@@ -267,7 +267,7 @@ func setInnoDBMetrics() {
 			mp.Metrics{Name: "hash_index_cells_used", Label: "Hash Index Cells Used", Diff: false, Stacked: false},
 		},
 	}
-	graphdef["mysql.innodb_buffer_pool_read"] = mp.Graphs{
+	graphdef["innodb_buffer_pool_read"] = mp.Graphs{
 		Label: "mysql.innodb Buffer Pool Read (/sec)",
 		Unit:  "float",
 		Metrics: [](mp.Metrics){
@@ -276,7 +276,7 @@ func setInnoDBMetrics() {
 			mp.Metrics{Name: "read_random_ahead", Label: "Random Read Ahead", Diff: false, Stacked: false},
 		},
 	}
-	graphdef["mysql.innodb_buffer_pool_activity"] = mp.Graphs{
+	graphdef["innodb_buffer_pool_activity"] = mp.Graphs{
 		Label: "mysql.innodb Buffer Pool Activity (Pages)",
 		Unit:  "integer",
 		Metrics: [](mp.Metrics){
@@ -285,7 +285,7 @@ func setInnoDBMetrics() {
 			mp.Metrics{Name: "pages_written", Label: "Written", Diff: true, Stacked: false},
 		},
 	}
-	graphdef["mysql.innodb_buffer_pool_efficiency"] = mp.Graphs{
+	graphdef["innodb_buffer_pool_efficiency"] = mp.Graphs{
 		Label: "mysql.innodb Buffer Pool Efficiency",
 		Unit:  "integer",
 		Metrics: [](mp.Metrics){
@@ -293,7 +293,7 @@ func setInnoDBMetrics() {
 			mp.Metrics{Name: "Innodb_buffer_pool_read_requests", Label: "Read Requests", Diff: true, Stacked: false},
 		},
 	}
-	graphdef["mysql.innodb_buffer_pool"] = mp.Graphs{
+	graphdef["innodb_buffer_pool"] = mp.Graphs{
 		Label: "mysql.innodb Buffer Pool (Pages)",
 		Unit:  "integer",
 		Metrics: [](mp.Metrics){
@@ -303,21 +303,21 @@ func setInnoDBMetrics() {
 			mp.Metrics{Name: "modified_pages", Label: "Modified", Diff: false, Stacked: false},
 		},
 	}
-	graphdef["mysql.innodb_checkpoint_age"] = mp.Graphs{
+	graphdef["innodb_checkpoint_age"] = mp.Graphs{
 		Label: "mysql.innodb Checkpoint Age",
 		Unit:  "bytes",
 		Metrics: [](mp.Metrics){
 			mp.Metrics{Name: "uncheckpointed_bytes", Label: "Uncheckpointed", Diff: false, Stacked: false},
 		},
 	}
-	graphdef["mysql.innodb_current_lock_waits"] = mp.Graphs{
+	graphdef["innodb_current_lock_waits"] = mp.Graphs{
 		Label: "mysql.innodb Current Lock Waits (secs)",
 		Unit:  "integer",
 		Metrics: [](mp.Metrics){
 			mp.Metrics{Name: "innodb_lock_wait_secs", Label: "Innodb Lock Wait", Diff: false, Stacked: false},
 		},
 	}
-	graphdef["mysql.innodb_io"] = mp.Graphs{
+	graphdef["innodb_io"] = mp.Graphs{
 		Label: "mysql.innodb I/O",
 		Unit:  "integer",
 		Metrics: [](mp.Metrics){
@@ -327,7 +327,7 @@ func setInnoDBMetrics() {
 			mp.Metrics{Name: "log_writes", Label: "Log Writes", Diff: true, Stacked: false},
 		},
 	}
-	graphdef["mysql.innodb_io_pending"] = mp.Graphs{
+	graphdef["innodb_io_pending"] = mp.Graphs{
 		Label: "mysql.innodb I/O Pending",
 		Unit:  "integer",
 		Metrics: [](mp.Metrics){
@@ -342,7 +342,7 @@ func setInnoDBMetrics() {
 			mp.Metrics{Name: "pending_chkp_writes", Label: "Checkpoint Writes", Diff: false, Stacked: false},
 		},
 	}
-	graphdef["mysql.innodb_insert_buffer"] = mp.Graphs{
+	graphdef["innodb_insert_buffer"] = mp.Graphs{
 		Label: "mysql.innodb Insert Buffer",
 		Unit:  "integer",
 		Metrics: [](mp.Metrics){
@@ -351,7 +351,7 @@ func setInnoDBMetrics() {
 			mp.Metrics{Name: "ibuf_merged", Label: "Merged", Diff: true, Stacked: false},
 		},
 	}
-	graphdef["mysql.innodb_insert_buffer_usage"] = mp.Graphs{
+	graphdef["innodb_insert_buffer_usage"] = mp.Graphs{
 		Label: "mysql.innodb Insert Buffer Usage (Cells)",
 		Unit:  "integer",
 		Metrics: [](mp.Metrics){
@@ -360,14 +360,14 @@ func setInnoDBMetrics() {
 			mp.Metrics{Name: "ibuf_free_cells", Label: "Free", Diff: false, Stacked: true},
 		},
 	}
-	graphdef["mysql.innodb_lock_structures"] = mp.Graphs{
+	graphdef["innodb_lock_structures"] = mp.Graphs{
 		Label: "mysql.innodb Lock Structures",
 		Unit:  "integer",
 		Metrics: [](mp.Metrics){
 			mp.Metrics{Name: "innodb_lock_structs", Label: "Structures", Diff: false, Stacked: false},
 		},
 	}
-	graphdef["mysql.innodb_log"] = mp.Graphs{
+	graphdef["innodb_log"] = mp.Graphs{
 		Label: "mysql.innodb Log",
 		Unit:  "bytes",
 		Metrics: [](mp.Metrics){
@@ -377,7 +377,7 @@ func setInnoDBMetrics() {
 			mp.Metrics{Name: "innodb_log_buffer_size", Label: "Buffer Size", Diff: false, Stacked: true},
 		},
 	}
-	graphdef["mysql.innodb_memory_allocation"] = mp.Graphs{
+	graphdef["innodb_memory_allocation"] = mp.Graphs{
 		Label: "mysql.innodb Memory Allocation",
 		Unit:  "integer",
 		Metrics: [](mp.Metrics){
@@ -385,7 +385,7 @@ func setInnoDBMetrics() {
 			mp.Metrics{Name: "total_mem_alloc", Label: "Total Memory Allocated", Diff: false, Stacked: false},
 		},
 	}
-	graphdef["mysql.innodb_semaphores"] = mp.Graphs{
+	graphdef["innodb_semaphores"] = mp.Graphs{
 		Label: "mysql.innodb Semaphores",
 		Unit:  "integer",
 		Metrics: [](mp.Metrics){
@@ -394,7 +394,7 @@ func setInnoDBMetrics() {
 			mp.Metrics{Name: "os_waits", Label: "OS Waits", Diff: true, Stacked: false},
 		},
 	}
-	graphdef["mysql.innodb_tables_in_use"] = mp.Graphs{
+	graphdef["innodb_tables_in_use"] = mp.Graphs{
 		Label: "mysql.innodb Tables In Use",
 		Unit:  "integer",
 		Metrics: [](mp.Metrics){
@@ -402,7 +402,7 @@ func setInnoDBMetrics() {
 			mp.Metrics{Name: "innodb_tables_in_use", Label: "Locked Tables", Diff: false, Stacked: false},
 		},
 	}
-	graphdef["mysql.innodb_transactions_active_locked"] = mp.Graphs{
+	graphdef["innodb_transactions_active_locked"] = mp.Graphs{
 		Label: "mysql.innodb Transactions Active/Locked",
 		Unit:  "integer",
 		Metrics: [](mp.Metrics){
@@ -412,7 +412,7 @@ func setInnoDBMetrics() {
 			mp.Metrics{Name: "read_views", Label: "Read Views", Diff: false, Stacked: false},
 		},
 	}
-	graphdef["mysql.innodb_transactions"] = mp.Graphs{
+	graphdef["innodb_transactions"] = mp.Graphs{
 		Label: "mysql.innodb Transactions",
 		Unit:  "integer",
 		Metrics: [](mp.Metrics){
