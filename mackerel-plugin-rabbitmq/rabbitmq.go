@@ -4,24 +4,24 @@ import (
 	"flag"
 	"os"
 
-	"github.com/michaelklishin/rabbit-hole"
 	mp "github.com/mackerelio/go-mackerel-plugin-helper"
+	"github.com/michaelklishin/rabbit-hole"
 )
 
 var graphdef = map[string](mp.Graphs){
 	"rabbitmq.queue": mp.Graphs{
 		Label: "RabbitMQ Queue",
-		Unit: "integer",
-		Metrics:[](mp.Metrics){
+		Unit:  "integer",
+		Metrics: [](mp.Metrics){
 			mp.Metrics{Name: "messages", Label: "Total", Diff: false},
 			mp.Metrics{Name: "ready", Label: "Ready", Diff: false},
-			mp.Metrics{Name: "unacknowledged", Label: "Unacknowledged", Diff:false},
+			mp.Metrics{Name: "unacknowledged", Label: "Unacknowledged", Diff: false},
 		},
 	},
 	"rabbitmq.message": mp.Graphs{
 		Label: "RabbitMQ Message",
-		Unit: "integer",
-		Metrics:[](mp.Metrics){
+		Unit:  "integer",
+		Metrics: [](mp.Metrics){
 			mp.Metrics{Name: "publish", Label: "Publish", Diff: false},
 		},
 	},
@@ -29,15 +29,15 @@ var graphdef = map[string](mp.Graphs){
 
 // RabbitMQPlugin metrics
 type RabbitMQPlugin struct {
-	URI string
-	User string
+	URI      string
+	User     string
 	Password string
 	TempFile string
 }
 
 // FetchMetrics interface for mackerelplugin
-func (r RabbitMQPlugin) FetchMetrics() (map[string]interface{},error){
-	rmqc, err:= rabbithole.NewClient(r.URI, r.User, r.Password)
+func (r RabbitMQPlugin) FetchMetrics() (map[string]interface{}, error) {
+	rmqc, err := rabbithole.NewClient(r.URI, r.User, r.Password)
 	if err != nil {
 		return nil, err
 	}
@@ -49,7 +49,7 @@ func (r RabbitMQPlugin) FetchMetrics() (map[string]interface{},error){
 	return r.parseStats(*res)
 }
 
-func (r RabbitMQPlugin) parseStats(res rabbithole.Overview) (map[string]interface{},error){
+func (r RabbitMQPlugin) parseStats(res rabbithole.Overview) (map[string]interface{}, error) {
 	stat := make(map[string]interface{})
 
 	stat["messages"] = float64(res.QueueTotals.Messages)
@@ -62,12 +62,12 @@ func (r RabbitMQPlugin) parseStats(res rabbithole.Overview) (map[string]interfac
 }
 
 // GraphDefinition interface for mackerel plugin
-func (r RabbitMQPlugin) GraphDefinition() map[string](mp.Graphs){
+func (r RabbitMQPlugin) GraphDefinition() map[string](mp.Graphs) {
 	return graphdef
 }
 
-func main(){
-	optURI :=  flag.String("uri", "http://localhost:15672", "URI")
+func main() {
+	optURI := flag.String("uri", "http://localhost:15672", "URI")
 	optUser := flag.String("user", "guest", "User")
 	optPass := flag.String("password", "guest", "Password")
 	flag.Parse()
@@ -80,7 +80,7 @@ func main(){
 
 	helper := mp.NewMackerelPlugin(rabbitmq)
 
-	if os.Getenv("MACKEREL_AGENT_PLUGIN_META") != ""{
+	if os.Getenv("MACKEREL_AGENT_PLUGIN_META") != "" {
 		helper.OutputDefinitions()
 	} else {
 		helper.OutputValues()

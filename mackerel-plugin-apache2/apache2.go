@@ -10,8 +10,8 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/codegangsta/cli"
 	mp "github.com/mackerelio/go-mackerel-plugin-helper"
+	"github.com/urfave/cli"
 )
 
 // metric value structure

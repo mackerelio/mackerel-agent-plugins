@@ -179,7 +179,7 @@ func (p *EBSPlugin) prepare() error {
 	p.EC2 = ec2.New(session.New(&aws.Config{Credentials: p.Credentials, Region: &p.Region}))
 	resp, err := p.EC2.DescribeVolumes(&ec2.DescribeVolumesInput{
 		Filters: []*ec2.Filter{
-			&ec2.Filter{
+			{
 				Name: aws.String("attachment.instance-id"),
 				Values: []*string{
 					&p.InstanceID,
@@ -213,7 +213,7 @@ func (p EBSPlugin) getLastPoint(vol *ec2.Volume, metricName string, statType str
 
 	resp, err := p.CloudWatch.GetMetricStatistics(&cloudwatch.GetMetricStatisticsInput{
 		Dimensions: []*cloudwatch.Dimension{
-			&cloudwatch.Dimension{
+			{
 				Name:  aws.String("VolumeId"),
 				Value: vol.VolumeId,
 			},

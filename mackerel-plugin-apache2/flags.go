@@ -1,7 +1,7 @@
 package main
 
 import (
-	"github.com/codegangsta/cli"
+	"github.com/urfave/cli"
 )
 
 var flags = []cli.Flag{
@@ -27,9 +27,9 @@ var cliHTTPPort = cli.IntFlag{
 }
 
 var cliHeader = cli.StringSliceFlag{
-	Name:  "header, H",
-	Value: &cli.StringSlice{},
-	Usage: "Set http header. (e.g. \"Host: servername\")",
+	Name:   "header, H",
+	Value:  &cli.StringSlice{},
+	Usage:  "Set http header. (e.g. \"Host: servername\")",
 	EnvVar: "ENVVAR_HEADER",
 }
 

@@ -9,8 +9,8 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/codegangsta/cli"
 	mp "github.com/mackerelio/go-mackerel-plugin"
+	"github.com/urfave/cli"
 )
 
 var graphdef = map[string](mp.Graphs){

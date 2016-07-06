@@ -76,11 +76,11 @@ func (p CloudFrontPlugin) getLastPoint(metric metrics) (float64, error) {
 	now := time.Now()
 
 	dimensions := []cloudwatch.Dimension{
-		cloudwatch.Dimension{
+		{
 			Name:  "DistributionId",
 			Value: p.Name,
 		},
-		cloudwatch.Dimension{
+		{
 			Name:  "Region",
 			Value: "Global",
 		},

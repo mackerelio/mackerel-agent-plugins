@@ -3,12 +3,13 @@ package main
 import (
 	"errors"
 	"flag"
-	"github.com/crowdmob/goamz/aws"
-	"github.com/crowdmob/goamz/cloudwatch"
-	mp "github.com/mackerelio/go-mackerel-plugin"
 	"log"
 	"os"
 	"time"
+
+	"github.com/crowdmob/goamz/aws"
+	"github.com/crowdmob/goamz/cloudwatch"
+	mp "github.com/mackerelio/go-mackerel-plugin"
 )
 
 var graphdef = map[string](mp.Graphs){
@@ -188,11 +189,11 @@ func (p ESPlugin) getLastPoint(dimensions *[]cloudwatch.Dimension, metricName st
 // FetchMetrics interface for mackerelplugin
 func (p ESPlugin) FetchMetrics() (map[string]float64, error) {
 	dimensions := []cloudwatch.Dimension{
-		cloudwatch.Dimension{
+		{
 			Name:  "DomainName",
 			Value: p.Domain,
 		},
-		cloudwatch.Dimension{
+		{
 			Name:  "ClientId",
 			Value: p.ClientID,
 		},

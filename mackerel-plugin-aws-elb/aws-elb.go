@@ -74,7 +74,7 @@ func (p *ELBPlugin) prepare() error {
 	ret, err := p.CloudWatch.ListMetrics(&cloudwatch.ListMetricsRequest{
 		Namespace: "AWS/ELB",
 		Dimensions: []cloudwatch.Dimension{
-			cloudwatch.Dimension{
+			{
 				Name: "AvailabilityZone",
 			},
 		},
@@ -146,7 +146,7 @@ func (p ELBPlugin) FetchMetrics() (map[string]float64, error) {
 	// HostCount per AZ
 	for _, az := range p.AZs {
 		d := []cloudwatch.Dimension{
-			cloudwatch.Dimension{
+			{
 				Name:  "AvailabilityZone",
 				Value: az,
 			},
@@ -167,7 +167,7 @@ func (p ELBPlugin) FetchMetrics() (map[string]float64, error) {
 	}
 
 	glb := []cloudwatch.Dimension{
-		cloudwatch.Dimension{
+		{
 			Name:  "Service",
 			Value: "ELB",
 		},

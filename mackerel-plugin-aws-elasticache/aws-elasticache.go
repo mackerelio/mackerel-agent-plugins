@@ -291,11 +291,11 @@ func (p ECachePlugin) FetchMetrics() (map[string]float64, error) {
 	stat := make(map[string]float64)
 
 	perInstances := &[]cloudwatch.Dimension{
-		cloudwatch.Dimension{
+		{
 			Name:  "CacheClusterId",
 			Value: p.CacheClusterID,
 		},
-		cloudwatch.Dimension{
+		{
 			Name:  "CacheNodeId",
 			Value: p.CacheNodeID,
 		},
