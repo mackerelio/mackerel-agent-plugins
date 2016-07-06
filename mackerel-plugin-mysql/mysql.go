@@ -1,7 +1,6 @@
 package main
 
 import (
-	"crypto/md5"
 	"flag"
 	"fmt"
 	"log"
@@ -98,10 +97,18 @@ var graphdef = map[string](mp.Graphs){
 type MySQLPlugin struct {
 	Target        string
 	Tempfile      string
+	prefix        string
 	Username      string
 	Password      string
 	DisableInnoDB bool
 	isUnixSocket  bool
+}
+
+func (m MySQLPlugin) GetMetricKeyPrefix() string {
+	if m.prefix == "" {
+		m.prefix = "mysql"
+	}
+	return m.prefix
 }
 
 func (m MySQLPlugin) fetchShowStatus(db mysql.Conn, stat map[string]float64) error {
@@ -783,10 +790,10 @@ func main() {
 	optPass := flag.String("password", "", "Password")
 	optTempfile := flag.String("tempfile", "", "Temp file name")
 	optInnoDB := flag.Bool("disable_innodb", false, "Disable InnoDB metrics")
+	optMetricKeyPrefix := flag.String("metric-key-prefix", "mysql", "metric key prefix")
 	flag.Parse()
 
 	var mysql MySQLPlugin
-
 	if *optSocket != "" {
 		mysql.Target = *optSocket
 		mysql.isUnixSocket = true
@@ -796,14 +803,8 @@ func main() {
 	mysql.Username = *optUser
 	mysql.Password = *optPass
 	mysql.DisableInnoDB = *optInnoDB
+	mysql.prefix = *optMetricKeyPrefix
 	helper := mp.NewMackerelPlugin(mysql)
 	helper.Tempfile = *optTempfile
-	if helper.Tempfile == "" {
-		if mysql.isUnixSocket {
-			helper.Tempfile = fmt.Sprintf("/tmp/mackerel-plugin-mysql-%s", fmt.Sprintf("%x", md5.Sum([]byte(mysql.Target))))
-		} else {
-			helper.Tempfile = fmt.Sprintf("/tmp/mackerel-plugin-mysql-%s-%s", *optHost, *optPort)
-		}
-	}
 	helper.Run()
 }
