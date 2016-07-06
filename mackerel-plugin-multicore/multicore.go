@@ -29,6 +29,7 @@ var graphDef = map[string](mp.Graphs){
 			mp.Metrics{Name: "softirq", Label: "softirq", Diff: false, Stacked: true},
 			mp.Metrics{Name: "steal", Label: "steal", Diff: false, Stacked: true},
 			mp.Metrics{Name: "guest", Label: "guest", Diff: false, Stacked: true},
+			mp.Metrics{Name: "guest_nice", Label: "guest_nice", Diff: false, Stacked: true},
 		},
 	},
 	"multicore.loadavg_per_core": mp.Graphs{
@@ -46,16 +47,17 @@ type saveItem struct {
 }
 
 type procStats struct {
-	User    float64 `json:"user"`
-	Nice    float64 `json:"nice"`
-	System  float64 `json:"system"`
-	Idle    float64 `json:"idle"`
-	IoWait  float64 `json:"iowait"`
-	Irq     float64 `json:"irq"`
-	SoftIrq float64 `json:"softirq"`
-	Steal   float64 `json:"steal"`
-	Guest   float64 `json:"guest"`
-	Total   float64 `json:"total"`
+	User      float64 `json:"user"`
+	Nice      float64 `json:"nice"`
+	System    float64 `json:"system"`
+	Idle      float64 `json:"idle"`
+	IoWait    float64 `json:"iowait"`
+	Irq       float64 `json:"irq"`
+	SoftIrq   float64 `json:"softirq"`
+	Steal     float64 `json:"steal"`
+	Guest     float64 `json:"guest"`
+	GuestNice float64 `json:"guest_nice"`
+	Total     float64 `json:"total"`
 }
 
 type cpuPercentages struct {
@@ -69,6 +71,7 @@ type cpuPercentages struct {
 	SoftIrq   float64
 	Steal     float64
 	Guest     float64
+	GuestNice float64
 }
 
 func getProcStat() (string, error) {
@@ -112,7 +115,7 @@ func parseProcStat(str string) (map[string]*procStats, error) {
 			if err != nil {
 				return nil, err
 			}
-			filledValues := fill(floatValues, 9)
+			filledValues := fill(floatValues, 10)
 
 			total := 0.0
 			for _, v := range floatValues {
@@ -120,16 +123,17 @@ func parseProcStat(str string) (map[string]*procStats, error) {
 			}
 
 			ps := &procStats{
-				User:    filledValues[0],
-				Nice:    filledValues[1],
-				System:  filledValues[2],
-				Idle:    filledValues[3],
-				IoWait:  filledValues[4],
-				Irq:     filledValues[5],
-				SoftIrq: filledValues[6],
-				Steal:   filledValues[7],
-				Guest:   filledValues[8],
-				Total:   total,
+				User:      filledValues[0],
+				Nice:      filledValues[1],
+				System:    filledValues[2],
+				Idle:      filledValues[3],
+				IoWait:    filledValues[4],
+				Irq:       filledValues[5],
+				SoftIrq:   filledValues[6],
+				Steal:     filledValues[7],
+				Guest:     filledValues[8],
+				GuestNice: filledValues[9],
+				Total:     total,
 			}
 			result[key] = ps
 
@@ -227,6 +231,10 @@ func calcCPUUsage(currentValues map[string]*procStats, now time.Time, lastValues
 			if err != nil {
 				return nil, err
 			}
+			guestNice, err := calcPercentage(current.GuestNice, last.GuestNice, current.Total, last.Total, now, lastTime)
+			if err != nil {
+				return nil, err
+			}
 
 			p := &cpuPercentages{
 				GroupName: key,
@@ -239,6 +247,7 @@ func calcCPUUsage(currentValues map[string]*procStats, now time.Time, lastValues
 				SoftIrq:   softirq,
 				Steal:     steal,
 				Guest:     guest,
+				GuestNice: guestNice,
 			}
 			result = append(result, p)
 		}
@@ -311,6 +320,7 @@ func outputCPUUsage(cpuUsage []*cpuPercentages, now time.Time) {
 				printValue(fmt.Sprintf("multicore.cpu.%s.softirq", u.GroupName), u.SoftIrq, now)
 				printValue(fmt.Sprintf("multicore.cpu.%s.steal", u.GroupName), u.Steal, now)
 				printValue(fmt.Sprintf("multicore.cpu.%s.guest", u.GroupName), u.Guest, now)
+				printValue(fmt.Sprintf("multicore.cpu.%s.guest_nice", u.GroupName), u.GuestNice, now)
 			}
 		}
 	}

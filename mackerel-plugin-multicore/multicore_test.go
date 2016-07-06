@@ -4,7 +4,7 @@ import "testing"
 
 func TestParseProcStats(t *testing.T) {
 	stab := `cpu  25308301 0 19470191 35582590482 432542 4227 1237778 2053417 0 0
-cpu0 14786890 0 4570343 2196397805 364717 4072 1209169 526216 0 0
+cpu0 14786890 0 4570343 2196397805 364717 4072 1209169 526216 1 2
 cpu1 2031368 0 2810375 2220960345 44625 21 6306 215873 0 0
 cpu2 1136965 0 2003305 2223401399 16913 34 2490 150020 0 0
 cpu3 887262 0 1351478 2225031553 1842 34 1984 106188 0 0
@@ -56,11 +56,14 @@ softirq 8788848490 0 2700996173 1094252449 1510759801 0 0 1 1761055606 1241616 1
 	if stat["cpu0"].Steal != 526216 {
 		t.Errorf("parseProcStat: steal should be 526216, but '%f'", stat["cpu0"].Steal)
 	}
-	if stat["cpu0"].Guest != 0 {
-		t.Errorf("parseProcStat: guest should be 526216, but '%f'", stat["cpu0"].Guest)
+	if stat["cpu0"].Guest != 1 {
+		t.Errorf("parseProcStat: guest should be 1, but '%f'", stat["cpu0"].Guest)
 	}
-	if stat["cpu0"].Total != 2217859212 {
-		t.Errorf("parseProcStat: total should be 2217859212, but '%f'", stat["cpu0"].Total)
+	if stat["cpu0"].GuestNice != 2 {
+		t.Errorf("parseProcStat: guest should be 2, but '%f'", stat["cpu0"].Guest)
+	}
+	if stat["cpu0"].Total != 2217859215 {
+		t.Errorf("parseProcStat: total should be 2217859215, but '%f'", stat["cpu0"].Total)
 	}
 }
 
