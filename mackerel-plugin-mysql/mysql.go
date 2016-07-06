@@ -12,85 +12,89 @@ import (
 	_ "github.com/ziutek/mymysql/native"
 )
 
-var graphdef = map[string](mp.Graphs){
-	"cmd": mp.Graphs{
-		Label: "MySQL Command",
-		Unit:  "float",
-		Metrics: [](mp.Metrics){
-			mp.Metrics{Name: "Com_insert", Label: "Insert", Diff: true, Stacked: true, Type: "uint64"},
-			mp.Metrics{Name: "Com_select", Label: "Select", Diff: true, Stacked: true, Type: "uint64"},
-			mp.Metrics{Name: "Com_update", Label: "Update", Diff: true, Stacked: true, Type: "uint64"},
-			mp.Metrics{Name: "Com_update_multi", Label: "Update Multi", Diff: true, Stacked: true, Type: "uint64"},
-			mp.Metrics{Name: "Com_delete", Label: "Delete", Diff: true, Stacked: true, Type: "uint64"},
-			mp.Metrics{Name: "Com_delete_multi", Label: "Delete Multi", Diff: true, Stacked: true, Type: "uint64"},
-			mp.Metrics{Name: "Com_replace", Label: "Replace", Diff: true, Stacked: true, Type: "uint64"},
-			mp.Metrics{Name: "Com_set_option", Label: "Set Option", Diff: true, Stacked: true, Type: "uint64"},
-			mp.Metrics{Name: "Qcache_hits", Label: "Query Cache Hits", Diff: true, Stacked: false, Type: "uint64"},
-			mp.Metrics{Name: "Questions", Label: "Questions", Diff: true, Stacked: false, Type: "uint64"},
+func (m MySQLPlugin) defaultGraphdef() map[string](mp.Graphs) {
+	labelPrefix := strings.Title(strings.Replace(m.GetMetricKeyPrefix(), "mysql", "MySQL", -1))
+
+	return map[string](mp.Graphs){
+		"cmd": mp.Graphs{
+			Label: labelPrefix + " Command",
+			Unit:  "float",
+			Metrics: [](mp.Metrics){
+				mp.Metrics{Name: "Com_insert", Label: "Insert", Diff: true, Stacked: true, Type: "uint64"},
+				mp.Metrics{Name: "Com_select", Label: "Select", Diff: true, Stacked: true, Type: "uint64"},
+				mp.Metrics{Name: "Com_update", Label: "Update", Diff: true, Stacked: true, Type: "uint64"},
+				mp.Metrics{Name: "Com_update_multi", Label: "Update Multi", Diff: true, Stacked: true, Type: "uint64"},
+				mp.Metrics{Name: "Com_delete", Label: "Delete", Diff: true, Stacked: true, Type: "uint64"},
+				mp.Metrics{Name: "Com_delete_multi", Label: "Delete Multi", Diff: true, Stacked: true, Type: "uint64"},
+				mp.Metrics{Name: "Com_replace", Label: "Replace", Diff: true, Stacked: true, Type: "uint64"},
+				mp.Metrics{Name: "Com_set_option", Label: "Set Option", Diff: true, Stacked: true, Type: "uint64"},
+				mp.Metrics{Name: "Qcache_hits", Label: "Query Cache Hits", Diff: true, Stacked: false, Type: "uint64"},
+				mp.Metrics{Name: "Questions", Label: "Questions", Diff: true, Stacked: false, Type: "uint64"},
+			},
 		},
-	},
-	"join": mp.Graphs{
-		Label: "MySQL Join/Scan",
-		Unit:  "float",
-		Metrics: [](mp.Metrics){
-			mp.Metrics{Name: "Select_full_join", Label: "Select Full JOIN", Diff: true, Stacked: false},
-			mp.Metrics{Name: "Select_full_range_join", Label: "Select Full Range JOIN", Diff: true, Stacked: false},
-			mp.Metrics{Name: "Select_scan", Label: "Select SCAN", Diff: true, Stacked: false},
-			mp.Metrics{Name: "Sort_scan", Label: "Sort SCAN", Diff: true, Stacked: false},
+		"join": mp.Graphs{
+			Label: labelPrefix + " Join/Scan",
+			Unit:  "float",
+			Metrics: [](mp.Metrics){
+				mp.Metrics{Name: "Select_full_join", Label: "Select Full JOIN", Diff: true, Stacked: false},
+				mp.Metrics{Name: "Select_full_range_join", Label: "Select Full Range JOIN", Diff: true, Stacked: false},
+				mp.Metrics{Name: "Select_scan", Label: "Select SCAN", Diff: true, Stacked: false},
+				mp.Metrics{Name: "Sort_scan", Label: "Sort SCAN", Diff: true, Stacked: false},
+			},
 		},
-	},
-	"threads": mp.Graphs{
-		Label: "MySQL Threads",
-		Unit:  "integer",
-		Metrics: [](mp.Metrics){
-			mp.Metrics{Name: "Max_used_connections", Label: "Max used connections", Diff: false, Stacked: false},
-			mp.Metrics{Name: "Threads_connected", Label: "Connected", Diff: false, Stacked: false},
-			mp.Metrics{Name: "Threads_running", Label: "Running", Diff: false, Stacked: false},
-			mp.Metrics{Name: "Threads_cached", Label: "Cached", Diff: false, Stacked: false},
+		"threads": mp.Graphs{
+			Label: labelPrefix + " Threads",
+			Unit:  "integer",
+			Metrics: [](mp.Metrics){
+				mp.Metrics{Name: "Max_used_connections", Label: "Max used connections", Diff: false, Stacked: false},
+				mp.Metrics{Name: "Threads_connected", Label: "Connected", Diff: false, Stacked: false},
+				mp.Metrics{Name: "Threads_running", Label: "Running", Diff: false, Stacked: false},
+				mp.Metrics{Name: "Threads_cached", Label: "Cached", Diff: false, Stacked: false},
+			},
 		},
-	},
-	"connections": mp.Graphs{
-		Label: "MySQL Connections",
-		Unit:  "float",
-		Metrics: [](mp.Metrics){
-			mp.Metrics{Name: "Connections", Label: "Connections", Diff: true, Stacked: false},
-			mp.Metrics{Name: "Threads_created", Label: "Created Threads", Diff: true, Stacked: false},
-			mp.Metrics{Name: "Aborted_clients", Label: "Aborted Clients", Diff: true, Stacked: false},
-			mp.Metrics{Name: "Aborted_connects", Label: "Aborted Connects", Diff: true, Stacked: false},
+		"connections": mp.Graphs{
+			Label: labelPrefix + " Connections",
+			Unit:  "float",
+			Metrics: [](mp.Metrics){
+				mp.Metrics{Name: "Connections", Label: "Connections", Diff: true, Stacked: false},
+				mp.Metrics{Name: "Threads_created", Label: "Created Threads", Diff: true, Stacked: false},
+				mp.Metrics{Name: "Aborted_clients", Label: "Aborted Clients", Diff: true, Stacked: false},
+				mp.Metrics{Name: "Aborted_connects", Label: "Aborted Connects", Diff: true, Stacked: false},
+			},
 		},
-	},
-	"seconds_behind_master": mp.Graphs{
-		Label: "MySQL Slave status",
-		Unit:  "integer",
-		Metrics: [](mp.Metrics){
-			mp.Metrics{Name: "Seconds_Behind_Master", Label: "Seconds Behind Master", Diff: false, Stacked: false},
+		"seconds_behind_master": mp.Graphs{
+			Label: labelPrefix + " Slave status",
+			Unit:  "integer",
+			Metrics: [](mp.Metrics){
+				mp.Metrics{Name: "Seconds_Behind_Master", Label: "Seconds Behind Master", Diff: false, Stacked: false},
+			},
 		},
-	},
-	"table_locks": mp.Graphs{
-		Label: "MySQL Table Locks/Slow Queries",
-		Unit:  "float",
-		Metrics: [](mp.Metrics){
-			mp.Metrics{Name: "Table_locks_immediate", Label: "Table Locks Immediate", Diff: true, Stacked: false},
-			mp.Metrics{Name: "Table_locks_waited", Label: "Table Locks Waited", Diff: true, Stacked: false},
-			mp.Metrics{Name: "Slow_queries", Label: "Slow Queries", Diff: true, Stacked: false},
+		"table_locks": mp.Graphs{
+			Label: labelPrefix + " Table Locks/Slow Queries",
+			Unit:  "float",
+			Metrics: [](mp.Metrics){
+				mp.Metrics{Name: "Table_locks_immediate", Label: "Table Locks Immediate", Diff: true, Stacked: false},
+				mp.Metrics{Name: "Table_locks_waited", Label: "Table Locks Waited", Diff: true, Stacked: false},
+				mp.Metrics{Name: "Slow_queries", Label: "Slow Queries", Diff: true, Stacked: false},
+			},
 		},
-	},
-	"traffic": mp.Graphs{
-		Label: "MySQL Traffic",
-		Unit:  "bytes/sec",
-		Metrics: [](mp.Metrics){
-			mp.Metrics{Name: "Bytes_sent", Label: "Sent Bytes", Diff: true, Stacked: false},
-			mp.Metrics{Name: "Bytes_received", Label: "Received Bytes", Diff: true, Stacked: false},
+		"traffic": mp.Graphs{
+			Label: labelPrefix + " Traffic",
+			Unit:  "bytes/sec",
+			Metrics: [](mp.Metrics){
+				mp.Metrics{Name: "Bytes_sent", Label: "Sent Bytes", Diff: true, Stacked: false},
+				mp.Metrics{Name: "Bytes_received", Label: "Received Bytes", Diff: true, Stacked: false},
+			},
 		},
-	},
-	"capacity": mp.Graphs{
-		Label: "MySQL Capacity",
-		Unit:  "percentage",
-		Metrics: [](mp.Metrics){
-			mp.Metrics{Name: "PercentageOfConnections", Label: "Percentage Of Connections", Diff: false, Stacked: false},
-			mp.Metrics{Name: "PercentageOfBufferPool", Label: "Percentage Of Buffer Pool", Diff: false, Stacked: false},
+		"capacity": mp.Graphs{
+			Label: labelPrefix + " Capacity",
+			Unit:  "percentage",
+			Metrics: [](mp.Metrics){
+				mp.Metrics{Name: "PercentageOfConnections", Label: "Percentage Of Connections", Diff: false, Stacked: false},
+				mp.Metrics{Name: "PercentageOfBufferPool", Label: "Percentage Of Buffer Pool", Diff: false, Stacked: false},
+			},
 		},
-	},
+	}
 }
 
 // MySQLPlugin mackerel plugin for MySQL
@@ -228,15 +232,17 @@ func (m MySQLPlugin) FetchMetrics() (map[string]interface{}, error) {
 
 // GraphDefinition interface for mackerelplugin
 func (m MySQLPlugin) GraphDefinition() map[string](mp.Graphs) {
-	if m.DisableInnoDB != true {
-		setInnoDBMetrics()
+	if !m.DisableInnoDB {
+		return m.graphdefWithInnoDBMetrics()
 	}
-	return graphdef
+	return m.defaultGraphdef()
 }
 
-func setInnoDBMetrics() {
+func (m MySQLPlugin) graphdefWithInnoDBMetrics() map[string](mp.Graphs) {
+	prefix := m.GetMetricKeyPrefix()
+	graphdef := m.defaultGraphdef()
 	graphdef["innodb_rows"] = mp.Graphs{
-		Label: "mysql.innodb Rows",
+		Label: prefix + ".innodb Rows",
 		Unit:  "float",
 		Metrics: [](mp.Metrics){
 			mp.Metrics{Name: "Innodb_rows_read", Label: "Read", Diff: true, Stacked: false},
@@ -246,21 +252,21 @@ func setInnoDBMetrics() {
 		},
 	}
 	graphdef["innodb_row_lock_time"] = mp.Graphs{
-		Label: "mysql.innodb Row Lock Time",
+		Label: prefix + ".innodb Row Lock Time",
 		Unit:  "float",
 		Metrics: [](mp.Metrics){
 			mp.Metrics{Name: "Innodb_row_lock_time", Label: "Lock Time", Diff: true, Stacked: false},
 		},
 	}
 	graphdef["innodb_row_lock_waits"] = mp.Graphs{
-		Label: "mysql.innodb Row Lock Waits",
+		Label: prefix + ".innodb Row Lock Waits",
 		Unit:  "float",
 		Metrics: [](mp.Metrics){
 			mp.Metrics{Name: "Innodb_row_lock_waits", Label: "Lock Waits", Diff: true, Stacked: false},
 		},
 	}
 	graphdef["innodb_adaptive_hash_index"] = mp.Graphs{
-		Label: "mysql.innodb Adaptive Hash Index",
+		Label: prefix + ".innodb Adaptive Hash Index",
 		Unit:  "integer",
 		Metrics: [](mp.Metrics){
 			mp.Metrics{Name: "hash_index_cells_total", Label: "Hash Index Cells Total", Diff: false, Stacked: false},
@@ -268,7 +274,7 @@ func setInnoDBMetrics() {
 		},
 	}
 	graphdef["innodb_buffer_pool_read"] = mp.Graphs{
-		Label: "mysql.innodb Buffer Pool Read (/sec)",
+		Label: prefix + ".innodb Buffer Pool Read (/sec)",
 		Unit:  "float",
 		Metrics: [](mp.Metrics){
 			mp.Metrics{Name: "read_ahead", Label: "Pages Read Ahead", Diff: false, Stacked: false},
@@ -277,7 +283,7 @@ func setInnoDBMetrics() {
 		},
 	}
 	graphdef["innodb_buffer_pool_activity"] = mp.Graphs{
-		Label: "mysql.innodb Buffer Pool Activity (Pages)",
+		Label: prefix + ".innodb Buffer Pool Activity (Pages)",
 		Unit:  "integer",
 		Metrics: [](mp.Metrics){
 			mp.Metrics{Name: "pages_created", Label: "Created", Diff: true, Stacked: false},
@@ -286,7 +292,7 @@ func setInnoDBMetrics() {
 		},
 	}
 	graphdef["innodb_buffer_pool_efficiency"] = mp.Graphs{
-		Label: "mysql.innodb Buffer Pool Efficiency",
+		Label: prefix + ".innodb Buffer Pool Efficiency",
 		Unit:  "integer",
 		Metrics: [](mp.Metrics){
 			mp.Metrics{Name: "Innodb_buffer_pool_reads", Label: "Reads", Diff: true, Stacked: false},
@@ -294,7 +300,7 @@ func setInnoDBMetrics() {
 		},
 	}
 	graphdef["innodb_buffer_pool"] = mp.Graphs{
-		Label: "mysql.innodb Buffer Pool (Pages)",
+		Label: prefix + ".innodb Buffer Pool (Pages)",
 		Unit:  "integer",
 		Metrics: [](mp.Metrics){
 			mp.Metrics{Name: "pool_size", Label: "Pool Size", Diff: false, Stacked: false},
@@ -304,21 +310,21 @@ func setInnoDBMetrics() {
 		},
 	}
 	graphdef["innodb_checkpoint_age"] = mp.Graphs{
-		Label: "mysql.innodb Checkpoint Age",
+		Label: prefix + ".innodb Checkpoint Age",
 		Unit:  "bytes",
 		Metrics: [](mp.Metrics){
 			mp.Metrics{Name: "uncheckpointed_bytes", Label: "Uncheckpointed", Diff: false, Stacked: false},
 		},
 	}
 	graphdef["innodb_current_lock_waits"] = mp.Graphs{
-		Label: "mysql.innodb Current Lock Waits (secs)",
+		Label: prefix + ".innodb Current Lock Waits (secs)",
 		Unit:  "integer",
 		Metrics: [](mp.Metrics){
 			mp.Metrics{Name: "innodb_lock_wait_secs", Label: "Innodb Lock Wait", Diff: false, Stacked: false},
 		},
 	}
 	graphdef["innodb_io"] = mp.Graphs{
-		Label: "mysql.innodb I/O",
+		Label: prefix + ".innodb I/O",
 		Unit:  "integer",
 		Metrics: [](mp.Metrics){
 			mp.Metrics{Name: "file_reads", Label: "File Reads", Diff: true, Stacked: false},
@@ -328,7 +334,7 @@ func setInnoDBMetrics() {
 		},
 	}
 	graphdef["innodb_io_pending"] = mp.Graphs{
-		Label: "mysql.innodb I/O Pending",
+		Label: prefix + ".innodb I/O Pending",
 		Unit:  "integer",
 		Metrics: [](mp.Metrics){
 			mp.Metrics{Name: "pending_normal_aio_reads", Label: "Normal AIO Reads", Diff: false, Stacked: false},
@@ -343,7 +349,7 @@ func setInnoDBMetrics() {
 		},
 	}
 	graphdef["innodb_insert_buffer"] = mp.Graphs{
-		Label: "mysql.innodb Insert Buffer",
+		Label: prefix + ".innodb Insert Buffer",
 		Unit:  "integer",
 		Metrics: [](mp.Metrics){
 			mp.Metrics{Name: "ibuf_inserts", Label: "Inserts", Diff: true, Stacked: false},
@@ -352,7 +358,7 @@ func setInnoDBMetrics() {
 		},
 	}
 	graphdef["innodb_insert_buffer_usage"] = mp.Graphs{
-		Label: "mysql.innodb Insert Buffer Usage (Cells)",
+		Label: prefix + ".innodb Insert Buffer Usage (Cells)",
 		Unit:  "integer",
 		Metrics: [](mp.Metrics){
 			mp.Metrics{Name: "ibuf_cell_count", Label: "Cell Count", Diff: false, Stacked: false},
@@ -361,14 +367,14 @@ func setInnoDBMetrics() {
 		},
 	}
 	graphdef["innodb_lock_structures"] = mp.Graphs{
-		Label: "mysql.innodb Lock Structures",
+		Label: prefix + ".innodb Lock Structures",
 		Unit:  "integer",
 		Metrics: [](mp.Metrics){
 			mp.Metrics{Name: "innodb_lock_structs", Label: "Structures", Diff: false, Stacked: false},
 		},
 	}
 	graphdef["innodb_log"] = mp.Graphs{
-		Label: "mysql.innodb Log",
+		Label: prefix + ".innodb Log",
 		Unit:  "bytes",
 		Metrics: [](mp.Metrics){
 			mp.Metrics{Name: "log_bytes_written", Label: "Written", Diff: true, Stacked: false},
@@ -378,7 +384,7 @@ func setInnoDBMetrics() {
 		},
 	}
 	graphdef["innodb_memory_allocation"] = mp.Graphs{
-		Label: "mysql.innodb Memory Allocation",
+		Label: prefix + ".innodb Memory Allocation",
 		Unit:  "integer",
 		Metrics: [](mp.Metrics){
 			mp.Metrics{Name: "additional_pool_alloc", Label: "Additional Pool Allocated", Diff: false, Stacked: false},
@@ -386,7 +392,7 @@ func setInnoDBMetrics() {
 		},
 	}
 	graphdef["innodb_semaphores"] = mp.Graphs{
-		Label: "mysql.innodb Semaphores",
+		Label: prefix + ".innodb Semaphores",
 		Unit:  "integer",
 		Metrics: [](mp.Metrics){
 			mp.Metrics{Name: "spin_waits", Label: "Spin Waits", Diff: true, Stacked: false},
@@ -395,7 +401,7 @@ func setInnoDBMetrics() {
 		},
 	}
 	graphdef["innodb_tables_in_use"] = mp.Graphs{
-		Label: "mysql.innodb Tables In Use",
+		Label: prefix + ".innodb Tables In Use",
 		Unit:  "integer",
 		Metrics: [](mp.Metrics){
 			mp.Metrics{Name: "innodb_locked_tables", Label: "Table in Use", Diff: false, Stacked: false},
@@ -403,7 +409,7 @@ func setInnoDBMetrics() {
 		},
 	}
 	graphdef["innodb_transactions_active_locked"] = mp.Graphs{
-		Label: "mysql.innodb Transactions Active/Locked",
+		Label: prefix + ".innodb Transactions Active/Locked",
 		Unit:  "integer",
 		Metrics: [](mp.Metrics){
 			mp.Metrics{Name: "current_transactions", Label: "Current", Diff: false, Stacked: false},
@@ -413,13 +419,14 @@ func setInnoDBMetrics() {
 		},
 	}
 	graphdef["innodb_transactions"] = mp.Graphs{
-		Label: "mysql.innodb Transactions",
+		Label: prefix + ".innodb Transactions",
 		Unit:  "integer",
 		Metrics: [](mp.Metrics){
 			mp.Metrics{Name: "history_list", Label: "History List", Diff: false, Stacked: false},
 			mp.Metrics{Name: "innodb_transactions", Label: "InnoDB Transactions", Diff: true, Stacked: false},
 		},
 	}
+	return graphdef
 }
 
 func setIfEmpty(p *map[string]float64, key string, val float64) {
