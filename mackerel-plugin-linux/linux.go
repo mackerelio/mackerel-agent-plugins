@@ -9,7 +9,7 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/codegangsta/cli"
+	"github.com/urfave/cli"
 	mp "github.com/mackerelio/go-mackerel-plugin-helper"
 )
 
