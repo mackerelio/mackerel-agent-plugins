@@ -108,6 +108,7 @@ type MySQLPlugin struct {
 	isUnixSocket  bool
 }
 
+// GetMetricKeyPrefix retruns the metrics key prefix
 func (m MySQLPlugin) GetMetricKeyPrefix() string {
 	if m.prefix == "" {
 		m.prefix = "mysql"
@@ -801,6 +802,7 @@ func main() {
 	flag.Parse()
 
 	var mysql MySQLPlugin
+
 	if *optSocket != "" {
 		mysql.Target = *optSocket
 		mysql.isUnixSocket = true
