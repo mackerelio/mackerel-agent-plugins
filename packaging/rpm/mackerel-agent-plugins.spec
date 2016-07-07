@@ -49,6 +49,13 @@ done
 %{__oldtargetdir}/*
 
 %changelog
+* Thu Jul 07 2016 <mackerel-developers@hatena.ne.jp> - 0.21.2-1
+- Fix help message (by ariarijp)
+- [apache2] update README.md. fix mod_status configuration (by Songmu)
+- Add some plugins to README (by ariarijp)
+- follow urfave/cli (by Songmu)
+- [mysql] support -metric-key-prefix option (by Songmu)
+
 * Tue Jun 28 2016 <mackerel-developers@hatena.ne.jp> - 0.21.1-1
 - build with go 1.6.2 (by Songmu)
 

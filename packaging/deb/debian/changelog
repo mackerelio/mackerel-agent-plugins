@@ -1,3 +1,18 @@
+mackerel-agent-plugins (0.21.2-1) stable; urgency=low
+
+  * Fix help message (by ariarijp)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/244>
+  * [apache2] update README.md. fix mod_status configuration (by Songmu)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/245>
+  * Add some plugins to README (by ariarijp)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/247>
+  * follow urfave/cli (by Songmu)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/249>
+  * [mysql] support -metric-key-prefix option (by Songmu)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/250>
+
+ -- mackerel <mackerel-developers@hatena.ne.jp>  Thu, 07 Jul 2016 09:09:50 +0000
+
 mackerel-agent-plugins (0.21.1-1) stable; urgency=low
 
   * build with go 1.6.2 (by Songmu)
