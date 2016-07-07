@@ -342,16 +342,7 @@ func outputDefinitions() {
 	fmt.Println(string(b))
 }
 
-// main function
-func main() {
-	optTempfile := flag.String("tempfile", "", "Temp file name")
-	flag.Parse()
-	var tempFileName string
-	if *optTempfile != "" {
-		tempFileName = *optTempfile
-	} else {
-		tempFileName = "/tmp/mackerel-plugin-multicore"
-	}
+func outputMulticore(tempFileName string) {
 	now := time.Now()
 
 	currentValues, _ := collectProcStatValues()
@@ -378,10 +369,24 @@ func main() {
 	}
 	loadPerCPUCount := loadavg5 / (float64(len(cpuUsage) - 1))
 
+	outputCPUUsage(cpuUsage, now)
+	outputLoadavgPerCore(loadPerCPUCount, now)
+}
+
+// main function
+func main() {
+	optTempfile := flag.String("tempfile", "", "Temp file name")
+	flag.Parse()
+	var tempFileName string
+	if *optTempfile != "" {
+		tempFileName = *optTempfile
+	} else {
+		tempFileName = "/tmp/mackerel-plugin-multicore"
+	}
+
 	if os.Getenv("MACKEREL_AGENT_PLUGIN_META") != "" {
 		outputDefinitions()
 	} else {
-		outputCPUUsage(cpuUsage, now)
-		outputLoadavgPerCore(loadPerCPUCount, now)
+		outputMulticore(tempFileName)
 	}
 }
