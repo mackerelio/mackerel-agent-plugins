@@ -13,7 +13,7 @@ import (
 )
 
 func (m MySQLPlugin) defaultGraphdef() map[string](mp.Graphs) {
-	labelPrefix := strings.Title(strings.Replace(m.GetMetricKeyPrefix(), "mysql", "MySQL", -1))
+	labelPrefix := strings.Title(strings.Replace(m.MetricKeyPrefix(), "mysql", "MySQL", -1))
 
 	return map[string](mp.Graphs){
 		"cmd": mp.Graphs{
@@ -108,8 +108,8 @@ type MySQLPlugin struct {
 	isUnixSocket  bool
 }
 
-// GetMetricKeyPrefix retruns the metrics key prefix
-func (m MySQLPlugin) GetMetricKeyPrefix() string {
+// MetricKeyPrefix retruns the metrics key prefix
+func (m MySQLPlugin) MetricKeyPrefix() string {
 	if m.prefix == "" {
 		m.prefix = "mysql"
 	}
@@ -240,7 +240,7 @@ func (m MySQLPlugin) GraphDefinition() map[string](mp.Graphs) {
 }
 
 func (m MySQLPlugin) graphdefWithInnoDBMetrics() map[string](mp.Graphs) {
-	prefix := m.GetMetricKeyPrefix()
+	prefix := m.MetricKeyPrefix()
 	graphdef := m.defaultGraphdef()
 	graphdef["innodb_rows"] = mp.Graphs{
 		Label: prefix + ".innodb Rows",
