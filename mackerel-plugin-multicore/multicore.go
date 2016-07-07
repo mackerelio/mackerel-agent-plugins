@@ -2,7 +2,6 @@ package main
 
 import (
 	"encoding/json"
-	"errors"
 	"flag"
 	"fmt"
 	"io/ioutil"
@@ -274,7 +273,7 @@ func calcPercentage(currentValue float64, lastValue float64, currentTotal float6
 func calcDiff(value float64, now time.Time, lastValue float64, lastTime time.Time) (float64, error) {
 	diffTime := now.Unix() - lastTime.Unix()
 	if diffTime > 600 {
-		return 0.0, errors.New("Too long duration")
+		return 0.0, fmt.Errorf("Too long duration")
 	}
 
 	diff := (value - lastValue) * 60 / float64(diffTime)
@@ -300,7 +299,7 @@ func fetchLoadavg5() (float64, error) {
 		}
 		return f, nil
 	}
-	return 0.0, errors.New("cannot fetch loadavg5")
+	return 0.0, fmt.Errorf("cannot fetch loadavg5")
 }
 
 func printValue(key string, value float64, time time.Time) {
