@@ -46,31 +46,31 @@ type saveItem struct {
 }
 
 type procStats struct {
-	User      float64 `json:"user"`
-	Nice      float64 `json:"nice"`
-	System    float64 `json:"system"`
-	Idle      float64 `json:"idle"`
-	IoWait    float64 `json:"iowait"`
-	Irq       float64 `json:"irq"`
-	SoftIrq   float64 `json:"softirq"`
-	Steal     float64 `json:"steal"`
-	Guest     float64 `json:"guest"`
-	GuestNice float64 `json:"guest_nice"`
-	Total     float64 `json:"total"`
+	User      *float64 `json:"user"`
+	Nice      *float64 `json:"nice"`
+	System    *float64 `json:"system"`
+	Idle      *float64 `json:"idle"`
+	IoWait    *float64 `json:"iowait"`
+	Irq       *float64 `json:"irq"`
+	SoftIrq   *float64 `json:"softirq"`
+	Steal     *float64 `json:"steal"`
+	Guest     *float64 `json:"guest"`
+	GuestNice *float64 `json:"guest_nice"`
+	Total     float64  `json:"total"`
 }
 
 type cpuPercentages struct {
 	GroupName string
-	User      float64
-	Nice      float64
-	System    float64
-	Idle      float64
-	IoWait    float64
-	Irq       float64
-	SoftIrq   float64
-	Steal     float64
-	Guest     float64
-	GuestNice float64
+	User      *float64
+	Nice      *float64
+	System    *float64
+	Idle      *float64
+	IoWait    *float64
+	Irq       *float64
+	SoftIrq   *float64
+	Steal     *float64
+	Guest     *float64
+	GuestNice *float64
 }
 
 func getProcStat() (string, error) {
@@ -93,13 +93,18 @@ func parseFloats(values []string) ([]float64, error) {
 	return result, nil
 }
 
-func fill(arr []float64, elementCount int) []float64 {
-	if len(arr) < elementCount {
-		zeroArr := make([]float64, elementCount-len(arr))
-		filled := append(arr, zeroArr...)
-		return filled
+func fill(arr []float64, elementCount int) []*float64 {
+	var filled []*float64
+	for _, v := range arr {
+		copy := v
+		filled = append(filled, &copy)
 	}
-	return arr
+
+	if len(arr) < elementCount {
+		emptyArray := make([]*float64, elementCount-len(arr))
+		filled = append(filled, emptyArray...)
+	}
+	return filled
 }
 
 func parseProcStat(str string) (map[string]*procStats, error) {
@@ -256,18 +261,24 @@ func calcCPUUsage(currentValues map[string]*procStats, now time.Time, lastValues
 	return result, nil
 }
 
-func calcPercentage(currentValue float64, lastValue float64, currentTotal float64, lastTotal float64, now time.Time, lastTime time.Time) (float64, error) {
-	value, err := calcDiff(currentValue, now, lastValue, lastTime)
+func calcPercentage(currentValue *float64, lastValue *float64, currentTotal float64, lastTotal float64, now time.Time, lastTime time.Time) (*float64, error) {
+
+	if currentValue == nil || lastValue == nil {
+		return nil, nil
+	}
+
+	value, err := calcDiff(*currentValue, now, *lastValue, lastTime)
 	if err != nil {
-		return 0.0, err
+		return nil, err
 	}
 
 	total, err := calcDiff(currentTotal, now, lastTotal, lastTime)
 	if err != nil {
-		return 0.0, err
+		return nil, err
 	}
 
-	return (value / total * 100.0), nil
+	ret := value / total * 100.0
+	return &ret, nil
 }
 
 func calcDiff(value float64, now time.Time, lastValue float64, lastTime time.Time) (float64, error) {
@@ -302,8 +313,10 @@ func fetchLoadavg5() (float64, error) {
 	return 0.0, fmt.Errorf("cannot fetch loadavg5")
 }
 
-func printValue(key string, value float64, time time.Time) {
-	fmt.Printf("%s\t%f\t%d\n", key, value, time.Unix())
+func printValue(key string, value *float64, time time.Time) {
+	if value != nil {
+		fmt.Printf("%s\t%f\t%d\n", key, *value, time.Unix())
+	}
 }
 
 func outputCPUUsage(cpuUsage []*cpuPercentages, now time.Time) {
@@ -326,7 +339,7 @@ func outputCPUUsage(cpuUsage []*cpuPercentages, now time.Time) {
 }
 
 func outputLoadavgPerCore(loadavgPerCore float64, now time.Time) {
-	printValue("multicore.loadavg_per_core.loadavg5", loadavgPerCore, now)
+	printValue("multicore.loadavg_per_core.loadavg5", &loadavgPerCore, now)
 }
 
 func outputDefinitions() {
