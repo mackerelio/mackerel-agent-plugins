@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.21.2 (2016-07-07)
+
+* Fix help message #244 (ariarijp)
+* [apache2] update README.md. fix mod_status configuration #245 (Songmu)
+* Add some plugins to README #247 (ariarijp)
+* follow urfave/cli #249 (Songmu)
+* [mysql] support -metric-key-prefix option #250 (Songmu)
+
+
 ## 0.21.1 (2016-06-28)
 
 * build with go 1.6.2 #241 (Songmu)
