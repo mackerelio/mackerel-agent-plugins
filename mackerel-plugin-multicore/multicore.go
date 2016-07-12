@@ -11,7 +11,7 @@ import (
 	"strings"
 	"time"
 
-	mp "github.com/mackerelio/go-mackerel-plugin"
+	mp "github.com/mackerelio/go-mackerel-plugin-helper"
 )
 
 var graphDef = map[string](mp.Graphs){
