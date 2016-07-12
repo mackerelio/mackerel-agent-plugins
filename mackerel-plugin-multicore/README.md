@@ -4,7 +4,6 @@ mackerel-plugin-multicore
 Get multicore CPU metrics for linux.
 
 - CPU usage by cores
-- CPU average per cores
 - loadavg5 per cores
 
 ## Synopsis
