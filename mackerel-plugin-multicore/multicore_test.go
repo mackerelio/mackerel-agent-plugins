@@ -29,8 +29,8 @@ procs_blocked 0
 softirq 8788848490 0 2700996173 1094252449 1510759801 0 0 1 1761055606 1241616 1720542844`
 
 	stat, _ := parseProcStat(stab)
-	if len(stat) != 17 {
-		t.Errorf("parseProcStat: size should be 17, but '%d'", len(stat))
+	if len(stat) != 16 {
+		t.Errorf("parseProcStat: size should be 16, but '%d'", len(stat))
 	}
 	if *stat["cpu0"].User != 14786890 {
 		t.Errorf("parseProcStat: user should be 14786890, but '%f'", *stat["cpu0"].User)

@@ -115,16 +115,22 @@ func parseProcStat(str string) (map[string]*procStats, error) {
 			key := fields[0]
 			values := fields[1:]
 
+			// skip total cpu usage
+			if key == "cpu" {
+				continue
+			}
+
 			floatValues, err := parseFloats(values)
 			if err != nil {
 				return nil, err
 			}
-			filledValues := fill(floatValues, 10)
 
 			total := 0.0
 			for _, v := range floatValues {
 				total += v
 			}
+
+			filledValues := fill(floatValues, 10)
 
 			ps := &procStats{
 				User:      filledValues[0],
@@ -140,7 +146,6 @@ func parseProcStat(str string) (map[string]*procStats, error) {
 				Total:     total,
 			}
 			result[key] = ps
-
 		} else {
 			break
 		}
@@ -164,7 +169,7 @@ func saveValues(tempFileName string, values map[string]*procStats, now time.Time
 	defer f.Close()
 
 	s := saveItem{
-		LastTime:       time.Now(),
+		LastTime:       now,
 		ProcStatsByCPU: values,
 	}
 
@@ -177,13 +182,13 @@ func saveValues(tempFileName string, values map[string]*procStats, now time.Time
 	return nil
 }
 
-func fetchLastValues(tempFileName string) (map[string]*procStats, time.Time, error) {
+func fetchSavedItem(tempFileName string) (*saveItem, error) {
 	f, err := os.Open(tempFileName)
 	if err != nil {
 		if os.IsNotExist(err) {
-			return nil, time.Now(), nil
+			return nil, nil
 		}
-		return nil, time.Now(), err
+		return nil, err
 	}
 	defer f.Close()
 
@@ -191,12 +196,14 @@ func fetchLastValues(tempFileName string) (map[string]*procStats, time.Time, err
 	decoder := json.NewDecoder(f)
 	err = decoder.Decode(&stat)
 	if err != nil {
-		return stat.ProcStatsByCPU, stat.LastTime, err
+		return nil, err
 	}
-	return stat.ProcStatsByCPU, stat.LastTime, nil
+	return &stat, nil
 }
 
-func calcCPUUsage(currentValues map[string]*procStats, now time.Time, lastValues map[string]*procStats, lastTime time.Time) ([]*cpuPercentages, error) {
+func calcCPUUsage(currentValues map[string]*procStats, now time.Time, savedItem *saveItem) ([]*cpuPercentages, error) {
+	lastValues := savedItem.ProcStatsByCPU
+	lastTime := savedItem.LastTime
 
 	var result []*cpuPercentages
 	for key, current := range currentValues {
@@ -295,7 +302,7 @@ func calcDiff(value float64, now time.Time, lastValue float64, lastTime time.Tim
 	if lastValue <= value {
 		return diff, nil
 	}
-	return 0.0, nil
+	return 0.0, fmt.Errorf("lastValue > value")
 }
 
 func fetchLoadavg5() (float64, error) {
@@ -323,21 +330,17 @@ func printValue(key string, value *float64, time time.Time) {
 }
 
 func outputCPUUsage(cpuUsage []*cpuPercentages, now time.Time) {
-	if cpuUsage != nil {
-		for _, u := range cpuUsage {
-			if u.GroupName != "cpu" {
-				printValue(fmt.Sprintf("multicore.cpu.%s.user", u.GroupName), u.User, now)
-				printValue(fmt.Sprintf("multicore.cpu.%s.nice", u.GroupName), u.Nice, now)
-				printValue(fmt.Sprintf("multicore.cpu.%s.system", u.GroupName), u.System, now)
-				printValue(fmt.Sprintf("multicore.cpu.%s.idle", u.GroupName), u.Idle, now)
-				printValue(fmt.Sprintf("multicore.cpu.%s.iowait", u.GroupName), u.IoWait, now)
-				printValue(fmt.Sprintf("multicore.cpu.%s.irq", u.GroupName), u.Irq, now)
-				printValue(fmt.Sprintf("multicore.cpu.%s.softirq", u.GroupName), u.SoftIrq, now)
-				printValue(fmt.Sprintf("multicore.cpu.%s.steal", u.GroupName), u.Steal, now)
-				printValue(fmt.Sprintf("multicore.cpu.%s.guest", u.GroupName), u.Guest, now)
-				printValue(fmt.Sprintf("multicore.cpu.%s.guest_nice", u.GroupName), u.GuestNice, now)
-			}
-		}
+	for _, u := range cpuUsage {
+		printValue(fmt.Sprintf("multicore.cpu.%s.user", u.GroupName), u.User, now)
+		printValue(fmt.Sprintf("multicore.cpu.%s.nice", u.GroupName), u.Nice, now)
+		printValue(fmt.Sprintf("multicore.cpu.%s.system", u.GroupName), u.System, now)
+		printValue(fmt.Sprintf("multicore.cpu.%s.idle", u.GroupName), u.Idle, now)
+		printValue(fmt.Sprintf("multicore.cpu.%s.iowait", u.GroupName), u.IoWait, now)
+		printValue(fmt.Sprintf("multicore.cpu.%s.irq", u.GroupName), u.Irq, now)
+		printValue(fmt.Sprintf("multicore.cpu.%s.softirq", u.GroupName), u.SoftIrq, now)
+		printValue(fmt.Sprintf("multicore.cpu.%s.steal", u.GroupName), u.Steal, now)
+		printValue(fmt.Sprintf("multicore.cpu.%s.guest", u.GroupName), u.Guest, now)
+		printValue(fmt.Sprintf("multicore.cpu.%s.guest_nice", u.GroupName), u.GuestNice, now)
 	}
 }
 
@@ -360,34 +363,35 @@ func outputDefinitions() {
 func outputMulticore(tempFileName string) {
 	now := time.Now()
 
-	currentValues, _ := collectProcStatValues()
-	lastValues, lastTime, err := fetchLastValues(tempFileName)
-	if currentValues != nil {
-		saveValues(tempFileName, currentValues, now)
+	currentValues, err := collectProcStatValues()
+	if err != nil {
+		log.Fatalln("collectProcStatValues: ", err)
 	}
+
+	savedItem, err := fetchSavedItem(tempFileName)
+	saveValues(tempFileName, currentValues, now)
 	if err != nil {
 		log.Fatalln("fetchLastValues: ", err)
 	}
 
-	var cpuUsage []*cpuPercentages
-	if lastValues != nil {
-		var err error
-		cpuUsage, err = calcCPUUsage(currentValues, now, lastValues, lastTime)
-		if err != nil {
-			log.Fatalln("calcCPUUsage: ", err)
-		}
+	// maybe first time run
+	if savedItem == nil {
+		return
 	}
 
-	if len(cpuUsage) != 0 {
-		loadavg5, err := fetchLoadavg5()
-		if err != nil {
-			log.Fatalln("fetchLoadavg5: ", err)
-		}
-		loadPerCPUCount := loadavg5 / (float64(len(cpuUsage) - 1))
-
-		outputCPUUsage(cpuUsage, now)
-		outputLoadavgPerCore(loadPerCPUCount, now)
+	cpuUsage, err := calcCPUUsage(currentValues, now, savedItem)
+	if err != nil {
+		log.Fatalln("calcCPUUsage: ", err)
 	}
+
+	loadavg5, err := fetchLoadavg5()
+	if err != nil {
+		log.Fatalln("fetchLoadavg5: ", err)
+	}
+	loadPerCPUCount := loadavg5 / (float64(len(cpuUsage)))
+
+	outputCPUUsage(cpuUsage, now)
+	outputLoadavgPerCore(loadPerCPUCount, now)
 }
 
 // main function
