@@ -180,6 +180,9 @@ func saveValues(tempFileName string, values map[string]*procStats, now time.Time
 func fetchLastValues(tempFileName string) (map[string]*procStats, time.Time, error) {
 	f, err := os.Open(tempFileName)
 	if err != nil {
+		if os.IsNotExist(err) {
+			return nil, time.Now(), nil
+		}
 		return nil, time.Now(), err
 	}
 	defer f.Close()
@@ -375,14 +378,16 @@ func outputMulticore(tempFileName string) {
 		}
 	}
 
-	loadavg5, err := fetchLoadavg5()
-	if err != nil {
-		log.Fatalln("fetchLoadavg5: ", err)
-	}
-	loadPerCPUCount := loadavg5 / (float64(len(cpuUsage) - 1))
+	if len(cpuUsage) != 0 {
+		loadavg5, err := fetchLoadavg5()
+		if err != nil {
+			log.Fatalln("fetchLoadavg5: ", err)
+		}
+		loadPerCPUCount := loadavg5 / (float64(len(cpuUsage) - 1))
 
-	outputCPUUsage(cpuUsage, now)
-	outputLoadavgPerCore(loadPerCPUCount, now)
+		outputCPUUsage(cpuUsage, now)
+		outputLoadavgPerCore(loadPerCPUCount, now)
+	}
 }
 
 // main function
