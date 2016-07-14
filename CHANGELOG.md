@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.22.0 (2016-07-14)
+
+* add multicore plugin #246 (daiksy)
+* add mackerel-plugin-multicore into package (daiksy)
+
+
 ## 0.21.2 (2016-07-07)
 
 * Fix help message #244 (ariarijp)
