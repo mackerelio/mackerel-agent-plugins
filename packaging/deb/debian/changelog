@@ -1,3 +1,10 @@
+mackerel-agent-plugins (0.22.0-1) stable; urgency=low
+
+  * add multicore plugin (by daiksy)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/246>
+
+ -- mackerel <mackerel-developers@hatena.ne.jp>  Thu, 14 Jul 2016 05:55:13 +0000
+
 mackerel-agent-plugins (0.21.2-1) stable; urgency=low
 
   * Fix help message (by ariarijp)
