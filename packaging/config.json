@@ -19,6 +19,7 @@
        "mailq",
        "memcached",
        "mongodb",
+       "multicore",
        "munin",
        "mysql",
        "nginx",
