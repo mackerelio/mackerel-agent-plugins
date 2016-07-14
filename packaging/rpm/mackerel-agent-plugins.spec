@@ -51,6 +51,7 @@ done
 %changelog
 * Thu Jul 14 2016 <mackerel-developers@hatena.ne.jp> - 0.22.0-1
 - add multicore plugin (by daiksy)
+- add mackerel-plugin-multicore into package (by daiksy)
 
 * Thu Jul 07 2016 <mackerel-developers@hatena.ne.jp> - 0.21.2-1
 - Fix help message (by ariarijp)
