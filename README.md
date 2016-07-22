@@ -79,7 +79,7 @@ yum install mackerel-agent-plugins
 apt-get install mackerel-agent-plugins
 ```
 
-mackerel-agent-plugins will be installed to ```/usr/local/bin/mackerel-plugin-*```.
+mackerel-agent-plugins will be installed to ```/usr/bin/mackerel-plugin-*```.
 
 Caution
 =======
