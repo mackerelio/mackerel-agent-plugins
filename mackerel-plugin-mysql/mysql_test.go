@@ -173,7 +173,7 @@ END OF INNODB MONITOR OUTPUT`
 	assert.EqualValues(t, stat["ibuf_merges"], 2)
 	assert.EqualValues(t, stat["ibuf_merged"], 48)
 	assert.EqualValues(t, stat["hash_index_cells_total"], 34679)
-	assert.EqualValues(t, stat["hash_index_cells_used"], 0) // emtpy
+	assert.EqualValues(t, stat["hash_index_cells_used"], 0) // empty
 	// Log
 	assert.EqualValues(t, stat["log_writes"], 3395)
 	assert.EqualValues(t, stat["pending_log_writes"], 0)
