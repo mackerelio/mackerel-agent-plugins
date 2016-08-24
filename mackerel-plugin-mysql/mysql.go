@@ -146,7 +146,7 @@ func (m MySQLPlugin) fetchShowInnodbStatus(db mysql.Conn, stat map[string]float6
 	}
 
 	if len(row) > 0 {
-		err = parseInnodbStatus(string(row[len(row)-1].([]byte)), &stat)
+		parseInnodbStatus(string(row[len(row)-1].([]byte)), &stat)
 	} else {
 		log.Fatalln("FetchMetrics (InnoDB Status): row length is too small: ", len(row))
 	}
@@ -437,7 +437,7 @@ func setIfEmpty(p *map[string]float64, key string, val float64) {
 	}
 }
 
-func parseInnodbStatus(str string, p *map[string]float64) error {
+func parseInnodbStatus(str string, p *map[string]float64) {
 	isTransaction := false
 	prevLine := ""
 
@@ -745,8 +745,6 @@ func parseInnodbStatus(str string, p *map[string]float64) error {
 	// finalize
 	(*p)["queries_queued"] = (*p)["log_bytes_written"] - (*p)["log_bytes_flushed"]
 	(*p)["uncheckpointed_bytes"] = (*p)["log_bytes_written"] - (*p)["last_checkpoint"]
-
-	return nil
 }
 
 func atof(str string) (float64, error) {
