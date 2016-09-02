@@ -17,6 +17,7 @@ type MemcachedPlugin struct {
 	Target   string
 	Socket   string
 	Tempfile string
+	Prefix   string
 }
 
 // FetchMetrics interface for mackerelplugin
@@ -61,14 +62,14 @@ func (m MemcachedPlugin) parseStats(conn io.Reader) (map[string]interface{}, err
 func (m MemcachedPlugin) GraphDefinition() map[string](mp.Graphs) {
 	// https://github.com/memcached/memcached/blob/master/doc/protocol.txt
 	var graphdef = map[string](mp.Graphs){
-		"memcached.connections": mp.Graphs{
+		(m.Prefix + ".connections"): mp.Graphs{
 			Label: "Memcached Connections",
 			Unit:  "integer",
 			Metrics: [](mp.Metrics){
 				mp.Metrics{Name: "curr_connections", Label: "Connections", Diff: false},
 			},
 		},
-		"memcached.cmd": mp.Graphs{
+		(m.Prefix + ".cmd"): mp.Graphs{
 			Label: "Memcached Command",
 			Unit:  "integer",
 			Metrics: [](mp.Metrics){
@@ -78,7 +79,7 @@ func (m MemcachedPlugin) GraphDefinition() map[string](mp.Graphs) {
 				mp.Metrics{Name: "cmd_touch", Label: "Touch", Diff: true, Type: "uint64"},
 			},
 		},
-		"memcached.hitmiss": mp.Graphs{
+		(m.Prefix + ".hitmiss"): mp.Graphs{
 			Label: "Memcached Hits/Misses",
 			Unit:  "integer",
 			Metrics: [](mp.Metrics){
@@ -94,14 +95,14 @@ func (m MemcachedPlugin) GraphDefinition() map[string](mp.Graphs) {
 				mp.Metrics{Name: "touch_misses", Label: "Touch Misses", Diff: true, Type: "uint64"},
 			},
 		},
-		"memcached.evictions": mp.Graphs{
+		(m.Prefix + ".evictions"): mp.Graphs{
 			Label: "Memcached Evictions",
 			Unit:  "integer",
 			Metrics: [](mp.Metrics){
 				mp.Metrics{Name: "evictions", Label: "Evictions", Diff: true, Type: "uint64"},
 			},
 		},
-		"memcached.unfetched": mp.Graphs{
+		(m.Prefix + ".unfetched"): mp.Graphs{
 			Label: "Memcached Unfetched",
 			Unit:  "integer",
 			Metrics: [](mp.Metrics){
@@ -109,7 +110,7 @@ func (m MemcachedPlugin) GraphDefinition() map[string](mp.Graphs) {
 				mp.Metrics{Name: "evicted_unfetched", Label: "Evicted unfetched", Diff: true, Type: "uint64"},
 			},
 		},
-		"memcached.rusage": mp.Graphs{
+		(m.Prefix + ".rusage"): mp.Graphs{
 			Label: "Memcached Resouce Usage",
 			Unit:  "float",
 			Metrics: [](mp.Metrics){
@@ -117,7 +118,7 @@ func (m MemcachedPlugin) GraphDefinition() map[string](mp.Graphs) {
 				mp.Metrics{Name: "rusage_system", Label: "System", Diff: true},
 			},
 		},
-		"memcached.bytes": mp.Graphs{
+		(m.Prefix + ".bytes"): mp.Graphs{
 			Label: "Memcached Traffics",
 			Unit:  "bytes",
 			Metrics: [](mp.Metrics){
@@ -125,7 +126,7 @@ func (m MemcachedPlugin) GraphDefinition() map[string](mp.Graphs) {
 				mp.Metrics{Name: "bytes_written", Label: "Write", Diff: true, Type: "uint64"},
 			},
 		},
-		"memcached.cachesize": mp.Graphs{
+		(m.Prefix + ".cachesize"): mp.Graphs{
 			Label: "Memcached Cache Size",
 			Unit:  "bytes",
 			Metrics: [](mp.Metrics){
@@ -141,10 +142,14 @@ func main() {
 	optHost := flag.String("host", "localhost", "Hostname")
 	optPort := flag.String("port", "11211", "Port")
 	optSocket := flag.String("socket", "", "Server socket (overrides hosts and port)")
+	optPrefix := flag.String("metric-key-prefix", "memcached", "Metric key prefix")
 	optTempfile := flag.String("tempfile", "", "Temp file name")
 	flag.Parse()
 
 	var memcached MemcachedPlugin
+
+	memcached.Prefix = *optPrefix
+
 	if *optSocket != "" {
 		memcached.Socket = *optSocket
 	} else {
