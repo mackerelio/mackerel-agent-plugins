@@ -20,6 +20,11 @@ type MemcachedPlugin struct {
 	Prefix   string
 }
 
+// MetricKeyPrefix interface for PluginWithPrefix
+func (m MemcachedPlugin) MetricKeyPrefix() string {
+	return m.Prefix
+}
+
 // FetchMetrics interface for mackerelplugin
 func (m MemcachedPlugin) FetchMetrics() (map[string]interface{}, error) {
 	network := "tcp"
@@ -64,14 +69,14 @@ func (m MemcachedPlugin) GraphDefinition() map[string](mp.Graphs) {
 
 	// https://github.com/memcached/memcached/blob/master/doc/protocol.txt
 	var graphdef = map[string](mp.Graphs){
-		(m.Prefix + ".connections"): mp.Graphs{
+		"connections": mp.Graphs{
 			Label: (labelPrefix + " Connections"),
 			Unit:  "integer",
 			Metrics: [](mp.Metrics){
 				mp.Metrics{Name: "curr_connections", Label: "Connections", Diff: false},
 			},
 		},
-		(m.Prefix + ".cmd"): mp.Graphs{
+		"cmd": mp.Graphs{
 			Label: (labelPrefix + " Command"),
 			Unit:  "integer",
 			Metrics: [](mp.Metrics){
@@ -81,7 +86,7 @@ func (m MemcachedPlugin) GraphDefinition() map[string](mp.Graphs) {
 				mp.Metrics{Name: "cmd_touch", Label: "Touch", Diff: true, Type: "uint64"},
 			},
 		},
-		(m.Prefix + ".hitmiss"): mp.Graphs{
+		"hitmiss": mp.Graphs{
 			Label: (labelPrefix + " Hits/Misses"),
 			Unit:  "integer",
 			Metrics: [](mp.Metrics){
@@ -97,14 +102,14 @@ func (m MemcachedPlugin) GraphDefinition() map[string](mp.Graphs) {
 				mp.Metrics{Name: "touch_misses", Label: "Touch Misses", Diff: true, Type: "uint64"},
 			},
 		},
-		(m.Prefix + ".evictions"): mp.Graphs{
+		"evictions": mp.Graphs{
 			Label: (labelPrefix + " Evictions"),
 			Unit:  "integer",
 			Metrics: [](mp.Metrics){
 				mp.Metrics{Name: "evictions", Label: "Evictions", Diff: true, Type: "uint64"},
 			},
 		},
-		(m.Prefix + ".unfetched"): mp.Graphs{
+		"unfetched": mp.Graphs{
 			Label: (labelPrefix + " Unfetched"),
 			Unit:  "integer",
 			Metrics: [](mp.Metrics){
@@ -112,7 +117,7 @@ func (m MemcachedPlugin) GraphDefinition() map[string](mp.Graphs) {
 				mp.Metrics{Name: "evicted_unfetched", Label: "Evicted unfetched", Diff: true, Type: "uint64"},
 			},
 		},
-		(m.Prefix + ".rusage"): mp.Graphs{
+		"rusage": mp.Graphs{
 			Label: (labelPrefix + " Resouce Usage"),
 			Unit:  "float",
 			Metrics: [](mp.Metrics){
@@ -120,7 +125,7 @@ func (m MemcachedPlugin) GraphDefinition() map[string](mp.Graphs) {
 				mp.Metrics{Name: "rusage_system", Label: "System", Diff: true},
 			},
 		},
-		(m.Prefix + ".bytes"): mp.Graphs{
+		"bytes": mp.Graphs{
 			Label: (labelPrefix + " Traffics"),
 			Unit:  "bytes",
 			Metrics: [](mp.Metrics){
@@ -128,7 +133,7 @@ func (m MemcachedPlugin) GraphDefinition() map[string](mp.Graphs) {
 				mp.Metrics{Name: "bytes_written", Label: "Write", Diff: true, Type: "uint64"},
 			},
 		},
-		(m.Prefix + ".cachesize"): mp.Graphs{
+		"cachesize": mp.Graphs{
 			Label: (labelPrefix + " Cache Size"),
 			Unit:  "bytes",
 			Metrics: [](mp.Metrics){
