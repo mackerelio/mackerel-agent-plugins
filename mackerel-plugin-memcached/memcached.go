@@ -22,6 +22,9 @@ type MemcachedPlugin struct {
 
 // MetricKeyPrefix interface for PluginWithPrefix
 func (m MemcachedPlugin) MetricKeyPrefix() string {
+	if m.Prefix == "" {
+		m.Prefix = "memcached"
+	}
 	return m.Prefix
 }
 
