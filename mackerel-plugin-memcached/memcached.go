@@ -166,15 +166,6 @@ func main() {
 		memcached.Target = fmt.Sprintf("%s:%s", *optHost, *optPort)
 	}
 	helper := mp.NewMackerelPlugin(memcached)
-
-	if *optTempfile != "" {
-		helper.Tempfile = *optTempfile
-	} else {
-		if memcached.Socket != "" {
-			helper.Tempfile = fmt.Sprintf("/tmp/mackerel-plugin-memcached-%s", fmt.Sprintf("%x", md5.Sum([]byte(memcached.Socket))))
-		} else {
-			helper.Tempfile = fmt.Sprintf("/tmp/mackerel-plugin-memcached-%s-%s", *optHost, *optPort)
-		}
-	}
+	helper.Tempfile = *optTempfile
 	helper.Run()
 }
