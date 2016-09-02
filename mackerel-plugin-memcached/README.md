@@ -6,7 +6,7 @@ Memcached custom metrics plugin for mackerel.io agent.
 ## Synopsis
 
 ```shell
-mackerel-plugin-memcached [-host=<host>] [-port=<port>] [-socket=</path/to/unixsocket>] [-tempfile=<tempfile>]
+mackerel-plugin-memcached [-host=<host>] [-port=<port>] [-socket=</path/to/unixsocket>] [-tempfile=<tempfile>] [-metric-key-prefix=<custom_prefix>]
 ```
 
 ## Example of mackerel-agent.conf
