@@ -420,7 +420,7 @@ func main() {
 
 	optHost := flag.String("host", "unix:///var/run/docker.sock", "Host for socket")
 	optCommand := flag.String("command", "docker", "Command path to docker")
-	optUseAPI := flag.String("method", "", "Specify the method to collect stats, 'API' or 'File'. If not specified, an appropriate method is choosen.")
+	optUseAPI := flag.String("method", "", "Specify the method to collect stats, 'API' or 'File'. If not specified, an appropriate method is chosen.")
 	optTempfile := flag.String("tempfile", "", "Temp file name")
 	optNameFormat := flag.String("name-format", "name_id", "Set the name format from "+strings.Join(candidateNameFormat, ", "))
 	optLabel := flag.String("label", "", "Use the value of the key as name in case that name-format is label.")

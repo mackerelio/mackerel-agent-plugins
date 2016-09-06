@@ -85,7 +85,7 @@ func (p HAProxyPlugin) parseStats(statsBody io.Reader) (map[string]float64, erro
 		}
 
 		if len(columns) < 60 {
-			return nil, errors.New("Length of stats csv is too short. Specifed uri may be wrong.")
+			return nil, errors.New("Length of stats csv is too short. Specified uri may be wrong.")
 		}
 
 		if columns[1] != "BACKEND" {

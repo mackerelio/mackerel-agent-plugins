@@ -260,7 +260,7 @@ func main() {
 		helper.OutputDefinitions()
 	} else {
 		// Not using go-mackerel-plugin-helper method
-		// bacause we want to post mulitple metrics with arbitary timestamp
+		// bacause we want to post multiple metrics with arbitrary timestamp
 		plugin.outputValues(os.Stdout)
 	}
 }

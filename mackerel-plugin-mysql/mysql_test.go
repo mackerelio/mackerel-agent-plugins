@@ -133,9 +133,7 @@ Number of rows inserted 3089, updated 220, deleted 212, read 2099881
 END OF INNODB MONITOR OUTPUT`
 	stat := make(map[string]float64)
 
-	err := parseInnodbStatus(stub, &stat)
-	// fmt.Println(stat)
-	assert.Nil(t, err)
+	parseInnodbStatus(stub, &stat)
 	// Innodb Semaphores
 	assert.EqualValues(t, stat["spin_waits"], 947)
 	assert.EqualValues(t, stat["spin_rounds"], 9442)
@@ -173,7 +171,7 @@ END OF INNODB MONITOR OUTPUT`
 	assert.EqualValues(t, stat["ibuf_merges"], 2)
 	assert.EqualValues(t, stat["ibuf_merged"], 48)
 	assert.EqualValues(t, stat["hash_index_cells_total"], 34679)
-	assert.EqualValues(t, stat["hash_index_cells_used"], 0) // emtpy
+	assert.EqualValues(t, stat["hash_index_cells_used"], 0) // empty
 	// Log
 	assert.EqualValues(t, stat["log_writes"], 3395)
 	assert.EqualValues(t, stat["pending_log_writes"], 0)
@@ -325,9 +323,7 @@ END OF INNODB MONITOR OUTPUT
 ============================`
 	stat := make(map[string]float64)
 
-	err := parseInnodbStatus(stub, &stat)
-	// fmt.Println(stat)
-	assert.Nil(t, err)
+	parseInnodbStatus(stub, &stat)
 	// Innodb Semaphores
 	assert.EqualValues(t, stat["spin_waits"], 5020565400)
 	assert.EqualValues(t, stat["spin_rounds"], 3687067031)
@@ -520,9 +516,7 @@ END OF INNODB MONITOR OUTPUT
 ============================`
 	stat := make(map[string]float64)
 
-	err := parseInnodbStatus(stub, &stat)
-	// fmt.Println(stat)
-	assert.Nil(t, err)
+	parseInnodbStatus(stub, &stat)
 	// Innodb Semaphores
 	assert.EqualValues(t, stat["spin_waits"], 180466733)
 	assert.EqualValues(t, stat["spin_rounds"], 142931556)
@@ -677,9 +671,7 @@ END OF INNODB MONITOR OUTPUT
 ============================`
 	stat := make(map[string]float64)
 
-	err := parseInnodbStatus(stub, &stat)
-	// fmt.Println(stat)
-	assert.Nil(t, err)
+	parseInnodbStatus(stub, &stat)
 	// Innodb Semaphores
 	assert.EqualValues(t, stat["spin_waits"], 1762)
 	assert.EqualValues(t, stat["spin_rounds"], 30300)
@@ -931,9 +923,7 @@ END OF INNODB MONITOR OUTPUT
 ============================
 `
 	stat := make(map[string]float64)
-	err := parseInnodbStatus(stub, &stat)
-	assert.Nil(t, err)
-
+	parseInnodbStatus(stub, &stat)
 	// Innodb Semaphores
 	assert.EqualValues(t, stat["spin_waits"], 0)
 	assert.EqualValues(t, stat["spin_rounds"], 0) // empty
