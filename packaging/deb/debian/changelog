@@ -1,3 +1,12 @@
+mackerel-agent-plugins (0.22.1-1) stable; urgency=low
+
+  * Fixed README.md (by kakakakakku)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/253>
+  * [memcached] Support -metric-key-prefix option  (by astj)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/255>
+
+ -- mackerel <mackerel-developers@hatena.ne.jp>  Tue, 06 Sep 2016 11:44:47 +0000
+
 mackerel-agent-plugins (0.22.0-1) stable; urgency=low
 
   * add multicore plugin (by daiksy)

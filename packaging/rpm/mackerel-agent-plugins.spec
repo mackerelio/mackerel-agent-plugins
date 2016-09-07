@@ -49,6 +49,10 @@ done
 %{__oldtargetdir}/*
 
 %changelog
+* Tue Sep 06 2016 <mackerel-developers@hatena.ne.jp> - 0.22.1-1
+- Fixed README.md (by kakakakakku)
+- [memcached] Support -metric-key-prefix option  (by astj)
+
 * Thu Jul 14 2016 <mackerel-developers@hatena.ne.jp> - 0.22.0-1
 - add multicore plugin (by daiksy)
 - add mackerel-plugin-multicore into package (by daiksy)

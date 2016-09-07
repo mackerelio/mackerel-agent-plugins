@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.22.1 (2016-09-06)
+
+* Fixed README.md #253 (kakakakakku)
+* [memcached] Support -metric-key-prefix option  #255 (astj)
+
+
 ## 0.22.0 (2016-07-14)
 
 * add multicore plugin #246 (daiksy)
