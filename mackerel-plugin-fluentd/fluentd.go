@@ -127,7 +127,7 @@ func (f FluentdMetrics) GraphDefinition() map[string](mp.Graphs) {
 }
 
 func main() {
-	host := flag.String("host", "localhost", "fluentd monitor_agent port")
+	host := flag.String("host", "localhost", "fluentd monitor_agent host")
 	port := flag.String("port", "24220", "fluentd monitor_agent port")
 	pluginType := flag.String("plugin-type", "", "Gets the metric that matches this plugin type")
 	pluginIDPatternString := flag.String("plugin-id-pattern", "", "Gets the metric that matches this plugin id pattern")
