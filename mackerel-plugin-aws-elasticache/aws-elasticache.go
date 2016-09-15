@@ -3,14 +3,13 @@ package main
 import (
 	"errors"
 	"flag"
-	"fmt"
 	"log"
 	"os"
 	"time"
 
 	"github.com/crowdmob/goamz/aws"
 	"github.com/crowdmob/goamz/cloudwatch"
-	mp "github.com/mackerelio/go-mackerel-plugin"
+	mp "github.com/mackerelio/go-mackerel-plugin-helper"
 )
 
 var metricsdefMemcached = []string{
@@ -33,28 +32,28 @@ var metricsdefRedis = []string{
 }
 
 var graphdefMemcached = map[string](mp.Graphs){
-	"ecache.CPUUtilization": mp.Graphs{
+	"CPUUtilization": mp.Graphs{
 		Label: "ECache CPU Utilization",
 		Unit:  "percentage",
 		Metrics: [](mp.Metrics){
 			mp.Metrics{Name: "CPUUtilization", Label: "CPUUtilization"},
 		},
 	},
-	"ecache.SwapUsage": mp.Graphs{
+	"SwapUsage": mp.Graphs{
 		Label: "ECache Swap Usage",
 		Unit:  "bytes",
 		Metrics: [](mp.Metrics){
 			mp.Metrics{Name: "SwapUsage", Label: "SwapUsage"},
 		},
 	},
-	"ecache.FreeableMemory": mp.Graphs{
+	"FreeableMemory": mp.Graphs{
 		Label: "ECache Freeable Memory",
 		Unit:  "bytes",
 		Metrics: [](mp.Metrics){
 			mp.Metrics{Name: "FreeableMemory", Label: "FreeableMemory"},
 		},
 	},
-	"ecache.NetworkTraffic": mp.Graphs{
+	"NetworkTraffic": mp.Graphs{
 		Label: "ECache Network Traffic",
 		Unit:  "bytes",
 		Metrics: [](mp.Metrics){
@@ -62,7 +61,7 @@ var graphdefMemcached = map[string](mp.Graphs){
 			mp.Metrics{Name: "NetworkBytesOut", Label: "NetworkBytesOut"},
 		},
 	},
-	"ecache.Command": mp.Graphs{
+	"Command": mp.Graphs{
 		Label: "ECache Command",
 		Unit:  "integer",
 		Metrics: [](mp.Metrics){
@@ -74,7 +73,7 @@ var graphdefMemcached = map[string](mp.Graphs){
 			mp.Metrics{Name: "CmdConfigSet", Label: "CmdConfigSet"},
 		},
 	},
-	"ecache.CacheHitAndMiss": mp.Graphs{
+	"CacheHitAndMiss": mp.Graphs{
 		Label: "ECache Hits/Misses",
 		Unit:  "integer",
 		Metrics: [](mp.Metrics){
@@ -93,14 +92,14 @@ var graphdefMemcached = map[string](mp.Graphs){
 			mp.Metrics{Name: "TouchMisses", Label: "TouchMisses"},
 		},
 	},
-	"ecache.Evictions": mp.Graphs{
+	"Evictions": mp.Graphs{
 		Label: "ECache Evictions",
 		Unit:  "integer",
 		Metrics: [](mp.Metrics){
 			mp.Metrics{Name: "Evictions", Label: "Evictions"},
 		},
 	},
-	"ecache.Unfetched": mp.Graphs{
+	"Unfetched": mp.Graphs{
 		Label: "ECache Unfetched",
 		Unit:  "integer",
 		Metrics: [](mp.Metrics){
@@ -108,7 +107,7 @@ var graphdefMemcached = map[string](mp.Graphs){
 			mp.Metrics{Name: "ExpiredUnfetched", Label: "ExpiredUnfetched"},
 		},
 	},
-	"ecache.Bytes": mp.Graphs{
+	"Bytes": mp.Graphs{
 		Label: "ECache Traffics",
 		Unit:  "bytes",
 		Metrics: [](mp.Metrics){
@@ -116,7 +115,7 @@ var graphdefMemcached = map[string](mp.Graphs){
 			mp.Metrics{Name: "BytesWrittenOutFromMemcached", Label: "BytesWrittenOutFromMemcached"},
 		},
 	},
-	"ecache.Connections": mp.Graphs{
+	"Connections": mp.Graphs{
 		Label: "ECache Connections",
 		Unit:  "integer",
 		Metrics: [](mp.Metrics){
@@ -124,7 +123,7 @@ var graphdefMemcached = map[string](mp.Graphs){
 			mp.Metrics{Name: "NewConnections", Label: "NewConnections"},
 		},
 	},
-	"ecache.Items": mp.Graphs{
+	"Items": mp.Graphs{
 		Label: "ECache Items",
 		Unit:  "integer",
 		Metrics: [](mp.Metrics){
@@ -135,7 +134,7 @@ var graphdefMemcached = map[string](mp.Graphs){
 			mp.Metrics{Name: "SlabsMoved", Label: "SlabsMoved"},
 		},
 	},
-	"ecache.MemoryUsage": mp.Graphs{
+	"MemoryUsage": mp.Graphs{
 		Label: "ECache Memory Usage",
 		Unit:  "bytes",
 		Metrics: [](mp.Metrics){
@@ -147,28 +146,28 @@ var graphdefMemcached = map[string](mp.Graphs){
 }
 
 var graphdefRedis = map[string](mp.Graphs){
-	"ecache.CPUUtilization": mp.Graphs{
+	"CPUUtilization": mp.Graphs{
 		Label: "ECache CPU Utilization",
 		Unit:  "percentage",
 		Metrics: [](mp.Metrics){
 			mp.Metrics{Name: "CPUUtilization", Label: "CPUUtilization"},
 		},
 	},
-	"ecache.SwapUsage": mp.Graphs{
+	"SwapUsage": mp.Graphs{
 		Label: "ECache Swap Usage",
 		Unit:  "bytes",
 		Metrics: [](mp.Metrics){
 			mp.Metrics{Name: "SwapUsage", Label: "SwapUsage"},
 		},
 	},
-	"ecache.FreeableMemory": mp.Graphs{
+	"FreeableMemory": mp.Graphs{
 		Label: "ECache Freeable Memory",
 		Unit:  "bytes",
 		Metrics: [](mp.Metrics){
 			mp.Metrics{Name: "FreeableMemory", Label: "FreeableMemory"},
 		},
 	},
-	"ecache.NetworkTraffic": mp.Graphs{
+	"NetworkTraffic": mp.Graphs{
 		Label: "ECache Network Traffic",
 		Unit:  "bytes",
 		Metrics: [](mp.Metrics){
@@ -176,7 +175,7 @@ var graphdefRedis = map[string](mp.Graphs){
 			mp.Metrics{Name: "NetworkBytesOut", Label: "NetworkBytesOut"},
 		},
 	},
-	"ecache.Command": mp.Graphs{
+	"Command": mp.Graphs{
 		Label: "ECache Command",
 		Unit:  "integer",
 		Metrics: [](mp.Metrics){
@@ -190,7 +189,7 @@ var graphdefRedis = map[string](mp.Graphs){
 			mp.Metrics{Name: "SortedSetBasedCmds", Label: "SortedSetBasedCmds"},
 		},
 	},
-	"ecache.CacheHitAndMiss": mp.Graphs{
+	"CacheHitAndMiss": mp.Graphs{
 		Label: "ECache Hits/Misses",
 		Unit:  "float",
 		Metrics: [](mp.Metrics){
@@ -198,21 +197,21 @@ var graphdefRedis = map[string](mp.Graphs){
 			mp.Metrics{Name: "CacheMisses", Label: "CacheMisses"},
 		},
 	},
-	"ecache.Evictions": mp.Graphs{
+	"Evictions": mp.Graphs{
 		Label: "ECache Evictions",
 		Unit:  "integer",
 		Metrics: [](mp.Metrics){
 			mp.Metrics{Name: "Evictions", Label: "Evictions"},
 		},
 	},
-	"ecache.Bytes": mp.Graphs{
+	"Bytes": mp.Graphs{
 		Label: "ECache Traffics",
 		Unit:  "bytes",
 		Metrics: [](mp.Metrics){
 			mp.Metrics{Name: "BytesUsedForCache", Label: "BytesUsedForCache"},
 		},
 	},
-	"ecache.Connections": mp.Graphs{
+	"Connections": mp.Graphs{
 		Label: "ECache Connections",
 		Unit:  "integer",
 		Metrics: [](mp.Metrics){
@@ -220,7 +219,7 @@ var graphdefRedis = map[string](mp.Graphs){
 			mp.Metrics{Name: "NewConnections", Label: "NewConnections"},
 		},
 	},
-	"ecache.Items": mp.Graphs{
+	"Items": mp.Graphs{
 		Label: "ECache Items",
 		Unit:  "integer",
 		Metrics: [](mp.Metrics){
@@ -239,6 +238,11 @@ type ECachePlugin struct {
 	CacheNodeID     string
 	ElastiCacheType string
 	CacheMetrics    []string
+}
+
+// MetricKeyPrefix interface for PluginWithPrefix
+func (p ECachePlugin) MetricKeyPrefix() string {
+	return "ecache"
 }
 
 func getLastPoint(cloudWatch *cloudwatch.CloudWatch, dimensions *[]cloudwatch.Dimension, metricName string) (float64, error) {
@@ -277,7 +281,7 @@ func getLastPoint(cloudWatch *cloudwatch.CloudWatch, dimensions *[]cloudwatch.Di
 }
 
 // FetchMetrics fetch elasticache values
-func (p ECachePlugin) FetchMetrics() (map[string]float64, error) {
+func (p ECachePlugin) FetchMetrics() (map[string]interface{}, error) {
 	auth, err := aws.GetAuth(p.AccessKeyID, p.SecretAccessKey, "", time.Now())
 	if err != nil {
 		return nil, err
@@ -288,7 +292,7 @@ func (p ECachePlugin) FetchMetrics() (map[string]float64, error) {
 		return nil, err
 	}
 
-	stat := make(map[string]float64)
+	stat := make(map[string]interface{})
 
 	perInstances := &[]cloudwatch.Dimension{
 		{
@@ -332,7 +336,7 @@ func main() {
 	optSecretAccessKey := flag.String("secret-access-key", "", "AWS Secret Access Key")
 	optCacheClusterID := flag.String("cache-cluster-id", "", "Cache Cluster Id")
 	optCacheNodeID := flag.String("cache-node-id", "0001", "Cache Node Id")
-	optElastiCacheType := flag.String("elasticache-type", "", "ElastiCache type")
+	optElastiCacheType := flag.String("elasticache-type", "", "ElastiCache type ('memcached' or 'redis')")
 	optTempfile := flag.String("tempfile", "", "Temp file name")
 	flag.Parse()
 
@@ -360,15 +364,6 @@ func main() {
 	}
 
 	helper := mp.NewMackerelPlugin(ecache)
-	if *optTempfile != "" {
-		helper.Tempfile = *optTempfile
-	} else {
-		helper.Tempfile = fmt.Sprintf("/tmp/mackerel-plugin-aws-elasticache-%s-%s", *optCacheClusterID, *optCacheNodeID)
-	}
-
-	if os.Getenv("MACKEREL_AGENT_PLUGIN_META") != "" {
-		helper.OutputDefinitions()
-	} else {
-		helper.OutputValues()
-	}
+	helper.Tempfile = *optTempfile
+	helper.Run()
 }
