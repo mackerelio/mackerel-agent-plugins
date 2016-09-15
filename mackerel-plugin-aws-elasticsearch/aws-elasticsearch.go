@@ -4,58 +4,57 @@ import (
 	"errors"
 	"flag"
 	"log"
-	"os"
 	"time"
 
 	"github.com/crowdmob/goamz/aws"
 	"github.com/crowdmob/goamz/cloudwatch"
-	mp "github.com/mackerelio/go-mackerel-plugin"
+	mp "github.com/mackerelio/go-mackerel-plugin-helper"
 )
 
 var graphdef = map[string](mp.Graphs){
-	"es.Nodes": mp.Graphs{
+	"Nodes": mp.Graphs{
 		Label: "AWS ES Nodes",
 		Unit:  "integer",
 		Metrics: [](mp.Metrics){
 			mp.Metrics{Name: "Nodes", Label: "Nodes"},
 		},
 	},
-	"es.CPUUtilization": mp.Graphs{
+	"CPUUtilization": mp.Graphs{
 		Label: "AWS ES CPU Utilization",
 		Unit:  "percentage",
 		Metrics: [](mp.Metrics){
 			mp.Metrics{Name: "CPUUtilization", Label: "CPUUtilization"},
 		},
 	},
-	"es.JVMMemoryPressure": mp.Graphs{
+	"JVMMemoryPressure": mp.Graphs{
 		Label: "AWS ES JVMMemoryPressure",
 		Unit:  "percentage",
 		Metrics: [](mp.Metrics){
 			mp.Metrics{Name: "JVMMemoryPressure", Label: "JVMMemoryPressure"},
 		},
 	},
-	"es.FreeStorageSpace": mp.Graphs{
+	"FreeStorageSpace": mp.Graphs{
 		Label: "AWS ES Free Storage Space",
 		Unit:  "bytes",
 		Metrics: [](mp.Metrics){
 			mp.Metrics{Name: "FreeStorageSpace", Label: "FreeStorageSpace"},
 		},
 	},
-	"es.SearchableDocuments": mp.Graphs{
+	"SearchableDocuments": mp.Graphs{
 		Label: "AWS ES SearchableDocuments",
 		Unit:  "integer",
 		Metrics: [](mp.Metrics){
 			mp.Metrics{Name: "SearchableDocuments", Label: "SearchableDocuments"},
 		},
 	},
-	"es.DeletedDocuments": mp.Graphs{
+	"DeletedDocuments": mp.Graphs{
 		Label: "AWS ES DeletedDocuments",
 		Unit:  "integer",
 		Metrics: [](mp.Metrics){
 			mp.Metrics{Name: "DeletedDocuments", Label: "DeletedDocuments"},
 		},
 	},
-	"es.IOPS": mp.Graphs{
+	"IOPS": mp.Graphs{
 		Label: "AWS ES IOPS",
 		Unit:  "iops",
 		Metrics: [](mp.Metrics){
@@ -63,7 +62,7 @@ var graphdef = map[string](mp.Graphs){
 			mp.Metrics{Name: "WriteIOPS", Label: "WriteIOPS"},
 		},
 	},
-	"es.Throughput": mp.Graphs{
+	"Throughput": mp.Graphs{
 		Label: "AWS ES Throughput",
 		Unit:  "bytes/sec",
 		Metrics: [](mp.Metrics){
@@ -71,28 +70,28 @@ var graphdef = map[string](mp.Graphs){
 			mp.Metrics{Name: "WriteThroughput", Label: "WriteThroughput"},
 		},
 	},
-	"es.DiskQueueDepth": mp.Graphs{
+	"DiskQueueDepth": mp.Graphs{
 		Label: "AWS ES DiskQueueDepth",
 		Unit:  "integer",
 		Metrics: [](mp.Metrics){
 			mp.Metrics{Name: "DiskQueueDepth", Label: "DiskQueueDepth"},
 		},
 	},
-	"es.AutomatedSnapshotFailure": mp.Graphs{
+	"AutomatedSnapshotFailure": mp.Graphs{
 		Label: "AWS ES AutomatedSnapshotFailure",
 		Unit:  "integer",
 		Metrics: [](mp.Metrics){
 			mp.Metrics{Name: "AutomatedSnapshotFailure", Label: "AutomatedSnapshotFailure"},
 		},
 	},
-	"es.MasterCPUUtilization": mp.Graphs{
+	"MasterCPUUtilization": mp.Graphs{
 		Label: "AWS ES MasterCPUUtilization",
 		Unit:  "percentage",
 		Metrics: [](mp.Metrics){
 			mp.Metrics{Name: "MasterCPUUtilization", Label: "MasterCPUUtilization"},
 		},
 	},
-	"es.Latency": mp.Graphs{
+	"Latency": mp.Graphs{
 		Label: "AWS ES Latency",
 		Unit:  "float",
 		Metrics: [](mp.Metrics){
@@ -100,21 +99,21 @@ var graphdef = map[string](mp.Graphs){
 			mp.Metrics{Name: "WriteLatency", Label: "WriteLatency"},
 		},
 	},
-	"es.MasterJVMMemoryPressure": mp.Graphs{
+	"MasterJVMMemoryPressure": mp.Graphs{
 		Label: "AWS ES MasterJVMMemoryPressure",
 		Unit:  "percentage",
 		Metrics: [](mp.Metrics){
 			mp.Metrics{Name: "MasterJVMMemoryPressure", Label: "MasterJVMMemoryPressure"},
 		},
 	},
-	"es.MasterFreeStorageSpace": mp.Graphs{
+	"MasterFreeStorageSpace": mp.Graphs{
 		Label: "AWS ES MasterFreeStorageSpace",
 		Unit:  "bytes",
 		Metrics: [](mp.Metrics){
 			mp.Metrics{Name: "MasterFreeStorageSpace", Label: "MasterFreeStorageSpace"},
 		},
 	},
-	"es.ClusterStatus": mp.Graphs{
+	"ClusterStatus": mp.Graphs{
 		Label: "AWS ES ClusterStatus",
 		Unit:  "integer",
 		Metrics: [](mp.Metrics){
@@ -136,6 +135,11 @@ type ESPlugin struct {
 }
 
 const esNameSpace = "AWS/ES"
+
+// MetricKeyPrefix interface for PluginWithPrefix
+func (p ESPlugin) MetricKeyPrefix() string {
+	return "es"
+}
 
 func (p *ESPlugin) prepare() error {
 	auth, err := aws.GetAuth(p.AccessKeyID, p.SecretAccessKey, "", time.Now())
@@ -187,7 +191,7 @@ func (p ESPlugin) getLastPoint(dimensions *[]cloudwatch.Dimension, metricName st
 }
 
 // FetchMetrics interface for mackerelplugin
-func (p ESPlugin) FetchMetrics() (map[string]float64, error) {
+func (p ESPlugin) FetchMetrics() (map[string]interface{}, error) {
 	dimensions := []cloudwatch.Dimension{
 		{
 			Name:  "DomainName",
@@ -207,7 +211,7 @@ func (p ESPlugin) FetchMetrics() (map[string]float64, error) {
 		log.Printf("%s", err)
 	}
 
-	stat := make(map[string]float64)
+	stat := make(map[string]interface{})
 
 	for _, met := range ret.ListMetricsResult.Metrics {
 		v, err := p.getLastPoint(&dimensions, met.MetricName)
@@ -258,15 +262,6 @@ func main() {
 	}
 
 	helper := mp.NewMackerelPlugin(es)
-	if *optTempfile != "" {
-		helper.Tempfile = *optTempfile
-	} else {
-		helper.Tempfile = "/tmp/mackerel-plugin-aws-elasticsearch"
-	}
-
-	if os.Getenv("MACKEREL_AGENT_PLUGIN_META") != "" {
-		helper.OutputDefinitions()
-	} else {
-		helper.OutputValues()
-	}
+	helper.Tempfile = *optTempfile
+	helper.Run()
 }
