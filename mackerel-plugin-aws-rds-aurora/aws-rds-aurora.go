@@ -3,7 +3,9 @@ package main
 import (
 	"errors"
 	"flag"
+	"fmt"
 	"log"
+	"os"
 	"time"
 
 	"github.com/crowdmob/goamz/aws"
@@ -266,4 +268,17 @@ func main() {
 	aurora.AccessKeyID = *optAccessKeyID
 	aurora.SecretAccessKey = *optSecretAccessKey
 	aurora.Metrics = metricsdefAurora
+
+	helper := mp.NewMackerelPlugin(aurora)
+	if *optTempfile != "" {
+		helper.Tempfile = *optTempfile
+	} else {
+		helper.Tempfile = fmt.Sprintf("/tmp/mackerel-plugin-aws-aurora")
+	}
+
+	if os.Getenv("MACKEREL_AGENT_PLUGIN_META") != "" {
+		helper.OutputDefinitions()
+	} else {
+		helper.OutputValues()
+	}
 }
