@@ -14,7 +14,7 @@ mackerel-plugin-conntrack [-tempfile=<tempfile>] [-version]
 $ mackerel-plugin-conntrack -h
 Usage of mackerel-plugin-conntrack:
   -tempfile string
-        Temp file name (default "/tmp/mackerel-plugin-conntrack")
+        Temp file name
   -version
         Print version information and quit.
 ```
