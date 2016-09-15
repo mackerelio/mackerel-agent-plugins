@@ -95,7 +95,7 @@ var cloudwatchdefs = map[string](cloudWatchSetting){
 }
 
 var graphdef = map[string](mp.Graphs){
-	"ec2.ebs.bandwidth.#": mp.Graphs{
+	"ebs.bandwidth.#": mp.Graphs{
 		Label: "EBS Bandwidth",
 		Unit:  "bytes/sec",
 		Metrics: [](mp.Metrics){
@@ -103,7 +103,7 @@ var graphdef = map[string](mp.Graphs){
 			mp.Metrics{Name: "write", Label: "Write", Diff: false},
 		},
 	},
-	"ec2.ebs.throughput.#": mp.Graphs{
+	"ebs.throughput.#": mp.Graphs{
 		Label: "EBS Throughput (op/s)",
 		Unit:  "iops",
 		Metrics: [](mp.Metrics){
@@ -111,7 +111,7 @@ var graphdef = map[string](mp.Graphs){
 			mp.Metrics{Name: "write", Label: "Write", Diff: false},
 		},
 	},
-	"ec2.ebs.size_per_op.#": mp.Graphs{
+	"ebs.size_per_op.#": mp.Graphs{
 		Label: "EBS Avg Op Size (Bytes/op)",
 		Unit:  "bytes",
 		Metrics: [](mp.Metrics){
@@ -119,7 +119,7 @@ var graphdef = map[string](mp.Graphs){
 			mp.Metrics{Name: "write", Label: "Write", Diff: false},
 		},
 	},
-	"ec2.ebs.latency.#": mp.Graphs{
+	"ebs.latency.#": mp.Graphs{
 		Label: "EBS Avg Latency (ms/op)",
 		Unit:  "float",
 		Metrics: [](mp.Metrics){
@@ -127,28 +127,28 @@ var graphdef = map[string](mp.Graphs){
 			mp.Metrics{Name: "write", Label: "Write", Diff: false},
 		},
 	},
-	"ec2.ebs.queue_length.#": mp.Graphs{
+	"ebs.queue_length.#": mp.Graphs{
 		Label: "EBS Avg Queue Length (ops)",
 		Unit:  "float",
 		Metrics: [](mp.Metrics){
 			mp.Metrics{Name: "queue_length", Label: "Queue Length", Diff: false},
 		},
 	},
-	"ec2.ebs.idle_time.#": mp.Graphs{
+	"ebs.idle_time.#": mp.Graphs{
 		Label: "EBS Time Spent Idle",
 		Unit:  "percentage",
 		Metrics: [](mp.Metrics){
 			mp.Metrics{Name: "idle_time", Label: "Idle Time", Diff: false},
 		},
 	},
-	"ec2.ebs.throughput_delivered.#": mp.Graphs{
+	"ebs.throughput_delivered.#": mp.Graphs{
 		Label: "EBS Throughput of Provisioned IOPS",
 		Unit:  "percentage",
 		Metrics: [](mp.Metrics){
 			mp.Metrics{Name: "throughput_delivered", Label: "Throughput", Diff: false},
 		},
 	},
-	"ec2.ebs.consumed_ops.#": mp.Graphs{
+	"ebs.consumed_ops.#": mp.Graphs{
 		Label: "EBS Consumed Ops of Provisioned IOPS",
 		Unit:  "float",
 		Metrics: [](mp.Metrics){
@@ -169,6 +169,11 @@ type EBSPlugin struct {
 	EC2             *ec2.EC2
 	CloudWatch      *cloudwatch.CloudWatch
 	Volumes         []*ec2.Volume
+}
+
+// MetricKeyPrefix interface for PluginWithPrefix
+func (p EBSPlugin) MetricKeyPrefix() string {
+	return "ec2"
 }
 
 func (p *EBSPlugin) prepare() error {
@@ -330,11 +335,7 @@ func main() {
 	}
 
 	helper := mp.NewMackerelPlugin(ebs)
-	if *optTempfile != "" {
-		helper.Tempfile = *optTempfile
-	} else {
-		helper.Tempfile = "/tmp/mackerel-plugin-ebs"
-	}
+	helper.Tempfile = *optTempfile
 
 	helper.Run()
 }
