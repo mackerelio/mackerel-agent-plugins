@@ -106,35 +106,35 @@ func (p AuroraPlugin) FetchMetrics() (map[string]float64, error) {
 // GraphDefinition interface for mackerel plugin
 func (p AuroraPlugin) GraphDefinition() map[string](mp.Graphs) {
 	graphdef := map[string](mp.Graphs){
-		p.Prefix + ".CPUUtilization": mp.Graphs{
+		p.LabelPrefix + ".CPUUtilization": mp.Graphs{
 			Label: p.LabelPrefix + " CPU Utilization",
 			Unit:  "percentage",
 			Metrics: [](mp.Metrics){
 				mp.Metrics{Name: "CPUUtilization", Label: "CPUUtilization"},
 			},
 		},
-		p.Prefix + ".DatabaseConnections": mp.Graphs{
+		p.LabelPrefix + ".DatabaseConnections": mp.Graphs{
 			Label: p.LabelPrefix + " Database Connections",
 			Unit:  "float",
 			Metrics: [](mp.Metrics){
 				mp.Metrics{Name: "DatabaseConnections", Label: "DatabaseConnections"},
 			},
 		},
-		p.Prefix + ".FreeableMemory": mp.Graphs{
+		p.LabelPrefix + ".FreeableMemory": mp.Graphs{
 			Label: p.LabelPrefix + " Freeable Memory",
 			Unit:  "bytes",
 			Metrics: [](mp.Metrics){
 				mp.Metrics{Name: "FreeableMemory", Label: "FreeableMemory"},
 			},
 		},
-		p.Prefix + ".FreeStorageSpace": mp.Graphs{
+		p.LabelPrefix + ".FreeStorageSpace": mp.Graphs{
 			Label: p.LabelPrefix + " Free Storage Space",
 			Unit:  "bytes",
 			Metrics: [](mp.Metrics){
 				mp.Metrics{Name: "FreeStorageSpace", Label: "FreeStorageSpace"},
 			},
 		},
-		p.Prefix + ".NetworkThroughput": mp.Graphs{
+		p.LabelPrefix + ".NetworkThroughput": mp.Graphs{
 			Label: p.LabelPrefix + " Network Throughput",
 			Unit:  "bytes/sec",
 			Metrics: [](mp.Metrics){
@@ -143,21 +143,21 @@ func (p AuroraPlugin) GraphDefinition() map[string](mp.Graphs) {
 				mp.Metrics{Name: "NetworkReceiveThroughput", Label: "Receive"},
 			},
 		},
-		p.Prefix + ".BinLogDiskUsage": mp.Graphs{
+		p.LabelPrefix + ".BinLogDiskUsage": mp.Graphs{
 			Label: p.LabelPrefix + " BinLog Disk Usage",
 			Unit:  "bytes",
 			Metrics: [](mp.Metrics){
 				mp.Metrics{Name: "BinLogDiskUsage", Label: "BinLogDiskUsage"},
 			},
 		},
-		p.Prefix + ".Deadlocks": mp.Graphs{
+		p.LabelPrefix + ".Deadlocks": mp.Graphs{
 			Label: p.LabelPrefix + " Dead Locks",
 			Unit:  "float",
 			Metrics: [](mp.Metrics){
 				mp.Metrics{Name: "Deadlocks", Label: "Deadlocks"},
 			},
 		},
-		p.Prefix + ".Transaction": mp.Graphs{
+		p.LabelPrefix + ".Transaction": mp.Graphs{
 			Label: p.LabelPrefix + " Transaction",
 			Unit:  "float",
 			Metrics: [](mp.Metrics){
@@ -165,28 +165,28 @@ func (p AuroraPlugin) GraphDefinition() map[string](mp.Graphs) {
 				mp.Metrics{Name: "BlockedTransactions", Label: "Blocked"},
 			},
 		},
-		p.Prefix + ".EngineUptime": mp.Graphs{
+		p.LabelPrefix + ".EngineUptime": mp.Graphs{
 			Label: p.LabelPrefix + " Engine Uptime",
 			Unit:  "float",
 			Metrics: [](mp.Metrics){
 				mp.Metrics{Name: "EngineUptime", Label: "EngineUptime"},
 			},
 		},
-		p.Prefix + ".Queries": mp.Graphs{
+		p.LabelPrefix + ".Queries": mp.Graphs{
 			Label: p.LabelPrefix + " Queries",
 			Unit:  "float",
 			Metrics: [](mp.Metrics){
 				mp.Metrics{Name: "Queries", Label: "Queries"},
 			},
 		},
-		p.Prefix + ".LoginFailures": mp.Graphs{
+		p.LabelPrefix + ".LoginFailures": mp.Graphs{
 			Label: p.LabelPrefix + " Login Failures",
 			Unit:  "integer",
 			Metrics: [](mp.Metrics){
 				mp.Metrics{Name: "LoginFailures", Label: "LoginFailures"},
 			},
 		},
-		p.Prefix + ".CacheHitRatio": mp.Graphs{
+		p.LabelPrefix + ".CacheHitRatio": mp.Graphs{
 			Label: p.LabelPrefix + " Cache Hit Ratio",
 			Unit:  "percentage",
 			Metrics: [](mp.Metrics){
@@ -194,14 +194,14 @@ func (p AuroraPlugin) GraphDefinition() map[string](mp.Graphs) {
 				mp.Metrics{Name: "BufferCacheHitRatio", Label: "Buffer"},
 			},
 		},
-		p.Prefix + ".AuroraBinlogReplicaLag": mp.Graphs{
+		p.LabelPrefix + ".AuroraBinlogReplicaLag": mp.Graphs{
 			Label: p.LabelPrefix + " Aurora Binlog ReplicaLag",
 			Unit:  "float",
 			Metrics: [](mp.Metrics){
 				mp.Metrics{Name: "AuroraBinlogReplicaLag", Label: "AuroraBinlogReplicaLag"},
 			},
 		},
-		p.Prefix + ".AuroraReplicaLag": mp.Graphs{
+		p.LabelPrefix + ".AuroraReplicaLag": mp.Graphs{
 			Label: p.LabelPrefix + " Aurora ReplicaLag",
 			Unit:  "float",
 			Metrics: [](mp.Metrics){
@@ -210,7 +210,7 @@ func (p AuroraPlugin) GraphDefinition() map[string](mp.Graphs) {
 				mp.Metrics{Name: "AuroraBinlogReplicaLag", Label: "ReplicaLagMinimum"},
 			},
 		},
-		p.Prefix + ".Latency": mp.Graphs{
+		p.LabelPrefix + ".Latency": mp.Graphs{
 			Label: p.LabelPrefix + " Latency",
 			Unit:  "float",
 			Metrics: [](mp.Metrics){
@@ -223,7 +223,7 @@ func (p AuroraPlugin) GraphDefinition() map[string](mp.Graphs) {
 				mp.Metrics{Name: "DMLLatency", Label: "DML"},
 			},
 		},
-		p.Prefix + ".Throughput": mp.Graphs{
+		p.LabelPrefix + ".Throughput": mp.Graphs{
 			Label: p.LabelPrefix + " Throughput",
 			Unit:  "float",
 			Metrics: [](mp.Metrics){
