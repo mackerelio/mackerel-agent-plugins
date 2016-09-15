@@ -273,7 +273,7 @@ func main() {
 	if *optTempfile != "" {
 		helper.Tempfile = *optTempfile
 	} else {
-		helper.Tempfile = fmt.Sprintf("/tmp/mackerel-plugin-aws-aurora")
+		helper.Tempfile = fmt.Sprintf("/tmp/mackerel-plugin-aws-rds-aurora")
 	}
 
 	if os.Getenv("MACKEREL_AGENT_PLUGIN_META") != "" {
