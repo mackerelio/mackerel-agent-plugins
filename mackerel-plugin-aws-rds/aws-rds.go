@@ -4,13 +4,12 @@ import (
 	"errors"
 	"flag"
 	"log"
-	"os"
 	"strings"
 	"time"
 
 	"github.com/crowdmob/goamz/aws"
 	"github.com/crowdmob/goamz/cloudwatch"
-	mp "github.com/mackerelio/go-mackerel-plugin"
+	mp "github.com/mackerelio/go-mackerel-plugin-helper"
 )
 
 // RDSPlugin mackerel plugin for amazon RDS
@@ -21,6 +20,14 @@ type RDSPlugin struct {
 	Identifier      string
 	Prefix          string
 	LabelPrefix     string
+}
+
+// MetricKeyPrefix interface for PluginWithPrefix
+func (p RDSPlugin) MetricKeyPrefix() string {
+	if p.Prefix == "" {
+		p.Prefix = "rds"
+	}
+	return p.Prefix
 }
 
 func getLastPoint(cloudWatch *cloudwatch.CloudWatch, dimension *cloudwatch.Dimension, metricName string) (float64, error) {
@@ -59,7 +66,7 @@ func getLastPoint(cloudWatch *cloudwatch.CloudWatch, dimension *cloudwatch.Dimen
 }
 
 // FetchMetrics interface for mackerel-plugin
-func (p RDSPlugin) FetchMetrics() (map[string]float64, error) {
+func (p RDSPlugin) FetchMetrics() (map[string]interface{}, error) {
 	auth, err := aws.GetAuth(p.AccessKeyID, p.SecretAccessKey, "", time.Now())
 	if err != nil {
 		return nil, err
@@ -70,7 +77,7 @@ func (p RDSPlugin) FetchMetrics() (map[string]float64, error) {
 		return nil, err
 	}
 
-	stat := make(map[string]float64)
+	stat := make(map[string]interface{})
 
 	perInstance := &cloudwatch.Dimension{
 		Name:  "DBInstanceIdentifier",
@@ -96,49 +103,49 @@ func (p RDSPlugin) FetchMetrics() (map[string]float64, error) {
 // GraphDefinition interface for mackerel plugin
 func (p RDSPlugin) GraphDefinition() map[string](mp.Graphs) {
 	graphdef := map[string](mp.Graphs){
-		p.Prefix + ".CPUUtilization": mp.Graphs{
+		"CPUUtilization": mp.Graphs{
 			Label: p.LabelPrefix + " CPU Utilization",
 			Unit:  "percentage",
 			Metrics: [](mp.Metrics){
 				mp.Metrics{Name: "CPUUtilization", Label: "CPUUtilization"},
 			},
 		},
-		p.Prefix + ".DatabaseConnections": mp.Graphs{
+		"DatabaseConnections": mp.Graphs{
 			Label: p.LabelPrefix + " Database Connections",
 			Unit:  "float",
 			Metrics: [](mp.Metrics){
 				mp.Metrics{Name: "DatabaseConnections", Label: "DatabaseConnections"},
 			},
 		},
-		p.Prefix + ".FreeableMemory": mp.Graphs{
+		"FreeableMemory": mp.Graphs{
 			Label: p.LabelPrefix + " Freeable Memory",
 			Unit:  "bytes",
 			Metrics: [](mp.Metrics){
 				mp.Metrics{Name: "FreeableMemory", Label: "FreeableMemory"},
 			},
 		},
-		p.Prefix + ".FreeStorageSpace": mp.Graphs{
+		"FreeStorageSpace": mp.Graphs{
 			Label: p.LabelPrefix + " Free Storage Space",
 			Unit:  "bytes",
 			Metrics: [](mp.Metrics){
 				mp.Metrics{Name: "FreeStorageSpace", Label: "FreeStorageSpace"},
 			},
 		},
-		p.Prefix + ".ReplicaLag": mp.Graphs{
+		"ReplicaLag": mp.Graphs{
 			Label: p.LabelPrefix + " Replica Lag",
 			Unit:  "float",
 			Metrics: [](mp.Metrics){
 				mp.Metrics{Name: "ReplicaLag", Label: "ReplicaLag"},
 			},
 		},
-		p.Prefix + ".SwapUsage": mp.Graphs{
+		"SwapUsage": mp.Graphs{
 			Label: p.LabelPrefix + " Swap Usage",
 			Unit:  "bytes",
 			Metrics: [](mp.Metrics){
 				mp.Metrics{Name: "SwapUsage", Label: "SwapUsage"},
 			},
 		},
-		p.Prefix + ".IOPS": mp.Graphs{
+		"IOPS": mp.Graphs{
 			Label: p.LabelPrefix + " IOPS",
 			Unit:  "iops",
 			Metrics: [](mp.Metrics){
@@ -146,7 +153,7 @@ func (p RDSPlugin) GraphDefinition() map[string](mp.Graphs) {
 				mp.Metrics{Name: "WriteIOPS", Label: "Write"},
 			},
 		},
-		p.Prefix + ".Latency": mp.Graphs{
+		"Latency": mp.Graphs{
 			Label: p.LabelPrefix + " Latency in second",
 			Unit:  "float",
 			Metrics: [](mp.Metrics){
@@ -154,7 +161,7 @@ func (p RDSPlugin) GraphDefinition() map[string](mp.Graphs) {
 				mp.Metrics{Name: "WriteLatency", Label: "Write"},
 			},
 		},
-		p.Prefix + ".Throughput": mp.Graphs{
+		"Throughput": mp.Graphs{
 			Label: p.LabelPrefix + " Throughput",
 			Unit:  "bytes/sec",
 			Metrics: [](mp.Metrics){
@@ -162,7 +169,7 @@ func (p RDSPlugin) GraphDefinition() map[string](mp.Graphs) {
 				mp.Metrics{Name: "WriteThroughput", Label: "Write"},
 			},
 		},
-		p.Prefix + ".NetworkThroughput": mp.Graphs{
+		"NetworkThroughput": mp.Graphs{
 			Label: p.LabelPrefix + " Network Throughput",
 			Unit:  "bytes/sec",
 			Metrics: [](mp.Metrics){
@@ -209,15 +216,6 @@ func main() {
 	rds.SecretAccessKey = *optSecretAccessKey
 
 	helper := mp.NewMackerelPlugin(rds)
-	if *optTempfile != "" {
-		helper.Tempfile = *optTempfile
-	} else {
-		helper.Tempfile = "/tmp/mackerel-plugin-rds"
-	}
-
-	if os.Getenv("MACKEREL_AGENT_PLUGIN_META") != "" {
-		helper.OutputDefinitions()
-	} else {
-		helper.OutputValues()
-	}
+	helper.Tempfile = *optTempfile
+	helper.Run()
 }
