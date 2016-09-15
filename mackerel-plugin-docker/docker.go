@@ -18,7 +18,7 @@ import (
 )
 
 var graphdef = map[string](mp.Graphs){
-	"docker.cpuacct.#": mp.Graphs{
+	"cpuacct.#": mp.Graphs{
 		Label: "Docker CPU",
 		Unit:  "integer",
 		Metrics: [](mp.Metrics){
@@ -26,7 +26,7 @@ var graphdef = map[string](mp.Graphs){
 			mp.Metrics{Name: "system", Label: "System", Diff: true, Stacked: true, Type: "uint64"},
 		},
 	},
-	"docker.memory.#": mp.Graphs{
+	"memory.#": mp.Graphs{
 		Label: "Docker Memory",
 		Unit:  "integer",
 		Metrics: [](mp.Metrics){
@@ -34,7 +34,7 @@ var graphdef = map[string](mp.Graphs){
 			mp.Metrics{Name: "rss", Label: "RSS", Diff: false, Stacked: true},
 		},
 	},
-	"docker.blkio.io_queued.#": mp.Graphs{
+	"blkio.io_queued.#": mp.Graphs{
 		Label: "Docker BlkIO Queued",
 		Unit:  "integer",
 		Metrics: [](mp.Metrics){
@@ -44,7 +44,7 @@ var graphdef = map[string](mp.Graphs){
 			mp.Metrics{Name: "async", Label: "Async", Diff: false, Stacked: true},
 		},
 	},
-	"docker.blkio.io_serviced.#": mp.Graphs{
+	"blkio.io_serviced.#": mp.Graphs{
 		Label: "Docker BlkIO IOPS",
 		Unit:  "integer",
 		Metrics: [](mp.Metrics){
@@ -54,7 +54,7 @@ var graphdef = map[string](mp.Graphs){
 			mp.Metrics{Name: "async", Label: "Async", Diff: true, Stacked: true, Type: "uint64"},
 		},
 	},
-	"docker.blkio.io_service_bytes.#": mp.Graphs{
+	"blkio.io_service_bytes.#": mp.Graphs{
 		Label: "Docker BlkIO Bytes",
 		Unit:  "integer",
 		Metrics: [](mp.Metrics){
@@ -75,6 +75,11 @@ type DockerPlugin struct {
 	NameFormat    string
 	Label         string
 	pathBuilder   *pathBuilder
+}
+
+// MetricKeyPrefix interface for PluginWithPrefix
+func (m DockerPlugin) MetricKeyPrefix() string {
+	return "docker"
 }
 
 func getFile(path string) (string, error) {
@@ -465,16 +470,6 @@ func main() {
 	}
 
 	helper := mp.NewMackerelPlugin(docker)
-
-	if *optTempfile != "" {
-		helper.Tempfile = *optTempfile
-	} else {
-		helper.Tempfile = fmt.Sprintf("/tmp/mackerel-plugin-docker-%s", normalizeMetricName(*optHost))
-	}
-
-	if os.Getenv("MACKEREL_AGENT_PLUGIN_META") != "" {
-		helper.OutputDefinitions()
-	} else {
-		helper.OutputValues()
-	}
+	helper.Tempfile = *optTempfile
+	helper.Run()
 }
