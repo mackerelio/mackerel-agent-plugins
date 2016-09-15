@@ -3,6 +3,7 @@ package main
 import (
 	"errors"
 	"flag"
+	"log"
 	"time"
 
 	"github.com/crowdmob/goamz/aws"
@@ -67,6 +68,37 @@ func getLastPoint(cloudWatch *cloudwatch.CloudWatch, dimension *cloudwatch.Dimen
 	}
 
 	return latestVal, nil
+}
+
+// FetchMetrics interface for mackerel-plugin
+func (p AuroraPlugin) FetchMetrics() (map[string]float64, error) {
+	auth, err := aws.GetAuth(p.AccessKeyID, p.SecretAccessKey, "", time.Now())
+	if err != nil {
+		return nil, err
+	}
+
+	cloudWatch, err := cloudwatch.NewCloudWatch(auth, aws.Regions[p.Region].CloudWatchServicepoint)
+	if err != nil {
+		return nil, err
+	}
+
+	stat := make(map[string]float64)
+
+	perInstance := &cloudwatch.Dimension{
+		Name:  "DBInstanceIdentifier",
+		Value: p.Identifier,
+	}
+
+	for _, met := range p.Metrics {
+		v, err := getLastPoint(cloudWatch, perInstance, met)
+		if err == nil {
+			stat[met] = v
+		} else {
+			log.Printf("%s: %s", met, err)
+		}
+	}
+
+	return stat, nil
 }
 
 // GraphDefinition interface for mackerel plugin
