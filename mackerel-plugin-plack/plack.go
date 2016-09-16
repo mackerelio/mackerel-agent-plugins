@@ -68,7 +68,7 @@ type PlackRequest struct{}
 
 // PlackServerStatus sturct for server-status's json
 type PlackServerStatus struct {
-	// Uptime        string         `json:"Uptime"`
+	Uptime        interface{}    `json:"Uptime"` // Plack::Middleware::ServerStatus::Lite 0.35 outputs Uptime as a JSON number, though pre-0.35 outputs it as a JSON string.
 	TotalAccesses string         `json:"TotalAccesses"`
 	TotalKbytes   string         `json:"TotalKbytes"`
 	BusyWorkers   string         `json:"BusyWorkers"`
