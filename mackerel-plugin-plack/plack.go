@@ -68,7 +68,7 @@ type PlackRequest struct{}
 
 // PlackServerStatus sturct for server-status's json
 type PlackServerStatus struct {
-	Uptime        string         `json:"Uptime"`
+	// Uptime        string         `json:"Uptime"`
 	TotalAccesses string         `json:"TotalAccesses"`
 	TotalKbytes   string         `json:"TotalKbytes"`
 	BusyWorkers   string         `json:"BusyWorkers"`
