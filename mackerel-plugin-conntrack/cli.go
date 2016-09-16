@@ -21,7 +21,7 @@ type ConntrackPlugin struct{}
 func (c ConntrackPlugin) GraphDefinition() map[string](mp.Graphs) {
 	// graphdef is Graph definition for mackerelplugin.
 	var graphdef = map[string](mp.Graphs){
-		"conntrack.count": mp.Graphs{
+		"count": mp.Graphs{
 			Label: "Conntrack Count",
 			Unit:  "integer",
 			Metrics: [](mp.Metrics){
@@ -31,6 +31,11 @@ func (c ConntrackPlugin) GraphDefinition() map[string](mp.Graphs) {
 	}
 
 	return graphdef
+}
+
+// MetricKeyPrefix interface for PluginWithPrefix
+func (c ConntrackPlugin) MetricKeyPrefix() string {
+	return "conntrack"
 }
 
 // FetchMetrics interface for mackerelplugin.
@@ -68,7 +73,7 @@ func (c *CLI) Run(args []string) int {
 	// Define option flag parse
 	flags := flag.NewFlagSet(Name, flag.ContinueOnError)
 	flags.BoolVar(&version, "version", false, "Print version information and quit.")
-	flags.StringVar(&tempfile, "tempfile", "/tmp/mackerel-plugin-conntrack", "Temp file name")
+	flags.StringVar(&tempfile, "tempfile", "", "Temp file name")
 
 	// Parse commandline flag
 	if err := flags.Parse(args[1:]); err != nil {

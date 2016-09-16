@@ -9,7 +9,7 @@ import (
 
 	"github.com/crowdmob/goamz/aws"
 	"github.com/crowdmob/goamz/cloudwatch"
-	mp "github.com/mackerelio/go-mackerel-plugin"
+	mp "github.com/mackerelio/go-mackerel-plugin-helper"
 )
 
 const (
@@ -18,32 +18,6 @@ const (
 	metricsTypeAverage = "Average"
 	metricsTypeSum     = "Sum"
 )
-
-var graphdef = map[string](mp.Graphs){
-	"cloudfront.Requests": mp.Graphs{
-		Label: "CloudFront Requests",
-		Unit:  "integer",
-		Metrics: [](mp.Metrics){
-			mp.Metrics{Name: "Requests", Label: "Requests"},
-		},
-	},
-	"cloudfront.Transfer": mp.Graphs{
-		Label: "CloudFront Transfer",
-		Unit:  "bytes",
-		Metrics: [](mp.Metrics){
-			mp.Metrics{Name: "BytesDownloaded", Label: "Download", Stacked: true},
-			mp.Metrics{Name: "BytesUploaded", Label: "Upload", Stacked: true},
-		},
-	},
-	"cloudfront.ErrorRate": mp.Graphs{
-		Label: "CloudFront ErrorRate",
-		Unit:  "percentage",
-		Metrics: [](mp.Metrics){
-			mp.Metrics{Name: "4xxErrorRate", Label: "4xx", Stacked: true},
-			mp.Metrics{Name: "5xxErrorRate", Label: "5xx", Stacked: true},
-		},
-	},
-}
 
 type metrics struct {
 	Name string
@@ -56,6 +30,16 @@ type CloudFrontPlugin struct {
 	SecretAccessKey string
 	CloudWatch      *cloudwatch.CloudWatch
 	Name            string
+	KeyPrefix       string
+	LabelPrefix     string
+}
+
+// MetricKeyPrefix interface for PluginWithPrefix
+func (p CloudFrontPlugin) MetricKeyPrefix() string {
+	if p.KeyPrefix == "" {
+		p.KeyPrefix = "cloudfront"
+	}
+	return p.KeyPrefix
 }
 
 func (p *CloudFrontPlugin) prepare() error {
@@ -123,8 +107,8 @@ func (p CloudFrontPlugin) getLastPoint(metric metrics) (float64, error) {
 }
 
 // FetchMetrics fetch the metrics
-func (p CloudFrontPlugin) FetchMetrics() (map[string]float64, error) {
-	stat := make(map[string]float64)
+func (p CloudFrontPlugin) FetchMetrics() (map[string]interface{}, error) {
+	stat := make(map[string]interface{})
 
 	for _, met := range [...]metrics{
 		{Name: "Requests", Type: metricsTypeSum},
@@ -146,6 +130,34 @@ func (p CloudFrontPlugin) FetchMetrics() (map[string]float64, error) {
 
 // GraphDefinition of CloudFrontPlugin
 func (p CloudFrontPlugin) GraphDefinition() map[string](mp.Graphs) {
+	labelPrefix := p.LabelPrefix
+
+	var graphdef = map[string](mp.Graphs){
+		"Requests": mp.Graphs{
+			Label: (labelPrefix + " Requests"),
+			Unit:  "integer",
+			Metrics: [](mp.Metrics){
+				mp.Metrics{Name: "Requests", Label: "Requests"},
+			},
+		},
+		"Transfer": mp.Graphs{
+			Label: (labelPrefix + " Transfer"),
+			Unit:  "bytes",
+			Metrics: [](mp.Metrics){
+				mp.Metrics{Name: "BytesDownloaded", Label: "Download", Stacked: true},
+				mp.Metrics{Name: "BytesUploaded", Label: "Upload", Stacked: true},
+			},
+		},
+		"ErrorRate": mp.Graphs{
+			Label: (labelPrefix + " ErrorRate"),
+			Unit:  "percentage",
+			Metrics: [](mp.Metrics){
+				mp.Metrics{Name: "4xxErrorRate", Label: "4xx", Stacked: true},
+				mp.Metrics{Name: "5xxErrorRate", Label: "5xx", Stacked: true},
+			},
+		},
+	}
+
 	return graphdef
 }
 
@@ -153,6 +165,8 @@ func main() {
 	optAccessKeyID := flag.String("access-key-id", "", "AWS Access Key ID")
 	optSecretAccessKey := flag.String("secret-access-key", "", "AWS Secret Access Key")
 	optIdentifier := flag.String("identifier", "", "Distribution ID")
+	optKeyPrefix := flag.String("metric-key-prefix", "cloudfront", "Metric key prefix")
+	optLabelPrefix := flag.String("metric-label-prefix", "CloudFront", "Metric label prefix")
 	optTempfile := flag.String("tempfile", "", "Temp file name")
 	flag.Parse()
 
@@ -161,22 +175,19 @@ func main() {
 	plugin.AccessKeyID = *optAccessKeyID
 	plugin.SecretAccessKey = *optSecretAccessKey
 	plugin.Name = *optIdentifier
-
-	err := plugin.prepare()
-	if err != nil {
-		log.Fatalln(err)
-	}
+	plugin.LabelPrefix = *optLabelPrefix
+	plugin.KeyPrefix = *optKeyPrefix
 
 	helper := mp.NewMackerelPlugin(plugin)
-	if *optTempfile != "" {
-		helper.Tempfile = *optTempfile
-	} else {
-		helper.Tempfile = "/tmp/mackerel-plugin-cloudfront"
-	}
+	helper.Tempfile = *optTempfile
 
 	if os.Getenv("MACKEREL_AGENT_PLUGIN_META") != "" {
 		helper.OutputDefinitions()
 	} else {
+		err := plugin.prepare()
+		if err != nil {
+			log.Fatalln(err)
+		}
 		helper.OutputValues()
 	}
 }

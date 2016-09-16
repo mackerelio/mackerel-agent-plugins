@@ -4,23 +4,22 @@ import (
 	"errors"
 	"flag"
 	"log"
-	"os"
 	"time"
 
 	"github.com/crowdmob/goamz/aws"
 	"github.com/crowdmob/goamz/cloudwatch"
-	mp "github.com/mackerelio/go-mackerel-plugin"
+	mp "github.com/mackerelio/go-mackerel-plugin-helper"
 )
 
 var graphdef = map[string](mp.Graphs){
-	"elb.latency": mp.Graphs{
+	"latency": mp.Graphs{
 		Label: "Whole ELB Latency",
 		Unit:  "float",
 		Metrics: [](mp.Metrics){
 			mp.Metrics{Name: "Latency", Label: "Latency"},
 		},
 	},
-	"elb.http_backend": mp.Graphs{
+	"http_backend": mp.Graphs{
 		Label: "Whole ELB HTTP Backend Count",
 		Unit:  "integer",
 		Metrics: [](mp.Metrics){
@@ -30,7 +29,7 @@ var graphdef = map[string](mp.Graphs){
 			mp.Metrics{Name: "HTTPCode_Backend_5XX", Label: "5XX", Stacked: true},
 		},
 	},
-	// "elb.healthy_host_count", "elb.unhealthy_host_count" will be generated dynamically
+	// "healthy_host_count", "unhealthy_host_count" will be generated dynamically
 }
 
 type statType int
@@ -58,6 +57,11 @@ type ELBPlugin struct {
 	AZs             []string
 	CloudWatch      *cloudwatch.CloudWatch
 	Lbname          string
+}
+
+// MetricKeyPrefix interface for PluginWithPrefix
+func (p ELBPlugin) MetricKeyPrefix() string {
+	return "elb"
 }
 
 func (p *ELBPlugin) prepare() error {
@@ -140,8 +144,8 @@ func (p ELBPlugin) getLastPoint(dimensions *[]cloudwatch.Dimension, metricName s
 }
 
 // FetchMetrics fetch elb metrics
-func (p ELBPlugin) FetchMetrics() (map[string]float64, error) {
-	stat := make(map[string]float64)
+func (p ELBPlugin) FetchMetrics() (map[string]interface{}, error) {
+	stat := make(map[string]interface{})
 
 	// HostCount per AZ
 	for _, az := range p.AZs {
@@ -197,14 +201,14 @@ func (p ELBPlugin) FetchMetrics() (map[string]float64, error) {
 
 // GraphDefinition for Mackerel
 func (p ELBPlugin) GraphDefinition() map[string](mp.Graphs) {
-	for _, grp := range [...]string{"elb.healthy_host_count", "elb.unhealthy_host_count"} {
+	for _, grp := range [...]string{"healthy_host_count", "unhealthy_host_count"} {
 		var namePre string
 		var label string
 		switch grp {
-		case "elb.healthy_host_count":
+		case "healthy_host_count":
 			namePre = "HealthyHostCount_"
 			label = "ELB Healthy Host Count"
-		case "elb.unhealthy_host_count":
+		case "unhealthy_host_count":
 			namePre = "UnHealthyHostCount_"
 			label = "ELB Unhealthy Host Count"
 		}
@@ -249,15 +253,6 @@ func main() {
 	}
 
 	helper := mp.NewMackerelPlugin(elb)
-	if *optTempfile != "" {
-		helper.Tempfile = *optTempfile
-	} else {
-		helper.Tempfile = "/tmp/mackerel-plugin-elb"
-	}
-
-	if os.Getenv("MACKEREL_AGENT_PLUGIN_META") != "" {
-		helper.OutputDefinitions()
-	} else {
-		helper.OutputValues()
-	}
+	helper.Tempfile = *optTempfile
+	helper.Run()
 }

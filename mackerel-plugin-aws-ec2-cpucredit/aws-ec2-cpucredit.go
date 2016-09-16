@@ -3,16 +3,15 @@ package main
 import (
 	"errors"
 	"flag"
-	"os"
 	"time"
 
 	"github.com/crowdmob/goamz/aws"
 	"github.com/crowdmob/goamz/cloudwatch"
-	mp "github.com/mackerelio/go-mackerel-plugin"
+	mp "github.com/mackerelio/go-mackerel-plugin-helper"
 )
 
 var graphdef = map[string](mp.Graphs){
-	"ec2.cpucredit": mp.Graphs{
+	"cpucredit": mp.Graphs{
 		Label: "EC2 CPU Credit",
 		Unit:  "float",
 		Metrics: [](mp.Metrics){
@@ -28,6 +27,11 @@ type CPUCreditPlugin struct {
 	AccessKeyID     string
 	SecretAccessKey string
 	InstanceID      string
+}
+
+// MetricKeyPrefix interface for PluginWithPrefix
+func (p CPUCreditPlugin) MetricKeyPrefix() string {
+	return "ec2"
 }
 
 func getLastPointAverage(cw *cloudwatch.CloudWatch, dimension *cloudwatch.Dimension, metricName string) (float64, error) {
@@ -70,7 +74,7 @@ func getLastPointAverage(cw *cloudwatch.CloudWatch, dimension *cloudwatch.Dimens
 }
 
 // FetchMetrics fetch the metrics
-func (p CPUCreditPlugin) FetchMetrics() (map[string]float64, error) {
+func (p CPUCreditPlugin) FetchMetrics() (map[string]interface{}, error) {
 	region := aws.Regions[p.Region]
 	dimension := &cloudwatch.Dimension{
 		Name:  "InstanceId",
@@ -83,7 +87,7 @@ func (p CPUCreditPlugin) FetchMetrics() (map[string]float64, error) {
 	}
 	cw, err := cloudwatch.NewCloudWatch(auth, region.CloudWatchServicepoint)
 
-	stat := make(map[string]float64)
+	stat := make(map[string]interface{})
 
 	stat["usage"], err = getLastPointAverage(cw, dimension, "CPUCreditUsage")
 	if err != nil {
@@ -125,15 +129,6 @@ func main() {
 	cpucredit.SecretAccessKey = *optSecretAccessKey
 
 	helper := mp.NewMackerelPlugin(cpucredit)
-	if *optTempfile != "" {
-		helper.Tempfile = *optTempfile
-	} else {
-		helper.Tempfile = "/tmp/mackerel-plugin-cpucredit"
-	}
-
-	if os.Getenv("MACKEREL_AGENT_PLUGIN_META") != "" {
-		helper.OutputDefinitions()
-	} else {
-		helper.OutputValues()
-	}
+	helper.Tempfile = *optTempfile
+	helper.Run()
 }

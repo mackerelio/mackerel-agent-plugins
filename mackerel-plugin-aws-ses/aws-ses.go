@@ -3,16 +3,15 @@ package main
 import (
 	"errors"
 	"flag"
-	"os"
 	"time"
 
 	"github.com/crowdmob/goamz/aws"
-	mp "github.com/mackerelio/go-mackerel-plugin"
+	mp "github.com/mackerelio/go-mackerel-plugin-helper"
 	ses "github.com/naokibtn/go-ses"
 )
 
 var graphdef = map[string](mp.Graphs){
-	"ses.send24h": mp.Graphs{
+	"send24h": mp.Graphs{
 		Label: "SES Send (last 24h)",
 		Unit:  "float",
 		Metrics: [](mp.Metrics){
@@ -20,14 +19,14 @@ var graphdef = map[string](mp.Graphs){
 			mp.Metrics{Name: "SentLast24Hours", Label: "Sent"},
 		},
 	},
-	"ses.max_send_rate": mp.Graphs{
+	"max_send_rate": mp.Graphs{
 		Label: "SES Max Send Rate",
 		Unit:  "float",
 		Metrics: [](mp.Metrics){
 			mp.Metrics{Name: "MaxSendRate", Label: "MaxRate"},
 		},
 	},
-	"ses.stats": mp.Graphs{
+	"stats": mp.Graphs{
 		Label: "SES Stats",
 		Unit:  "int",
 		Metrics: [](mp.Metrics){
@@ -46,8 +45,13 @@ type SESPlugin struct {
 	SecretAccessKey string
 }
 
+// MetricKeyPrefix interface for PluginWithPrefix
+func (p SESPlugin) MetricKeyPrefix() string {
+	return "ses"
+}
+
 // FetchMetrics interface for mackerel plugin
-func (p SESPlugin) FetchMetrics() (map[string]float64, error) {
+func (p SESPlugin) FetchMetrics() (map[string]interface{}, error) {
 	if p.Endpoint == "" {
 		return nil, errors.New("no endpoint")
 	}
@@ -64,7 +68,7 @@ func (p SESPlugin) FetchMetrics() (map[string]float64, error) {
 		Endpoint:        p.Endpoint,
 	}
 
-	stat := make(map[string]float64)
+	stat := make(map[string]interface{})
 	quota, err := sescfg.GetSendQuota()
 	if err == nil {
 		stat["SentLast24Hours"] = quota.SentLast24Hours
@@ -112,15 +116,6 @@ func main() {
 	ses.SecretAccessKey = *optSecretAccessKey
 
 	helper := mp.NewMackerelPlugin(ses)
-	if *optTempfile != "" {
-		helper.Tempfile = *optTempfile
-	} else {
-		helper.Tempfile = "/tmp/mackerel-plugin-ses"
-	}
-
-	if os.Getenv("MACKEREL_AGENT_PLUGIN_META") != "" {
-		helper.OutputDefinitions()
-	} else {
-		helper.OutputValues()
-	}
+	helper.Tempfile = *optTempfile
+	helper.Run()
 }
