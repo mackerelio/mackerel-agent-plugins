@@ -5,7 +5,7 @@ CURRENT_VERSION = $(shell git log --merges --oneline | perl -ne 'if(m/^.+Merge p
 
 BUILD_FLAGS = -ldflags "\
 	      -s -w \
-	      -X main.Version=\"$(VERSION)\" \
+	      -X \"main.Version=$(VERSION)\" \
 	      "
 
 TARGET_OSARCH="linux/amd64"
