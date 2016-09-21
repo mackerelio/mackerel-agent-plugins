@@ -19,8 +19,10 @@ type RDSPlugin struct {
 	AccessKeyID     string
 	SecretAccessKey string
 	Identifier      string
+	Engine          string
 	Prefix          string
 	LabelPrefix     string
+	RDSMetrics      []string
 }
 
 func getLastPoint(cloudWatch *cloudwatch.CloudWatch, dimension *cloudwatch.Dimension, metricName string) (float64, error) {
@@ -95,83 +97,20 @@ func (p RDSPlugin) FetchMetrics() (map[string]float64, error) {
 
 // GraphDefinition interface for mackerel plugin
 func (p RDSPlugin) GraphDefinition() map[string](mp.Graphs) {
-	graphdef := map[string](mp.Graphs){
-		p.Prefix + ".CPUUtilization": mp.Graphs{
-			Label: p.LabelPrefix + " CPU Utilization",
-			Unit:  "percentage",
-			Metrics: [](mp.Metrics){
-				mp.Metrics{Name: "CPUUtilization", Label: "CPUUtilization"},
-			},
-		},
-		p.Prefix + ".DatabaseConnections": mp.Graphs{
-			Label: p.LabelPrefix + " Database Connections",
-			Unit:  "float",
-			Metrics: [](mp.Metrics){
-				mp.Metrics{Name: "DatabaseConnections", Label: "DatabaseConnections"},
-			},
-		},
-		p.Prefix + ".FreeableMemory": mp.Graphs{
-			Label: p.LabelPrefix + " Freeable Memory",
-			Unit:  "bytes",
-			Metrics: [](mp.Metrics){
-				mp.Metrics{Name: "FreeableMemory", Label: "FreeableMemory"},
-			},
-		},
-		p.Prefix + ".FreeStorageSpace": mp.Graphs{
-			Label: p.LabelPrefix + " Free Storage Space",
-			Unit:  "bytes",
-			Metrics: [](mp.Metrics){
-				mp.Metrics{Name: "FreeStorageSpace", Label: "FreeStorageSpace"},
-			},
-		},
-		p.Prefix + ".ReplicaLag": mp.Graphs{
-			Label: p.LabelPrefix + " Replica Lag",
-			Unit:  "float",
-			Metrics: [](mp.Metrics){
-				mp.Metrics{Name: "ReplicaLag", Label: "ReplicaLag"},
-			},
-		},
-		p.Prefix + ".SwapUsage": mp.Graphs{
-			Label: p.LabelPrefix + " Swap Usage",
-			Unit:  "bytes",
-			Metrics: [](mp.Metrics){
-				mp.Metrics{Name: "SwapUsage", Label: "SwapUsage"},
-			},
-		},
-		p.Prefix + ".IOPS": mp.Graphs{
-			Label: p.LabelPrefix + " IOPS",
-			Unit:  "iops",
-			Metrics: [](mp.Metrics){
-				mp.Metrics{Name: "ReadIOPS", Label: "Read"},
-				mp.Metrics{Name: "WriteIOPS", Label: "Write"},
-			},
-		},
-		p.Prefix + ".Latency": mp.Graphs{
-			Label: p.LabelPrefix + " Latency in second",
-			Unit:  "float",
-			Metrics: [](mp.Metrics){
-				mp.Metrics{Name: "ReadLatency", Label: "Read"},
-				mp.Metrics{Name: "WriteLatency", Label: "Write"},
-			},
-		},
-		p.Prefix + ".Throughput": mp.Graphs{
-			Label: p.LabelPrefix + " Throughput",
-			Unit:  "bytes/sec",
-			Metrics: [](mp.Metrics){
-				mp.Metrics{Name: "ReadThroughput", Label: "Read"},
-				mp.Metrics{Name: "WriteThroughput", Label: "Write"},
-			},
-		},
-		p.Prefix + ".NetworkThroughput": mp.Graphs{
-			Label: p.LabelPrefix + " Network Throughput",
-			Unit:  "bytes/sec",
-			Metrics: [](mp.Metrics){
-				mp.Metrics{Name: "NetworkTransmitThroughput", Label: "Transmit"},
-				mp.Metrics{Name: "NetworkReceiveThroughput", Label: "Receive"},
-			},
-		},
+	var graphdef map[string](mp.Graphs)
+	switch p.Engine {
+	case "mysql":
+		graphdef = p.MySQLGraphDefinition()
+	case "aurora":
+		graphdef = p.AuroraGraphDefinition()
+	case "mariadb":
+		graphdef = p.MariaDBGraphDefinition()
+	case "postgresql":
+		graphdef = p.PostgreSQLGraphDefinition()
+	default:
+		log.Printf("RDS Engine is 'mysql' or 'aurora' or 'mariadb' or 'postgresql'.")
+		os.Exit(1)
 	}
-
 	return graphdef
 }
 
@@ -180,6 +119,7 @@ func main() {
 	optAccessKeyID := flag.String("access-key-id", "", "AWS Access Key ID")
 	optSecretAccessKey := flag.String("secret-access-key", "", "AWS Secret Access Key")
 	optIdentifier := flag.String("identifier", "", "DB Instance Identifier")
+	optEngine := flag.String("engine", "", "RDS Engine")
 	optPrefix := flag.String("metric-key-prefix", "rds", "Metric key prefix")
 	optLabelPrefix := flag.String("metric-label-prefix", "", "Metric Label prefix")
 	optTempfile := flag.String("tempfile", "", "Temp file name")
@@ -207,6 +147,7 @@ func main() {
 	rds.Identifier = *optIdentifier
 	rds.AccessKeyID = *optAccessKeyID
 	rds.SecretAccessKey = *optSecretAccessKey
+	rds.Engine = *optEngine
 
 	helper := mp.NewMackerelPlugin(rds)
 	if *optTempfile != "" {
