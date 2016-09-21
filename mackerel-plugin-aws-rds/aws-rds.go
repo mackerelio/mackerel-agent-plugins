@@ -79,11 +79,7 @@ func (p RDSPlugin) FetchMetrics() (map[string]float64, error) {
 		Value: p.Identifier,
 	}
 
-	for _, met := range [...]string{
-		"BinLogDiskUsage", "CPUUtilization", "DatabaseConnections", "DiskQueueDepth", "FreeableMemory",
-		"FreeStorageSpace", "ReplicaLag", "SwapUsage", "ReadIOPS", "WriteIOPS", "ReadLatency",
-		"WriteLatency", "ReadThroughput", "WriteThroughput", "NetworkTransmitThroughput", "NetworkReceiveThroughput",
-	} {
+	for _, met := range p.RDSMetrics {
 		v, err := getLastPoint(cloudWatch, perInstance, met)
 		if err == nil {
 			stat[met] = v
@@ -148,6 +144,20 @@ func main() {
 	rds.AccessKeyID = *optAccessKeyID
 	rds.SecretAccessKey = *optSecretAccessKey
 	rds.Engine = *optEngine
+
+	switch rds.Engine {
+	case "mysql":
+		rds.RDSMetrics = MetricsdefMySQL
+	case "aurora":
+		rds.RDSMetrics = MetricsdefAurora
+	case "mariadb":
+		rds.RDSMetrics = MetricsdefMariaDB
+	case "postgresql":
+		rds.RDSMetrics = MetricsdefPostgreSQL
+	default:
+		log.Printf("RDS Engine is 'mysql' or 'aurora' or 'mariadb' or 'postgresql'.")
+		os.Exit(1)
+	}
 
 	helper := mp.NewMackerelPlugin(rds)
 	if *optTempfile != "" {
