@@ -109,6 +109,8 @@ func (m MemcachedPlugin) GraphDefinition() map[string](mp.Graphs) {
 			Unit:  "integer",
 			Metrics: [](mp.Metrics){
 				mp.Metrics{Name: "evictions", Label: "Evictions", Diff: true, Type: "uint64"},
+				mp.Metrics{Name: "evicted_unfetched", Label: "Evictions prior to Expire", Diff: true, Type: "uint64"},
+				mp.Metrics{Name: "reclaimed", Label: "Reclaimed Items", Diff: true, Type: "uint64"},
 			},
 		},
 		"unfetched": mp.Graphs{
