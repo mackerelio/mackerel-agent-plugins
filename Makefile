@@ -1,11 +1,9 @@
 VERBOSE_FLAG = $(if $(VERBOSE),-verbose)
 
-VERSION = $$(git describe --tags --always --dirty) ($$(git name-rev --name-only HEAD))
 CURRENT_VERSION = $(shell git log --merges --oneline | perl -ne 'if(m/^.+Merge pull request \#[0-9]+ from .+\/bump-version-([0-9\.]+)/){print $$1;exit}')
 
 BUILD_FLAGS = -ldflags "\
 	      -s -w \
-	      -X \"main.Version=$(VERSION)\" \
 	      "
 
 TARGET_OSARCH="linux/amd64"
