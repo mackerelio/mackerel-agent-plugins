@@ -1,11 +1,9 @@
 VERBOSE_FLAG = $(if $(VERBOSE),-verbose)
 
-VERSION = $$(git describe --tags --always --dirty) ($$(git name-rev --name-only HEAD))
 CURRENT_VERSION = $(shell git log --merges --oneline | perl -ne 'if(m/^.+Merge pull request \#[0-9]+ from .+\/bump-version-([0-9\.]+)/){print $$1;exit}')
 
 BUILD_FLAGS = -ldflags "\
 	      -s -w \
-	      -X main.Version \"$(VERSION)\" \
 	      "
 
 TARGET_OSARCH="linux/amd64"
@@ -33,10 +31,10 @@ testgo: testdeps
 	go test $(VERBOSE_FLAG) ./...
 
 deps:
-	go get -d -v $(VERBOSE_FLAG) ./...
+	go get -d -v ./...
 
 testdeps:
-	go get -d -v -t $(VERBOSE_FLAG) ./...
+	go get -d -v -t ./...
 	go get github.com/golang/lint/golint
 	go get golang.org/x/tools/cmd/cover
 	go get github.com/pierrre/gotestcover

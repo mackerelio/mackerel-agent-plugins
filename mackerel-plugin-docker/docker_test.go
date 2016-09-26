@@ -54,32 +54,32 @@ func TestGenerateName(t *testing.T) {
 	var docker DockerPlugin
 	docker.NameFormat = "name_id"
 	if docker.generateName(stub) != "my-mongodb_bab2b0" {
-		t.Errorf("generateName(name): %d should be 'my-mongodb_bab2b0'", docker.generateName(stub))
+		t.Errorf("generateName(name): %s should be 'my-mongodb_bab2b0'", docker.generateName(stub))
 	}
 	docker.NameFormat = "name"
 	if docker.generateName(stub) != "my-mongodb" {
-		t.Errorf("generateName(name): %d should be 'my-mongodb'", docker.generateName(stub))
+		t.Errorf("generateName(name): %s should be 'my-mongodb'", docker.generateName(stub))
 	}
 	docker.NameFormat = "id"
 	if docker.generateName(stub) != "bab2b03c736de41ecba6470eba736c5109436f706eedca4f3e0d93d6530eccd4" {
-		t.Errorf("generateName(name): %d should be 'bab2b03c736de41ecba6470eba736c5109436f706eedca4f3e0d93d6530eccd4'", docker.generateName(stub))
+		t.Errorf("generateName(name): %s should be 'bab2b03c736de41ecba6470eba736c5109436f706eedca4f3e0d93d6530eccd4'", docker.generateName(stub))
 	}
 	docker.NameFormat = "image"
 	if docker.generateName(stub) != "tutum/mongodb" {
-		t.Errorf("generateName(name): %d should be 'tutum/mongodb'", docker.generateName(stub))
+		t.Errorf("generateName(name): %s should be 'tutum/mongodb'", docker.generateName(stub))
 	}
 	docker.NameFormat = "image_id"
 	if docker.generateName(stub) != "tutum/mongodb_bab2b0" {
-		t.Errorf("generateName(name): %d should be 'tutum/mongodb_bab2b0'", docker.generateName(stub))
+		t.Errorf("generateName(name): %s should be 'tutum/mongodb_bab2b0'", docker.generateName(stub))
 	}
 	docker.NameFormat = "image_name"
 	if docker.generateName(stub) != "tutum/mongodb_my-mongodb" {
-		t.Errorf("generateName(name): %d should be 'tutum/mongodb_my-mongodb'", docker.generateName(stub))
+		t.Errorf("generateName(name): %s should be 'tutum/mongodb_my-mongodb'", docker.generateName(stub))
 	}
 	docker.NameFormat = "label"
 	docker.Label = "foo"
 	if docker.generateName(stub) != "bar" {
-		t.Errorf("generateName(name): %d should be 'bar'", docker.generateName(stub))
+		t.Errorf("generateName(name): %s should be 'bar'", docker.generateName(stub))
 	}
 
 }
