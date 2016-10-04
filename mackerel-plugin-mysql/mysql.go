@@ -458,6 +458,15 @@ func (m MySQLPlugin) addExtendedGraphdef(graphdef map[string](mp.Graphs)) map[st
 			mp.Metrics{Name: "Qcache_free_blocks", Label: "Qcache Free Blocks", Diff: false, Stacked: false, Type: "uint64"},
 		},
 	}
+	graphdef["temporary_objects"] = mp.Graphs{
+		Label: prefix + ".temporary Objects",
+		Unit:  "float",
+		Metrics: [](mp.Metrics){
+			mp.Metrics{Name: "Created_tmp_tables", Label: "Created Tmp Tables", Diff: true, Stacked: false, Type: "uint64"},
+			mp.Metrics{Name: "Created_tmp_disk_tables", Label: "Created Tmp Disk Tables", Diff: true, Stacked: false, Type: "uint64"},
+			mp.Metrics{Name: "Created_tmp_files", Label: "Created Tmp Files", Diff: true, Stacked: false, Type: "uint64"},
+		},
+	}
 	return graphdef
 }
 
