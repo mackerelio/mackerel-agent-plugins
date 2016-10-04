@@ -25,6 +25,27 @@ func TestGraphDefinition(t *testing.T) {
 	}
 }
 
+func TestGraphDefinition_DisableInnoDB_EnableExtended(t *testing.T) {
+	var mysql MySQLPlugin
+
+	mysql.DisableInnoDB = true
+	mysql.EnableExtended = true
+	graphdef := mysql.GraphDefinition()
+	if len(graphdef) != 10 {
+		t.Errorf("GetTempfilename: %d should be 28", len(graphdef))
+	}
+}
+
+func TestGraphDefinition_EnableExtended(t *testing.T) {
+	var mysql MySQLPlugin
+
+	mysql.EnableExtended = true
+	graphdef := mysql.GraphDefinition()
+	if len(graphdef) != 31 {
+		t.Errorf("GetTempfilename: %d should be 28", len(graphdef))
+	}
+}
+
 func TestParseProcStat56(t *testing.T) {
 	stub := `=====================================
 2015-03-09 20:11:22 7f6c0c845700 INNODB MONITOR OUTPUT

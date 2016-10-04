@@ -99,13 +99,14 @@ func (m MySQLPlugin) defaultGraphdef() map[string](mp.Graphs) {
 
 // MySQLPlugin mackerel plugin for MySQL
 type MySQLPlugin struct {
-	Target        string
-	Tempfile      string
-	prefix        string
-	Username      string
-	Password      string
-	DisableInnoDB bool
-	isUnixSocket  bool
+	Target         string
+	Tempfile       string
+	prefix         string
+	Username       string
+	Password       string
+	DisableInnoDB  bool
+	isUnixSocket   bool
+	EnableExtended bool
 }
 
 // MetricKeyPrefix retruns the metrics key prefix
@@ -233,15 +234,18 @@ func (m MySQLPlugin) FetchMetrics() (map[string]interface{}, error) {
 
 // GraphDefinition interface for mackerelplugin
 func (m MySQLPlugin) GraphDefinition() map[string](mp.Graphs) {
+	graphdef := m.defaultGraphdef()
 	if !m.DisableInnoDB {
-		return m.graphdefWithInnoDBMetrics()
+		graphdef = m.addGraphdefWithInnoDBMetrics(graphdef)
 	}
-	return m.defaultGraphdef()
+	if m.EnableExtended {
+		graphdef = m.addExtendedGraphdef(graphdef)
+	}
+	return graphdef
 }
 
-func (m MySQLPlugin) graphdefWithInnoDBMetrics() map[string](mp.Graphs) {
+func (m MySQLPlugin) addGraphdefWithInnoDBMetrics(graphdef map[string](mp.Graphs)) map[string](mp.Graphs) {
 	prefix := m.MetricKeyPrefix()
-	graphdef := m.defaultGraphdef()
 	graphdef["innodb_rows"] = mp.Graphs{
 		Label: prefix + ".innodb Rows",
 		Unit:  "float",
@@ -425,6 +429,33 @@ func (m MySQLPlugin) graphdefWithInnoDBMetrics() map[string](mp.Graphs) {
 		Metrics: [](mp.Metrics){
 			mp.Metrics{Name: "history_list", Label: "History List", Diff: false, Stacked: false},
 			mp.Metrics{Name: "innodb_transactions", Label: "InnoDB Transactions", Diff: true, Stacked: false},
+		},
+	}
+	return graphdef
+}
+
+func (m MySQLPlugin) addExtendedGraphdef(graphdef map[string](mp.Graphs)) map[string](mp.Graphs) {
+	//TODO
+	prefix := m.MetricKeyPrefix()
+	graphdef["query_cache"] = mp.Graphs{
+		Label: prefix + ".query Cache",
+		Unit:  "float",
+		Metrics: [](mp.Metrics){
+			mp.Metrics{Name: "Qcache_queries_in_cache", Label: "Qcache Queries In Cache", Diff: false, Stacked: false, Type: "uint64"},
+			mp.Metrics{Name: "Qcache_hits", Label: "Qcache Hits", Diff: true, Stacked: false, Type: "uint64"},
+			mp.Metrics{Name: "Qcache_inserts", Label: "Qcache Inserts", Diff: true, Stacked: false, Type: "uint64"},
+			mp.Metrics{Name: "Qcache_not_cached", Label: "Qcache Not Cached", Diff: true, Stacked: false, Type: "uint64"},
+			mp.Metrics{Name: "Qcache_lowmem_prunes", Label: "Qcache Lowmem Prunes", Diff: true, Stacked: false, Type: "uint64"},
+		},
+	}
+	graphdef["query_cache_memory"] = mp.Graphs{
+		Label: prefix + ".query Cache Memory",
+		Unit:  "float",
+		Metrics: [](mp.Metrics){
+			mp.Metrics{Name: "query_cache_size", Label: "Query Cache Size", Diff: false, Stacked: false, Type: "uint64"},
+			mp.Metrics{Name: "Qcache_free_memory", Label: "Qcache Free Memory", Diff: false, Stacked: false, Type: "uint64"},
+			mp.Metrics{Name: "Qcache_total_blocks", Label: "Qcache Total Blocks", Diff: false, Stacked: false, Type: "uint64"},
+			mp.Metrics{Name: "Qcache_free_blocks", Label: "Qcache Free Blocks", Diff: false, Stacked: false, Type: "uint64"},
 		},
 	}
 	return graphdef
@@ -797,6 +828,7 @@ func main() {
 	optTempfile := flag.String("tempfile", "", "Temp file name")
 	optInnoDB := flag.Bool("disable_innodb", false, "Disable InnoDB metrics")
 	optMetricKeyPrefix := flag.String("metric-key-prefix", "mysql", "metric key prefix")
+	optEnableExtended := flag.Bool("enable_extended", false, "Enable Extended metrics")
 	flag.Parse()
 
 	var mysql MySQLPlugin
@@ -811,6 +843,7 @@ func main() {
 	mysql.Password = *optPass
 	mysql.DisableInnoDB = *optInnoDB
 	mysql.prefix = *optMetricKeyPrefix
+	mysql.EnableExtended = *optEnableExtended
 	helper := mp.NewMackerelPlugin(mysql)
 	helper.Tempfile = *optTempfile
 	helper.Run()
