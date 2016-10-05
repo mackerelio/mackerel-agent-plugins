@@ -99,7 +99,7 @@ func doMain(c *cli.Context) error {
 	apache2.Path = c.String("status_page")
 	apache2.Header = c.StringSlice("header")
 	apache2.Prefix = c.String("metric-key-prefix")
-	apache2.LabelPrefix = c.String("label-prefix")
+	apache2.LabelPrefix = c.String("metric-label-prefix")
 
 	helper := mp.NewMackerelPlugin(apache2)
 	helper.Tempfile = c.String("tempfile")

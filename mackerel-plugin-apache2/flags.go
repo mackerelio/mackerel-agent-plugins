@@ -55,7 +55,7 @@ var cliMetricKerPrefix = cli.StringFlag{
 }
 
 var cliLabelPrefix = cli.StringFlag{
-	Name:  "label-prefix, l",
+	Name:  "metric-label-prefix, l",
 	Value: "Apache",
 	Usage: "Set metric label prefix.",
 }
