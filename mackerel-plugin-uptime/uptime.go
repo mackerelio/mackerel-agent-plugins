@@ -14,11 +14,19 @@ type UptimePlugin struct {
 	Prefix string
 }
 
+// MetricKeyPrefix interface for PluginWithPrefix
+func (u UptimePlugin) MetricKeyPrefix() string {
+	if u.Prefix == "" {
+		u.Prefix = "uptime"
+	}
+	return u.Prefix
+}
+
 // GraphDefinition interface for mackerelplugin
 func (u UptimePlugin) GraphDefinition() map[string](mp.Graphs) {
 	labelPrefix := strings.Title(u.Prefix)
 	return map[string](mp.Graphs){
-		u.Prefix: mp.Graphs{
+		"": mp.Graphs{
 			Label: labelPrefix,
 			Unit:  "float",
 			Metrics: [](mp.Metrics){
@@ -47,8 +55,5 @@ func main() {
 	}
 	helper := mp.NewMackerelPlugin(u)
 	helper.Tempfile = *optTempfile
-	if helper.Tempfile == "" {
-		helper.Tempfile = fmt.Sprintf("/tmp/mackerel-plugin-%s", *optPrefix)
-	}
 	helper.Run()
 }
