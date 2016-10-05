@@ -49,13 +49,13 @@ var cliTempFile = cli.StringFlag{
 }
 
 var cliMetricKerPrefix = cli.StringFlag{
-	Name:  "metric-key-prefix, m",
+	Name:  "metric-key-prefix",
 	Value: "apache2",
 	Usage: "Set metric key prefix.",
 }
 
 var cliLabelPrefix = cli.StringFlag{
-	Name:  "metric-label-prefix, l",
+	Name:  "metric-label-prefix",
 	Value: "Apache",
 	Usage: "Set metric label prefix.",
 }
