@@ -174,8 +174,6 @@ func main() {
 
 	if *optTempfile != "" {
 		helper.Tempfile = *optTempfile
-	} else {
-		helper.Tempfile = "/tmp/mackerel-plugin-varnish"
 	}
 
 	if os.Getenv("MACKEREL_AGENT_PLUGIN_META") != "" {
