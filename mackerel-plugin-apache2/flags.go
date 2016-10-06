@@ -10,6 +10,8 @@ var flags = []cli.Flag{
 	cliHeader,
 	cliStatusPage,
 	cliTempFile,
+	cliMetricKerPrefix,
+	cliLabelPrefix,
 }
 
 var cliHTTPHost = cli.StringFlag{
@@ -42,7 +44,18 @@ var cliStatusPage = cli.StringFlag{
 
 var cliTempFile = cli.StringFlag{
 	Name:   "tempfile, t",
-	Value:  "/tmp/mackerel-plugin-apache2",
 	Usage:  "Set temporary file path.",
 	EnvVar: "ENVVAR_TEMPFILE",
+}
+
+var cliMetricKerPrefix = cli.StringFlag{
+	Name:  "metric-key-prefix",
+	Value: "apache2",
+	Usage: "Set metric key prefix.",
+}
+
+var cliLabelPrefix = cli.StringFlag{
+	Name:  "metric-label-prefix",
+	Value: "Apache",
+	Usage: "Set metric label prefix.",
 }

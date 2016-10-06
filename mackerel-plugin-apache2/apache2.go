@@ -14,67 +14,78 @@ import (
 	"github.com/urfave/cli"
 )
 
-// metric value structure
-var graphdef = map[string](mp.Graphs){
-	"apache2.workers": mp.Graphs{
-		Label: "Apache Workers",
-		Unit:  "integer",
-		Metrics: [](mp.Metrics){
-			mp.Metrics{Name: "busy_workers", Label: "Busy Workers", Diff: false, Stacked: true},
-			mp.Metrics{Name: "idle_workers", Label: "Idle Workers", Diff: false, Stacked: true},
-		},
-	},
-	"apache2.bytes": mp.Graphs{
-		Label: "Apache Bytes",
-		Unit:  "bytes",
-		Metrics: [](mp.Metrics){
-			mp.Metrics{Name: "bytes_sent", Label: "Bytes Sent", Diff: true, Type: "uint64"},
-		},
-	},
-	"apache2.cpu": mp.Graphs{
-		Label: "Apache CPU Load",
-		Unit:  "float",
-		Metrics: [](mp.Metrics){
-			mp.Metrics{Name: "cpu_load", Label: "CPU Load", Diff: false},
-		},
-	},
-	"apache2.req": mp.Graphs{
-		Label: "Apache Requests",
-		Unit:  "integer",
-		Metrics: [](mp.Metrics){
-			mp.Metrics{Name: "requests", Label: "Requests", Diff: true, Type: "uint64"},
-		},
-	},
-	"apache2.scoreboard": mp.Graphs{
-		Label: "Apache Scoreboard",
-		Unit:  "integer",
-		Metrics: [](mp.Metrics){
-			mp.Metrics{Name: "score-_", Label: "Waiting for connection", Diff: false, Stacked: true},
-			mp.Metrics{Name: "score-S", Label: "Starting up", Diff: false, Stacked: true},
-			mp.Metrics{Name: "score-R", Label: "Reading request", Diff: false, Stacked: true},
-			mp.Metrics{Name: "scpre-W", Label: "Sending reply", Diff: false, Stacked: true},
-			mp.Metrics{Name: "score-K", Label: "Keepalive", Diff: false, Stacked: true},
-			mp.Metrics{Name: "score-D", Label: "DNS lookup", Diff: false, Stacked: true},
-			mp.Metrics{Name: "score-C", Label: "Closing connection", Diff: false, Stacked: true},
-			mp.Metrics{Name: "score-L", Label: "Logging", Diff: false, Stacked: true},
-			mp.Metrics{Name: "score-G", Label: "Gracefully finishing", Diff: false, Stacked: true},
-			mp.Metrics{Name: "score-I", Label: "Idle cleanup", Diff: false, Stacked: true},
-			mp.Metrics{Name: "score-.", Label: "Open slot", Diff: false, Stacked: true},
-		},
-	},
-}
-
 // Apache2Plugin for fetching metrics
 type Apache2Plugin struct {
-	Host     string
-	Port     uint16
-	Path     string
-	Header   []string
-	Tempfile string
+	Host        string
+	Port        uint16
+	Path        string
+	Header      []string
+	Tempfile    string
+	Prefix      string
+	LabelPrefix string
+}
+
+// MetricKeyPrefix interface for PluginWithPrefix
+func (c Apache2Plugin) MetricKeyPrefix() string {
+	if c.Prefix == "" {
+		c.Prefix = "apache2"
+	}
+	return c.Prefix
 }
 
 // GraphDefinition Graph definition
 func (c Apache2Plugin) GraphDefinition() map[string](mp.Graphs) {
+	labelPrefix := c.LabelPrefix
+
+	// metric value structure
+	var graphdef = map[string](mp.Graphs){
+		"workers": mp.Graphs{
+			Label: (labelPrefix + " Workers"),
+			Unit:  "integer",
+			Metrics: [](mp.Metrics){
+				mp.Metrics{Name: "busy_workers", Label: "Busy Workers", Diff: false, Stacked: true},
+				mp.Metrics{Name: "idle_workers", Label: "Idle Workers", Diff: false, Stacked: true},
+			},
+		},
+		"bytes": mp.Graphs{
+			Label: (labelPrefix + " Bytes"),
+			Unit:  "bytes",
+			Metrics: [](mp.Metrics){
+				mp.Metrics{Name: "bytes_sent", Label: "Bytes Sent", Diff: true, Type: "uint64"},
+			},
+		},
+		"cpu": mp.Graphs{
+			Label: (labelPrefix + " CPU Load"),
+			Unit:  "float",
+			Metrics: [](mp.Metrics){
+				mp.Metrics{Name: "cpu_load", Label: "CPU Load", Diff: false},
+			},
+		},
+		"req": mp.Graphs{
+			Label: (labelPrefix + " Requests"),
+			Unit:  "integer",
+			Metrics: [](mp.Metrics){
+				mp.Metrics{Name: "requests", Label: "Requests", Diff: true, Type: "uint64"},
+			},
+		},
+		"scoreboard": mp.Graphs{
+			Label: (labelPrefix + " Scoreboard"),
+			Unit:  "integer",
+			Metrics: [](mp.Metrics){
+				mp.Metrics{Name: "score-_", Label: "Waiting for connection", Diff: false, Stacked: true},
+				mp.Metrics{Name: "score-S", Label: "Starting up", Diff: false, Stacked: true},
+				mp.Metrics{Name: "score-R", Label: "Reading request", Diff: false, Stacked: true},
+				mp.Metrics{Name: "scpre-W", Label: "Sending reply", Diff: false, Stacked: true},
+				mp.Metrics{Name: "score-K", Label: "Keepalive", Diff: false, Stacked: true},
+				mp.Metrics{Name: "score-D", Label: "DNS lookup", Diff: false, Stacked: true},
+				mp.Metrics{Name: "score-C", Label: "Closing connection", Diff: false, Stacked: true},
+				mp.Metrics{Name: "score-L", Label: "Logging", Diff: false, Stacked: true},
+				mp.Metrics{Name: "score-G", Label: "Gracefully finishing", Diff: false, Stacked: true},
+				mp.Metrics{Name: "score-I", Label: "Idle cleanup", Diff: false, Stacked: true},
+				mp.Metrics{Name: "score-.", Label: "Open slot", Diff: false, Stacked: true},
+			},
+		},
+	}
 	return graphdef
 }
 
@@ -87,6 +98,8 @@ func doMain(c *cli.Context) error {
 	apache2.Port = uint16(c.Int("http_port"))
 	apache2.Path = c.String("status_page")
 	apache2.Header = c.StringSlice("header")
+	apache2.Prefix = c.String("metric-key-prefix")
+	apache2.LabelPrefix = c.String("metric-label-prefix")
 
 	helper := mp.NewMackerelPlugin(apache2)
 	helper.Tempfile = c.String("tempfile")
