@@ -25,6 +25,27 @@ func TestGraphDefinition(t *testing.T) {
 	}
 }
 
+func TestGraphDefinition_DisableInnoDB_EnableExtended(t *testing.T) {
+	var mysql MySQLPlugin
+
+	mysql.DisableInnoDB = true
+	mysql.EnableExtended = true
+	graphdef := mysql.GraphDefinition()
+	if len(graphdef) != 14 {
+		t.Errorf("GetTempfilename: %d should be 14", len(graphdef))
+	}
+}
+
+func TestGraphDefinition_EnableExtended(t *testing.T) {
+	var mysql MySQLPlugin
+
+	mysql.EnableExtended = true
+	graphdef := mysql.GraphDefinition()
+	if len(graphdef) != 35 {
+		t.Errorf("GetTempfilename: %d should be 35", len(graphdef))
+	}
+}
+
 func TestParseProcStat56(t *testing.T) {
 	stub := `=====================================
 2015-03-09 20:11:22 7f6c0c845700 INNODB MONITOR OUTPUT
@@ -1001,4 +1022,141 @@ END OF INNODB MONITOR OUTPUT
 	assert.EqualValues(t, stat["unflushed_log"], 0)
 	assert.EqualValues(t, stat["uncheckpointed_bytes"], 9)
 
+}
+
+func TestParseProcesslist1(t *testing.T) {
+	stat := make(map[string]float64)
+	pattern := []string{"NULL"}
+
+	for _, val := range pattern {
+		parseProcesslist(val, &stat)
+	}
+	assert.EqualValues(t, 0, stat["State_closing_tables"])
+	assert.EqualValues(t, 0, stat["State_copying_to_tmp_table"])
+	assert.EqualValues(t, 0, stat["State_end"])
+	assert.EqualValues(t, 0, stat["State_freeing_items"])
+	assert.EqualValues(t, 0, stat["State_init"])
+	assert.EqualValues(t, 0, stat["State_locked"])
+	assert.EqualValues(t, 0, stat["State_login"])
+	assert.EqualValues(t, 0, stat["State_preparing"])
+	assert.EqualValues(t, 0, stat["State_reading_from_net"])
+	assert.EqualValues(t, 0, stat["State_sending_data"])
+	assert.EqualValues(t, 0, stat["State_sorting_result"])
+	assert.EqualValues(t, 0, stat["State_statistics"])
+	assert.EqualValues(t, 0, stat["State_updating"])
+	assert.EqualValues(t, 0, stat["State_writing_to_net"])
+	assert.EqualValues(t, 0, stat["State_none"])
+	assert.EqualValues(t, 1, stat["State_other"])
+}
+
+func TestParseProcesslist2(t *testing.T) {
+	stat := make(map[string]float64)
+
+	// https://dev.mysql.com/doc/refman/5.6/en/general-thread-states.html
+	pattern := []string{
+		"",
+		"After create",
+		"altering table",
+		"Analyzing",
+		"checking permissions",
+		"Checking table",
+		"cleaning up",
+		"closing tables",
+		"committing alter table to storage engine",
+		"converting HEAP to MyISAM",
+		"MEMORY",
+		"MyISAM",
+		"copy to tmp table",
+		"Copying to group table",
+		"GROUP BY",
+		"Copying to tmp table",
+		"Copying to tmp table on disk",
+		"Creating index",
+		"Creating sort index",
+		"creating table",
+		"Creating tmp table",
+		"deleting from main table",
+		"deleting from reference tables",
+		"discard_or_import_tablespace",
+		"end",
+		"executing",
+		"Execution of init_command",
+		"freeing items",
+		"FULLTEXT initialization",
+		"init",
+		"Killed",
+		"logging slow query",
+		"login",
+		"manage keys",
+		"NULL",
+		"Opening tables",
+		"Opening table",
+		"optimizing",
+		"preparing",
+		"preparing for alter table",
+		"Purging old relay logs",
+		"query end",
+		"Reading from net",
+		"Removing duplicates",
+		"removing tmp table",
+		"rename",
+		"rename result table",
+		"Reopen tables",
+		"Repair by sorting",
+		"Repair done",
+		"Repair with keycache",
+		"Rolling back",
+		"Saving state",
+		"Searching rows for update",
+		"Sending data",
+		"setup",
+		"Sorting for group",
+		"Sorting for order",
+		"Sorting index",
+		"Sorting result",
+		"statistics",
+		"System lock",
+		"update",
+		"Updating",
+		"updating main table",
+		"updating reference tables",
+		"User lock",
+		"User sleep",
+		"Waiting for commit lock",
+		"Waiting for global read lock",
+		"Waiting for tables",
+		"Waiting for table flush",
+		"Waiting for lock_type lock",
+		"Waiting for table level lock",
+		"Waiting for event metadata lock",
+		"Waiting for global read lock",
+		"Waiting for schema metadat lock",
+		"Waiting for stored function metadata  lock",
+		"Waiting for stored procedure metadata lock",
+		"Waiting for table metadata lock",
+		"Waiting for trigger metadata lock",
+		"Waiting on cond",
+		"Writing to net",
+		"Table lock",
+	}
+
+	for _, val := range pattern {
+		parseProcesslist(val, &stat)
+	}
+	assert.EqualValues(t, 1, stat["State_closing_tables"])
+	assert.EqualValues(t, 1, stat["State_copying_to_tmp_table"])
+	assert.EqualValues(t, 1, stat["State_end"])
+	assert.EqualValues(t, 1, stat["State_freeing_items"])
+	assert.EqualValues(t, 1, stat["State_init"])
+	assert.EqualValues(t, 12, stat["State_locked"])
+	assert.EqualValues(t, 1, stat["State_login"])
+	assert.EqualValues(t, 1, stat["State_preparing"])
+	assert.EqualValues(t, 1, stat["State_reading_from_net"])
+	assert.EqualValues(t, 1, stat["State_sending_data"])
+	assert.EqualValues(t, 1, stat["State_sorting_result"])
+	assert.EqualValues(t, 1, stat["State_statistics"])
+	assert.EqualValues(t, 1, stat["State_updating"])
+	assert.EqualValues(t, 1, stat["State_writing_to_net"])
+	assert.EqualValues(t, 1, stat["State_none"])
+	assert.EqualValues(t, 58, stat["State_other"])
 }

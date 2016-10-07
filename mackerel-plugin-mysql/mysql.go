@@ -12,6 +12,30 @@ import (
 	_ "github.com/ziutek/mymysql/native"
 )
 
+var (
+	processState map[string]bool
+)
+
+func init() {
+	processState = make(map[string]bool, 0)
+	processState["State_closing_tables"] = true
+	processState["State_copying_to_tmp_table"] = true
+	processState["State_end"] = true
+	processState["State_freeing_items"] = true
+	processState["State_init"] = true
+	processState["State_locked"] = true
+	processState["State_login"] = true
+	processState["State_preparing"] = true
+	processState["State_reading_from_net"] = true
+	processState["State_sending_data"] = true
+	processState["State_sorting_result"] = true
+	processState["State_statistics"] = true
+	processState["State_updating"] = true
+	processState["State_writing_to_net"] = true
+	processState["State_none"] = true
+	processState["State_other"] = true
+}
+
 func (m MySQLPlugin) defaultGraphdef() map[string](mp.Graphs) {
 	labelPrefix := strings.Title(strings.Replace(m.MetricKeyPrefix(), "mysql", "MySQL", -1))
 
@@ -99,13 +123,14 @@ func (m MySQLPlugin) defaultGraphdef() map[string](mp.Graphs) {
 
 // MySQLPlugin mackerel plugin for MySQL
 type MySQLPlugin struct {
-	Target        string
-	Tempfile      string
-	prefix        string
-	Username      string
-	Password      string
-	DisableInnoDB bool
-	isUnixSocket  bool
+	Target         string
+	Tempfile       string
+	prefix         string
+	Username       string
+	Password       string
+	DisableInnoDB  bool
+	isUnixSocket   bool
+	EnableExtended bool
 }
 
 // MetricKeyPrefix retruns the metrics key prefix
@@ -134,6 +159,20 @@ func (m MySQLPlugin) fetchShowStatus(db mysql.Conn, stat map[string]float64) err
 		} else {
 			log.Fatalln("FetchMetrics (Status): row length is too small: ", len(row))
 		}
+	}
+	if m.EnableExtended {
+		err = fetchShowStatusBackwardCompatibile(stat)
+		if err != nil {
+			log.Fatalln("FetchExtendedMetrics (Status Fetch): ", err)
+		}
+	}
+	return nil
+}
+
+func fetchShowStatusBackwardCompatibile(stat map[string]float64) error {
+	// https://github.com/percona/percona-monitoring-plugins/blob/v1.1.6/cacti/scripts/ss_get_mysql_stats.php#L585
+	if val, found := stat["table_open_cache"]; found {
+		stat["table_cache"] = val
 	}
 	return nil
 }
@@ -193,6 +232,34 @@ func (m MySQLPlugin) fetchShowSlaveStatus(db mysql.Conn, stat map[string]float64
 	return nil
 }
 
+func (m MySQLPlugin) fetchProcesslist(db mysql.Conn, stat map[string]float64) error {
+	rows, _, err := db.Query("SHOW PROCESSLIST")
+	if err != nil {
+		log.Fatalln("FetchMetrics (Processlist): ", err)
+		return err
+	}
+
+	for k := range processState {
+		stat[k] = 0
+	}
+
+	for _, row := range rows {
+		if len(row) > 1 {
+			var state string
+			if row[6] == nil {
+				state = "NULL"
+			} else {
+				state = string(row[6].([]byte))
+			}
+			parseProcesslist(state, &stat)
+		} else {
+			log.Fatalln("FetchMetrics (Processlist): row length is too small: ", len(row))
+		}
+	}
+
+	return nil
+}
+
 func (m MySQLPlugin) calculateCapacity(stat map[string]float64) {
 	stat["PercentageOfConnections"] = 100.0 * stat["Threads_connected"] / stat["max_connections"]
 	stat["PercentageOfBufferPool"] = 100.0 * stat["database_pages"] / stat["pool_size"]
@@ -221,6 +288,11 @@ func (m MySQLPlugin) FetchMetrics() (map[string]interface{}, error) {
 	}
 
 	m.fetchShowSlaveStatus(db, stat)
+
+	if m.EnableExtended {
+		m.fetchProcesslist(db, stat)
+	}
+
 	m.calculateCapacity(stat)
 
 	statRet := make(map[string]interface{})
@@ -233,15 +305,18 @@ func (m MySQLPlugin) FetchMetrics() (map[string]interface{}, error) {
 
 // GraphDefinition interface for mackerelplugin
 func (m MySQLPlugin) GraphDefinition() map[string](mp.Graphs) {
+	graphdef := m.defaultGraphdef()
 	if !m.DisableInnoDB {
-		return m.graphdefWithInnoDBMetrics()
+		graphdef = m.addGraphdefWithInnoDBMetrics(graphdef)
 	}
-	return m.defaultGraphdef()
+	if m.EnableExtended {
+		graphdef = m.addExtendedGraphdef(graphdef)
+	}
+	return graphdef
 }
 
-func (m MySQLPlugin) graphdefWithInnoDBMetrics() map[string](mp.Graphs) {
+func (m MySQLPlugin) addGraphdefWithInnoDBMetrics(graphdef map[string](mp.Graphs)) map[string](mp.Graphs) {
 	prefix := m.MetricKeyPrefix()
-	graphdef := m.defaultGraphdef()
 	graphdef["innodb_rows"] = mp.Graphs{
 		Label: prefix + ".innodb Rows",
 		Unit:  "float",
@@ -427,6 +502,85 @@ func (m MySQLPlugin) graphdefWithInnoDBMetrics() map[string](mp.Graphs) {
 			mp.Metrics{Name: "innodb_transactions", Label: "InnoDB Transactions", Diff: true, Stacked: false},
 		},
 	}
+	return graphdef
+}
+
+func (m MySQLPlugin) addExtendedGraphdef(graphdef map[string](mp.Graphs)) map[string](mp.Graphs) {
+	//TODO
+	prefix := m.MetricKeyPrefix()
+	graphdef["query_cache"] = mp.Graphs{
+		Label: prefix + ".query Cache",
+		Unit:  "float",
+		Metrics: [](mp.Metrics){
+			mp.Metrics{Name: "Qcache_queries_in_cache", Label: "Qcache Queries In Cache", Diff: false, Stacked: false, Type: "uint64"},
+			mp.Metrics{Name: "Qcache_hits", Label: "Qcache Hits", Diff: true, Stacked: false, Type: "uint64"},
+			mp.Metrics{Name: "Qcache_inserts", Label: "Qcache Inserts", Diff: true, Stacked: false, Type: "uint64"},
+			mp.Metrics{Name: "Qcache_not_cached", Label: "Qcache Not Cached", Diff: true, Stacked: false, Type: "uint64"},
+			mp.Metrics{Name: "Qcache_lowmem_prunes", Label: "Qcache Lowmem Prunes", Diff: true, Stacked: false, Type: "uint64"},
+		},
+	}
+	graphdef["query_cache_memory"] = mp.Graphs{
+		Label: prefix + ".query Cache Memory",
+		Unit:  "float",
+		Metrics: [](mp.Metrics){
+			mp.Metrics{Name: "query_cache_size", Label: "Query Cache Size", Diff: false, Stacked: false, Type: "uint64"},
+			mp.Metrics{Name: "Qcache_free_memory", Label: "Qcache Free Memory", Diff: false, Stacked: false, Type: "uint64"},
+			mp.Metrics{Name: "Qcache_total_blocks", Label: "Qcache Total Blocks", Diff: false, Stacked: false, Type: "uint64"},
+			mp.Metrics{Name: "Qcache_free_blocks", Label: "Qcache Free Blocks", Diff: false, Stacked: false, Type: "uint64"},
+		},
+	}
+	graphdef["temporary_objects"] = mp.Graphs{
+		Label: prefix + ".temporary Objects",
+		Unit:  "float",
+		Metrics: [](mp.Metrics){
+			mp.Metrics{Name: "Created_tmp_tables", Label: "Created Tmp Tables", Diff: true, Stacked: false, Type: "uint64"},
+			mp.Metrics{Name: "Created_tmp_disk_tables", Label: "Created Tmp Disk Tables", Diff: true, Stacked: false, Type: "uint64"},
+			mp.Metrics{Name: "Created_tmp_files", Label: "Created Tmp Files", Diff: true, Stacked: false, Type: "uint64"},
+		},
+	}
+	graphdef["files_and_tables"] = mp.Graphs{
+		Label: prefix + ".files and Tables",
+		Unit:  "float",
+		Metrics: [](mp.Metrics){
+			mp.Metrics{Name: "table_cache", Label: "Table Cache", Diff: false, Stacked: false, Type: "uint64"},
+			mp.Metrics{Name: "Open_tables", Label: "Open Tables", Diff: false, Stacked: false, Type: "uint64"},
+			mp.Metrics{Name: "Open_files", Label: "Open Files", Diff: false, Stacked: false, Type: "uint64"},
+			mp.Metrics{Name: "Opened_tables", Label: "Opened Tables", Diff: false, Stacked: false, Type: "uint64"},
+		},
+	}
+	graphdef["processlist"] = mp.Graphs{
+		Label: prefix + ".processlist",
+		Unit:  "float",
+		Metrics: [](mp.Metrics){
+			mp.Metrics{Name: "State_closing_tables", Label: "State Closing Tables", Diff: false, Stacked: false, Type: "uint64"},
+			mp.Metrics{Name: "State_copying_to_tmp_table", Label: "State Copying To Tmp Table", Diff: false, Stacked: false, Type: "uint64"},
+			mp.Metrics{Name: "State_end", Label: "State End", Diff: false, Stacked: false, Type: "uint64"},
+			mp.Metrics{Name: "State_freeing_items", Label: "State Freeing Items", Diff: false, Stacked: false, Type: "uint64"},
+			mp.Metrics{Name: "State_init", Label: "State Init", Diff: false, Stacked: false, Type: "uint64"},
+			mp.Metrics{Name: "State_locked", Label: "State Locked", Diff: false, Stacked: false, Type: "uint64"},
+			mp.Metrics{Name: "State_login", Label: "State Login", Diff: false, Stacked: false, Type: "uint64"},
+			mp.Metrics{Name: "State_preparing", Label: "State Preparing", Diff: false, Stacked: false, Type: "uint64"},
+			mp.Metrics{Name: "State_reading_from_net", Label: "State Reading From Net", Diff: false, Stacked: false, Type: "uint64"},
+			mp.Metrics{Name: "State_sending_data", Label: "State Sending Data", Diff: false, Stacked: false, Type: "uint64"},
+			mp.Metrics{Name: "State_sorting_result", Label: "State Sorting Result", Diff: false, Stacked: false, Type: "uint64"},
+			mp.Metrics{Name: "State_statistics", Label: "State Statistics", Diff: false, Stacked: false, Type: "uint64"},
+			mp.Metrics{Name: "State_updating", Label: "State Updating", Diff: false, Stacked: false, Type: "uint64"},
+			mp.Metrics{Name: "State_writing_to_net", Label: "State Writing To Net", Diff: false, Stacked: false, Type: "uint64"},
+			mp.Metrics{Name: "State_none", Label: "State None", Diff: false, Stacked: false, Type: "uint64"},
+			mp.Metrics{Name: "State_other", Label: "State Other", Diff: false, Stacked: false, Type: "uint64"},
+		},
+	}
+	graphdef["sorts"] = mp.Graphs{
+		Label: prefix + ".sorts",
+		Unit:  "float",
+		Metrics: [](mp.Metrics){
+			mp.Metrics{Name: "Sort_rows", Label: "Sort Rows", Diff: true, Stacked: false, Type: "uint64"},
+			mp.Metrics{Name: "Sort_range", Label: "Sort Range", Diff: true, Stacked: false, Type: "uint64"},
+			mp.Metrics{Name: "Sort_merge_passes", Label: "Sort Merge Passes", Diff: true, Stacked: false, Type: "uint64"},
+			mp.Metrics{Name: "Sort_scan", Label: "Sort Scan", Diff: true, Stacked: false, Type: "uint64"},
+		},
+	}
+
 	return graphdef
 }
 
@@ -747,6 +901,25 @@ func parseInnodbStatus(str string, p *map[string]float64) {
 	(*p)["uncheckpointed_bytes"] = (*p)["log_bytes_written"] - (*p)["last_checkpoint"]
 }
 
+func parseProcesslist(state string, p *map[string]float64) {
+
+	if state == "" {
+		state = "none"
+	} else if state == "Table lock" {
+		state = "Locked"
+	} else if strings.HasPrefix(state, "Waiting for ") && strings.HasSuffix(state, "lock") {
+		state = "Locked"
+	}
+	state = strings.Replace(strings.ToLower(state), " ", "_", -1)
+
+	state = strings.Join([]string{"State_", state}, "")
+	if _, found := processState[state]; !found {
+		state = "State_other"
+	}
+
+	increaseMap(p, state, "1")
+}
+
 func atof(str string) (float64, error) {
 	str = strings.Replace(str, ",", "", -1)
 	str = strings.Replace(str, ";", "", -1)
@@ -797,6 +970,7 @@ func main() {
 	optTempfile := flag.String("tempfile", "", "Temp file name")
 	optInnoDB := flag.Bool("disable_innodb", false, "Disable InnoDB metrics")
 	optMetricKeyPrefix := flag.String("metric-key-prefix", "mysql", "metric key prefix")
+	optEnableExtended := flag.Bool("enable_extended", false, "Enable Extended metrics")
 	flag.Parse()
 
 	var mysql MySQLPlugin
@@ -811,6 +985,7 @@ func main() {
 	mysql.Password = *optPass
 	mysql.DisableInnoDB = *optInnoDB
 	mysql.prefix = *optMetricKeyPrefix
+	mysql.EnableExtended = *optEnableExtended
 	helper := mp.NewMackerelPlugin(mysql)
 	helper.Tempfile = *optTempfile
 	helper.Run()
