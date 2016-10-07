@@ -19,6 +19,7 @@ type RDSPlugin struct {
 	AccessKeyID     string
 	SecretAccessKey string
 	Identifier      string
+	Engine          string
 	Prefix          string
 	LabelPrefix     string
 }
@@ -77,11 +78,7 @@ func (p RDSPlugin) FetchMetrics() (map[string]float64, error) {
 		Value: p.Identifier,
 	}
 
-	for _, met := range [...]string{
-		"BinLogDiskUsage", "CPUUtilization", "DatabaseConnections", "DiskQueueDepth", "FreeableMemory",
-		"FreeStorageSpace", "ReplicaLag", "SwapUsage", "ReadIOPS", "WriteIOPS", "ReadLatency",
-		"WriteLatency", "ReadThroughput", "WriteThroughput", "NetworkTransmitThroughput", "NetworkReceiveThroughput",
-	} {
+	for _, met := range p.rdsMetrics() {
 		v, err := getLastPoint(cloudWatch, perInstance, met)
 		if err == nil {
 			stat[met] = v
@@ -93,9 +90,22 @@ func (p RDSPlugin) FetchMetrics() (map[string]float64, error) {
 	return stat, nil
 }
 
-// GraphDefinition interface for mackerel plugin
-func (p RDSPlugin) GraphDefinition() map[string](mp.Graphs) {
-	graphdef := map[string](mp.Graphs){
+func (p RDSPlugin) baseGraphDefs() map[string](mp.Graphs) {
+	return map[string](mp.Graphs){
+		p.Prefix + ".BinLogDiskUsage": mp.Graphs{
+			Label: p.LabelPrefix + " BinLogDiskUsage",
+			Unit:  "bytes",
+			Metrics: [](mp.Metrics){
+				mp.Metrics{Name: "BinLogDiskUsage", Label: "Usage"},
+			},
+		},
+		p.Prefix + ".DiskQueueDepth": mp.Graphs{
+			Label: p.LabelPrefix + " BinLogDiskUsage",
+			Unit:  "bytes",
+			Metrics: [](mp.Metrics){
+				mp.Metrics{Name: "DiskQueueDepth", Label: "Depth"},
+			},
+		},
 		p.Prefix + ".CPUUtilization": mp.Graphs{
 			Label: p.LabelPrefix + " CPU Utilization",
 			Unit:  "percentage",
@@ -171,7 +181,19 @@ func (p RDSPlugin) GraphDefinition() map[string](mp.Graphs) {
 			},
 		},
 	}
+}
 
+// GraphDefinition interface for mackerel plugin
+func (p RDSPlugin) GraphDefinition() map[string](mp.Graphs) {
+	graphdef := p.baseGraphDefs()
+	switch p.Engine {
+	case "mysql", "mariadb":
+		graphdef = mergeGraphDefs(graphdef, p.mySQLGraphDefinition())
+	case "aurora":
+		graphdef = mergeGraphDefs(graphdef, p.auroraGraphDefinition())
+	case "postgresql":
+		graphdef = mergeGraphDefs(graphdef, p.postgreSQLGraphDefinition())
+	}
 	return graphdef
 }
 
@@ -180,6 +202,7 @@ func main() {
 	optAccessKeyID := flag.String("access-key-id", "", "AWS Access Key ID")
 	optSecretAccessKey := flag.String("secret-access-key", "", "AWS Secret Access Key")
 	optIdentifier := flag.String("identifier", "", "DB Instance Identifier")
+	optEngine := flag.String("engine", "", "RDS Engine")
 	optPrefix := flag.String("metric-key-prefix", "rds", "Metric key prefix")
 	optLabelPrefix := flag.String("metric-label-prefix", "", "Metric Label prefix")
 	optTempfile := flag.String("tempfile", "", "Temp file name")
@@ -207,6 +230,7 @@ func main() {
 	rds.Identifier = *optIdentifier
 	rds.AccessKeyID = *optAccessKeyID
 	rds.SecretAccessKey = *optSecretAccessKey
+	rds.Engine = *optEngine
 
 	helper := mp.NewMackerelPlugin(rds)
 	if *optTempfile != "" {
