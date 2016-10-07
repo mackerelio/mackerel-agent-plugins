@@ -16,9 +16,9 @@ var cliTempFile = cli.StringFlag{
 	EnvVar: "ENVVAR_TEMPFILE",
 }
 
-var cliType = cli.StringFlag{
+var cliType = cli.StringSliceFlag{
 	Name:   "type, p",
-	Value:  "all",
-	Usage:  "Select metrics: all, swap, netstat, diskstats, proc_stat, users",
+	Value:  &cli.StringSlice{},
+	Usage:  "Select metrics type(s) to fetch: all, swap, netstat, diskstats, proc_stat, users",
 	EnvVar: "ENVVAR_TYPE",
 }

@@ -26,7 +26,7 @@ var graphdef = map[string](mp.Graphs){}
 // LinuxPlugin mackerel plugin for linux
 type LinuxPlugin struct {
 	Tempfile string
-	Type     string
+	Typemap  map[string]bool
 }
 
 // GraphDefinition interface for mackerelplugin
@@ -35,35 +35,35 @@ func (c LinuxPlugin) GraphDefinition() map[string](mp.Graphs) {
 
 	p := make(map[string]interface{})
 
-	if c.Type == "all" || c.Type == "swap" {
+	if c.Typemap["all"] || c.Typemap["swap"] {
 		err = collectProcVmstat(pathVmstat, &p)
 		if err != nil {
 			return nil
 		}
 	}
 
-	if c.Type == "all" || c.Type == "netstat" {
+	if c.Typemap["all"] || c.Typemap["netstat"] {
 		err = collectSs(&p)
 		if err != nil {
 			return nil
 		}
 	}
 
-	if c.Type == "all" || c.Type == "diskstats" {
+	if c.Typemap["all"] || c.Typemap["diskstats"] {
 		err = collectProcDiskstats(pathDiskstats, &p)
 		if err != nil {
 			return nil
 		}
 	}
 
-	if c.Type == "all" || c.Type == "proc_stat" {
+	if c.Typemap["all"] || c.Typemap["proc_stat"] {
 		err = collectProcStat(pathStat, &p)
 		if err != nil {
 			return nil
 		}
 	}
 
-	if c.Type == "all" || c.Type == "users" {
+	if c.Typemap["all"] || c.Typemap["users"] {
 		err = collectWho(&p)
 		if err != nil {
 			return nil
@@ -77,7 +77,17 @@ func (c LinuxPlugin) GraphDefinition() map[string](mp.Graphs) {
 func doMain(c *cli.Context) error {
 	var linux LinuxPlugin
 
-	linux.Type = c.String("type")
+	typemap := map[string]bool{}
+	types := c.StringSlice("type")
+	// If no `type` is specified, fetch all metrics
+	if len(types) == 0 {
+		typemap["all"] = true
+	} else {
+		for _, t := range types {
+			typemap[t] = true
+		}
+	}
+	linux.Typemap = typemap
 	helper := mp.NewMackerelPlugin(linux)
 	helper.Tempfile = c.String("tempfile")
 
@@ -91,35 +101,35 @@ func (c LinuxPlugin) FetchMetrics() (map[string]interface{}, error) {
 
 	p := make(map[string]interface{})
 
-	if c.Type == "all" || c.Type == "swap" {
+	if c.Typemap["all"] || c.Typemap["swap"] {
 		err = collectProcVmstat(pathVmstat, &p)
 		if err != nil {
 			return nil, err
 		}
 	}
 
-	if c.Type == "all" || c.Type == "netstat" {
+	if c.Typemap["all"] || c.Typemap["netstat"] {
 		err = collectSs(&p)
 		if err != nil {
 			return nil, err
 		}
 	}
 
-	if c.Type == "all" || c.Type == "diskstats" {
+	if c.Typemap["all"] || c.Typemap["diskstats"] {
 		err = collectProcDiskstats(pathDiskstats, &p)
 		if err != nil {
 			return nil, err
 		}
 	}
 
-	if c.Type == "all" || c.Type == "proc_stat" {
+	if c.Typemap["all"] || c.Typemap["proc_stat"] {
 		err = collectProcStat(pathStat, &p)
 		if err != nil {
 			return nil, err
 		}
 	}
 
-	if c.Type == "all" || c.Type == "users" {
+	if c.Typemap["all"] || c.Typemap["users"] {
 		err = collectWho(&p)
 		if err != nil {
 			return nil, err
