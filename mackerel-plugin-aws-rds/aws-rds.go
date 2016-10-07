@@ -22,7 +22,6 @@ type RDSPlugin struct {
 	Engine          string
 	Prefix          string
 	LabelPrefix     string
-	RDSMetrics      []string
 }
 
 func getLastPoint(cloudWatch *cloudwatch.CloudWatch, dimension *cloudwatch.Dimension, metricName string) (float64, error) {
@@ -79,7 +78,7 @@ func (p RDSPlugin) FetchMetrics() (map[string]float64, error) {
 		Value: p.Identifier,
 	}
 
-	for _, met := range p.RDSMetrics {
+	for _, met := range p.rdsMetrics() {
 		v, err := getLastPoint(cloudWatch, perInstance, met)
 		if err == nil {
 			stat[met] = v
@@ -91,21 +90,109 @@ func (p RDSPlugin) FetchMetrics() (map[string]float64, error) {
 	return stat, nil
 }
 
+func (p RDSPlugin) baseGraphDefs() map[string](mp.Graphs) {
+	return map[string](mp.Graphs){
+		p.Prefix + ".BinLogDiskUsage": mp.Graphs{
+			Label: p.LabelPrefix + " BinLogDiskUsage",
+			Unit:  "bytes",
+			Metrics: [](mp.Metrics){
+				mp.Metrics{Name: "BinLogDiskUsage", Label: "Usage"},
+			},
+		},
+		p.Prefix + ".DiskQueueDepth": mp.Graphs{
+			Label: p.LabelPrefix + " BinLogDiskUsage",
+			Unit:  "bytes",
+			Metrics: [](mp.Metrics){
+				mp.Metrics{Name: "DiskQueueDepth", Label: "Depth"},
+			},
+		},
+		p.Prefix + ".CPUUtilization": mp.Graphs{
+			Label: p.LabelPrefix + " CPU Utilization",
+			Unit:  "percentage",
+			Metrics: [](mp.Metrics){
+				mp.Metrics{Name: "CPUUtilization", Label: "CPUUtilization"},
+			},
+		},
+		p.Prefix + ".DatabaseConnections": mp.Graphs{
+			Label: p.LabelPrefix + " Database Connections",
+			Unit:  "float",
+			Metrics: [](mp.Metrics){
+				mp.Metrics{Name: "DatabaseConnections", Label: "DatabaseConnections"},
+			},
+		},
+		p.Prefix + ".FreeableMemory": mp.Graphs{
+			Label: p.LabelPrefix + " Freeable Memory",
+			Unit:  "bytes",
+			Metrics: [](mp.Metrics){
+				mp.Metrics{Name: "FreeableMemory", Label: "FreeableMemory"},
+			},
+		},
+		p.Prefix + ".FreeStorageSpace": mp.Graphs{
+			Label: p.LabelPrefix + " Free Storage Space",
+			Unit:  "bytes",
+			Metrics: [](mp.Metrics){
+				mp.Metrics{Name: "FreeStorageSpace", Label: "FreeStorageSpace"},
+			},
+		},
+		p.Prefix + ".ReplicaLag": mp.Graphs{
+			Label: p.LabelPrefix + " Replica Lag",
+			Unit:  "float",
+			Metrics: [](mp.Metrics){
+				mp.Metrics{Name: "ReplicaLag", Label: "ReplicaLag"},
+			},
+		},
+		p.Prefix + ".SwapUsage": mp.Graphs{
+			Label: p.LabelPrefix + " Swap Usage",
+			Unit:  "bytes",
+			Metrics: [](mp.Metrics){
+				mp.Metrics{Name: "SwapUsage", Label: "SwapUsage"},
+			},
+		},
+		p.Prefix + ".IOPS": mp.Graphs{
+			Label: p.LabelPrefix + " IOPS",
+			Unit:  "iops",
+			Metrics: [](mp.Metrics){
+				mp.Metrics{Name: "ReadIOPS", Label: "Read"},
+				mp.Metrics{Name: "WriteIOPS", Label: "Write"},
+			},
+		},
+		p.Prefix + ".Latency": mp.Graphs{
+			Label: p.LabelPrefix + " Latency in second",
+			Unit:  "float",
+			Metrics: [](mp.Metrics){
+				mp.Metrics{Name: "ReadLatency", Label: "Read"},
+				mp.Metrics{Name: "WriteLatency", Label: "Write"},
+			},
+		},
+		p.Prefix + ".Throughput": mp.Graphs{
+			Label: p.LabelPrefix + " Throughput",
+			Unit:  "bytes/sec",
+			Metrics: [](mp.Metrics){
+				mp.Metrics{Name: "ReadThroughput", Label: "Read"},
+				mp.Metrics{Name: "WriteThroughput", Label: "Write"},
+			},
+		},
+		p.Prefix + ".NetworkThroughput": mp.Graphs{
+			Label: p.LabelPrefix + " Network Throughput",
+			Unit:  "bytes/sec",
+			Metrics: [](mp.Metrics){
+				mp.Metrics{Name: "NetworkTransmitThroughput", Label: "Transmit"},
+				mp.Metrics{Name: "NetworkReceiveThroughput", Label: "Receive"},
+			},
+		},
+	}
+}
+
 // GraphDefinition interface for mackerel plugin
 func (p RDSPlugin) GraphDefinition() map[string](mp.Graphs) {
-	var graphdef map[string](mp.Graphs)
+	graphdef := p.baseGraphDefs()
 	switch p.Engine {
-	case "mysql":
-		graphdef = p.MySQLGraphDefinition()
+	case "mysql", "mariadb":
+		graphdef = mergeGraphDefs(graphdef, p.mySQLGraphDefinition())
 	case "aurora":
-		graphdef = p.AuroraGraphDefinition()
-	case "mariadb":
-		graphdef = p.MariaDBGraphDefinition()
+		graphdef = mergeGraphDefs(graphdef, p.auroraGraphDefinition())
 	case "postgresql":
-		graphdef = p.PostgreSQLGraphDefinition()
-	default:
-		log.Printf("RDS Engine is 'mysql' or 'aurora' or 'mariadb' or 'postgresql'.")
-		os.Exit(1)
+		graphdef = mergeGraphDefs(graphdef, p.postgreSQLGraphDefinition())
 	}
 	return graphdef
 }
@@ -144,20 +231,6 @@ func main() {
 	rds.AccessKeyID = *optAccessKeyID
 	rds.SecretAccessKey = *optSecretAccessKey
 	rds.Engine = *optEngine
-
-	switch rds.Engine {
-	case "mysql":
-		rds.RDSMetrics = MetricsdefMySQL
-	case "aurora":
-		rds.RDSMetrics = MetricsdefAurora
-	case "mariadb":
-		rds.RDSMetrics = MetricsdefMariaDB
-	case "postgresql":
-		rds.RDSMetrics = MetricsdefPostgreSQL
-	default:
-		log.Printf("RDS Engine is 'mysql' or 'aurora' or 'mariadb' or 'postgresql'.")
-		os.Exit(1)
-	}
 
 	helper := mp.NewMackerelPlugin(rds)
 	if *optTempfile != "" {
