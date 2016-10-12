@@ -9,7 +9,7 @@ import (
 	"strings"
 
 	"github.com/alouca/gosnmp"
-	mp "github.com/mackerelio/go-mackerel-plugin"
+	mp "github.com/mackerelio/go-mackerel-plugin-helper"
 )
 
 // SNMPMetrics metrics
@@ -29,8 +29,8 @@ type SNMPPlugin struct {
 }
 
 // FetchMetrics interface for mackerelplugin
-func (m SNMPPlugin) FetchMetrics() (map[string]float64, error) {
-	stat := make(map[string]float64)
+func (m SNMPPlugin) FetchMetrics() (map[string]interface{}, error) {
+	stat := make(map[string]interface{})
 
 	s, err := gosnmp.NewGoSNMP(m.Host, m.Community, gosnmp.Version2c, 30)
 	if err != nil {
@@ -108,12 +108,7 @@ func main() {
 	snmp.SNMPMetricsSlice = sms
 
 	helper := mp.NewMackerelPlugin(snmp)
-
-	if *optTempfile != "" {
-		helper.Tempfile = *optTempfile
-	} else {
-		helper.Tempfile = fmt.Sprintf("/tmp/mackerel-plugin-snmp-%s-%s", *optHost, *optGraphName)
-	}
+	helper.Tempfile = *optTempfile
 
 	if os.Getenv("MACKEREL_AGENT_PLUGIN_META") != "" {
 		helper.OutputDefinitions()
