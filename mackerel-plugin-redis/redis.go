@@ -97,6 +97,14 @@ func calculateCapacity(c *redis.Client, stat map[string]interface{}) error {
 	return nil
 }
 
+// MetricKeyPrefix interface for PluginWithPrefix
+func (m RedisPlugin) MetricKeyPrefix() string {
+	if m.Prefix == "" {
+		m.Prefix = "redis"
+	}
+	return m.Prefix
+}
+
 // FetchMetrics interface for mackerelplugin
 func (m RedisPlugin) FetchMetrics() (map[string]interface{}, error) {
 	network := "tcp"
@@ -197,14 +205,14 @@ func (m RedisPlugin) GraphDefinition() map[string](mp.Graphs) {
 	labelPrefix := strings.Title(m.Prefix)
 
 	var graphdef = map[string](mp.Graphs){
-		(m.Prefix + ".queries"): mp.Graphs{
+		"queries": mp.Graphs{
 			Label: (labelPrefix + " Queries"),
 			Unit:  "integer",
 			Metrics: [](mp.Metrics){
 				mp.Metrics{Name: "instantaneous_ops_per_sec", Label: "Queries", Diff: false},
 			},
 		},
-		(m.Prefix + ".connections"): mp.Graphs{
+		"connections": mp.Graphs{
 			Label: (labelPrefix + " Connections"),
 			Unit:  "integer",
 			Metrics: [](mp.Metrics){
@@ -212,7 +220,7 @@ func (m RedisPlugin) GraphDefinition() map[string](mp.Graphs) {
 				mp.Metrics{Name: "rejected_connections", Label: "Rejected Connections", Diff: true, Stacked: true},
 			},
 		},
-		(m.Prefix + ".clients"): mp.Graphs{
+		"clients": mp.Graphs{
 			Label: (labelPrefix + " Clients"),
 			Unit:  "integer",
 			Metrics: [](mp.Metrics){
@@ -221,7 +229,7 @@ func (m RedisPlugin) GraphDefinition() map[string](mp.Graphs) {
 				mp.Metrics{Name: "connected_slaves", Label: "Blocked Clients", Diff: false, Stacked: true},
 			},
 		},
-		(m.Prefix + ".keys"): mp.Graphs{
+		"keys": mp.Graphs{
 			Label: (labelPrefix + " Keys"),
 			Unit:  "integer",
 			Metrics: [](mp.Metrics){
@@ -229,7 +237,7 @@ func (m RedisPlugin) GraphDefinition() map[string](mp.Graphs) {
 				mp.Metrics{Name: "expired", Label: "Expired Keys", Diff: false},
 			},
 		},
-		(m.Prefix + ".keyspace"): mp.Graphs{
+		"keyspace": mp.Graphs{
 			Label: (labelPrefix + " Keyspace"),
 			Unit:  "integer",
 			Metrics: [](mp.Metrics){
@@ -237,7 +245,7 @@ func (m RedisPlugin) GraphDefinition() map[string](mp.Graphs) {
 				mp.Metrics{Name: "keyspace_misses", Label: "Keyspace Missed", Diff: true},
 			},
 		},
-		(m.Prefix + ".memory"): mp.Graphs{
+		"memory": mp.Graphs{
 			Label: (labelPrefix + " Memory"),
 			Unit:  "integer",
 			Metrics: [](mp.Metrics){
@@ -247,7 +255,7 @@ func (m RedisPlugin) GraphDefinition() map[string](mp.Graphs) {
 				mp.Metrics{Name: "used_memory_lua", Label: "Used Memory Lua engine", Diff: false},
 			},
 		},
-		(m.Prefix + ".capacity"): mp.Graphs{
+		"capacity": mp.Graphs{
 			Label: (labelPrefix + " Capacity"),
 			Unit:  "percentage",
 			Metrics: [](mp.Metrics){
