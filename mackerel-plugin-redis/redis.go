@@ -1,7 +1,6 @@
 package main
 
 import (
-	"crypto/md5"
 	"flag"
 	"fmt"
 	"os"
@@ -11,7 +10,7 @@ import (
 	"time"
 
 	"github.com/fzzy/radix/redis"
-	mp "github.com/mackerelio/go-mackerel-plugin"
+	mp "github.com/mackerelio/go-mackerel-plugin-helper"
 	"github.com/mackerelio/mackerel-agent/logging"
 )
 
@@ -36,7 +35,7 @@ func authenticateByPassword(c *redis.Client, password string) error {
 	return nil
 }
 
-func fetchPercentageOfMemory(c *redis.Client, stat map[string]float64) error {
+func fetchPercentageOfMemory(c *redis.Client, stat map[string]interface{}) error {
 	r := c.Cmd("CONFIG", "GET", "maxmemory")
 	if r.Err != nil {
 		logger.Errorf("Failed to run `CONFIG GET maxmemory` command. %s", r.Err)
@@ -58,13 +57,13 @@ func fetchPercentageOfMemory(c *redis.Client, stat map[string]float64) error {
 	if maxsize == 0.0 {
 		stat["percentage_of_memory"] = 0.0
 	} else {
-		stat["percentage_of_memory"] = 100.0 * stat["used_memory"] / maxsize
+		stat["percentage_of_memory"] = 100.0 * stat["used_memoty"].(float64) / maxsize
 	}
 
 	return nil
 }
 
-func fetchPercentageOfClients(c *redis.Client, stat map[string]float64) error {
+func fetchPercentageOfClients(c *redis.Client, stat map[string]interface{}) error {
 	r := c.Cmd("CONFIG", "GET", "maxclients")
 	if r.Err != nil {
 		logger.Errorf("Failed to run `CONFIG GET maxclients` command. %s", r.Err)
@@ -83,12 +82,12 @@ func fetchPercentageOfClients(c *redis.Client, stat map[string]float64) error {
 		return err
 	}
 
-	stat["percentage_of_clients"] = 100.0 * stat["connected_clients"] / maxsize
+	stat["percentage_of_clients"] = 100.0 * stat["connected_clients"].(float64) / maxsize
 
 	return nil
 }
 
-func calculateCapacity(c *redis.Client, stat map[string]float64) error {
+func calculateCapacity(c *redis.Client, stat map[string]interface{}) error {
 	if err := fetchPercentageOfMemory(c, stat); err != nil {
 		return err
 	}
@@ -98,8 +97,16 @@ func calculateCapacity(c *redis.Client, stat map[string]float64) error {
 	return nil
 }
 
+// MetricKeyPrefix interface for PluginWithPrefix
+func (m RedisPlugin) MetricKeyPrefix() string {
+	if m.Prefix == "" {
+		m.Prefix = "redis"
+	}
+	return m.Prefix
+}
+
 // FetchMetrics interface for mackerelplugin
-func (m RedisPlugin) FetchMetrics() (map[string]float64, error) {
+func (m RedisPlugin) FetchMetrics() (map[string]interface{}, error) {
 	network := "tcp"
 	target := fmt.Sprintf("%s:%s", m.Host, m.Port)
 	if m.Socket != "" {
@@ -130,7 +137,10 @@ func (m RedisPlugin) FetchMetrics() (map[string]float64, error) {
 		return nil, err
 	}
 
-	stat := make(map[string]float64)
+	stat := make(map[string]interface{})
+
+	keysStat := 0.0
+	expiredStat := 0.0
 
 	for _, line := range strings.Split(str, "\r\n") {
 		if line == "" {
@@ -155,17 +165,20 @@ func (m RedisPlugin) FetchMetrics() (map[string]float64, error) {
 			if err != nil {
 				logger.Warningf("Failed to parse db keys. %s", err)
 			}
-			stat["keys"] += keysFv
+			keysStat += keysFv
 
 			expiredKv := strings.SplitN(expired, "=", 2)
 			expiredFv, err := strconv.ParseFloat(expiredKv[1], 64)
 			if err != nil {
 				logger.Warningf("Failed to parse db expired. %s", err)
 			}
-			stat["expired"] += expiredFv
+			expiredStat += expiredFv
 
 			continue
 		}
+
+		stat["keys"] = keysStat
+		stat["expired"] = expiredStat
 
 		stat[key], err = strconv.ParseFloat(value, 64)
 		if err != nil {
@@ -192,14 +205,14 @@ func (m RedisPlugin) GraphDefinition() map[string](mp.Graphs) {
 	labelPrefix := strings.Title(m.Prefix)
 
 	var graphdef = map[string](mp.Graphs){
-		(m.Prefix + ".queries"): mp.Graphs{
+		"queries": mp.Graphs{
 			Label: (labelPrefix + " Queries"),
 			Unit:  "integer",
 			Metrics: [](mp.Metrics){
 				mp.Metrics{Name: "instantaneous_ops_per_sec", Label: "Queries", Diff: false},
 			},
 		},
-		(m.Prefix + ".connections"): mp.Graphs{
+		"connections": mp.Graphs{
 			Label: (labelPrefix + " Connections"),
 			Unit:  "integer",
 			Metrics: [](mp.Metrics){
@@ -207,7 +220,7 @@ func (m RedisPlugin) GraphDefinition() map[string](mp.Graphs) {
 				mp.Metrics{Name: "rejected_connections", Label: "Rejected Connections", Diff: true, Stacked: true},
 			},
 		},
-		(m.Prefix + ".clients"): mp.Graphs{
+		"clients": mp.Graphs{
 			Label: (labelPrefix + " Clients"),
 			Unit:  "integer",
 			Metrics: [](mp.Metrics){
@@ -216,7 +229,7 @@ func (m RedisPlugin) GraphDefinition() map[string](mp.Graphs) {
 				mp.Metrics{Name: "connected_slaves", Label: "Blocked Clients", Diff: false, Stacked: true},
 			},
 		},
-		(m.Prefix + ".keys"): mp.Graphs{
+		"keys": mp.Graphs{
 			Label: (labelPrefix + " Keys"),
 			Unit:  "integer",
 			Metrics: [](mp.Metrics){
@@ -224,7 +237,7 @@ func (m RedisPlugin) GraphDefinition() map[string](mp.Graphs) {
 				mp.Metrics{Name: "expired", Label: "Expired Keys", Diff: false},
 			},
 		},
-		(m.Prefix + ".keyspace"): mp.Graphs{
+		"keyspace": mp.Graphs{
 			Label: (labelPrefix + " Keyspace"),
 			Unit:  "integer",
 			Metrics: [](mp.Metrics){
@@ -232,7 +245,7 @@ func (m RedisPlugin) GraphDefinition() map[string](mp.Graphs) {
 				mp.Metrics{Name: "keyspace_misses", Label: "Keyspace Missed", Diff: true},
 			},
 		},
-		(m.Prefix + ".memory"): mp.Graphs{
+		"memory": mp.Graphs{
 			Label: (labelPrefix + " Memory"),
 			Unit:  "integer",
 			Metrics: [](mp.Metrics){
@@ -242,7 +255,7 @@ func (m RedisPlugin) GraphDefinition() map[string](mp.Graphs) {
 				mp.Metrics{Name: "used_memory_lua", Label: "Used Memory Lua engine", Diff: false},
 			},
 		},
-		(m.Prefix + ".capacity"): mp.Graphs{
+		"capacity": mp.Graphs{
 			Label: (labelPrefix + " Capacity"),
 			Unit:  "percentage",
 			Metrics: [](mp.Metrics){
@@ -277,16 +290,7 @@ func main() {
 		redis.Password = *optPassowrd
 	}
 	helper := mp.NewMackerelPlugin(redis)
-
-	if *optTempfile != "" {
-		helper.Tempfile = *optTempfile
-	} else {
-		if redis.Socket != "" {
-			helper.Tempfile = fmt.Sprintf("/tmp/mackerel-plugin-redis-%s", fmt.Sprintf("%x", md5.Sum([]byte(redis.Socket))))
-		} else {
-			helper.Tempfile = fmt.Sprintf("/tmp/mackerel-plugin-redis-%s-%s", redis.Host, redis.Port)
-		}
-	}
+	helper.Tempfile = *optTempfile
 
 	if os.Getenv("MACKEREL_AGENT_PLUGIN_META") != "" {
 		helper.OutputDefinitions()
