@@ -92,12 +92,7 @@ func main() {
 	var squid SquidPlugin
 	squid.Target = fmt.Sprintf("%s:%s", *optHost, *optPort)
 	helper := mp.NewMackerelPlugin(squid)
-
-	if *optTempfile != "" {
-		helper.Tempfile = *optTempfile
-	} else {
-		helper.Tempfile = fmt.Sprintf("/tmp/mackerel-plugin-squid-%s-%s", *optHost, *optPort)
-	}
+	helper.Tempfile = *optTempfile
 
 	if os.Getenv("MACKEREL_AGENT_PLUGIN_META") != "" {
 		helper.OutputDefinitions()

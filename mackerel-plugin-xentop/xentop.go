@@ -168,8 +168,6 @@ func main() {
 
 	if *optTempfile != "" {
 		helper.Tempfile = *optTempfile
-	} else {
-		helper.Tempfile = fmt.Sprintf("/tmp/mackerel-plugin-xentop")
 	}
 
 	if os.Getenv("MACKEREL_AGENT_PLUGIN_META") != "" {

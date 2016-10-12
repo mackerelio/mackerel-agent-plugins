@@ -109,11 +109,7 @@ func main() {
 	unicorn.WorkerPids = workerPids
 
 	helper := mp.NewMackerelPlugin(unicorn)
-	if *optTempfile != "" {
-		helper.Tempfile = *optTempfile
-	} else {
-		helper.Tempfile = fmt.Sprintf("/tmp/mackerel-plugin-unicorn")
-	}
+	helper.Tempfile = *optTempfile
 
 	if os.Getenv("MACKEREL_AGENT_PLUGIN_META") != "" {
 		helper.OutputDefinitions()
