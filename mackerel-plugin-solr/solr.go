@@ -10,7 +10,7 @@ import (
 	"os"
 	"strings"
 
-	mp "github.com/mackerelio/go-mackerel-plugin"
+	mp "github.com/mackerelio/go-mackerel-plugin-helper"
 	"github.com/mackerelio/mackerel-agent/logging"
 )
 
@@ -141,8 +141,8 @@ func escapeSlash(slashIncludedString string) (str string) {
 }
 
 // FetchMetrics interface for mackerelplugin
-func (s SolrPlugin) FetchMetrics() (map[string]float64, error) {
-	stat := make(map[string]float64)
+func (s SolrPlugin) FetchMetrics() (map[string]interface{}, error) {
+	stat := make(map[string]interface{})
 	for core, stats := range s.Stats {
 		for k, v := range stats {
 			stat[core+"_"+k] = v
@@ -237,12 +237,7 @@ func main() {
 	solr.loadStats()
 
 	helper := mp.NewMackerelPlugin(solr)
-
-	if *optTempfile != "" {
-		helper.Tempfile = *optTempfile
-	} else {
-		helper.Tempfile = fmt.Sprintf("/tmp/mackerel-plugin-%s-%s-%s", solr.Prefix, *optHost, *optPort)
-	}
+	helper.Tempfile = *optTempfile
 
 	if os.Getenv("MACKEREL_AGENT_PLUGIN_META") != "" {
 		helper.OutputDefinitions()
