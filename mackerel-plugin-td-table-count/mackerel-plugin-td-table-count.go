@@ -6,7 +6,7 @@ import (
 	"os"
 	"strings"
 
-	mp "github.com/mackerelio/go-mackerel-plugin"
+	mp "github.com/mackerelio/go-mackerel-plugin-helper"
 	"github.com/mackerelio/mackerel-agent/logging"
 	td "github.com/mattn/go-treasuredata"
 )
@@ -50,8 +50,8 @@ func getTables(m TDTablePlugin) ([]td.Table, error) {
 }
 
 // FetchMetrics interface for mackerelplugin
-func (m TDTablePlugin) FetchMetrics() (map[string]float64, error) {
-	stat := make(map[string]float64)
+func (m TDTablePlugin) FetchMetrics() (map[string]interface{}, error) {
+	stat := make(map[string]interface{})
 
 	tables, _ := getTables(m)
 	for _, table := range tables {
@@ -106,12 +106,7 @@ func main() {
 	plugin.IgnoreTableNames = ignoreTableNames
 
 	helper := mp.NewMackerelPlugin(plugin)
-
-	if *optTempfile != "" {
-		helper.Tempfile = *optTempfile
-	} else {
-		helper.Tempfile = "/tmp/mackerel-plugin-td-table"
-	}
+	helper.Tempfile = *optTempfile
 
 	if os.Getenv("MACKEREL_AGENT_PLUGIN_META") != "" {
 		helper.OutputDefinitions()
