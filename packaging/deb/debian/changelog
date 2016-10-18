@@ -1,3 +1,30 @@
+mackerel-agent-plugins (0.23.0-1) stable; urgency=low
+
+  * mackerel-plugin-linux: Allow to select multiple (but not all) sets of metrics (by astj)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/243>
+  * Fixed flag comment of mackerel-plugin-fluentd (by kakakakakku)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/257>
+  * Fix postgres.iotime.{blk_read_time,blk_write_time} (by mechairoi)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/259>
+  * [Plack] Adopt Plack::Middleware::ServerStatus::Lite 0.35's response (by astj)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/261>
+  * build with Go 1.7 (by astj)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/262>
+  * Add much graphs/metrics to mackerel-plugin-mysql (by netmarkjp)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/264>
+  * [apache2] Support -metric-key-prefix option and get rid of default Tempfile specification (by astj)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/265>
+  * [aws-rds] add `-engine` option (by Songmu)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/266>
+  * [elasticsearch] Add open_file_descriptors metric in elasticsearch plugin (by kamijin-fanta)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/267>
+  * Make *some* plugins to support MACKEREL_PLUGIN_WORKDIR (by astj)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/268>
+  * [redis] deal with MACKEREL_PLUGIN_WORKDIR (by astj)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/269>
+
+ -- mackerel <mackerel-developers@hatena.ne.jp>  Tue, 18 Oct 2016 08:36:50 +0000
+
 mackerel-agent-plugins (0.22.1-1) stable; urgency=low
 
   * Fixed README.md (by kakakakakku)
