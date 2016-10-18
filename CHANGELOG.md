@@ -1,5 +1,20 @@
 # Changelog
 
+## 0.23.0 (2016-10-18)
+
+* mackerel-plugin-linux: Allow to select multiple (but not all) sets of metrics #243 (astj)
+* Fixed flag comment of mackerel-plugin-fluentd #257 (kakakakakku)
+* Fix postgres.iotime.{blk_read_time,blk_write_time} #259 (mechairoi)
+* [Plack] Adopt Plack::Middleware::ServerStatus::Lite 0.35's response #261 (astj)
+* build with Go 1.7 #262 (astj)
+* Add much graphs/metrics to mackerel-plugin-mysql #264 (netmarkjp)
+* [apache2] Support -metric-key-prefix option and get rid of default Tempfile specification #265 (astj)
+* [aws-rds] add `-engine` option #266 (Songmu)
+* [elasticsearch] Add open_file_descriptors metric in elasticsearch plugin #267 (kamijin-fanta)
+* Make *some* plugins to support MACKEREL_PLUGIN_WORKDIR #268 (astj)
+* [redis] deal with MACKEREL_PLUGIN_WORKDIR #269 (astj)
+
+
 ## 0.22.1 (2016-09-06)
 
 * Fixed README.md #253 (kakakakakku)
