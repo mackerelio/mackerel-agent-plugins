@@ -61,6 +61,7 @@ var metricPlace = map[string][]string{
 	"threads_listener":            {"thread_pool", "listener", "threads"},
 	"count_rx":                    {"transport", "rx_count"},
 	"count_tx":                    {"transport", "tx_count"},
+	"open_file_descriptors":       {"process", "open_file_descriptors"},
 }
 
 func getFloatValue(s map[string]interface{}, keys []string) (float64, error) {
@@ -228,6 +229,13 @@ func (p ElasticsearchPlugin) GraphDefinition() map[string](mp.Graphs) {
 			Metrics: [](mp.Metrics){
 				mp.Metrics{Name: "count_rx", Label: "TX", Diff: true},
 				mp.Metrics{Name: "count_tx", Label: "RX", Diff: true},
+			},
+		},
+		p.Prefix + ".process": mp.Graphs{
+			Label: (p.LabelPrefix + " Process"),
+			Unit:  "integer",
+			Metrics: [](mp.Metrics){
+				mp.Metrics{Name: "open_file_descriptors", Label: "Open File Descriptors", Diff: true},
 			},
 		},
 	}
