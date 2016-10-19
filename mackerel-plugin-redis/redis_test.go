@@ -3,6 +3,7 @@ package main
 import (
 	"testing"
 
+	"github.com/garyburd/redigo/redis"
 	"github.com/soh335/go-test-redisserver"
 )
 
@@ -19,6 +20,24 @@ func TestFetchMetricsUnixSocket(t *testing.T) {
 		return
 	}
 	defer s.Stop()
+
+	// set test data
+	conn, err := redis.Dial("unix", s.Config["unixsocket"])
+	if err != nil {
+		t.Errorf("Failed to create a testclient. %s", err)
+		return
+	}
+	_, err = conn.Do("SET", "TEST_KEY", 1)
+	if err != nil {
+		t.Errorf("Failed to send a SET command. %s", err)
+		return
+	}
+	_, err = conn.Do("SETEX", "TEST_EXPIRED_KEY", 1, 2)
+	if err != nil {
+		t.Errorf("Failed to send a SETEX command. %s", err)
+		return
+	}
+
 	redis := RedisPlugin{
 		Timeout: 5,
 		Prefix:  "redis",
@@ -31,8 +50,15 @@ func TestFetchMetricsUnixSocket(t *testing.T) {
 	}
 
 	for _, v := range metrics {
-		if _, ok := stat[v]; !ok {
+		value, ok := stat[v]
+		if !ok {
 			t.Errorf("metric of %s cannot be fetched", v)
+		}
+		if v == "keys" && value != 2.0 {
+			t.Errorf("metric of key should be 2, but %v", value)
+		}
+		if v == "expired" && value != 1.0 {
+			t.Errorf("metric of expired should be 1, but %v", value)
 		}
 	}
 }
