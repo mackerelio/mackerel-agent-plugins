@@ -177,14 +177,14 @@ func (m RedisPlugin) FetchMetrics() (map[string]interface{}, error) {
 			continue
 		}
 
-		stat["keys"] = keysStat
-		stat["expired"] = expiredStat
-
 		stat[key], err = strconv.ParseFloat(value, 64)
 		if err != nil {
 			continue
 		}
 	}
+
+	stat["keys"] = keysStat
+	stat["expired"] = expiredStat
 
 	if _, ok := stat["keys"]; !ok {
 		stat["keys"] = 0
