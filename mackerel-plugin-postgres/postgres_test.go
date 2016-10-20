@@ -1,14 +1,14 @@
 package main
 
 import (
-	"database/sql"
 	"testing"
 
 	"github.com/erikstmartin/go-testdb"
+	"github.com/jmoiron/sqlx"
 )
 
 func TestFetchStatDatabase(t *testing.T) {
-	db, _ := sql.Open("testdb", "")
+	db, _ := sqlx.Connect("testdb", "")
 
 	columns := []string{"xact_commit", "xact_rollback", "blks_read", "blks_hit", "blk_read_time", "blk_write_time",
 		"tup_returned", "tup_fetched", "tup_inserted", "tup_updated", "tup_deleted", "deadlocks", "temp_bytes"}

@@ -1,11 +1,11 @@
 package main
 
 import (
-	"database/sql"
 	"flag"
 	"fmt"
 	"os"
 
+	"github.com/jmoiron/sqlx"
 	_ "github.com/lib/pq"
 	mp "github.com/mackerelio/go-mackerel-plugin-helper"
 	"github.com/mackerelio/mackerel-agent/logging"
@@ -92,7 +92,7 @@ type PostgresPlugin struct {
 	Option   string
 }
 
-func fetchStatDatabase(db *sql.DB) (map[string]interface{}, error) {
+func fetchStatDatabase(db *sqlx.DB) (map[string]interface{}, error) {
 	rows, err := db.Query(`
 		select xact_commit, xact_rollback, blks_read, blks_hit, blk_read_time, blk_write_time,
 		tup_returned, tup_fetched, tup_inserted, tup_updated, tup_deleted, deadlocks, temp_bytes
@@ -129,6 +129,7 @@ func fetchStatDatabase(db *sql.DB) (map[string]interface{}, error) {
 		totalDeadlocks += deadlocks
 		totalTempBytes += tempBytes
 	}
+	stat := make(map[string]interface{})
 	stat["xact_commit"] = totalXactCommit
 	stat["xact_rollback"] = totalXactRollback
 	stat["blks_read"] = totalBlksRead
@@ -146,7 +147,7 @@ func fetchStatDatabase(db *sql.DB) (map[string]interface{}, error) {
 	return stat, nil
 }
 
-func fetchConnections(db *sql.DB) (map[string]interface{}, error) {
+func fetchConnections(db *sqlx.DB) (map[string]interface{}, error) {
 	rows, err := db.Query(`
 		select count(*), waiting from pg_stat_activity group by waiting
 	`)
@@ -176,7 +177,7 @@ func fetchConnections(db *sql.DB) (map[string]interface{}, error) {
 	}, nil
 }
 
-func fetchDatabaseSize(db *sql.DB) (map[string]interface{}, error) {
+func fetchDatabaseSize(db *sqlx.DB) (map[string]interface{}, error) {
 	rows, err := db.Query("select sum(pg_database_size(datname)) as dbsize from pg_database")
 	if err != nil {
 		logger.Errorf("Failed to select pg_database_size. %s", err)
@@ -206,7 +207,8 @@ func mergeStat(dst, src map[string]interface{}) {
 
 // FetchMetrics interface for mackerelplugin
 func (p PostgresPlugin) FetchMetrics() (map[string]interface{}, error) {
-	db, err := sql.Open("postgres", fmt.Sprintf("user=%s password=%s host=%s port=%s sslmode=%s connect_timeout=%d %s", p.Username, p.Password, p.Host, p.Port, p.SSLmode, p.Timeout, p.Option))
+
+	db, err := sqlx.Connect("postgres", fmt.Sprintf("user=%s password=%s host=%s port=%s sslmode=%s connect_timeout=%d %s", p.Username, p.Password, p.Host, p.Port, p.SSLmode, p.Timeout, p.Option))
 	if err != nil {
 		logger.Errorf("FetchMetrics: %s", err)
 		return nil, err
