@@ -101,19 +101,19 @@ func fetchStatDatabase(db *sqlx.DB) (map[string]interface{}, error) {
 	}
 
 	type pgStat struct {
-		XactCommit   *uint64 `db:"xact_commit"`
-		XactRollback *uint64 `db:"xact_rollback"`
-		BlksRead     *uint64 `db:"blks_read"`
-		BlksHit      *uint64 `db:"blks_hit"`
-		BlkReadTime  *uint64 `db:"blk_read_time"`
-		BlkWriteTime *uint64 `db:"blk_write_time"`
-		TupReturned  *uint64 `db:"tup_returned"`
-		TupFetched   *uint64 `db:"tup_fetched"`
-		TupInserted  *uint64 `db:"tup_inserted"`
-		TupUpdated   *uint64 `db:"tup_updated"`
-		TupDeleted   *uint64 `db:"tup_deleted"`
-		Deadlocks    *uint64 `db:"deadlocks"`
-		TempBytes    *uint64 `db:"temp_bytes"`
+		XactCommit   uint64   `db:"xact_commit"`
+		XactRollback uint64   `db:"xact_rollback"`
+		BlksRead     uint64   `db:"blks_read"`
+		BlksHit      uint64   `db:"blks_hit"`
+		BlkReadTime  *float64 `db:"blk_read_time"`
+		BlkWriteTime *float64 `db:"blk_write_time"`
+		TupReturned  uint64   `db:"tup_returned"`
+		TupFetched   uint64   `db:"tup_fetched"`
+		TupInserted  uint64   `db:"tup_inserted"`
+		TupUpdated   uint64   `db:"tup_updated"`
+		TupDeleted   uint64   `db:"tup_deleted"`
+		Deadlocks    *uint64  `db:"deadlocks"`
+		TempBytes    *uint64  `db:"temp_bytes"`
 	}
 
 	totalStat := pgStat{}
@@ -123,34 +123,10 @@ func fetchStatDatabase(db *sqlx.DB) (map[string]interface{}, error) {
 			logger.Warningf("Failed to scan. %s", err)
 			continue
 		}
-		if p.XactCommit != nil {
-			if totalStat.XactCommit == nil {
-				totalStat.XactCommit = p.XactCommit
-			} else {
-				*totalStat.XactCommit += *p.XactCommit
-			}
-		}
-		if p.XactRollback != nil {
-			if totalStat.XactRollback == nil {
-				totalStat.XactRollback = p.XactRollback
-			} else {
-				*totalStat.XactRollback += *p.XactRollback
-			}
-		}
-		if p.BlksRead != nil {
-			if totalStat.BlksRead == nil {
-				totalStat.BlksRead = p.BlksRead
-			} else {
-				*totalStat.BlksRead += *p.BlksRead
-			}
-		}
-		if p.BlksHit != nil {
-			if totalStat.BlksHit == nil {
-				totalStat.BlksHit = p.BlksHit
-			} else {
-				*totalStat.BlksHit += *p.BlksHit
-			}
-		}
+		totalStat.XactCommit += p.XactCommit
+		totalStat.XactRollback += p.XactRollback
+		totalStat.BlksRead += p.BlksRead
+		totalStat.BlksHit += p.BlksHit
 		if p.BlkReadTime != nil {
 			if totalStat.BlkReadTime == nil {
 				totalStat.BlkReadTime = p.BlkReadTime
@@ -165,41 +141,11 @@ func fetchStatDatabase(db *sqlx.DB) (map[string]interface{}, error) {
 				*totalStat.BlkWriteTime += *p.BlkWriteTime
 			}
 		}
-		if p.TupReturned != nil {
-			if totalStat.TupReturned == nil {
-				totalStat.TupReturned = p.TupReturned
-			} else {
-				*totalStat.TupReturned += *p.TupReturned
-			}
-		}
-		if p.TupFetched != nil {
-			if totalStat.TupFetched == nil {
-				totalStat.TupFetched = p.TupFetched
-			} else {
-				*totalStat.TupFetched += *p.TupFetched
-			}
-		}
-		if p.TupInserted != nil {
-			if totalStat.TupInserted == nil {
-				totalStat.TupInserted = p.TupInserted
-			} else {
-				*totalStat.TupInserted += *p.TupInserted
-			}
-		}
-		if p.TupUpdated != nil {
-			if totalStat.TupUpdated == nil {
-				totalStat.TupUpdated = p.TupUpdated
-			} else {
-				*totalStat.TupUpdated += *p.TupUpdated
-			}
-		}
-		if p.TupDeleted != nil {
-			if totalStat.TupDeleted == nil {
-				totalStat.TupDeleted = p.TupDeleted
-			} else {
-				*totalStat.TupDeleted += *p.TupDeleted
-			}
-		}
+		totalStat.TupReturned += p.TupReturned
+		totalStat.TupFetched += p.TupFetched
+		totalStat.TupInserted += p.TupInserted
+		totalStat.TupUpdated += p.TupUpdated
+		totalStat.TupDeleted += p.TupDeleted
 		if p.Deadlocks != nil {
 			if totalStat.Deadlocks == nil {
 				totalStat.Deadlocks = p.Deadlocks
@@ -216,39 +162,21 @@ func fetchStatDatabase(db *sqlx.DB) (map[string]interface{}, error) {
 		}
 	}
 	stat := make(map[string]interface{})
-	if totalStat.XactCommit != nil {
-		stat["xact_commit"] = *totalStat.XactCommit
-	}
-	if totalStat.XactRollback != nil {
-		stat["xact_rollback"] = *totalStat.XactRollback
-	}
-	if totalStat.BlksRead != nil {
-		stat["blks_read"] = *totalStat.BlksRead
-	}
-	if totalStat.BlksHit != nil {
-		stat["blks_hit"] = *totalStat.BlksHit
-	}
+	stat["xact_commit"] = totalStat.XactCommit
+	stat["xact_rollback"] = totalStat.XactRollback
+	stat["blks_read"] = totalStat.BlksRead
+	stat["blks_hit"] = totalStat.BlksHit
 	if totalStat.BlkReadTime != nil {
 		stat["blk_read_time"] = *totalStat.BlkReadTime
 	}
 	if totalStat.BlkWriteTime != nil {
 		stat["blk_write_time"] = *totalStat.BlkWriteTime
 	}
-	if totalStat.TupReturned != nil {
-		stat["tup_returned"] = *totalStat.TupReturned
-	}
-	if totalStat.TupFetched != nil {
-		stat["tup_fetched"] = *totalStat.TupFetched
-	}
-	if totalStat.TupInserted != nil {
-		stat["tup_inserted"] = *totalStat.TupInserted
-	}
-	if totalStat.TupUpdated != nil {
-		stat["tup_updated"] = *totalStat.TupUpdated
-	}
-	if totalStat.TupDeleted != nil {
-		stat["tup_deleted"] = *totalStat.TupDeleted
-	}
+	stat["tup_returned"] = totalStat.TupReturned
+	stat["tup_fetched"] = totalStat.TupFetched
+	stat["tup_inserted"] = totalStat.TupInserted
+	stat["tup_updated"] = totalStat.TupUpdated
+	stat["tup_deleted"] = totalStat.TupDeleted
 	if totalStat.Deadlocks != nil {
 		stat["deadlocks"] = *totalStat.Deadlocks
 	}
