@@ -103,7 +103,21 @@ func fetchStatDatabase(db *sqlx.DB) (map[string]interface{}, error) {
 		return nil, err
 	}
 
-	stat := make(map[string]interface{})
+	type pgStat struct {
+		XactCommit   *float64 `db:"xact_commit"`
+		XactRollback *float64 `db:"xact_rollback"`
+		BlksRead     *float64 `db:"blks_read"`
+		BlksHit      *float64 `db:"blks_hit"`
+		BlkReadTime  *float64 `db:"blk_read_time"`
+		BlkWriteTime *float64 `db:"blk_write_time"`
+		TupReturned  *float64 `db:"tup_returned"`
+		TupFetched   *float64 `db:"tup_fetched"`
+		TupInserted  *float64 `db:"tup_inserted"`
+		TupUpdated   *float64 `db:"tup_updated"`
+		TupDeleted   *float64 `db:"tup_deleted"`
+		Deadlocks    *float64 `db:"deadlocks"`
+		TempBytes    *float64 `db:"temp_bytes"`
+	}
 
 	var totalXactCommit, totalXactRollback, totalBlksRead, totalBlksHit, totalBlkReadTime, totalBlkWriteTime, totalTupReturned, totalTupFetched, totalTupInserted, totalTupUpdated, totalTupDeleted, totalDeadlocks, totalTempBytes float64
 
