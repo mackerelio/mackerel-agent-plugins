@@ -93,71 +93,168 @@ type PostgresPlugin struct {
 }
 
 func fetchStatDatabase(db *sqlx.DB) (map[string]interface{}, error) {
-	rows, err := db.Query(`
-		select xact_commit, xact_rollback, blks_read, blks_hit, blk_read_time, blk_write_time,
-		tup_returned, tup_fetched, tup_inserted, tup_updated, tup_deleted, deadlocks, temp_bytes
-		from pg_stat_database
-	`)
+	db = db.Unsafe()
+	rows, err := db.Queryx(`SELECT * FROM pg_stat_database`)
 	if err != nil {
 		logger.Errorf("Failed to select pg_stat_database. %s", err)
 		return nil, err
 	}
 
 	type pgStat struct {
-		XactCommit   *float64 `db:"xact_commit"`
-		XactRollback *float64 `db:"xact_rollback"`
-		BlksRead     *float64 `db:"blks_read"`
-		BlksHit      *float64 `db:"blks_hit"`
-		BlkReadTime  *float64 `db:"blk_read_time"`
-		BlkWriteTime *float64 `db:"blk_write_time"`
-		TupReturned  *float64 `db:"tup_returned"`
-		TupFetched   *float64 `db:"tup_fetched"`
-		TupInserted  *float64 `db:"tup_inserted"`
-		TupUpdated   *float64 `db:"tup_updated"`
-		TupDeleted   *float64 `db:"tup_deleted"`
-		Deadlocks    *float64 `db:"deadlocks"`
-		TempBytes    *float64 `db:"temp_bytes"`
+		XactCommit   *uint64 `db:"xact_commit"`
+		XactRollback *uint64 `db:"xact_rollback"`
+		BlksRead     *uint64 `db:"blks_read"`
+		BlksHit      *uint64 `db:"blks_hit"`
+		BlkReadTime  *uint64 `db:"blk_read_time"`
+		BlkWriteTime *uint64 `db:"blk_write_time"`
+		TupReturned  *uint64 `db:"tup_returned"`
+		TupFetched   *uint64 `db:"tup_fetched"`
+		TupInserted  *uint64 `db:"tup_inserted"`
+		TupUpdated   *uint64 `db:"tup_updated"`
+		TupDeleted   *uint64 `db:"tup_deleted"`
+		Deadlocks    *uint64 `db:"deadlocks"`
+		TempBytes    *uint64 `db:"temp_bytes"`
 	}
 
-	var totalXactCommit, totalXactRollback, totalBlksRead, totalBlksHit, totalBlkReadTime, totalBlkWriteTime, totalTupReturned, totalTupFetched, totalTupInserted, totalTupUpdated, totalTupDeleted, totalDeadlocks, totalTempBytes float64
-
+	totalStat := pgStat{}
 	for rows.Next() {
-		var xactCommit, xactRollback, blksRead, blksHit, blkReadTime, blkWriteTime, tupReturned, tupFetched, tupInserted, tupUpdated, tupDeleted, deadlocks, tempBytes float64
-
-		if err := rows.Scan(&xactCommit, &xactRollback, &blksRead, &blksHit, &blkReadTime, &blkWriteTime, &tupReturned, &tupFetched, &tupInserted, &tupUpdated, &tupDeleted, &deadlocks, &tempBytes); err != nil {
+		p := pgStat{}
+		if err := rows.StructScan(&p); err != nil {
 			logger.Warningf("Failed to scan. %s", err)
 			continue
 		}
-
-		totalXactCommit += xactCommit
-		totalXactRollback += xactRollback
-		totalBlksRead += blksRead
-		totalBlksHit += blksHit
-		totalBlkReadTime += blkReadTime
-		totalBlkWriteTime += blkWriteTime
-		totalTupReturned += tupReturned
-		totalTupFetched += tupFetched
-		totalTupInserted += tupInserted
-		totalTupUpdated += tupUpdated
-		totalTupDeleted += tupDeleted
-		totalDeadlocks += deadlocks
-		totalTempBytes += tempBytes
+		if p.XactCommit != nil {
+			if totalStat.XactCommit == nil {
+				totalStat.XactCommit = p.XactCommit
+			} else {
+				*totalStat.XactCommit += *p.XactCommit
+			}
+		}
+		if p.XactRollback != nil {
+			if totalStat.XactRollback == nil {
+				totalStat.XactRollback = p.XactRollback
+			} else {
+				*totalStat.XactRollback += *p.XactRollback
+			}
+		}
+		if p.BlksRead != nil {
+			if totalStat.BlksRead == nil {
+				totalStat.BlksRead = p.BlksRead
+			} else {
+				*totalStat.BlksRead += *p.BlksRead
+			}
+		}
+		if p.BlksHit != nil {
+			if totalStat.BlksHit == nil {
+				totalStat.BlksHit = p.BlksHit
+			} else {
+				*totalStat.BlksHit += *p.BlksHit
+			}
+		}
+		if p.BlkReadTime != nil {
+			if totalStat.BlkReadTime == nil {
+				totalStat.BlkReadTime = p.BlkReadTime
+			} else {
+				*totalStat.BlkReadTime += *p.BlkReadTime
+			}
+		}
+		if p.BlkWriteTime != nil {
+			if totalStat.BlkWriteTime == nil {
+				totalStat.BlkWriteTime = p.BlkWriteTime
+			} else {
+				*totalStat.BlkWriteTime += *p.BlkWriteTime
+			}
+		}
+		if p.TupReturned != nil {
+			if totalStat.TupReturned == nil {
+				totalStat.TupReturned = p.TupReturned
+			} else {
+				*totalStat.TupReturned += *p.TupReturned
+			}
+		}
+		if p.TupFetched != nil {
+			if totalStat.TupFetched == nil {
+				totalStat.TupFetched = p.TupFetched
+			} else {
+				*totalStat.TupFetched += *p.TupFetched
+			}
+		}
+		if p.TupInserted != nil {
+			if totalStat.TupInserted == nil {
+				totalStat.TupInserted = p.TupInserted
+			} else {
+				*totalStat.TupInserted += *p.TupInserted
+			}
+		}
+		if p.TupUpdated != nil {
+			if totalStat.TupUpdated == nil {
+				totalStat.TupUpdated = p.TupUpdated
+			} else {
+				*totalStat.TupUpdated += *p.TupUpdated
+			}
+		}
+		if p.TupDeleted != nil {
+			if totalStat.TupDeleted == nil {
+				totalStat.TupDeleted = p.TupDeleted
+			} else {
+				*totalStat.TupDeleted += *p.TupDeleted
+			}
+		}
+		if p.Deadlocks != nil {
+			if totalStat.Deadlocks == nil {
+				totalStat.Deadlocks = p.Deadlocks
+			} else {
+				*totalStat.Deadlocks += *p.Deadlocks
+			}
+		}
+		if p.TempBytes != nil {
+			if totalStat.TempBytes == nil {
+				totalStat.TempBytes = p.TempBytes
+			} else {
+				*totalStat.TempBytes += *p.TempBytes
+			}
+		}
 	}
 	stat := make(map[string]interface{})
-	stat["xact_commit"] = totalXactCommit
-	stat["xact_rollback"] = totalXactRollback
-	stat["blks_read"] = totalBlksRead
-	stat["blks_hit"] = totalBlksHit
-	stat["blk_read_time"] = totalBlkReadTime
-	stat["blk_write_time"] = totalBlkWriteTime
-	stat["tup_returned"] = totalTupReturned
-	stat["tup_fetched"] = totalTupFetched
-	stat["tup_inserted"] = totalTupInserted
-	stat["tup_updated"] = totalTupUpdated
-	stat["tup_deleted"] = totalTupDeleted
-	stat["deadlocks"] = totalDeadlocks
-	stat["temp_bytes"] = totalTempBytes
-
+	if totalStat.XactCommit != nil {
+		stat["xact_commit"] = *totalStat.XactCommit
+	}
+	if totalStat.XactRollback != nil {
+		stat["xact_rollback"] = *totalStat.XactRollback
+	}
+	if totalStat.BlksRead != nil {
+		stat["blks_read"] = *totalStat.BlksRead
+	}
+	if totalStat.BlksHit != nil {
+		stat["blks_hit"] = *totalStat.BlksHit
+	}
+	if totalStat.BlkReadTime != nil {
+		stat["blk_read_time"] = *totalStat.BlkReadTime
+	}
+	if totalStat.BlkWriteTime != nil {
+		stat["blk_write_time"] = *totalStat.BlkWriteTime
+	}
+	if totalStat.TupReturned != nil {
+		stat["tup_returned"] = *totalStat.TupReturned
+	}
+	if totalStat.TupFetched != nil {
+		stat["tup_fetched"] = *totalStat.TupFetched
+	}
+	if totalStat.TupInserted != nil {
+		stat["tup_inserted"] = *totalStat.TupInserted
+	}
+	if totalStat.TupUpdated != nil {
+		stat["tup_updated"] = *totalStat.TupUpdated
+	}
+	if totalStat.TupDeleted != nil {
+		stat["tup_deleted"] = *totalStat.TupDeleted
+	}
+	if totalStat.Deadlocks != nil {
+		stat["deadlocks"] = *totalStat.Deadlocks
+	}
+	if totalStat.TempBytes != nil {
+		stat["temp_bytes"] = *totalStat.TempBytes
+	}
 	return stat, nil
 }
 
