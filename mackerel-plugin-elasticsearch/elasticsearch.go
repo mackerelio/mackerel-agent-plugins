@@ -235,7 +235,7 @@ func (p ElasticsearchPlugin) GraphDefinition() map[string](mp.Graphs) {
 			Label: (p.LabelPrefix + " Process"),
 			Unit:  "integer",
 			Metrics: [](mp.Metrics){
-				mp.Metrics{Name: "open_file_descriptors", Label: "Open File Descriptors", Diff: true},
+				mp.Metrics{Name: "open_file_descriptors", Label: "Open File Descriptors"},
 			},
 		},
 	}
