@@ -24,20 +24,25 @@ func TestFetchStatDatabase(t *testing.T) {
 
 	stat, err := fetchStatDatabase(db)
 
+	expected := map[string]interface{}{
+		"xact_commit":  11.0,
+		"blks_hit":     44.0,
+		"tup_returned": 77.0,
+	}
+
 	if err != nil {
 		t.Errorf("Expected no error, but got %s instead", err)
 	}
 	if err = db.Close(); err != nil {
 		t.Errorf("Error '%s' was not expected while closing the database", err)
 	}
-	if stat["xact_commit"] != 11 {
+	if stat["xact_commit"] != expected["xact_commit"] {
 		t.Error("should be 11")
 	}
-	if stat["blks_hit"] != 44 {
+	if stat["blks_hit"] != expected["blks_hit"] {
 		t.Error("should be 44")
 	}
-	if stat["tup_returned"] != 77 {
+	if stat["tup_returned"] != expected["tup_returned"] {
 		t.Error("should be 77")
 	}
-
 }

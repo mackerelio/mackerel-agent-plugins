@@ -7,7 +7,7 @@ import (
 	"os"
 
 	_ "github.com/lib/pq"
-	mp "github.com/mackerelio/go-mackerel-plugin"
+	mp "github.com/mackerelio/go-mackerel-plugin-helper"
 	"github.com/mackerelio/mackerel-agent/logging"
 )
 
@@ -92,7 +92,7 @@ type PostgresPlugin struct {
 	Option   string
 }
 
-func fetchStatDatabase(db *sql.DB) (map[string]float64, error) {
+func fetchStatDatabase(db *sql.DB) (map[string]interface{}, error) {
 	rows, err := db.Query(`
 		select xact_commit, xact_rollback, blks_read, blks_hit, blk_read_time, blk_write_time,
 		tup_returned, tup_fetched, tup_inserted, tup_updated, tup_deleted, deadlocks, temp_bytes
@@ -103,35 +103,50 @@ func fetchStatDatabase(db *sql.DB) (map[string]float64, error) {
 		return nil, err
 	}
 
-	stat := make(map[string]float64)
+	stat := make(map[string]interface{})
+
+	var totalXactCommit, totalXactRollback, totalBlksRead, totalBlksHit, totalBlkReadTime, totalBlkWriteTime, totalTupReturned, totalTupFetched, totalTupInserted, totalTupUpdated, totalTupDeleted, totalDeadlocks, totalTempBytes float64
 
 	for rows.Next() {
-		var xactCommit, xactRollback, blksRead, blksHit, blkReadTime, blkWriteTime, tupReturned, tupFetched, tupInserted, tupUpdated, tupDeleted, deadlocks, tempBytes int
+		var xactCommit, xactRollback, blksRead, blksHit, blkReadTime, blkWriteTime, tupReturned, tupFetched, tupInserted, tupUpdated, tupDeleted, deadlocks, tempBytes float64
 
 		if err := rows.Scan(&xactCommit, &xactRollback, &blksRead, &blksHit, &blkReadTime, &blkWriteTime, &tupReturned, &tupFetched, &tupInserted, &tupUpdated, &tupDeleted, &deadlocks, &tempBytes); err != nil {
 			logger.Warningf("Failed to scan. %s", err)
 			continue
 		}
 
-		stat["xact_commit"] += float64(xactCommit)
-		stat["xact_rollback"] += float64(xactRollback)
-		stat["blks_read"] += float64(blksRead)
-		stat["blks_hit"] += float64(blksHit)
-		stat["blk_read_time"] += float64(blkReadTime)
-		stat["blk_write_time"] += float64(blkWriteTime)
-		stat["tup_returned"] += float64(tupReturned)
-		stat["tup_fetched"] += float64(tupFetched)
-		stat["tup_inserted"] += float64(tupInserted)
-		stat["tup_updated"] += float64(tupUpdated)
-		stat["tup_deleted"] += float64(tupDeleted)
-		stat["deadlocks"] += float64(deadlocks)
-		stat["temp_bytes"] += float64(tempBytes)
+		totalXactCommit += xactCommit
+		totalXactRollback += xactRollback
+		totalBlksRead += blksRead
+		totalBlksHit += blksHit
+		totalBlkReadTime += blkReadTime
+		totalBlkWriteTime += blkWriteTime
+		totalTupReturned += tupReturned
+		totalTupFetched += tupFetched
+		totalTupInserted += tupInserted
+		totalTupUpdated += tupUpdated
+		totalTupDeleted += tupDeleted
+		totalDeadlocks += deadlocks
+		totalTempBytes += tempBytes
 	}
+	stat["xact_commit"] = totalXactCommit
+	stat["xact_rollback"] = totalXactRollback
+	stat["blks_read"] = totalBlksRead
+	stat["blks_hit"] = totalBlksHit
+	stat["blk_read_time"] = totalBlkReadTime
+	stat["blk_write_time"] = totalBlkWriteTime
+	stat["tup_returned"] = totalTupReturned
+	stat["tup_fetched"] = totalTupFetched
+	stat["tup_inserted"] = totalTupInserted
+	stat["tup_updated"] = totalTupUpdated
+	stat["tup_deleted"] = totalTupDeleted
+	stat["deadlocks"] = totalDeadlocks
+	stat["temp_bytes"] = totalTempBytes
 
 	return stat, nil
 }
 
-func fetchConnections(db *sql.DB) (map[string]float64, error) {
+func fetchConnections(db *sql.DB) (map[string]interface{}, error) {
 	rows, err := db.Query(`
 		select count(*), waiting from pg_stat_activity group by waiting
 	`)
@@ -140,54 +155,57 @@ func fetchConnections(db *sql.DB) (map[string]float64, error) {
 		return nil, err
 	}
 
-	stat := make(map[string]float64)
-
+	var totalActive, totalWaiting float64
 	for rows.Next() {
-		var count int
+		var count float64
 		var waiting string
 		if err := rows.Scan(&count, &waiting); err != nil {
 			logger.Warningf("Failed to scan %s", err)
 			continue
 		}
 		if waiting != "" {
-			stat["active"] += float64(count)
+			totalActive += count
 		} else {
-			stat["waiting"] += float64(count)
+			totalWaiting += count
 		}
 	}
 
-	return stat, nil
+	return map[string]interface{}{
+		"active":  totalActive,
+		"waiting": totalWaiting,
+	}, nil
 }
 
-func fetchDatabaseSize(db *sql.DB) (map[string]float64, error) {
+func fetchDatabaseSize(db *sql.DB) (map[string]interface{}, error) {
 	rows, err := db.Query("select sum(pg_database_size(datname)) as dbsize from pg_database")
 	if err != nil {
 		logger.Errorf("Failed to select pg_database_size. %s", err)
 		return nil, err
 	}
 
-	stat := make(map[string]float64)
-
+	var totalSize float64
 	for rows.Next() {
-		var dbsize int
+		var dbsize float64
 		if err := rows.Scan(&dbsize); err != nil {
 			logger.Warningf("Failed to scan %s", err)
 			continue
 		}
-		stat["total_size"] += float64(dbsize)
+		totalSize += dbsize
 	}
 
-	return stat, nil
+	return map[string]interface{}{
+		"total_size": totalSize,
+	}, nil
 }
 
-func mergeStat(dst, src map[string]float64) {
+func mergeStat(dst, src map[string]interface{}) {
 	for k, v := range src {
 		dst[k] = v
 	}
 }
 
 // FetchMetrics interface for mackerelplugin
-func (p PostgresPlugin) FetchMetrics() (map[string]float64, error) {
+func (p PostgresPlugin) FetchMetrics() (map[string]interface{}, error) {
 	db, err := sql.Open("postgres", fmt.Sprintf("user=%s password=%s host=%s port=%s sslmode=%s connect_timeout=%d %s", p.Username, p.Password, p.Host, p.Port, p.SSLmode, p.Timeout, p.Option))
 	if err != nil {
 		logger.Errorf("FetchMetrics: %s", err)
@@ -208,7 +226,7 @@ func (p PostgresPlugin) FetchMetrics() (map[string]float64, error) {
 		return nil, err
 	}
 
-	stat := make(map[string]float64)
+	stat := make(map[string]interface{})
 	mergeStat(stat, statStatDatabase)
 	mergeStat(stat, statConnections)
 	mergeStat(stat, statDatabaseSize)
@@ -258,15 +276,6 @@ func main() {
 
 	helper := mp.NewMackerelPlugin(postgres)
 
-	if *optTempfile != "" {
-		helper.Tempfile = *optTempfile
-	} else {
-		helper.Tempfile = fmt.Sprintf("/tmp/mackerel-plugin-postgres-%s-%s", *optHost, *optPort)
-	}
-
-	if os.Getenv("MACKEREL_AGENT_PLUGIN_META") != "" {
-		helper.OutputDefinitions()
-	} else {
-		helper.OutputValues()
-	}
+	helper.Tempfile = *optTempfile
+	helper.Run()
 }
