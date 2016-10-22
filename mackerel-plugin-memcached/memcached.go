@@ -51,6 +51,7 @@ func (m MemcachedPlugin) parseStats(conn io.Reader) (map[string]interface{}, err
 		line := scanner.Text()
 		s := string(line)
 		if s == "END" {
+			stat["new_items"] = stat["total_items"]
 			return stat, nil
 		}
 
@@ -147,7 +148,8 @@ func (m MemcachedPlugin) GraphDefinition() map[string](mp.Graphs) {
 			Label: (labelPrefix + " Items"),
 			Unit:  "integer",
 			Metrics: [](mp.Metrics){
-				mp.Metrics{Name: "curr_items", Label: "Current Items", Diff: false},
+				mp.Metrics{Name: "curr_items", Label: "Current Items", Diff: false, Type: "uint64"},
+				mp.Metrics{Name: "new_items", Label: "Current Items", Diff: true, Type: "uint64"},
 			},
 		},
 	}
