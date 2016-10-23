@@ -48,6 +48,7 @@ Documentation for each plugin is located in its respective sub directory.
 * [mackerel-plugin-squid](./mackerel-plugin-squid/README.md)
 * [mackerel-plugin-td-table-count](./mackerel-plugin-td-table-count/README.md)
 * [mackerel-plugin-trafficserver](./mackerel-plugin-trafficserver/README.md)
+* [mackerel-plugin-twemproxy](./mackerel-plugin-twemproxy/README.md)
 * [mackerel-plugin-unicorn](./mackerel-plugin-unicorn/README.md)
 * [mackerel-plugin-uptime](./mackerel-plugin-uptime/README.md)
 * [mackerel-plugin-varnish](./mackerel-plugin-varnish/README.md)
