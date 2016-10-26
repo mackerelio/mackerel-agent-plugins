@@ -149,7 +149,7 @@ func (m MemcachedPlugin) GraphDefinition() map[string](mp.Graphs) {
 			Unit:  "integer",
 			Metrics: [](mp.Metrics){
 				mp.Metrics{Name: "curr_items", Label: "Current Items", Diff: false, Type: "uint64"},
-				mp.Metrics{Name: "new_items", Label: "Current Items", Diff: true, Type: "uint64"},
+				mp.Metrics{Name: "new_items", Label: "New Items", Diff: true, Type: "uint64"},
 			},
 		},
 	}
