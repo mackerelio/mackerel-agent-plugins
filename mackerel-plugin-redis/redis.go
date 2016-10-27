@@ -57,7 +57,7 @@ func fetchPercentageOfMemory(c *redis.Client, stat map[string]interface{}) error
 	if maxsize == 0.0 {
 		stat["percentage_of_memory"] = 0.0
 	} else {
-		stat["percentage_of_memory"] = 100.0 * stat["used_memoty"].(float64) / maxsize
+		stat["percentage_of_memory"] = 100.0 * stat["used_memory"].(float64) / maxsize
 	}
 
 	return nil
