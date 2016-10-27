@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.23.1 (2016-10-27)
+
+* [redis] Fix a bug to fetch no metrics of keys and expired #272 (yoheimuta)
+* fix: "open file descriptors" property in elasticsearch  #273 (kamijin-fanta)
+* [memcached] Supported memcached curr_items metric #275 (kakakakakku)
+* [memcached] support new_items metrics #276 (Songmu)
+* [redis] s/memoty/memory/ #277 (astj)
+
+
 ## 0.23.0 (2016-10-18)
 
 * mackerel-plugin-linux: Allow to select multiple (but not all) sets of metrics #243 (astj)

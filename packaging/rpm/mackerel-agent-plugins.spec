@@ -49,6 +49,13 @@ done
 %{__oldtargetdir}/*
 
 %changelog
+* Thu Oct 27 2016 <mackerel-developers@hatena.ne.jp> - 0.23.1-1
+- [redis] Fix a bug to fetch no metrics of keys and expired (by yoheimuta)
+- fix: "open file descriptors" property in elasticsearch  (by kamijin-fanta)
+- [memcached] Supported memcached curr_items metric (by kakakakakku)
+- [memcached] support new_items metrics (by Songmu)
+- [redis] s/memoty/memory/ (by astj)
+
 * Tue Oct 18 2016 <mackerel-developers@hatena.ne.jp> - 0.23.0-1
 - mackerel-plugin-linux: Allow to select multiple (but not all) sets of metrics (by astj)
 - Fixed flag comment of mackerel-plugin-fluentd (by kakakakakku)
