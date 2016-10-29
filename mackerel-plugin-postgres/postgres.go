@@ -1,13 +1,13 @@
 package main
 
 import (
-	"database/sql"
 	"flag"
 	"fmt"
 	"os"
 
+	"github.com/jmoiron/sqlx"
 	_ "github.com/lib/pq"
-	mp "github.com/mackerelio/go-mackerel-plugin"
+	mp "github.com/mackerelio/go-mackerel-plugin-helper"
 	"github.com/mackerelio/mackerel-agent/logging"
 )
 
@@ -92,46 +92,101 @@ type PostgresPlugin struct {
 	Option   string
 }
 
-func fetchStatDatabase(db *sql.DB) (map[string]float64, error) {
-	rows, err := db.Query(`
-		select xact_commit, xact_rollback, blks_read, blks_hit, blk_read_time, blk_write_time,
-		tup_returned, tup_fetched, tup_inserted, tup_updated, tup_deleted, deadlocks, temp_bytes
-		from pg_stat_database
-	`)
+func fetchStatDatabase(db *sqlx.DB) (map[string]interface{}, error) {
+	db = db.Unsafe()
+	rows, err := db.Queryx(`SELECT * FROM pg_stat_database`)
 	if err != nil {
 		logger.Errorf("Failed to select pg_stat_database. %s", err)
 		return nil, err
 	}
 
-	stat := make(map[string]float64)
+	type pgStat struct {
+		XactCommit   uint64   `db:"xact_commit"`
+		XactRollback uint64   `db:"xact_rollback"`
+		BlksRead     uint64   `db:"blks_read"`
+		BlksHit      uint64   `db:"blks_hit"`
+		BlkReadTime  *float64 `db:"blk_read_time"`
+		BlkWriteTime *float64 `db:"blk_write_time"`
+		TupReturned  uint64   `db:"tup_returned"`
+		TupFetched   uint64   `db:"tup_fetched"`
+		TupInserted  uint64   `db:"tup_inserted"`
+		TupUpdated   uint64   `db:"tup_updated"`
+		TupDeleted   uint64   `db:"tup_deleted"`
+		Deadlocks    *uint64  `db:"deadlocks"`
+		TempBytes    *uint64  `db:"temp_bytes"`
+	}
 
+	totalStat := pgStat{}
 	for rows.Next() {
-		var xactCommit, xactRollback, blksRead, blksHit, blkReadTime, blkWriteTime, tupReturned, tupFetched, tupInserted, tupUpdated, tupDeleted, deadlocks, tempBytes int
-
-		if err := rows.Scan(&xactCommit, &xactRollback, &blksRead, &blksHit, &blkReadTime, &blkWriteTime, &tupReturned, &tupFetched, &tupInserted, &tupUpdated, &tupDeleted, &deadlocks, &tempBytes); err != nil {
+		p := pgStat{}
+		if err := rows.StructScan(&p); err != nil {
 			logger.Warningf("Failed to scan. %s", err)
 			continue
 		}
-
-		stat["xact_commit"] += float64(xactCommit)
-		stat["xact_rollback"] += float64(xactRollback)
-		stat["blks_read"] += float64(blksRead)
-		stat["blks_hit"] += float64(blksHit)
-		stat["blk_read_time"] += float64(blkReadTime)
-		stat["blk_write_time"] += float64(blkWriteTime)
-		stat["tup_returned"] += float64(tupReturned)
-		stat["tup_fetched"] += float64(tupFetched)
-		stat["tup_inserted"] += float64(tupInserted)
-		stat["tup_updated"] += float64(tupUpdated)
-		stat["tup_deleted"] += float64(tupDeleted)
-		stat["deadlocks"] += float64(deadlocks)
-		stat["temp_bytes"] += float64(tempBytes)
+		totalStat.XactCommit += p.XactCommit
+		totalStat.XactRollback += p.XactRollback
+		totalStat.BlksRead += p.BlksRead
+		totalStat.BlksHit += p.BlksHit
+		if p.BlkReadTime != nil {
+			if totalStat.BlkReadTime == nil {
+				totalStat.BlkReadTime = p.BlkReadTime
+			} else {
+				*totalStat.BlkReadTime += *p.BlkReadTime
+			}
+		}
+		if p.BlkWriteTime != nil {
+			if totalStat.BlkWriteTime == nil {
+				totalStat.BlkWriteTime = p.BlkWriteTime
+			} else {
+				*totalStat.BlkWriteTime += *p.BlkWriteTime
+			}
+		}
+		totalStat.TupReturned += p.TupReturned
+		totalStat.TupFetched += p.TupFetched
+		totalStat.TupInserted += p.TupInserted
+		totalStat.TupUpdated += p.TupUpdated
+		totalStat.TupDeleted += p.TupDeleted
+		if p.Deadlocks != nil {
+			if totalStat.Deadlocks == nil {
+				totalStat.Deadlocks = p.Deadlocks
+			} else {
+				*totalStat.Deadlocks += *p.Deadlocks
+			}
+		}
+		if p.TempBytes != nil {
+			if totalStat.TempBytes == nil {
+				totalStat.TempBytes = p.TempBytes
+			} else {
+				*totalStat.TempBytes += *p.TempBytes
+			}
+		}
 	}
-
+	stat := make(map[string]interface{})
+	stat["xact_commit"] = totalStat.XactCommit
+	stat["xact_rollback"] = totalStat.XactRollback
+	stat["blks_read"] = totalStat.BlksRead
+	stat["blks_hit"] = totalStat.BlksHit
+	if totalStat.BlkReadTime != nil {
+		stat["blk_read_time"] = *totalStat.BlkReadTime
+	}
+	if totalStat.BlkWriteTime != nil {
+		stat["blk_write_time"] = *totalStat.BlkWriteTime
+	}
+	stat["tup_returned"] = totalStat.TupReturned
+	stat["tup_fetched"] = totalStat.TupFetched
+	stat["tup_inserted"] = totalStat.TupInserted
+	stat["tup_updated"] = totalStat.TupUpdated
+	stat["tup_deleted"] = totalStat.TupDeleted
+	if totalStat.Deadlocks != nil {
+		stat["deadlocks"] = *totalStat.Deadlocks
+	}
+	if totalStat.TempBytes != nil {
+		stat["temp_bytes"] = *totalStat.TempBytes
+	}
 	return stat, nil
 }
 
-func fetchConnections(db *sql.DB) (map[string]float64, error) {
+func fetchConnections(db *sqlx.DB) (map[string]interface{}, error) {
 	rows, err := db.Query(`
 		select count(*), waiting from pg_stat_activity group by waiting
 	`)
@@ -140,55 +195,59 @@ func fetchConnections(db *sql.DB) (map[string]float64, error) {
 		return nil, err
 	}
 
-	stat := make(map[string]float64)
-
+	var totalActive, totalWaiting float64
 	for rows.Next() {
-		var count int
+		var count float64
 		var waiting string
 		if err := rows.Scan(&count, &waiting); err != nil {
 			logger.Warningf("Failed to scan %s", err)
 			continue
 		}
 		if waiting != "" {
-			stat["active"] += float64(count)
+			totalActive += count
 		} else {
-			stat["waiting"] += float64(count)
+			totalWaiting += count
 		}
 	}
 
-	return stat, nil
+	return map[string]interface{}{
+		"active":  totalActive,
+		"waiting": totalWaiting,
+	}, nil
 }
 
-func fetchDatabaseSize(db *sql.DB) (map[string]float64, error) {
+func fetchDatabaseSize(db *sqlx.DB) (map[string]interface{}, error) {
 	rows, err := db.Query("select sum(pg_database_size(datname)) as dbsize from pg_database")
 	if err != nil {
 		logger.Errorf("Failed to select pg_database_size. %s", err)
 		return nil, err
 	}
 
-	stat := make(map[string]float64)
-
+	var totalSize float64
 	for rows.Next() {
-		var dbsize int
+		var dbsize float64
 		if err := rows.Scan(&dbsize); err != nil {
 			logger.Warningf("Failed to scan %s", err)
 			continue
 		}
-		stat["total_size"] += float64(dbsize)
+		totalSize += dbsize
 	}
 
-	return stat, nil
+	return map[string]interface{}{
+		"total_size": totalSize,
+	}, nil
 }
 
-func mergeStat(dst, src map[string]float64) {
+func mergeStat(dst, src map[string]interface{}) {
 	for k, v := range src {
 		dst[k] = v
 	}
 }
 
 // FetchMetrics interface for mackerelplugin
-func (p PostgresPlugin) FetchMetrics() (map[string]float64, error) {
-	db, err := sql.Open("postgres", fmt.Sprintf("user=%s password=%s host=%s port=%s sslmode=%s connect_timeout=%d %s", p.Username, p.Password, p.Host, p.Port, p.SSLmode, p.Timeout, p.Option))
+func (p PostgresPlugin) FetchMetrics() (map[string]interface{}, error) {
+
+	db, err := sqlx.Connect("postgres", fmt.Sprintf("user=%s password=%s host=%s port=%s sslmode=%s connect_timeout=%d %s", p.Username, p.Password, p.Host, p.Port, p.SSLmode, p.Timeout, p.Option))
 	if err != nil {
 		logger.Errorf("FetchMetrics: %s", err)
 		return nil, err
@@ -208,7 +267,7 @@ func (p PostgresPlugin) FetchMetrics() (map[string]float64, error) {
 		return nil, err
 	}
 
-	stat := make(map[string]float64)
+	stat := make(map[string]interface{})
 	mergeStat(stat, statStatDatabase)
 	mergeStat(stat, statConnections)
 	mergeStat(stat, statDatabaseSize)
@@ -258,15 +317,6 @@ func main() {
 
 	helper := mp.NewMackerelPlugin(postgres)
 
-	if *optTempfile != "" {
-		helper.Tempfile = *optTempfile
-	} else {
-		helper.Tempfile = fmt.Sprintf("/tmp/mackerel-plugin-postgres-%s-%s", *optHost, *optPort)
-	}
-
-	if os.Getenv("MACKEREL_AGENT_PLUGIN_META") != "" {
-		helper.OutputDefinitions()
-	} else {
-		helper.OutputValues()
-	}
+	helper.Tempfile = *optTempfile
+	helper.Run()
 }
