@@ -63,6 +63,59 @@ func TestFetchMetricsUnixSocket(t *testing.T) {
 	}
 }
 
+func TestFetchMetricsPercentageOfMemory(t *testing.T) {
+	s, err := redistest.NewServer(true, nil)
+	if err != nil {
+		t.Errorf("Failed to invoke testserver. %s", err)
+		return
+	}
+	defer s.Stop()
+
+	rp := RedisPlugin{
+		Timeout: 5,
+		Prefix:  "redis",
+		Socket:  s.Config["unixsocket"],
+	}
+
+	conn, err := redis.Dial("unix", s.Config["unixsocket"])
+
+	// Without maxmemory
+	_, err = conn.Do("CONFIG", "SET", "maxmemory", 0.0)
+	if err != nil {
+		t.Errorf("Failed to send a CONFIG command. %s", err)
+		return
+	}
+
+	stat1, err := rp.FetchMetrics()
+	if err != nil {
+		t.Errorf("something went wrong")
+	}
+
+	if value, ok := stat1["percentage_of_memory"]; !ok {
+		t.Errorf("metric of 'percentage_of_memory' cannnot be fetched")
+	} else if value != 0.0 {
+		t.Errorf("metric of 'percentage_of_memory' should be 0.0, but %v", value)
+	}
+
+	// With maxmemory
+	_, err = conn.Do("CONFIG", "SET", "maxmemory", 1024*1024)
+	if err != nil {
+		t.Errorf("Failed to send a CONFIG command. %s", err)
+		return
+	}
+
+	stat2, err := rp.FetchMetrics()
+	if err != nil {
+		t.Errorf("something went wrong")
+	}
+
+	if value, ok := stat2["percentage_of_memory"]; !ok {
+		t.Errorf("metric of 'percentage_of_memory' cannnot be fetched")
+	} else if value == 0.0 {
+		t.Errorf("metric of 'percentage_of_memory' should not be 0.0, but %v", value)
+	}
+}
+
 func TestFetchMetrics(t *testing.T) {
 	// should detect empty port
 	portStr := "63331"
