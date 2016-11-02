@@ -11,9 +11,9 @@ import (
 	"github.com/mackerelio/mackerel-agent/logging"
 )
 
-var logger = logging.GetLogger("metrics.plugin.server-sessions")
+var logger = logging.GetLogger("metrics.plugin.windows-server-sessions")
 
-// WindowsServerSessionsPlugin mackerel plugin for td
+// WindowsServerSessionsPlugin store the name of servers
 type WindowsServerSessionsPlugin struct {
 	names []string
 }
