@@ -49,6 +49,7 @@ type NVidiaSMIPlugin struct {
 	Prefix string
 }
 
+// GraphDefinition interface for mackerelplugin
 func (n NVidiaSMIPlugin) GraphDefinition() map[string](mp.Graphs) {
 	var graphdef = map[string](mp.Graphs){
 		"gpu.util": mp.Graphs{
@@ -93,6 +94,7 @@ func (n NVidiaSMIPlugin) GraphDefinition() map[string](mp.Graphs) {
 	return graphdef
 }
 
+// FetchMetrics interface for mackerelplugin
 func (n NVidiaSMIPlugin) FetchMetrics() (map[string]interface{}, error) {
 	ret, err := exec.Command("nvidia-smi", nvidiaSmiOptions...).CombinedOutput()
 	if err != nil {
@@ -101,6 +103,7 @@ func (n NVidiaSMIPlugin) FetchMetrics() (map[string]interface{}, error) {
 	return n.parseStats(string(ret))
 }
 
+// MetricKeyPrefix interface for mackerelplugin
 func (n NVidiaSMIPlugin) MetricKeyPrefix() string {
 	return n.Prefix
 }
