@@ -3,5 +3,7 @@ machine:
     Asia/Tokyo
 
 test:
+  pre:
+    - go get github.com/mitchellh/gox
   override:
     - make all
