@@ -18,6 +18,7 @@ mackerel-plugin-jvm -javaname=<javaname> [-pidfile=</path/to/pidfile>] [-jstatpa
 ```
 [plugin.metrics.jvm]
 command = "/path/to/mackerel-plugin-jvm -javaname=NettyServer -jstatpath=/usr/bin/jstat -jpspath=/usr/bin/jps -jinfopath=/usr/bin/jinfo"
+user = "SOME_USER_NAME"
 ```
 
 ## About javaname
@@ -32,6 +33,11 @@ You can check javaname by jps command.
 
 Please choose an arbitrary name as `javaname` when you use `pidfile` option.
 It is just used as a prefix of graph label.
+
+## User to execute this plugin
+
+Normally mackerel-agent is executed by root, but this plugin (and jps command explained above) needs to be executed by the user who executes target java application process, and the two may differ.
+In this case, you need to specify which user to execute this plugin to `mackerel-agent-conf` configuration, like the example.
 
 ## References
 
