@@ -1,0 +1,7 @@
+machine:
+  timezone:
+    Asia/Tokyo
+
+test:
+  override:
+    - make all
