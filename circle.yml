@@ -5,6 +5,6 @@ machine:
 test:
   pre:
     - go get github.com/mitchellh/gox
-    - sudo /etc/init.d/mongodb stop
+    - sudo service mongod restart
   override:
     - make test
