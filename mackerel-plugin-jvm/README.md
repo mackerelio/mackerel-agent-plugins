@@ -36,8 +36,8 @@ It is just used as a prefix of graph label.
 
 ## User to execute this plugin
 
-Normally mackerel-agent is executed by root, but this plugin (and jps command explained above) needs to be executed by the user who executes target java application process, and the two may differ.
-In this case, you need to specify which user to execute this plugin to `mackerel-agent-conf` configuration, like the example.
+This plugin (as well as the jps command explained above) must be executed by the user who executes the target Java application process, while mackerel-agent usually runs under root privilege.
+Since the executing user may not be root, you are required to specify the user in `mackerel-agent-conf` as shown above.
 
 ## References
 
