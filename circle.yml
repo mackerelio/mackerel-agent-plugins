@@ -1,0 +1,10 @@
+machine:
+  timezone:
+    Asia/Tokyo
+
+test:
+  pre:
+    - go get github.com/mitchellh/gox
+    - sudo service mongod stop
+  override:
+    - make test
