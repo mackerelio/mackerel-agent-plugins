@@ -54,7 +54,9 @@ STAT conn_yields 1487476
 STAT bytes 621371972
 STAT curr_items 955652
 STAT total_items 2423543841
+STAT evicted_nonzero 10
 STAT evictions 236677775
+STAT reclaimed 56614232
 END
 `
 
