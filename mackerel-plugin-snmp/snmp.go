@@ -57,14 +57,14 @@ func (m SNMPPlugin) FetchMetrics() (map[string]interface{}, error) {
 }
 
 // GraphDefinition interface for mackerelplugin
-func (m SNMPPlugin) GraphDefinition() map[string](mp.Graphs) {
+func (m SNMPPlugin) GraphDefinition() map[string]mp.Graphs {
 	metrics := []mp.Metrics{}
 	for _, sm := range m.SNMPMetricsSlice {
 		metrics = append(metrics, sm.Metrics)
 	}
 
-	return map[string](mp.Graphs){
-		m.GraphName: mp.Graphs{
+	return map[string]mp.Graphs{
+		m.GraphName: {
 			Label:   m.GraphName,
 			Unit:    m.GraphUnit,
 			Metrics: metrics,

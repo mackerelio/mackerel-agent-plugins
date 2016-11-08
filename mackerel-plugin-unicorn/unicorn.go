@@ -15,22 +15,22 @@ import (
 
 var logger = logging.GetLogger("metrics.plugin.unicorn")
 
-var graphdef = map[string](mp.Graphs){
-	"unicorn.memory": mp.Graphs{
+var graphdef = map[string]mp.Graphs{
+	"unicorn.memory": {
 		Label: "Unicorn Memory",
 		Unit:  "bytes",
-		Metrics: [](mp.Metrics){
-			mp.Metrics{Name: "memory_workers", Label: "Workers", Diff: false, Stacked: true},
-			mp.Metrics{Name: "memory_master", Label: "Master", Diff: false, Stacked: true},
-			mp.Metrics{Name: "memory_workeravg", Label: "Worker Average", Diff: false, Stacked: false},
+		Metrics: []mp.Metrics{
+			{Name: "memory_workers", Label: "Workers", Diff: false, Stacked: true},
+			{Name: "memory_master", Label: "Master", Diff: false, Stacked: true},
+			{Name: "memory_workeravg", Label: "Worker Average", Diff: false, Stacked: false},
 		},
 	},
-	"unicorn.workers": mp.Graphs{
+	"unicorn.workers": {
 		Label: "Unicorn Workers",
 		Unit:  "integer",
-		Metrics: [](mp.Metrics){
-			mp.Metrics{Name: "busy_workers", Label: "Busy Workers", Diff: false, Stacked: true},
-			mp.Metrics{Name: "idle_workers", Label: "Idle Workers", Diff: false, Stacked: true},
+		Metrics: []mp.Metrics{
+			{Name: "busy_workers", Label: "Busy Workers", Diff: false, Stacked: true},
+			{Name: "idle_workers", Label: "Idle Workers", Diff: false, Stacked: true},
 		},
 	},
 }
@@ -76,7 +76,7 @@ func (u UnicornPlugin) FetchMetrics() (map[string]interface{}, error) {
 }
 
 // GraphDefinition interface for mackerelplugin
-func (u UnicornPlugin) GraphDefinition() map[string](mp.Graphs) {
+func (u UnicornPlugin) GraphDefinition() map[string]mp.Graphs {
 	return graphdef
 }
 

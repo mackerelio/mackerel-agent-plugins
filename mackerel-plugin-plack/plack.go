@@ -120,28 +120,28 @@ func (p PlackPlugin) parseStats(body io.Reader) (map[string]interface{}, error) 
 }
 
 // GraphDefinition interface for mackerelplugin
-func (p PlackPlugin) GraphDefinition() map[string](mp.Graphs) {
-	var graphdef = map[string](mp.Graphs){
-		(p.Prefix + ".workers"): mp.Graphs{
+func (p PlackPlugin) GraphDefinition() map[string]mp.Graphs {
+	var graphdef = map[string]mp.Graphs{
+		(p.Prefix + ".workers"): {
 			Label: p.LabelPrefix + " Workers",
 			Unit:  "integer",
-			Metrics: [](mp.Metrics){
-				mp.Metrics{Name: "busy_workers", Label: "Busy Workers", Diff: false, Stacked: true},
-				mp.Metrics{Name: "idle_workers", Label: "Idle Workers", Diff: false, Stacked: true},
+			Metrics: []mp.Metrics{
+				{Name: "busy_workers", Label: "Busy Workers", Diff: false, Stacked: true},
+				{Name: "idle_workers", Label: "Idle Workers", Diff: false, Stacked: true},
 			},
 		},
-		(p.Prefix + ".req"): mp.Graphs{
+		(p.Prefix + ".req"): {
 			Label: p.LabelPrefix + " Requests",
 			Unit:  "integer",
-			Metrics: [](mp.Metrics){
-				mp.Metrics{Name: "requests", Label: "Requests", Diff: true, Type: "uint64"},
+			Metrics: []mp.Metrics{
+				{Name: "requests", Label: "Requests", Diff: true, Type: "uint64"},
 			},
 		},
-		(p.Prefix + ".bytes"): mp.Graphs{
+		(p.Prefix + ".bytes"): {
 			Label: p.LabelPrefix + " Bytes",
 			Unit:  "integer",
-			Metrics: [](mp.Metrics){
-				mp.Metrics{Name: "bytes_sent", Label: "Bytes Sent", Diff: true, Type: "uint64"},
+			Metrics: []mp.Metrics{
+				{Name: "bytes_sent", Label: "Bytes Sent", Diff: true, Type: "uint64"},
 			},
 		},
 	}

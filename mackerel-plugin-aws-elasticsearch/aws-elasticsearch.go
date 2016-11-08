@@ -12,115 +12,115 @@ import (
 	mp "github.com/mackerelio/go-mackerel-plugin"
 )
 
-var graphdef = map[string](mp.Graphs){
-	"es.Nodes": mp.Graphs{
+var graphdef = map[string]mp.Graphs{
+	"es.Nodes": {
 		Label: "AWS ES Nodes",
 		Unit:  "integer",
-		Metrics: [](mp.Metrics){
-			mp.Metrics{Name: "Nodes", Label: "Nodes"},
+		Metrics: []mp.Metrics{
+			{Name: "Nodes", Label: "Nodes"},
 		},
 	},
-	"es.CPUUtilization": mp.Graphs{
+	"es.CPUUtilization": {
 		Label: "AWS ES CPU Utilization",
 		Unit:  "percentage",
-		Metrics: [](mp.Metrics){
-			mp.Metrics{Name: "CPUUtilization", Label: "CPUUtilization"},
+		Metrics: []mp.Metrics{
+			{Name: "CPUUtilization", Label: "CPUUtilization"},
 		},
 	},
-	"es.JVMMemoryPressure": mp.Graphs{
+	"es.JVMMemoryPressure": {
 		Label: "AWS ES JVMMemoryPressure",
 		Unit:  "percentage",
-		Metrics: [](mp.Metrics){
-			mp.Metrics{Name: "JVMMemoryPressure", Label: "JVMMemoryPressure"},
+		Metrics: []mp.Metrics{
+			{Name: "JVMMemoryPressure", Label: "JVMMemoryPressure"},
 		},
 	},
-	"es.FreeStorageSpace": mp.Graphs{
+	"es.FreeStorageSpace": {
 		Label: "AWS ES Free Storage Space",
 		Unit:  "bytes",
-		Metrics: [](mp.Metrics){
-			mp.Metrics{Name: "FreeStorageSpace", Label: "FreeStorageSpace"},
+		Metrics: []mp.Metrics{
+			{Name: "FreeStorageSpace", Label: "FreeStorageSpace"},
 		},
 	},
-	"es.SearchableDocuments": mp.Graphs{
+	"es.SearchableDocuments": {
 		Label: "AWS ES SearchableDocuments",
 		Unit:  "integer",
-		Metrics: [](mp.Metrics){
-			mp.Metrics{Name: "SearchableDocuments", Label: "SearchableDocuments"},
+		Metrics: []mp.Metrics{
+			{Name: "SearchableDocuments", Label: "SearchableDocuments"},
 		},
 	},
-	"es.DeletedDocuments": mp.Graphs{
+	"es.DeletedDocuments": {
 		Label: "AWS ES DeletedDocuments",
 		Unit:  "integer",
-		Metrics: [](mp.Metrics){
-			mp.Metrics{Name: "DeletedDocuments", Label: "DeletedDocuments"},
+		Metrics: []mp.Metrics{
+			{Name: "DeletedDocuments", Label: "DeletedDocuments"},
 		},
 	},
-	"es.IOPS": mp.Graphs{
+	"es.IOPS": {
 		Label: "AWS ES IOPS",
 		Unit:  "iops",
-		Metrics: [](mp.Metrics){
-			mp.Metrics{Name: "ReadIOPS", Label: "ReadIOPS"},
-			mp.Metrics{Name: "WriteIOPS", Label: "WriteIOPS"},
+		Metrics: []mp.Metrics{
+			{Name: "ReadIOPS", Label: "ReadIOPS"},
+			{Name: "WriteIOPS", Label: "WriteIOPS"},
 		},
 	},
-	"es.Throughput": mp.Graphs{
+	"es.Throughput": {
 		Label: "AWS ES Throughput",
 		Unit:  "bytes/sec",
-		Metrics: [](mp.Metrics){
-			mp.Metrics{Name: "ReadThroughput", Label: "ReadThroughput"},
-			mp.Metrics{Name: "WriteThroughput", Label: "WriteThroughput"},
+		Metrics: []mp.Metrics{
+			{Name: "ReadThroughput", Label: "ReadThroughput"},
+			{Name: "WriteThroughput", Label: "WriteThroughput"},
 		},
 	},
-	"es.DiskQueueDepth": mp.Graphs{
+	"es.DiskQueueDepth": {
 		Label: "AWS ES DiskQueueDepth",
 		Unit:  "integer",
-		Metrics: [](mp.Metrics){
-			mp.Metrics{Name: "DiskQueueDepth", Label: "DiskQueueDepth"},
+		Metrics: []mp.Metrics{
+			{Name: "DiskQueueDepth", Label: "DiskQueueDepth"},
 		},
 	},
-	"es.AutomatedSnapshotFailure": mp.Graphs{
+	"es.AutomatedSnapshotFailure": {
 		Label: "AWS ES AutomatedSnapshotFailure",
 		Unit:  "integer",
-		Metrics: [](mp.Metrics){
-			mp.Metrics{Name: "AutomatedSnapshotFailure", Label: "AutomatedSnapshotFailure"},
+		Metrics: []mp.Metrics{
+			{Name: "AutomatedSnapshotFailure", Label: "AutomatedSnapshotFailure"},
 		},
 	},
-	"es.MasterCPUUtilization": mp.Graphs{
+	"es.MasterCPUUtilization": {
 		Label: "AWS ES MasterCPUUtilization",
 		Unit:  "percentage",
-		Metrics: [](mp.Metrics){
-			mp.Metrics{Name: "MasterCPUUtilization", Label: "MasterCPUUtilization"},
+		Metrics: []mp.Metrics{
+			{Name: "MasterCPUUtilization", Label: "MasterCPUUtilization"},
 		},
 	},
-	"es.Latency": mp.Graphs{
+	"es.Latency": {
 		Label: "AWS ES Latency",
 		Unit:  "float",
-		Metrics: [](mp.Metrics){
-			mp.Metrics{Name: "ReadLatency", Label: "ReadLatency"},
-			mp.Metrics{Name: "WriteLatency", Label: "WriteLatency"},
+		Metrics: []mp.Metrics{
+			{Name: "ReadLatency", Label: "ReadLatency"},
+			{Name: "WriteLatency", Label: "WriteLatency"},
 		},
 	},
-	"es.MasterJVMMemoryPressure": mp.Graphs{
+	"es.MasterJVMMemoryPressure": {
 		Label: "AWS ES MasterJVMMemoryPressure",
 		Unit:  "percentage",
-		Metrics: [](mp.Metrics){
-			mp.Metrics{Name: "MasterJVMMemoryPressure", Label: "MasterJVMMemoryPressure"},
+		Metrics: []mp.Metrics{
+			{Name: "MasterJVMMemoryPressure", Label: "MasterJVMMemoryPressure"},
 		},
 	},
-	"es.MasterFreeStorageSpace": mp.Graphs{
+	"es.MasterFreeStorageSpace": {
 		Label: "AWS ES MasterFreeStorageSpace",
 		Unit:  "bytes",
-		Metrics: [](mp.Metrics){
-			mp.Metrics{Name: "MasterFreeStorageSpace", Label: "MasterFreeStorageSpace"},
+		Metrics: []mp.Metrics{
+			{Name: "MasterFreeStorageSpace", Label: "MasterFreeStorageSpace"},
 		},
 	},
-	"es.ClusterStatus": mp.Graphs{
+	"es.ClusterStatus": {
 		Label: "AWS ES ClusterStatus",
 		Unit:  "integer",
-		Metrics: [](mp.Metrics){
-			mp.Metrics{Name: "ClusterStatus.green", Label: "green"},
-			mp.Metrics{Name: "ClusterStatus.yellow", Label: "yellow"},
-			mp.Metrics{Name: "ClusterStatus.red", Label: "red"},
+		Metrics: []mp.Metrics{
+			{Name: "ClusterStatus.green", Label: "green"},
+			{Name: "ClusterStatus.yellow", Label: "yellow"},
+			{Name: "ClusterStatus.red", Label: "red"},
 		},
 	},
 }
@@ -226,7 +226,7 @@ func (p ESPlugin) FetchMetrics() (map[string]float64, error) {
 }
 
 // GraphDefinition interface for mackerelplugin
-func (p ESPlugin) GraphDefinition() map[string](mp.Graphs) {
+func (p ESPlugin) GraphDefinition() map[string]mp.Graphs {
 	return graphdef
 }
 

@@ -23,14 +23,14 @@ func (u UptimePlugin) MetricKeyPrefix() string {
 }
 
 // GraphDefinition interface for mackerelplugin
-func (u UptimePlugin) GraphDefinition() map[string](mp.Graphs) {
+func (u UptimePlugin) GraphDefinition() map[string]mp.Graphs {
 	labelPrefix := strings.Title(u.Prefix)
-	return map[string](mp.Graphs){
-		"": mp.Graphs{
+	return map[string]mp.Graphs{
+		"": {
 			Label: labelPrefix,
 			Unit:  "float",
-			Metrics: [](mp.Metrics){
-				mp.Metrics{Name: "seconds", Label: "Seconds"},
+			Metrics: []mp.Metrics{
+				{Name: "seconds", Label: "Seconds"},
 			},
 		},
 	}

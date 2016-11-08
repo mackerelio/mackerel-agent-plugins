@@ -208,83 +208,83 @@ func (m JVMPlugin) FetchMetrics() (map[string]interface{}, error) {
 }
 
 // GraphDefinition interface for mackerelplugin
-func (m JVMPlugin) GraphDefinition() map[string](mp.Graphs) {
+func (m JVMPlugin) GraphDefinition() map[string]mp.Graphs {
 	rawJavaName := m.JavaName
 	lowerJavaName := strings.ToLower(m.JavaName)
-	return map[string](mp.Graphs){
-		fmt.Sprintf("jvm.%s.gc_events", lowerJavaName): mp.Graphs{
+	return map[string]mp.Graphs{
+		fmt.Sprintf("jvm.%s.gc_events", lowerJavaName): {
 			Label: fmt.Sprintf("JVM %s GC events", rawJavaName),
 			Unit:  "integer",
-			Metrics: [](mp.Metrics){
-				mp.Metrics{Name: "YGC", Label: "Young GC event", Diff: true},
-				mp.Metrics{Name: "FGC", Label: "Full GC event", Diff: true},
+			Metrics: []mp.Metrics{
+				{Name: "YGC", Label: "Young GC event", Diff: true},
+				{Name: "FGC", Label: "Full GC event", Diff: true},
 			},
 		},
-		fmt.Sprintf("jvm.%s.gc_time", lowerJavaName): mp.Graphs{
+		fmt.Sprintf("jvm.%s.gc_time", lowerJavaName): {
 			Label: fmt.Sprintf("JVM %s GC time (msec)", rawJavaName),
 			Unit:  "float",
-			Metrics: [](mp.Metrics){
-				mp.Metrics{Name: "YGCT", Label: "Young GC time", Diff: true},
-				mp.Metrics{Name: "FGCT", Label: "Full GC time", Diff: true},
+			Metrics: []mp.Metrics{
+				{Name: "YGCT", Label: "Young GC time", Diff: true},
+				{Name: "FGCT", Label: "Full GC time", Diff: true},
 			},
 		},
-		fmt.Sprintf("jvm.%s.gc_time_percentage", lowerJavaName): mp.Graphs{
+		fmt.Sprintf("jvm.%s.gc_time_percentage", lowerJavaName): {
 			Label: fmt.Sprintf("JVM %s GC time percentage", rawJavaName),
 			Unit:  "percentage",
-			Metrics: [](mp.Metrics){
+			Metrics: []mp.Metrics{
 				// gc_time_percentage is the percentage of gc time to 60 sec.
-				mp.Metrics{Name: "YGCT", Label: "Young GC time", Diff: true, Scale: (0.001 / 60)},
-				mp.Metrics{Name: "FGCT", Label: "Full GC time", Diff: true, Scale: (0.001 / 60)},
+				{Name: "YGCT", Label: "Young GC time", Diff: true, Scale: (0.001 / 60)},
+				{Name: "FGCT", Label: "Full GC time", Diff: true, Scale: (0.001 / 60)},
 			},
 		},
-		fmt.Sprintf("jvm.%s.new_space", lowerJavaName): mp.Graphs{
+		fmt.Sprintf("jvm.%s.new_space", lowerJavaName): {
 			Label: fmt.Sprintf("JVM %s New Space memory", rawJavaName),
 			Unit:  "float",
-			Metrics: [](mp.Metrics){
-				mp.Metrics{Name: "NGCMX", Label: "New max", Diff: false, Scale: 1024},
-				mp.Metrics{Name: "NGC", Label: "New current", Diff: false, Scale: 1024},
-				mp.Metrics{Name: "EU", Label: "Eden used", Diff: false, Scale: 1024},
-				mp.Metrics{Name: "S0U", Label: "Survivor0 used", Diff: false, Scale: 1024},
-				mp.Metrics{Name: "S1U", Label: "Survivor1 used", Diff: false, Scale: 1024},
+			Metrics: []mp.Metrics{
+				{Name: "NGCMX", Label: "New max", Diff: false, Scale: 1024},
+				{Name: "NGC", Label: "New current", Diff: false, Scale: 1024},
+				{Name: "EU", Label: "Eden used", Diff: false, Scale: 1024},
+				{Name: "S0U", Label: "Survivor0 used", Diff: false, Scale: 1024},
+				{Name: "S1U", Label: "Survivor1 used", Diff: false, Scale: 1024},
 			},
 		},
-		fmt.Sprintf("jvm.%s.old_space", lowerJavaName): mp.Graphs{
+		fmt.Sprintf("jvm.%s.old_space", lowerJavaName): {
 			Label: fmt.Sprintf("JVM %s Old Space memory", rawJavaName),
 			Unit:  "float",
-			Metrics: [](mp.Metrics){
-				mp.Metrics{Name: "OGCMX", Label: "Old max", Diff: false, Scale: 1024},
-				mp.Metrics{Name: "OGC", Label: "Old current", Diff: false, Scale: 1024},
-				mp.Metrics{Name: "OU", Label: "Old used", Diff: false, Scale: 1024},
+			Metrics: []mp.Metrics{
+				{Name: "OGCMX", Label: "Old max", Diff: false, Scale: 1024},
+				{Name: "OGC", Label: "Old current", Diff: false, Scale: 1024},
+				{Name: "OU", Label: "Old used", Diff: false, Scale: 1024},
 			},
 		},
-		fmt.Sprintf("jvm.%s.perm_space", lowerJavaName): mp.Graphs{
+		fmt.Sprintf("jvm.%s.perm_space", lowerJavaName): {
 			Label: fmt.Sprintf("JVM %s Permanent Space", rawJavaName),
 			Unit:  "float",
-			Metrics: [](mp.Metrics){
-				mp.Metrics{Name: "PGCMX", Label: "Perm max", Diff: false, Scale: 1024},
-				mp.Metrics{Name: "PGC", Label: "Perm current", Diff: false, Scale: 1024},
-				mp.Metrics{Name: "PU", Label: "Perm used", Diff: false, Scale: 1024},
+			Metrics: []mp.Metrics{
+				{Name: "PGCMX", Label: "Perm max", Diff: false, Scale: 1024},
+				{Name: "PGC", Label: "Perm current", Diff: false, Scale: 1024},
+				{Name: "PU", Label: "Perm used", Diff: false, Scale: 1024},
 			},
 		},
-		fmt.Sprintf("jvm.%s.metaspace", lowerJavaName): mp.Graphs{
+		fmt.Sprintf("jvm.%s.metaspace", lowerJavaName): {
 			Label: fmt.Sprintf("JVM %s Metaspace", rawJavaName),
 			Unit:  "float",
-			Metrics: [](mp.Metrics){
-				mp.Metrics{Name: "MCMX", Label: "Metaspace capacity max", Diff: false, Scale: 1024},
-				mp.Metrics{Name: "MCMN", Label: "Metaspace capacity min", Diff: false, Scale: 1024},
-				mp.Metrics{Name: "MC", Label: "Metaspace capacity", Diff: false, Scale: 1024},
-				mp.Metrics{Name: "MU", Label: "Metaspace utilization ", Diff: false, Scale: 1024},
-				mp.Metrics{Name: "CCSC", Label: "Compressed Class Space Capacity", Diff: false, Scale: 1024},
-				mp.Metrics{Name: "CCSU", Label: "Compressed Class Space Used", Diff: false, Scale: 1024},
+			Metrics: []mp.Metrics{
+				{Name: "MCMX", Label: "Metaspace capacity max", Diff: false, Scale: 1024},
+				{Name: "MCMN", Label: "Metaspace capacity min", Diff: false, Scale: 1024},
+				{Name: "MC", Label: "Metaspace capacity", Diff: false, Scale: 1024},
+				{Name: "MU", Label: "Metaspace utilization ", Diff: false, Scale: 1024},
+				{Name: "CCSC", Label: "Compressed Class Space Capacity", Diff: false, Scale: 1024},
+				{Name: "CCSU", Label: "Compressed Class Space Used", Diff: false, Scale: 1024},
 			},
 		},
-		fmt.Sprintf("jvm.%s.memorySpace", lowerJavaName): mp.Graphs{
+		fmt.Sprintf("jvm.%s.memorySpace", lowerJavaName): {
 			Label: fmt.Sprintf("JVM %s MemorySpace", rawJavaName),
 			Unit:  "float",
-			Metrics: [](mp.Metrics){
-				mp.Metrics{Name: "oldSpaceRate", Label: "GC Old Memory Space", Diff: false},
-				mp.Metrics{Name: "newSpaceRate", Label: "GC New Memory Space", Diff: false},
-				mp.Metrics{Name: "CMSInitiatingOccupancyFraction", Label: "CMS Initiating Occupancy Fraction", Diff: false},
+			Metrics: []mp.Metrics{
+				{Name: "oldSpaceRate", Label: "GC Old Memory Space", Diff: false},
+				{Name: "newSpaceRate", Label: "GC New Memory Space", Diff: false},
+				{Name: "CMSInitiatingOccupancyFraction", Label: "CMS Initiating Occupancy Fraction", Diff: false},
 			},
 		},
 	}

@@ -13,145 +13,145 @@ func (p RDSPlugin) rdsMetrics() (metrics []string) {
 	return
 }
 
-func mergeGraphDefs(a, b map[string](mp.Graphs)) map[string](mp.Graphs) {
+func mergeGraphDefs(a, b map[string]mp.Graphs) map[string]mp.Graphs {
 	for k, v := range b {
 		a[k] = v
 	}
 	return a
 }
 
-func (p RDSPlugin) mySQLGraphDefinition() map[string](mp.Graphs) {
-	return map[string](mp.Graphs){
-		p.Prefix + ".CPUCreditBalance": mp.Graphs{
+func (p RDSPlugin) mySQLGraphDefinition() map[string]mp.Graphs {
+	return map[string]mp.Graphs{
+		p.Prefix + ".CPUCreditBalance": {
 			Label: p.LabelPrefix + " CPU CreditBalance",
 			Unit:  "float",
-			Metrics: [](mp.Metrics){
-				mp.Metrics{Name: "CPUCreditBalance", Label: "CPUCreditBalance"},
+			Metrics: []mp.Metrics{
+				{Name: "CPUCreditBalance", Label: "CPUCreditBalance"},
 			},
 		},
-		p.Prefix + ".CPUCreditUsage": mp.Graphs{
+		p.Prefix + ".CPUCreditUsage": {
 			Label: p.LabelPrefix + " CPU CreditUsage",
 			Unit:  "float",
-			Metrics: [](mp.Metrics){
-				mp.Metrics{Name: "CPUCreditUsage", Label: "CPUCreditUsage"},
+			Metrics: []mp.Metrics{
+				{Name: "CPUCreditUsage", Label: "CPUCreditUsage"},
 			},
 		},
 	}
 }
 
-func (p RDSPlugin) auroraGraphDefinition() map[string](mp.Graphs) {
-	return map[string](mp.Graphs){
-		p.Prefix + ".Deadlocks": mp.Graphs{
+func (p RDSPlugin) auroraGraphDefinition() map[string]mp.Graphs {
+	return map[string]mp.Graphs{
+		p.Prefix + ".Deadlocks": {
 			Label: p.LabelPrefix + " Dead Locks",
 			Unit:  "float",
-			Metrics: [](mp.Metrics){
-				mp.Metrics{Name: "Deadlocks", Label: "Deadlocks"},
+			Metrics: []mp.Metrics{
+				{Name: "Deadlocks", Label: "Deadlocks"},
 			},
 		},
-		p.Prefix + ".Transaction": mp.Graphs{
+		p.Prefix + ".Transaction": {
 			Label: p.LabelPrefix + " Transaction",
 			Unit:  "float",
-			Metrics: [](mp.Metrics){
-				mp.Metrics{Name: "ActiveTransactions", Label: "Active"},
-				mp.Metrics{Name: "BlockedTransactions", Label: "Blocked"},
+			Metrics: []mp.Metrics{
+				{Name: "ActiveTransactions", Label: "Active"},
+				{Name: "BlockedTransactions", Label: "Blocked"},
 			},
 		},
-		p.Prefix + ".EngineUptime": mp.Graphs{
+		p.Prefix + ".EngineUptime": {
 			Label: p.LabelPrefix + " Engine Uptime",
 			Unit:  "float",
-			Metrics: [](mp.Metrics){
-				mp.Metrics{Name: "EngineUptime", Label: "EngineUptime"},
+			Metrics: []mp.Metrics{
+				{Name: "EngineUptime", Label: "EngineUptime"},
 			},
 		},
-		p.Prefix + ".Queries": mp.Graphs{
+		p.Prefix + ".Queries": {
 			Label: p.LabelPrefix + " Queries",
 			Unit:  "float",
-			Metrics: [](mp.Metrics){
-				mp.Metrics{Name: "Queries", Label: "Queries"},
+			Metrics: []mp.Metrics{
+				{Name: "Queries", Label: "Queries"},
 			},
 		},
-		p.Prefix + ".LoginFailures": mp.Graphs{
+		p.Prefix + ".LoginFailures": {
 			Label: p.LabelPrefix + " Login Failures",
 			Unit:  "integer",
-			Metrics: [](mp.Metrics){
-				mp.Metrics{Name: "LoginFailures", Label: "LoginFailures"},
+			Metrics: []mp.Metrics{
+				{Name: "LoginFailures", Label: "LoginFailures"},
 			},
 		},
-		p.Prefix + ".CacheHitRatio": mp.Graphs{
+		p.Prefix + ".CacheHitRatio": {
 			Label: p.LabelPrefix + " Cache Hit Ratio",
 			Unit:  "percentage",
-			Metrics: [](mp.Metrics){
-				mp.Metrics{Name: "ResultSetCacheHitRatio", Label: "ResultSet"},
-				mp.Metrics{Name: "BufferCacheHitRatio", Label: "Buffer"},
+			Metrics: []mp.Metrics{
+				{Name: "ResultSetCacheHitRatio", Label: "ResultSet"},
+				{Name: "BufferCacheHitRatio", Label: "Buffer"},
 			},
 		},
-		p.Prefix + ".AuroraBinlogReplicaLag": mp.Graphs{
+		p.Prefix + ".AuroraBinlogReplicaLag": {
 			Label: p.LabelPrefix + " Aurora Binlog ReplicaLag",
 			Unit:  "integer",
-			Metrics: [](mp.Metrics){
-				mp.Metrics{Name: "AuroraBinlogReplicaLag", Label: "AuroraBinlogReplicaLag"},
+			Metrics: []mp.Metrics{
+				{Name: "AuroraBinlogReplicaLag", Label: "AuroraBinlogReplicaLag"},
 			},
 		},
-		p.Prefix + ".AuroraReplicaLag": mp.Graphs{
+		p.Prefix + ".AuroraReplicaLag": {
 			Label: p.LabelPrefix + " Aurora ReplicaLag",
 			Unit:  "float",
-			Metrics: [](mp.Metrics){
-				mp.Metrics{Name: "AuroraReplicaLagMaximum", Label: "ReplicaLagMaximum"},
-				mp.Metrics{Name: "AuroraBinlogReplicaLag", Label: "ReplicaLagMinimum"},
+			Metrics: []mp.Metrics{
+				{Name: "AuroraReplicaLagMaximum", Label: "ReplicaLagMaximum"},
+				{Name: "AuroraBinlogReplicaLag", Label: "ReplicaLagMinimum"},
 			},
 		},
 	}
 }
 
-func (p RDSPlugin) postgreSQLGraphDefinition() map[string](mp.Graphs) {
-	return map[string](mp.Graphs){
-		p.Prefix + ".CPUCreditBalance": mp.Graphs{
+func (p RDSPlugin) postgreSQLGraphDefinition() map[string]mp.Graphs {
+	return map[string]mp.Graphs{
+		p.Prefix + ".CPUCreditBalance": {
 			Label: p.LabelPrefix + " CPU CreditBalance",
 			Unit:  "float",
-			Metrics: [](mp.Metrics){
-				mp.Metrics{Name: "CPUCreditBalance", Label: "CPUCreditBalance"},
+			Metrics: []mp.Metrics{
+				{Name: "CPUCreditBalance", Label: "CPUCreditBalance"},
 			},
 		},
-		p.Prefix + ".CPUCreditUsage": mp.Graphs{
+		p.Prefix + ".CPUCreditUsage": {
 			Label: p.LabelPrefix + " CPU CreditUsage",
 			Unit:  "float",
-			Metrics: [](mp.Metrics){
-				mp.Metrics{Name: "CPUCreditUsage", Label: "CPUCreditUsage"},
+			Metrics: []mp.Metrics{
+				{Name: "CPUCreditUsage", Label: "CPUCreditUsage"},
 			},
 		},
-		p.Prefix + ".MaximumUsedTransactionIDs": mp.Graphs{
+		p.Prefix + ".MaximumUsedTransactionIDs": {
 			Label: p.LabelPrefix + " Maximum Used Transaction IDs",
 			Unit:  "float",
-			Metrics: [](mp.Metrics){
-				mp.Metrics{Name: "MaximumUsedTransactionIDs", Label: "MaximumUsedTransactionIDs"},
+			Metrics: []mp.Metrics{
+				{Name: "MaximumUsedTransactionIDs", Label: "MaximumUsedTransactionIDs"},
 			},
 		},
-		p.Prefix + ".OldestReplicationSlotLag": mp.Graphs{
+		p.Prefix + ".OldestReplicationSlotLag": {
 			Label: p.LabelPrefix + " Oldest Replication Slot Lag",
 			Unit:  "bytes",
-			Metrics: [](mp.Metrics){
-				mp.Metrics{Name: "OldestReplicationSlotLag", Label: "OldestReplicationSlotLag"},
+			Metrics: []mp.Metrics{
+				{Name: "OldestReplicationSlotLag", Label: "OldestReplicationSlotLag"},
 			},
 		},
-		p.Prefix + ".ReplicationSlotDiskUsage": mp.Graphs{
+		p.Prefix + ".ReplicationSlotDiskUsage": {
 			Label: p.LabelPrefix + " Replication Slot Disk Usage",
 			Unit:  "bytes",
-			Metrics: [](mp.Metrics){
-				mp.Metrics{Name: "ReplicationSlotDiskUsage", Label: "ReplicationSlotDiskUsage"},
+			Metrics: []mp.Metrics{
+				{Name: "ReplicationSlotDiskUsage", Label: "ReplicationSlotDiskUsage"},
 			},
 		},
-		p.Prefix + ".TransactionLogsDiskUsage": mp.Graphs{
+		p.Prefix + ".TransactionLogsDiskUsage": {
 			Label: p.LabelPrefix + " Transaction Logs Disk Usage",
 			Unit:  "bytes",
-			Metrics: [](mp.Metrics){
-				mp.Metrics{Name: "TransactionLogsDiskUsage", Label: "TransactionLogsDiskUsage"},
+			Metrics: []mp.Metrics{
+				{Name: "TransactionLogsDiskUsage", Label: "TransactionLogsDiskUsage"},
 			},
 		},
-		p.Prefix + ".TransactionLogsGeneration": mp.Graphs{
+		p.Prefix + ".TransactionLogsGeneration": {
 			Label: p.LabelPrefix + " Transaction Logs Generation",
 			Unit:  "bytes/sec",
-			Metrics: [](mp.Metrics){
-				mp.Metrics{Name: "TransactionLogsGeneration", Label: "TransactionLogsGeneration"},
+			Metrics: []mp.Metrics{
+				{Name: "TransactionLogsGeneration", Label: "TransactionLogsGeneration"},
 			},
 		},
 	}

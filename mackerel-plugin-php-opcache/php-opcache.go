@@ -13,41 +13,41 @@ import (
 	"github.com/urfave/cli"
 )
 
-var graphdef = map[string](mp.Graphs){
-	"php-opcache.memory_size": mp.Graphs{
+var graphdef = map[string]mp.Graphs{
+	"php-opcache.memory_size": {
 		Label: "PHP OPCache Memory Size",
 		Unit:  "integer",
-		Metrics: [](mp.Metrics){
-			mp.Metrics{Name: "used_memory", Label: "Used Memory", Diff: false, Stacked: false},
-			mp.Metrics{Name: "free_memory", Label: "Free Memory", Diff: false, Stacked: false},
-			mp.Metrics{Name: "wasted_memory", Label: "Wasted Memory", Diff: false, Stacked: false},
+		Metrics: []mp.Metrics{
+			{Name: "used_memory", Label: "Used Memory", Diff: false, Stacked: false},
+			{Name: "free_memory", Label: "Free Memory", Diff: false, Stacked: false},
+			{Name: "wasted_memory", Label: "Wasted Memory", Diff: false, Stacked: false},
 		},
 	},
-	"php-opcache.memory": mp.Graphs{
+	"php-opcache.memory": {
 		Label: "PHP OPCache Memory Statistics",
 		Unit:  "integer",
-		Metrics: [](mp.Metrics){
-			mp.Metrics{Name: "opcache_hit_rate", Label: "OPCache hit rate", Diff: false, Stacked: false},
-			mp.Metrics{Name: "current_wasted_percentage", Label: "Used Memory", Diff: false, Stacked: false},
+		Metrics: []mp.Metrics{
+			{Name: "opcache_hit_rate", Label: "OPCache hit rate", Diff: false, Stacked: false},
+			{Name: "current_wasted_percentage", Label: "Used Memory", Diff: false, Stacked: false},
 		},
 	},
 
-	"php-opcache.cache_size": mp.Graphs{
+	"php-opcache.cache_size": {
 		Label: "PHP OPCache Cache Size",
 		Unit:  "integer",
-		Metrics: [](mp.Metrics){
-			mp.Metrics{Name: "num_cached_scripts", Label: "Cached Script", Diff: true, Stacked: false},
-			mp.Metrics{Name: "num_cached_keys", Label: "Num Cached Key", Diff: true, Stacked: false},
-			mp.Metrics{Name: "max_cached_keys", Label: "Max Cached Key", Diff: true, Stacked: false},
+		Metrics: []mp.Metrics{
+			{Name: "num_cached_scripts", Label: "Cached Script", Diff: true, Stacked: false},
+			{Name: "num_cached_keys", Label: "Num Cached Key", Diff: true, Stacked: false},
+			{Name: "max_cached_keys", Label: "Max Cached Key", Diff: true, Stacked: false},
 		},
 	},
-	"php-opcache.stats": mp.Graphs{
+	"php-opcache.stats": {
 		Label: "PHP OPCache Cache Statistics",
 		Unit:  "integer",
-		Metrics: [](mp.Metrics){
-			mp.Metrics{Name: "hits", Label: "Hits", Diff: true, Stacked: false},
-			mp.Metrics{Name: "misses", Label: "Misses", Diff: true, Stacked: false},
-			mp.Metrics{Name: "blacklist_misses", Label: "Blacklist Misses", Diff: true, Stacked: false},
+		Metrics: []mp.Metrics{
+			{Name: "hits", Label: "Hits", Diff: true, Stacked: false},
+			{Name: "misses", Label: "Misses", Diff: true, Stacked: false},
+			{Name: "blacklist_misses", Label: "Blacklist Misses", Diff: true, Stacked: false},
 		},
 	},
 }
@@ -61,7 +61,7 @@ type PhpOpcachePlugin struct {
 }
 
 // GraphDefinition interface for mackerelplugin
-func (c PhpOpcachePlugin) GraphDefinition() map[string](mp.Graphs) {
+func (c PhpOpcachePlugin) GraphDefinition() map[string]mp.Graphs {
 	return graphdef
 }
 

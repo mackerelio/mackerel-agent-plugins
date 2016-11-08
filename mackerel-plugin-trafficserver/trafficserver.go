@@ -12,31 +12,31 @@ import (
 	mp "github.com/mackerelio/go-mackerel-plugin-helper"
 )
 
-var graphdef = map[string](mp.Graphs){
-	"trafficserver.cache": mp.Graphs{
+var graphdef = map[string]mp.Graphs{
+	"trafficserver.cache": {
 		Label: "Trafficserver Cache Hits/Misses",
 		Unit:  "integer",
-		Metrics: [](mp.Metrics){
-			mp.Metrics{Name: "cache_hits", Label: "Hits", Diff: true, Stacked: true, Type: "uint64"},
-			mp.Metrics{Name: "cache_misses", Label: "Misses", Diff: true, Stacked: true, Type: "uint64"},
+		Metrics: []mp.Metrics{
+			{Name: "cache_hits", Label: "Hits", Diff: true, Stacked: true, Type: "uint64"},
+			{Name: "cache_misses", Label: "Misses", Diff: true, Stacked: true, Type: "uint64"},
 		},
 	},
-	"trafficserver.http_response_codes": mp.Graphs{
+	"trafficserver.http_response_codes": {
 		Label: "Trafficserver HTTP Response Codes",
 		Unit:  "integer",
-		Metrics: [](mp.Metrics){
-			mp.Metrics{Name: "http_2xx", Label: "2xx", Diff: true, Stacked: true, Type: "uint64"},
-			mp.Metrics{Name: "http_3xx", Label: "3xx", Diff: true, Stacked: true, Type: "uint64"},
-			mp.Metrics{Name: "http_4xx", Label: "4xx", Diff: true, Stacked: true, Type: "uint64"},
-			mp.Metrics{Name: "http_5xx", Label: "5xx", Diff: true, Stacked: true, Type: "uint64"},
+		Metrics: []mp.Metrics{
+			{Name: "http_2xx", Label: "2xx", Diff: true, Stacked: true, Type: "uint64"},
+			{Name: "http_3xx", Label: "3xx", Diff: true, Stacked: true, Type: "uint64"},
+			{Name: "http_4xx", Label: "4xx", Diff: true, Stacked: true, Type: "uint64"},
+			{Name: "http_5xx", Label: "5xx", Diff: true, Stacked: true, Type: "uint64"},
 		},
 	},
-	"trafficserver.connections": mp.Graphs{
+	"trafficserver.connections": {
 		Label: "Trafficserver Current Connections",
 		Unit:  "integer",
-		Metrics: [](mp.Metrics){
-			mp.Metrics{Name: "conn_server", Label: "Server"},
-			mp.Metrics{Name: "conn_client", Label: "Client"},
+		Metrics: []mp.Metrics{
+			{Name: "conn_server", Label: "Server"},
+			{Name: "conn_client", Label: "Client"},
 		},
 	},
 }
@@ -107,7 +107,7 @@ func getDataWithCommand() (*string, error) {
 }
 
 // GraphDefinition interface for mackerelplugin
-func (m TrafficserverPlugin) GraphDefinition() map[string](mp.Graphs) {
+func (m TrafficserverPlugin) GraphDefinition() map[string]mp.Graphs {
 	return graphdef
 }
 

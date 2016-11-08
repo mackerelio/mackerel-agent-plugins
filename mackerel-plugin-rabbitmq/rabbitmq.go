@@ -8,21 +8,21 @@ import (
 	"github.com/michaelklishin/rabbit-hole"
 )
 
-var graphdef = map[string](mp.Graphs){
-	"rabbitmq.queue": mp.Graphs{
+var graphdef = map[string]mp.Graphs{
+	"rabbitmq.queue": {
 		Label: "RabbitMQ Queue",
 		Unit:  "integer",
-		Metrics: [](mp.Metrics){
-			mp.Metrics{Name: "messages", Label: "Total", Diff: false},
-			mp.Metrics{Name: "ready", Label: "Ready", Diff: false},
-			mp.Metrics{Name: "unacknowledged", Label: "Unacknowledged", Diff: false},
+		Metrics: []mp.Metrics{
+			{Name: "messages", Label: "Total", Diff: false},
+			{Name: "ready", Label: "Ready", Diff: false},
+			{Name: "unacknowledged", Label: "Unacknowledged", Diff: false},
 		},
 	},
-	"rabbitmq.message": mp.Graphs{
+	"rabbitmq.message": {
 		Label: "RabbitMQ Message",
 		Unit:  "integer",
-		Metrics: [](mp.Metrics){
-			mp.Metrics{Name: "publish", Label: "Publish", Diff: false},
+		Metrics: []mp.Metrics{
+			{Name: "publish", Label: "Publish", Diff: false},
 		},
 	},
 }
@@ -62,7 +62,7 @@ func (r RabbitMQPlugin) parseStats(res rabbithole.Overview) (map[string]interfac
 }
 
 // GraphDefinition interface for mackerel plugin
-func (r RabbitMQPlugin) GraphDefinition() map[string](mp.Graphs) {
+func (r RabbitMQPlugin) GraphDefinition() map[string]mp.Graphs {
 	return graphdef
 }
 

@@ -16,14 +16,14 @@ import (
 
 const nullPrefix = "-"
 
-var graphdef = map[string](mp.Graphs){
-	"gearmand.queue.#": mp.Graphs{
+var graphdef = map[string]mp.Graphs{
+	"gearmand.queue.#": {
 		Label: "Gearmand Queue",
 		Unit:  "integer",
-		Metrics: [](mp.Metrics){
-			mp.Metrics{Name: "available", Label: "Available", Diff: false, Stacked: false},
-			mp.Metrics{Name: "running", Label: "Running", Diff: false, Stacked: false},
-			mp.Metrics{Name: "total", Label: "Total", Diff: false, Stacked: false},
+		Metrics: []mp.Metrics{
+			{Name: "available", Label: "Available", Diff: false, Stacked: false},
+			{Name: "running", Label: "Running", Diff: false, Stacked: false},
+			{Name: "total", Label: "Total", Diff: false, Stacked: false},
 		},
 	},
 }
@@ -146,7 +146,7 @@ func reverse(src []string) []string {
 }
 
 // GraphDefinition interface for mackerelplugin
-func (m GearmandPlugin) GraphDefinition() map[string](mp.Graphs) {
+func (m GearmandPlugin) GraphDefinition() map[string]mp.Graphs {
 	return graphdef
 }
 

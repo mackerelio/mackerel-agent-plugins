@@ -94,65 +94,65 @@ var cloudwatchdefs = map[string](cloudWatchSetting){
 	},
 }
 
-var graphdef = map[string](mp.Graphs){
-	"ec2.ebs.bandwidth.#": mp.Graphs{
+var graphdef = map[string]mp.Graphs{
+	"ec2.ebs.bandwidth.#": {
 		Label: "EBS Bandwidth",
 		Unit:  "bytes/sec",
-		Metrics: [](mp.Metrics){
-			mp.Metrics{Name: "read", Label: "Read", Diff: false},
-			mp.Metrics{Name: "write", Label: "Write", Diff: false},
+		Metrics: []mp.Metrics{
+			{Name: "read", Label: "Read", Diff: false},
+			{Name: "write", Label: "Write", Diff: false},
 		},
 	},
-	"ec2.ebs.throughput.#": mp.Graphs{
+	"ec2.ebs.throughput.#": {
 		Label: "EBS Throughput (op/s)",
 		Unit:  "iops",
-		Metrics: [](mp.Metrics){
-			mp.Metrics{Name: "read", Label: "Read", Diff: false},
-			mp.Metrics{Name: "write", Label: "Write", Diff: false},
+		Metrics: []mp.Metrics{
+			{Name: "read", Label: "Read", Diff: false},
+			{Name: "write", Label: "Write", Diff: false},
 		},
 	},
-	"ec2.ebs.size_per_op.#": mp.Graphs{
+	"ec2.ebs.size_per_op.#": {
 		Label: "EBS Avg Op Size (Bytes/op)",
 		Unit:  "bytes",
-		Metrics: [](mp.Metrics){
-			mp.Metrics{Name: "read", Label: "Read", Diff: false},
-			mp.Metrics{Name: "write", Label: "Write", Diff: false},
+		Metrics: []mp.Metrics{
+			{Name: "read", Label: "Read", Diff: false},
+			{Name: "write", Label: "Write", Diff: false},
 		},
 	},
-	"ec2.ebs.latency.#": mp.Graphs{
+	"ec2.ebs.latency.#": {
 		Label: "EBS Avg Latency (ms/op)",
 		Unit:  "float",
-		Metrics: [](mp.Metrics){
-			mp.Metrics{Name: "read", Label: "Read", Diff: false},
-			mp.Metrics{Name: "write", Label: "Write", Diff: false},
+		Metrics: []mp.Metrics{
+			{Name: "read", Label: "Read", Diff: false},
+			{Name: "write", Label: "Write", Diff: false},
 		},
 	},
-	"ec2.ebs.queue_length.#": mp.Graphs{
+	"ec2.ebs.queue_length.#": {
 		Label: "EBS Avg Queue Length (ops)",
 		Unit:  "float",
-		Metrics: [](mp.Metrics){
-			mp.Metrics{Name: "queue_length", Label: "Queue Length", Diff: false},
+		Metrics: []mp.Metrics{
+			{Name: "queue_length", Label: "Queue Length", Diff: false},
 		},
 	},
-	"ec2.ebs.idle_time.#": mp.Graphs{
+	"ec2.ebs.idle_time.#": {
 		Label: "EBS Time Spent Idle",
 		Unit:  "percentage",
-		Metrics: [](mp.Metrics){
-			mp.Metrics{Name: "idle_time", Label: "Idle Time", Diff: false},
+		Metrics: []mp.Metrics{
+			{Name: "idle_time", Label: "Idle Time", Diff: false},
 		},
 	},
-	"ec2.ebs.throughput_delivered.#": mp.Graphs{
+	"ec2.ebs.throughput_delivered.#": {
 		Label: "EBS Throughput of Provisioned IOPS",
 		Unit:  "percentage",
-		Metrics: [](mp.Metrics){
-			mp.Metrics{Name: "throughput_delivered", Label: "Throughput", Diff: false},
+		Metrics: []mp.Metrics{
+			{Name: "throughput_delivered", Label: "Throughput", Diff: false},
 		},
 	},
-	"ec2.ebs.consumed_ops.#": mp.Graphs{
+	"ec2.ebs.consumed_ops.#": {
 		Label: "EBS Consumed Ops of Provisioned IOPS",
 		Unit:  "float",
-		Metrics: [](mp.Metrics){
-			mp.Metrics{Name: "consumed_ops", Label: "Consumed Ops", Diff: false},
+		Metrics: []mp.Metrics{
+			{Name: "consumed_ops", Label: "Consumed Ops", Diff: false},
 		},
 	},
 }
@@ -285,7 +285,7 @@ func (p EBSPlugin) FetchMetrics() (map[string]interface{}, error) {
 }
 
 // GraphDefinition for plugin
-func (p EBSPlugin) GraphDefinition() map[string](mp.Graphs) {
+func (p EBSPlugin) GraphDefinition() map[string]mp.Graphs {
 	return graphdef
 }
 

@@ -90,101 +90,101 @@ func (p RDSPlugin) FetchMetrics() (map[string]float64, error) {
 	return stat, nil
 }
 
-func (p RDSPlugin) baseGraphDefs() map[string](mp.Graphs) {
-	return map[string](mp.Graphs){
-		p.Prefix + ".BinLogDiskUsage": mp.Graphs{
+func (p RDSPlugin) baseGraphDefs() map[string]mp.Graphs {
+	return map[string]mp.Graphs{
+		p.Prefix + ".BinLogDiskUsage": {
 			Label: p.LabelPrefix + " BinLogDiskUsage",
 			Unit:  "bytes",
-			Metrics: [](mp.Metrics){
-				mp.Metrics{Name: "BinLogDiskUsage", Label: "Usage"},
+			Metrics: []mp.Metrics{
+				{Name: "BinLogDiskUsage", Label: "Usage"},
 			},
 		},
-		p.Prefix + ".DiskQueueDepth": mp.Graphs{
+		p.Prefix + ".DiskQueueDepth": {
 			Label: p.LabelPrefix + " BinLogDiskUsage",
 			Unit:  "bytes",
-			Metrics: [](mp.Metrics){
-				mp.Metrics{Name: "DiskQueueDepth", Label: "Depth"},
+			Metrics: []mp.Metrics{
+				{Name: "DiskQueueDepth", Label: "Depth"},
 			},
 		},
-		p.Prefix + ".CPUUtilization": mp.Graphs{
+		p.Prefix + ".CPUUtilization": {
 			Label: p.LabelPrefix + " CPU Utilization",
 			Unit:  "percentage",
-			Metrics: [](mp.Metrics){
-				mp.Metrics{Name: "CPUUtilization", Label: "CPUUtilization"},
+			Metrics: []mp.Metrics{
+				{Name: "CPUUtilization", Label: "CPUUtilization"},
 			},
 		},
-		p.Prefix + ".DatabaseConnections": mp.Graphs{
+		p.Prefix + ".DatabaseConnections": {
 			Label: p.LabelPrefix + " Database Connections",
 			Unit:  "float",
-			Metrics: [](mp.Metrics){
-				mp.Metrics{Name: "DatabaseConnections", Label: "DatabaseConnections"},
+			Metrics: []mp.Metrics{
+				{Name: "DatabaseConnections", Label: "DatabaseConnections"},
 			},
 		},
-		p.Prefix + ".FreeableMemory": mp.Graphs{
+		p.Prefix + ".FreeableMemory": {
 			Label: p.LabelPrefix + " Freeable Memory",
 			Unit:  "bytes",
-			Metrics: [](mp.Metrics){
-				mp.Metrics{Name: "FreeableMemory", Label: "FreeableMemory"},
+			Metrics: []mp.Metrics{
+				{Name: "FreeableMemory", Label: "FreeableMemory"},
 			},
 		},
-		p.Prefix + ".FreeStorageSpace": mp.Graphs{
+		p.Prefix + ".FreeStorageSpace": {
 			Label: p.LabelPrefix + " Free Storage Space",
 			Unit:  "bytes",
-			Metrics: [](mp.Metrics){
-				mp.Metrics{Name: "FreeStorageSpace", Label: "FreeStorageSpace"},
+			Metrics: []mp.Metrics{
+				{Name: "FreeStorageSpace", Label: "FreeStorageSpace"},
 			},
 		},
-		p.Prefix + ".ReplicaLag": mp.Graphs{
+		p.Prefix + ".ReplicaLag": {
 			Label: p.LabelPrefix + " Replica Lag",
 			Unit:  "float",
-			Metrics: [](mp.Metrics){
-				mp.Metrics{Name: "ReplicaLag", Label: "ReplicaLag"},
+			Metrics: []mp.Metrics{
+				{Name: "ReplicaLag", Label: "ReplicaLag"},
 			},
 		},
-		p.Prefix + ".SwapUsage": mp.Graphs{
+		p.Prefix + ".SwapUsage": {
 			Label: p.LabelPrefix + " Swap Usage",
 			Unit:  "bytes",
-			Metrics: [](mp.Metrics){
-				mp.Metrics{Name: "SwapUsage", Label: "SwapUsage"},
+			Metrics: []mp.Metrics{
+				{Name: "SwapUsage", Label: "SwapUsage"},
 			},
 		},
-		p.Prefix + ".IOPS": mp.Graphs{
+		p.Prefix + ".IOPS": {
 			Label: p.LabelPrefix + " IOPS",
 			Unit:  "iops",
-			Metrics: [](mp.Metrics){
-				mp.Metrics{Name: "ReadIOPS", Label: "Read"},
-				mp.Metrics{Name: "WriteIOPS", Label: "Write"},
+			Metrics: []mp.Metrics{
+				{Name: "ReadIOPS", Label: "Read"},
+				{Name: "WriteIOPS", Label: "Write"},
 			},
 		},
-		p.Prefix + ".Latency": mp.Graphs{
+		p.Prefix + ".Latency": {
 			Label: p.LabelPrefix + " Latency in second",
 			Unit:  "float",
-			Metrics: [](mp.Metrics){
-				mp.Metrics{Name: "ReadLatency", Label: "Read"},
-				mp.Metrics{Name: "WriteLatency", Label: "Write"},
+			Metrics: []mp.Metrics{
+				{Name: "ReadLatency", Label: "Read"},
+				{Name: "WriteLatency", Label: "Write"},
 			},
 		},
-		p.Prefix + ".Throughput": mp.Graphs{
+		p.Prefix + ".Throughput": {
 			Label: p.LabelPrefix + " Throughput",
 			Unit:  "bytes/sec",
-			Metrics: [](mp.Metrics){
-				mp.Metrics{Name: "ReadThroughput", Label: "Read"},
-				mp.Metrics{Name: "WriteThroughput", Label: "Write"},
+			Metrics: []mp.Metrics{
+				{Name: "ReadThroughput", Label: "Read"},
+				{Name: "WriteThroughput", Label: "Write"},
 			},
 		},
-		p.Prefix + ".NetworkThroughput": mp.Graphs{
+		p.Prefix + ".NetworkThroughput": {
 			Label: p.LabelPrefix + " Network Throughput",
 			Unit:  "bytes/sec",
-			Metrics: [](mp.Metrics){
-				mp.Metrics{Name: "NetworkTransmitThroughput", Label: "Transmit"},
-				mp.Metrics{Name: "NetworkReceiveThroughput", Label: "Receive"},
+			Metrics: []mp.Metrics{
+				{Name: "NetworkTransmitThroughput", Label: "Transmit"},
+				{Name: "NetworkReceiveThroughput", Label: "Receive"},
 			},
 		},
 	}
 }
 
 // GraphDefinition interface for mackerel plugin
-func (p RDSPlugin) GraphDefinition() map[string](mp.Graphs) {
+func (p RDSPlugin) GraphDefinition() map[string]mp.Graphs {
 	graphdef := p.baseGraphDefs()
 	switch p.Engine {
 	case "mysql", "mariadb":

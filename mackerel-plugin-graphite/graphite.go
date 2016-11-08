@@ -26,8 +26,8 @@ type GraphitePlugin struct {
 }
 
 // GraphDefinition interface for mackerelplugin
-func (p GraphitePlugin) GraphDefinition() map[string](mp.Graphs) {
-	var graphdef map[string](mp.Graphs)
+func (p GraphitePlugin) GraphDefinition() map[string]mp.Graphs {
+	var graphdef map[string]mp.Graphs
 	switch p.Type {
 	case "cache":
 		graphdef = p.cacheGraphDefinition()
@@ -38,7 +38,7 @@ func (p GraphitePlugin) GraphDefinition() map[string](mp.Graphs) {
 }
 
 // cacheGraphDefinition returns Graphs for carbon-cache
-func (p GraphitePlugin) cacheGraphDefinition() map[string](mp.Graphs) {
+func (p GraphitePlugin) cacheGraphDefinition() map[string]mp.Graphs {
 	data, err := p.fetchData()
 	if err != nil {
 		log.Fatalln(err)
@@ -52,9 +52,9 @@ func (p GraphitePlugin) cacheGraphDefinition() map[string](mp.Graphs) {
 		}
 	}
 
-	graphdef := make(map[string](mp.Graphs))
+	graphdef := make(map[string]mp.Graphs)
 	for key, m := range cacheMeta {
-		var ms [](mp.Metrics)
+		var ms []mp.Metrics
 
 		var thetype string
 		if m.unit == "float" {
@@ -82,7 +82,7 @@ func (p GraphitePlugin) cacheGraphDefinition() map[string](mp.Graphs) {
 }
 
 // relayGraphDefinition returns Graphs for carbon-relay
-func (p GraphitePlugin) relayGraphDefinition() map[string](mp.Graphs) {
+func (p GraphitePlugin) relayGraphDefinition() map[string]mp.Graphs {
 	data, err := p.fetchData()
 	if err != nil {
 		log.Fatalln(err)
@@ -96,7 +96,7 @@ func (p GraphitePlugin) relayGraphDefinition() map[string](mp.Graphs) {
 		}
 	}
 
-	graphdef := make(map[string](mp.Graphs))
+	graphdef := make(map[string]mp.Graphs)
 	for key, m := range relayMeta {
 		var unit string
 		if m.unit == "float" {
@@ -109,12 +109,12 @@ func (p GraphitePlugin) relayGraphDefinition() map[string](mp.Graphs) {
 			graphdef[relayPrefix+key] = mp.Graphs{
 				Label: p.LabelPrefix + m.label,
 				Unit:  m.unit,
-				Metrics: [](mp.Metrics){
-					mp.Metrics{Name: key, Label: key, Type: unit},
+				Metrics: []mp.Metrics{
+					{Name: key, Label: key, Type: unit},
 				},
 			}
 		} else {
-			var ms [](mp.Metrics)
+			var ms []mp.Metrics
 			for dest := range set {
 				ms = append(ms, mp.Metrics{
 					Name:  strings.Replace(dest, ":", "-", -1),

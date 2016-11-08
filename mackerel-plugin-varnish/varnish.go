@@ -12,61 +12,61 @@ import (
 	mp "github.com/mackerelio/go-mackerel-plugin-helper"
 )
 
-var graphdef = map[string](mp.Graphs){
-	"varnish.requests": mp.Graphs{
+var graphdef = map[string]mp.Graphs{
+	"varnish.requests": {
 		Label: "Varnish Client Requests",
 		Unit:  "integer",
-		Metrics: [](mp.Metrics){
-			mp.Metrics{Name: "requests", Label: "Requests", Diff: true},
-			mp.Metrics{Name: "cache_hits", Label: "Hits", Diff: true},
+		Metrics: []mp.Metrics{
+			{Name: "requests", Label: "Requests", Diff: true},
+			{Name: "cache_hits", Label: "Hits", Diff: true},
 		},
 	},
-	"varnish.backend": mp.Graphs{
+	"varnish.backend": {
 		Label: "Varnish Backend",
 		Unit:  "integer",
-		Metrics: [](mp.Metrics){
-			mp.Metrics{Name: "backend_req", Label: "Requests", Diff: true},
-			mp.Metrics{Name: "backend_conn", Label: "Conn success", Diff: true},
-			mp.Metrics{Name: "backend_fail", Label: "Conn fail", Diff: true},
+		Metrics: []mp.Metrics{
+			{Name: "backend_req", Label: "Requests", Diff: true},
+			{Name: "backend_conn", Label: "Conn success", Diff: true},
+			{Name: "backend_fail", Label: "Conn fail", Diff: true},
 		},
 	},
-	"varnish.objects": mp.Graphs{
+	"varnish.objects": {
 		Label: "Varnish Objects",
 		Unit:  "integer",
-		Metrics: [](mp.Metrics){
-			mp.Metrics{Name: "n_object", Label: "object", Diff: false},
-			mp.Metrics{Name: "n_objectcore", Label: "objectcore", Diff: false},
-			mp.Metrics{Name: "n_objecthead", Label: "objecthead", Diff: false},
+		Metrics: []mp.Metrics{
+			{Name: "n_object", Label: "object", Diff: false},
+			{Name: "n_objectcore", Label: "objectcore", Diff: false},
+			{Name: "n_objecthead", Label: "objecthead", Diff: false},
 		},
 	},
-	"varnish.objects_expire": mp.Graphs{
+	"varnish.objects_expire": {
 		Label: "Varnish Objects Expire",
 		Unit:  "integer",
-		Metrics: [](mp.Metrics){
-			mp.Metrics{Name: "n_expired", Label: "expire", Diff: true},
+		Metrics: []mp.Metrics{
+			{Name: "n_expired", Label: "expire", Diff: true},
 		},
 	},
-	"varnish.busy_requests": mp.Graphs{
+	"varnish.busy_requests": {
 		Label: "Varnish Busy Requests",
 		Unit:  "integer",
-		Metrics: [](mp.Metrics){
-			mp.Metrics{Name: "busy_sleep", Label: "sleep", Diff: true},
-			mp.Metrics{Name: "busy_wakeup", Label: "wakeup", Diff: true},
+		Metrics: []mp.Metrics{
+			{Name: "busy_sleep", Label: "sleep", Diff: true},
+			{Name: "busy_wakeup", Label: "wakeup", Diff: true},
 		},
 	},
-	"varnish.sma.g_alloc.#": mp.Graphs{
+	"varnish.sma.g_alloc.#": {
 		Label: "Varnish SMA Allocations",
 		Unit:  "integer",
-		Metrics: [](mp.Metrics){
-			mp.Metrics{Name: "g_alloc", Label: "num", Diff: false},
+		Metrics: []mp.Metrics{
+			{Name: "g_alloc", Label: "num", Diff: false},
 		},
 	},
-	"varnish.sma.memory.#": mp.Graphs{
+	"varnish.sma.memory.#": {
 		Label: "Varnish SMA Memory",
 		Unit:  "integer",
-		Metrics: [](mp.Metrics){
-			mp.Metrics{Name: "allocated", Label: "Allocated", Diff: false},
-			mp.Metrics{Name: "available", Label: "Available", Diff: false},
+		Metrics: []mp.Metrics{
+			{Name: "allocated", Label: "Allocated", Diff: false},
+			{Name: "available", Label: "Available", Diff: false},
 		},
 	},
 }
@@ -157,7 +157,7 @@ func (m VarnishPlugin) FetchMetrics() (map[string]interface{}, error) {
 }
 
 // GraphDefinition interface for mackerelplugin
-func (m VarnishPlugin) GraphDefinition() map[string](mp.Graphs) {
+func (m VarnishPlugin) GraphDefinition() map[string]mp.Graphs {
 	return graphdef
 }
 

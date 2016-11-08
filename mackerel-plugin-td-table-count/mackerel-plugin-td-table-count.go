@@ -62,7 +62,7 @@ func (m TDTablePlugin) FetchMetrics() (map[string]interface{}, error) {
 }
 
 // GraphDefinition interface for mackerelplugin
-func (m TDTablePlugin) GraphDefinition() map[string](mp.Graphs) {
+func (m TDTablePlugin) GraphDefinition() map[string]mp.Graphs {
 	tables, _ := getTables(m)
 
 	var metrics []mp.Metrics
@@ -81,7 +81,7 @@ func (m TDTablePlugin) GraphDefinition() map[string](mp.Graphs) {
 		Metrics: metrics,
 	}
 
-	graphdef := map[string](mp.Graphs){
+	graphdef := map[string]mp.Graphs{
 		fmt.Sprintf("td-table.%s", m.Database): graph,
 	}
 

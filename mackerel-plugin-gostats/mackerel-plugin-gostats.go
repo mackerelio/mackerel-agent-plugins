@@ -51,52 +51,52 @@ type GostatsPlugin struct {
 */
 
 // GraphDefinition interface for mackerelplugin
-func (m GostatsPlugin) GraphDefinition() map[string](mp.Graphs) {
+func (m GostatsPlugin) GraphDefinition() map[string]mp.Graphs {
 	labelPrefix := strings.Title(m.Prefix)
-	return map[string](mp.Graphs){
-		(m.Prefix + ".runtime"): mp.Graphs{
+	return map[string]mp.Graphs{
+		(m.Prefix + ".runtime"): {
 			Label: (labelPrefix + " Runtime"),
 			Unit:  "integer",
-			Metrics: [](mp.Metrics){
-				mp.Metrics{Name: "goroutine_num", Label: "Gorotine Num"},
-				mp.Metrics{Name: "cgo_call_num", Label: "CGO Call Num", Diff: true},
+			Metrics: []mp.Metrics{
+				{Name: "goroutine_num", Label: "Gorotine Num"},
+				{Name: "cgo_call_num", Label: "CGO Call Num", Diff: true},
 			},
 		},
-		(m.Prefix + ".memory"): mp.Graphs{
+		(m.Prefix + ".memory"): {
 			Label: (labelPrefix + " Memory"),
 			Unit:  "bytes",
-			Metrics: [](mp.Metrics){
-				mp.Metrics{Name: "memory_alloc", Label: "Alloc"},
-				mp.Metrics{Name: "memory_sys", Label: "Sys"},
-				mp.Metrics{Name: "memory_stack", Label: "Stack In Use"},
+			Metrics: []mp.Metrics{
+				{Name: "memory_alloc", Label: "Alloc"},
+				{Name: "memory_sys", Label: "Sys"},
+				{Name: "memory_stack", Label: "Stack In Use"},
 			},
 		},
-		(m.Prefix + ".operation"): mp.Graphs{
+		(m.Prefix + ".operation"): {
 			Label: (labelPrefix + " Operation"),
 			Unit:  "integer",
-			Metrics: [](mp.Metrics){
-				mp.Metrics{Name: "memory_lookups", Label: "Pointer Lookups", Diff: true},
-				mp.Metrics{Name: "memory_mallocs", Label: "Mallocs", Diff: true},
-				mp.Metrics{Name: "memory_frees", Label: "Frees", Diff: true},
+			Metrics: []mp.Metrics{
+				{Name: "memory_lookups", Label: "Pointer Lookups", Diff: true},
+				{Name: "memory_mallocs", Label: "Mallocs", Diff: true},
+				{Name: "memory_frees", Label: "Frees", Diff: true},
 			},
 		},
-		(m.Prefix + ".heap"): mp.Graphs{
+		(m.Prefix + ".heap"): {
 			Label: (labelPrefix + " Heap"),
 			Unit:  "bytes",
-			Metrics: [](mp.Metrics){
-				mp.Metrics{Name: "heap_sys", Label: "Sys"},
-				mp.Metrics{Name: "heap_idle", Label: "Idle"},
-				mp.Metrics{Name: "heap_inuse", Label: "In Use"},
-				mp.Metrics{Name: "heap_released", Label: "Released", Diff: true},
+			Metrics: []mp.Metrics{
+				{Name: "heap_sys", Label: "Sys"},
+				{Name: "heap_idle", Label: "Idle"},
+				{Name: "heap_inuse", Label: "In Use"},
+				{Name: "heap_released", Label: "Released", Diff: true},
 			},
 		},
-		(m.Prefix + ".gc"): mp.Graphs{
+		(m.Prefix + ".gc"): {
 			Label: (labelPrefix + " GC"),
 			Unit:  "float",
-			Metrics: [](mp.Metrics){
-				mp.Metrics{Name: "gc_num", Label: "GC Num", Diff: true},
-				mp.Metrics{Name: "gc_per_second", Label: "GC Per Second"},
-				mp.Metrics{Name: "gc_pause_per_second", Label: "GC Pause Per Second"},
+			Metrics: []mp.Metrics{
+				{Name: "gc_num", Label: "GC Num", Diff: true},
+				{Name: "gc_per_second", Label: "GC Per Second"},
+				{Name: "gc_pause_per_second", Label: "GC Pause Per Second"},
 			},
 		},
 	}

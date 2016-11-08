@@ -14,27 +14,27 @@ import (
 	mp "github.com/mackerelio/go-mackerel-plugin"
 )
 
-var graphdef = map[string](mp.Graphs){
-	"haproxy.total.sessions": mp.Graphs{
+var graphdef = map[string]mp.Graphs{
+	"haproxy.total.sessions": {
 		Label: "HAProxy Total Sessions",
 		Unit:  "integer",
-		Metrics: [](mp.Metrics){
-			mp.Metrics{Name: "sessions", Label: "Sessions", Diff: true},
+		Metrics: []mp.Metrics{
+			{Name: "sessions", Label: "Sessions", Diff: true},
 		},
 	},
-	"haproxy.total.bytes": mp.Graphs{
+	"haproxy.total.bytes": {
 		Label: "HAProxy Total Bytes",
 		Unit:  "integer",
-		Metrics: [](mp.Metrics){
-			mp.Metrics{Name: "bytes_in", Label: "Bytes In", Diff: true},
-			mp.Metrics{Name: "bytes_out", Label: "Bytes Out", Diff: true},
+		Metrics: []mp.Metrics{
+			{Name: "bytes_in", Label: "Bytes In", Diff: true},
+			{Name: "bytes_out", Label: "Bytes Out", Diff: true},
 		},
 	},
-	"haproxy.total.connection_errors": mp.Graphs{
+	"haproxy.total.connection_errors": {
 		Label: "HAProxy Total Connection Errors",
 		Unit:  "integer",
-		Metrics: [](mp.Metrics){
-			mp.Metrics{Name: "connection_errors", Label: "Connection Errors", Diff: true},
+		Metrics: []mp.Metrics{
+			{Name: "connection_errors", Label: "Connection Errors", Diff: true},
 		},
 	},
 }
@@ -123,7 +123,7 @@ func (p HAProxyPlugin) parseStats(statsBody io.Reader) (map[string]float64, erro
 }
 
 // GraphDefinition interface for mackerelplugin
-func (p HAProxyPlugin) GraphDefinition() map[string](mp.Graphs) {
+func (p HAProxyPlugin) GraphDefinition() map[string]mp.Graphs {
 	return graphdef
 }
 

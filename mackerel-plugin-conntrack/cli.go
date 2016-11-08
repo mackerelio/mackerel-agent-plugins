@@ -18,14 +18,14 @@ const (
 type ConntrackPlugin struct{}
 
 // GraphDefinition interface for mackerelplugin.
-func (c ConntrackPlugin) GraphDefinition() map[string](mp.Graphs) {
+func (c ConntrackPlugin) GraphDefinition() map[string]mp.Graphs {
 	// graphdef is Graph definition for mackerelplugin.
-	var graphdef = map[string](mp.Graphs){
-		"conntrack.count": mp.Graphs{
+	var graphdef = map[string]mp.Graphs{
+		"conntrack.count": {
 			Label: "Conntrack Count",
 			Unit:  "integer",
-			Metrics: [](mp.Metrics){
-				mp.Metrics{Name: "*", Label: "%1", Diff: false, Stacked: true, Type: "uint64"},
+			Metrics: []mp.Metrics{
+				{Name: "*", Label: "%1", Diff: false, Stacked: true, Type: "uint64"},
 			},
 		},
 	}

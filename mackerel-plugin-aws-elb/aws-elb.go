@@ -12,22 +12,22 @@ import (
 	mp "github.com/mackerelio/go-mackerel-plugin"
 )
 
-var graphdef = map[string](mp.Graphs){
-	"elb.latency": mp.Graphs{
+var graphdef = map[string]mp.Graphs{
+	"elb.latency": {
 		Label: "Whole ELB Latency",
 		Unit:  "float",
-		Metrics: [](mp.Metrics){
-			mp.Metrics{Name: "Latency", Label: "Latency"},
+		Metrics: []mp.Metrics{
+			{Name: "Latency", Label: "Latency"},
 		},
 	},
-	"elb.http_backend": mp.Graphs{
+	"elb.http_backend": {
 		Label: "Whole ELB HTTP Backend Count",
 		Unit:  "integer",
-		Metrics: [](mp.Metrics){
-			mp.Metrics{Name: "HTTPCode_Backend_2XX", Label: "2XX", Stacked: true},
-			mp.Metrics{Name: "HTTPCode_Backend_3XX", Label: "3XX", Stacked: true},
-			mp.Metrics{Name: "HTTPCode_Backend_4XX", Label: "4XX", Stacked: true},
-			mp.Metrics{Name: "HTTPCode_Backend_5XX", Label: "5XX", Stacked: true},
+		Metrics: []mp.Metrics{
+			{Name: "HTTPCode_Backend_2XX", Label: "2XX", Stacked: true},
+			{Name: "HTTPCode_Backend_3XX", Label: "3XX", Stacked: true},
+			{Name: "HTTPCode_Backend_4XX", Label: "4XX", Stacked: true},
+			{Name: "HTTPCode_Backend_5XX", Label: "5XX", Stacked: true},
 		},
 	},
 	// "elb.healthy_host_count", "elb.unhealthy_host_count" will be generated dynamically
@@ -196,7 +196,7 @@ func (p ELBPlugin) FetchMetrics() (map[string]float64, error) {
 }
 
 // GraphDefinition for Mackerel
-func (p ELBPlugin) GraphDefinition() map[string](mp.Graphs) {
+func (p ELBPlugin) GraphDefinition() map[string]mp.Graphs {
 	for _, grp := range [...]string{"elb.healthy_host_count", "elb.unhealthy_host_count"} {
 		var namePre string
 		var label string
@@ -209,7 +209,7 @@ func (p ELBPlugin) GraphDefinition() map[string](mp.Graphs) {
 			label = "ELB Unhealthy Host Count"
 		}
 
-		var metrics [](mp.Metrics)
+		var metrics []mp.Metrics
 		for _, az := range p.AZs {
 			metrics = append(metrics, mp.Metrics{Name: namePre + az, Label: az, Stacked: true})
 		}

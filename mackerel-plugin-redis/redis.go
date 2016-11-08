@@ -201,66 +201,66 @@ func (m RedisPlugin) FetchMetrics() (map[string]interface{}, error) {
 }
 
 // GraphDefinition interface for mackerelplugin
-func (m RedisPlugin) GraphDefinition() map[string](mp.Graphs) {
+func (m RedisPlugin) GraphDefinition() map[string]mp.Graphs {
 	labelPrefix := strings.Title(m.Prefix)
 
-	var graphdef = map[string](mp.Graphs){
-		"queries": mp.Graphs{
+	var graphdef = map[string]mp.Graphs{
+		"queries": {
 			Label: (labelPrefix + " Queries"),
 			Unit:  "integer",
-			Metrics: [](mp.Metrics){
-				mp.Metrics{Name: "instantaneous_ops_per_sec", Label: "Queries", Diff: false},
+			Metrics: []mp.Metrics{
+				{Name: "instantaneous_ops_per_sec", Label: "Queries", Diff: false},
 			},
 		},
-		"connections": mp.Graphs{
+		"connections": {
 			Label: (labelPrefix + " Connections"),
 			Unit:  "integer",
-			Metrics: [](mp.Metrics){
-				mp.Metrics{Name: "total_connections_received", Label: "Connections", Diff: true, Stacked: true},
-				mp.Metrics{Name: "rejected_connections", Label: "Rejected Connections", Diff: true, Stacked: true},
+			Metrics: []mp.Metrics{
+				{Name: "total_connections_received", Label: "Connections", Diff: true, Stacked: true},
+				{Name: "rejected_connections", Label: "Rejected Connections", Diff: true, Stacked: true},
 			},
 		},
-		"clients": mp.Graphs{
+		"clients": {
 			Label: (labelPrefix + " Clients"),
 			Unit:  "integer",
-			Metrics: [](mp.Metrics){
-				mp.Metrics{Name: "connected_clients", Label: "Connected Clients", Diff: false, Stacked: true},
-				mp.Metrics{Name: "blocked_clients", Label: "Blocked Clients", Diff: false, Stacked: true},
-				mp.Metrics{Name: "connected_slaves", Label: "Blocked Clients", Diff: false, Stacked: true},
+			Metrics: []mp.Metrics{
+				{Name: "connected_clients", Label: "Connected Clients", Diff: false, Stacked: true},
+				{Name: "blocked_clients", Label: "Blocked Clients", Diff: false, Stacked: true},
+				{Name: "connected_slaves", Label: "Blocked Clients", Diff: false, Stacked: true},
 			},
 		},
-		"keys": mp.Graphs{
+		"keys": {
 			Label: (labelPrefix + " Keys"),
 			Unit:  "integer",
-			Metrics: [](mp.Metrics){
-				mp.Metrics{Name: "keys", Label: "Keys", Diff: false},
-				mp.Metrics{Name: "expired", Label: "Expired Keys", Diff: false},
+			Metrics: []mp.Metrics{
+				{Name: "keys", Label: "Keys", Diff: false},
+				{Name: "expired", Label: "Expired Keys", Diff: false},
 			},
 		},
-		"keyspace": mp.Graphs{
+		"keyspace": {
 			Label: (labelPrefix + " Keyspace"),
 			Unit:  "integer",
-			Metrics: [](mp.Metrics){
-				mp.Metrics{Name: "keyspace_hits", Label: "Keyspace Hits", Diff: true},
-				mp.Metrics{Name: "keyspace_misses", Label: "Keyspace Missed", Diff: true},
+			Metrics: []mp.Metrics{
+				{Name: "keyspace_hits", Label: "Keyspace Hits", Diff: true},
+				{Name: "keyspace_misses", Label: "Keyspace Missed", Diff: true},
 			},
 		},
-		"memory": mp.Graphs{
+		"memory": {
 			Label: (labelPrefix + " Memory"),
 			Unit:  "integer",
-			Metrics: [](mp.Metrics){
-				mp.Metrics{Name: "used_memory", Label: "Used Memory", Diff: false},
-				mp.Metrics{Name: "used_memory_rss", Label: "Used Memory RSS", Diff: false},
-				mp.Metrics{Name: "used_memory_peak", Label: "Used Memory Peak", Diff: false},
-				mp.Metrics{Name: "used_memory_lua", Label: "Used Memory Lua engine", Diff: false},
+			Metrics: []mp.Metrics{
+				{Name: "used_memory", Label: "Used Memory", Diff: false},
+				{Name: "used_memory_rss", Label: "Used Memory RSS", Diff: false},
+				{Name: "used_memory_peak", Label: "Used Memory Peak", Diff: false},
+				{Name: "used_memory_lua", Label: "Used Memory Lua engine", Diff: false},
 			},
 		},
-		"capacity": mp.Graphs{
+		"capacity": {
 			Label: (labelPrefix + " Capacity"),
 			Unit:  "percentage",
-			Metrics: [](mp.Metrics){
-				mp.Metrics{Name: "percentage_of_memory", Label: "Percentage of memory", Diff: false},
-				mp.Metrics{Name: "percentage_of_clients", Label: "Percentage of clients", Diff: false},
+			Metrics: []mp.Metrics{
+				{Name: "percentage_of_memory", Label: "Percentage of memory", Diff: false},
+				{Name: "percentage_of_clients", Label: "Percentage of clients", Diff: false},
 			},
 		},
 	}

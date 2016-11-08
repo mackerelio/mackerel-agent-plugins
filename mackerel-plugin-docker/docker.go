@@ -17,51 +17,51 @@ import (
 	mp "github.com/mackerelio/go-mackerel-plugin-helper"
 )
 
-var graphdef = map[string](mp.Graphs){
-	"docker.cpuacct.#": mp.Graphs{
+var graphdef = map[string]mp.Graphs{
+	"docker.cpuacct.#": {
 		Label: "Docker CPU",
 		Unit:  "integer",
-		Metrics: [](mp.Metrics){
-			mp.Metrics{Name: "user", Label: "User", Diff: true, Stacked: true, Type: "uint64"},
-			mp.Metrics{Name: "system", Label: "System", Diff: true, Stacked: true, Type: "uint64"},
+		Metrics: []mp.Metrics{
+			{Name: "user", Label: "User", Diff: true, Stacked: true, Type: "uint64"},
+			{Name: "system", Label: "System", Diff: true, Stacked: true, Type: "uint64"},
 		},
 	},
-	"docker.memory.#": mp.Graphs{
+	"docker.memory.#": {
 		Label: "Docker Memory",
 		Unit:  "integer",
-		Metrics: [](mp.Metrics){
-			mp.Metrics{Name: "cache", Label: "Cache", Diff: false, Stacked: true},
-			mp.Metrics{Name: "rss", Label: "RSS", Diff: false, Stacked: true},
+		Metrics: []mp.Metrics{
+			{Name: "cache", Label: "Cache", Diff: false, Stacked: true},
+			{Name: "rss", Label: "RSS", Diff: false, Stacked: true},
 		},
 	},
-	"docker.blkio.io_queued.#": mp.Graphs{
+	"docker.blkio.io_queued.#": {
 		Label: "Docker BlkIO Queued",
 		Unit:  "integer",
-		Metrics: [](mp.Metrics){
-			mp.Metrics{Name: "read", Label: "Read", Diff: false, Stacked: true},
-			mp.Metrics{Name: "write", Label: "Write", Diff: false, Stacked: true},
-			mp.Metrics{Name: "sync", Label: "Sync", Diff: false, Stacked: true},
-			mp.Metrics{Name: "async", Label: "Async", Diff: false, Stacked: true},
+		Metrics: []mp.Metrics{
+			{Name: "read", Label: "Read", Diff: false, Stacked: true},
+			{Name: "write", Label: "Write", Diff: false, Stacked: true},
+			{Name: "sync", Label: "Sync", Diff: false, Stacked: true},
+			{Name: "async", Label: "Async", Diff: false, Stacked: true},
 		},
 	},
-	"docker.blkio.io_serviced.#": mp.Graphs{
+	"docker.blkio.io_serviced.#": {
 		Label: "Docker BlkIO IOPS",
 		Unit:  "integer",
-		Metrics: [](mp.Metrics){
-			mp.Metrics{Name: "read", Label: "Read", Diff: true, Stacked: true, Type: "uint64"},
-			mp.Metrics{Name: "write", Label: "Write", Diff: true, Stacked: true, Type: "uint64"},
-			mp.Metrics{Name: "sync", Label: "Sync", Diff: true, Stacked: true, Type: "uint64"},
-			mp.Metrics{Name: "async", Label: "Async", Diff: true, Stacked: true, Type: "uint64"},
+		Metrics: []mp.Metrics{
+			{Name: "read", Label: "Read", Diff: true, Stacked: true, Type: "uint64"},
+			{Name: "write", Label: "Write", Diff: true, Stacked: true, Type: "uint64"},
+			{Name: "sync", Label: "Sync", Diff: true, Stacked: true, Type: "uint64"},
+			{Name: "async", Label: "Async", Diff: true, Stacked: true, Type: "uint64"},
 		},
 	},
-	"docker.blkio.io_service_bytes.#": mp.Graphs{
+	"docker.blkio.io_service_bytes.#": {
 		Label: "Docker BlkIO Bytes",
 		Unit:  "integer",
-		Metrics: [](mp.Metrics){
-			mp.Metrics{Name: "read", Label: "Read", Diff: true, Stacked: true, Type: "uint64"},
-			mp.Metrics{Name: "write", Label: "Write", Diff: true, Stacked: true, Type: "uint64"},
-			mp.Metrics{Name: "sync", Label: "Sync", Diff: true, Stacked: true, Type: "uint64"},
-			mp.Metrics{Name: "async", Label: "Async", Diff: true, Stacked: true, Type: "uint64"},
+		Metrics: []mp.Metrics{
+			{Name: "read", Label: "Read", Diff: true, Stacked: true, Type: "uint64"},
+			{Name: "write", Label: "Write", Diff: true, Stacked: true, Type: "uint64"},
+			{Name: "sync", Label: "Sync", Diff: true, Stacked: true, Type: "uint64"},
+			{Name: "async", Label: "Async", Diff: true, Stacked: true, Type: "uint64"},
 		},
 	},
 }
@@ -407,7 +407,7 @@ func (m DockerPlugin) FetchMetricsWithFile(dockerStats *map[string][]string) (ma
 }
 
 // GraphDefinition interface for mackerel plugin
-func (m DockerPlugin) GraphDefinition() map[string](mp.Graphs) {
+func (m DockerPlugin) GraphDefinition() map[string]mp.Graphs {
 	return graphdef
 }
 

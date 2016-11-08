@@ -11,30 +11,30 @@ import (
 	ses "github.com/naokibtn/go-ses"
 )
 
-var graphdef = map[string](mp.Graphs){
-	"ses.send24h": mp.Graphs{
+var graphdef = map[string]mp.Graphs{
+	"ses.send24h": {
 		Label: "SES Send (last 24h)",
 		Unit:  "float",
-		Metrics: [](mp.Metrics){
-			mp.Metrics{Name: "Max24HourSend", Label: "Max"},
-			mp.Metrics{Name: "SentLast24Hours", Label: "Sent"},
+		Metrics: []mp.Metrics{
+			{Name: "Max24HourSend", Label: "Max"},
+			{Name: "SentLast24Hours", Label: "Sent"},
 		},
 	},
-	"ses.max_send_rate": mp.Graphs{
+	"ses.max_send_rate": {
 		Label: "SES Max Send Rate",
 		Unit:  "float",
-		Metrics: [](mp.Metrics){
-			mp.Metrics{Name: "MaxSendRate", Label: "MaxRate"},
+		Metrics: []mp.Metrics{
+			{Name: "MaxSendRate", Label: "MaxRate"},
 		},
 	},
-	"ses.stats": mp.Graphs{
+	"ses.stats": {
 		Label: "SES Stats",
 		Unit:  "int",
-		Metrics: [](mp.Metrics){
-			mp.Metrics{Name: "Complaints", Label: "Complaints"},
-			mp.Metrics{Name: "DeliveryAttempts", Label: "DeliveryAttempts"},
-			mp.Metrics{Name: "Bounces", Label: "Bounces"},
-			mp.Metrics{Name: "Rejects", Label: "Rejects"},
+		Metrics: []mp.Metrics{
+			{Name: "Complaints", Label: "Complaints"},
+			{Name: "DeliveryAttempts", Label: "DeliveryAttempts"},
+			{Name: "Bounces", Label: "Bounces"},
+			{Name: "Rejects", Label: "Rejects"},
 		},
 	},
 }
@@ -94,7 +94,7 @@ func (p SESPlugin) FetchMetrics() (map[string]float64, error) {
 }
 
 // GraphDefinition interface for mackerel plugin
-func (p SESPlugin) GraphDefinition() map[string](mp.Graphs) {
+func (p SESPlugin) GraphDefinition() map[string]mp.Graphs {
 	return graphdef
 }
 
