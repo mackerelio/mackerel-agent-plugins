@@ -10,13 +10,13 @@ import (
 	mp "github.com/mackerelio/go-mackerel-plugin-helper"
 )
 
-var graphdef = map[string](mp.Graphs){
-	"murmur.connections": mp.Graphs{
+var graphdef = map[string]mp.Graphs{
+	"murmur.connections": {
 		Label: "Murmur Connections",
 		Unit:  "integer",
-		Metrics: [](mp.Metrics){
-			mp.Metrics{Name: "con_cur", Label: "Current users", Diff: false, Type: "uint32"},
-			mp.Metrics{Name: "con_max", Label: "Maximum users", Diff: false, Type: "uint32"},
+		Metrics: []mp.Metrics{
+			{Name: "con_cur", Label: "Current users", Diff: false, Type: "uint32"},
+			{Name: "con_max", Label: "Maximum users", Diff: false, Type: "uint32"},
 		},
 	},
 }
@@ -44,7 +44,7 @@ func (m MurmurPlugin) FetchMetrics() (map[string]interface{}, error) {
 }
 
 // GraphDefinition interface for mackerelplugin
-func (m MurmurPlugin) GraphDefinition() map[string](mp.Graphs) {
+func (m MurmurPlugin) GraphDefinition() map[string]mp.Graphs {
 	return graphdef
 }
 

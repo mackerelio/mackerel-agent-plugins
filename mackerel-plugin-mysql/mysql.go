@@ -36,86 +36,86 @@ func init() {
 	processState["State_other"] = true
 }
 
-func (m MySQLPlugin) defaultGraphdef() map[string](mp.Graphs) {
+func (m MySQLPlugin) defaultGraphdef() map[string]mp.Graphs {
 	labelPrefix := strings.Title(strings.Replace(m.MetricKeyPrefix(), "mysql", "MySQL", -1))
 
-	return map[string](mp.Graphs){
-		"cmd": mp.Graphs{
+	return map[string]mp.Graphs{
+		"cmd": {
 			Label: labelPrefix + " Command",
 			Unit:  "float",
-			Metrics: [](mp.Metrics){
-				mp.Metrics{Name: "Com_insert", Label: "Insert", Diff: true, Stacked: true, Type: "uint64"},
-				mp.Metrics{Name: "Com_select", Label: "Select", Diff: true, Stacked: true, Type: "uint64"},
-				mp.Metrics{Name: "Com_update", Label: "Update", Diff: true, Stacked: true, Type: "uint64"},
-				mp.Metrics{Name: "Com_update_multi", Label: "Update Multi", Diff: true, Stacked: true, Type: "uint64"},
-				mp.Metrics{Name: "Com_delete", Label: "Delete", Diff: true, Stacked: true, Type: "uint64"},
-				mp.Metrics{Name: "Com_delete_multi", Label: "Delete Multi", Diff: true, Stacked: true, Type: "uint64"},
-				mp.Metrics{Name: "Com_replace", Label: "Replace", Diff: true, Stacked: true, Type: "uint64"},
-				mp.Metrics{Name: "Com_set_option", Label: "Set Option", Diff: true, Stacked: true, Type: "uint64"},
-				mp.Metrics{Name: "Qcache_hits", Label: "Query Cache Hits", Diff: true, Stacked: false, Type: "uint64"},
-				mp.Metrics{Name: "Questions", Label: "Questions", Diff: true, Stacked: false, Type: "uint64"},
+			Metrics: []mp.Metrics{
+				{Name: "Com_insert", Label: "Insert", Diff: true, Stacked: true, Type: "uint64"},
+				{Name: "Com_select", Label: "Select", Diff: true, Stacked: true, Type: "uint64"},
+				{Name: "Com_update", Label: "Update", Diff: true, Stacked: true, Type: "uint64"},
+				{Name: "Com_update_multi", Label: "Update Multi", Diff: true, Stacked: true, Type: "uint64"},
+				{Name: "Com_delete", Label: "Delete", Diff: true, Stacked: true, Type: "uint64"},
+				{Name: "Com_delete_multi", Label: "Delete Multi", Diff: true, Stacked: true, Type: "uint64"},
+				{Name: "Com_replace", Label: "Replace", Diff: true, Stacked: true, Type: "uint64"},
+				{Name: "Com_set_option", Label: "Set Option", Diff: true, Stacked: true, Type: "uint64"},
+				{Name: "Qcache_hits", Label: "Query Cache Hits", Diff: true, Stacked: false, Type: "uint64"},
+				{Name: "Questions", Label: "Questions", Diff: true, Stacked: false, Type: "uint64"},
 			},
 		},
-		"join": mp.Graphs{
+		"join": {
 			Label: labelPrefix + " Join/Scan",
 			Unit:  "float",
-			Metrics: [](mp.Metrics){
-				mp.Metrics{Name: "Select_full_join", Label: "Select Full JOIN", Diff: true, Stacked: false},
-				mp.Metrics{Name: "Select_full_range_join", Label: "Select Full Range JOIN", Diff: true, Stacked: false},
-				mp.Metrics{Name: "Select_scan", Label: "Select SCAN", Diff: true, Stacked: false},
-				mp.Metrics{Name: "Sort_scan", Label: "Sort SCAN", Diff: true, Stacked: false},
+			Metrics: []mp.Metrics{
+				{Name: "Select_full_join", Label: "Select Full JOIN", Diff: true, Stacked: false},
+				{Name: "Select_full_range_join", Label: "Select Full Range JOIN", Diff: true, Stacked: false},
+				{Name: "Select_scan", Label: "Select SCAN", Diff: true, Stacked: false},
+				{Name: "Sort_scan", Label: "Sort SCAN", Diff: true, Stacked: false},
 			},
 		},
-		"threads": mp.Graphs{
+		"threads": {
 			Label: labelPrefix + " Threads",
 			Unit:  "integer",
-			Metrics: [](mp.Metrics){
-				mp.Metrics{Name: "Max_used_connections", Label: "Max used connections", Diff: false, Stacked: false},
-				mp.Metrics{Name: "Threads_connected", Label: "Connected", Diff: false, Stacked: false},
-				mp.Metrics{Name: "Threads_running", Label: "Running", Diff: false, Stacked: false},
-				mp.Metrics{Name: "Threads_cached", Label: "Cached", Diff: false, Stacked: false},
+			Metrics: []mp.Metrics{
+				{Name: "Max_used_connections", Label: "Max used connections", Diff: false, Stacked: false},
+				{Name: "Threads_connected", Label: "Connected", Diff: false, Stacked: false},
+				{Name: "Threads_running", Label: "Running", Diff: false, Stacked: false},
+				{Name: "Threads_cached", Label: "Cached", Diff: false, Stacked: false},
 			},
 		},
-		"connections": mp.Graphs{
+		"connections": {
 			Label: labelPrefix + " Connections",
 			Unit:  "float",
-			Metrics: [](mp.Metrics){
-				mp.Metrics{Name: "Connections", Label: "Connections", Diff: true, Stacked: false},
-				mp.Metrics{Name: "Threads_created", Label: "Created Threads", Diff: true, Stacked: false},
-				mp.Metrics{Name: "Aborted_clients", Label: "Aborted Clients", Diff: true, Stacked: false},
-				mp.Metrics{Name: "Aborted_connects", Label: "Aborted Connects", Diff: true, Stacked: false},
+			Metrics: []mp.Metrics{
+				{Name: "Connections", Label: "Connections", Diff: true, Stacked: false},
+				{Name: "Threads_created", Label: "Created Threads", Diff: true, Stacked: false},
+				{Name: "Aborted_clients", Label: "Aborted Clients", Diff: true, Stacked: false},
+				{Name: "Aborted_connects", Label: "Aborted Connects", Diff: true, Stacked: false},
 			},
 		},
-		"seconds_behind_master": mp.Graphs{
+		"seconds_behind_master": {
 			Label: labelPrefix + " Slave status",
 			Unit:  "integer",
-			Metrics: [](mp.Metrics){
-				mp.Metrics{Name: "Seconds_Behind_Master", Label: "Seconds Behind Master", Diff: false, Stacked: false},
+			Metrics: []mp.Metrics{
+				{Name: "Seconds_Behind_Master", Label: "Seconds Behind Master", Diff: false, Stacked: false},
 			},
 		},
-		"table_locks": mp.Graphs{
+		"table_locks": {
 			Label: labelPrefix + " Table Locks/Slow Queries",
 			Unit:  "float",
-			Metrics: [](mp.Metrics){
-				mp.Metrics{Name: "Table_locks_immediate", Label: "Table Locks Immediate", Diff: true, Stacked: false},
-				mp.Metrics{Name: "Table_locks_waited", Label: "Table Locks Waited", Diff: true, Stacked: false},
-				mp.Metrics{Name: "Slow_queries", Label: "Slow Queries", Diff: true, Stacked: false},
+			Metrics: []mp.Metrics{
+				{Name: "Table_locks_immediate", Label: "Table Locks Immediate", Diff: true, Stacked: false},
+				{Name: "Table_locks_waited", Label: "Table Locks Waited", Diff: true, Stacked: false},
+				{Name: "Slow_queries", Label: "Slow Queries", Diff: true, Stacked: false},
 			},
 		},
-		"traffic": mp.Graphs{
+		"traffic": {
 			Label: labelPrefix + " Traffic",
 			Unit:  "bytes/sec",
-			Metrics: [](mp.Metrics){
-				mp.Metrics{Name: "Bytes_sent", Label: "Sent Bytes", Diff: true, Stacked: false},
-				mp.Metrics{Name: "Bytes_received", Label: "Received Bytes", Diff: true, Stacked: false},
+			Metrics: []mp.Metrics{
+				{Name: "Bytes_sent", Label: "Sent Bytes", Diff: true, Stacked: false},
+				{Name: "Bytes_received", Label: "Received Bytes", Diff: true, Stacked: false},
 			},
 		},
-		"capacity": mp.Graphs{
+		"capacity": {
 			Label: labelPrefix + " Capacity",
 			Unit:  "percentage",
-			Metrics: [](mp.Metrics){
-				mp.Metrics{Name: "PercentageOfConnections", Label: "Percentage Of Connections", Diff: false, Stacked: false},
-				mp.Metrics{Name: "PercentageOfBufferPool", Label: "Percentage Of Buffer Pool", Diff: false, Stacked: false},
+			Metrics: []mp.Metrics{
+				{Name: "PercentageOfConnections", Label: "Percentage Of Connections", Diff: false, Stacked: false},
+				{Name: "PercentageOfBufferPool", Label: "Percentage Of Buffer Pool", Diff: false, Stacked: false},
 			},
 		},
 	}
@@ -304,7 +304,7 @@ func (m MySQLPlugin) FetchMetrics() (map[string]interface{}, error) {
 }
 
 // GraphDefinition interface for mackerelplugin
-func (m MySQLPlugin) GraphDefinition() map[string](mp.Graphs) {
+func (m MySQLPlugin) GraphDefinition() map[string]mp.Graphs {
 	graphdef := m.defaultGraphdef()
 	if !m.DisableInnoDB {
 		graphdef = m.addGraphdefWithInnoDBMetrics(graphdef)
@@ -315,269 +315,269 @@ func (m MySQLPlugin) GraphDefinition() map[string](mp.Graphs) {
 	return graphdef
 }
 
-func (m MySQLPlugin) addGraphdefWithInnoDBMetrics(graphdef map[string](mp.Graphs)) map[string](mp.Graphs) {
+func (m MySQLPlugin) addGraphdefWithInnoDBMetrics(graphdef map[string]mp.Graphs) map[string]mp.Graphs {
 	prefix := m.MetricKeyPrefix()
 	graphdef["innodb_rows"] = mp.Graphs{
 		Label: prefix + ".innodb Rows",
 		Unit:  "float",
-		Metrics: [](mp.Metrics){
-			mp.Metrics{Name: "Innodb_rows_read", Label: "Read", Diff: true, Stacked: false},
-			mp.Metrics{Name: "Innodb_rows_inserted", Label: "Inserted", Diff: true, Stacked: false},
-			mp.Metrics{Name: "Innodb_rows_updated", Label: "Updated", Diff: true, Stacked: false},
-			mp.Metrics{Name: "Innodb_rows_deleted", Label: "Deleted", Diff: true, Stacked: false},
+		Metrics: []mp.Metrics{
+			{Name: "Innodb_rows_read", Label: "Read", Diff: true, Stacked: false},
+			{Name: "Innodb_rows_inserted", Label: "Inserted", Diff: true, Stacked: false},
+			{Name: "Innodb_rows_updated", Label: "Updated", Diff: true, Stacked: false},
+			{Name: "Innodb_rows_deleted", Label: "Deleted", Diff: true, Stacked: false},
 		},
 	}
 	graphdef["innodb_row_lock_time"] = mp.Graphs{
 		Label: prefix + ".innodb Row Lock Time",
 		Unit:  "float",
-		Metrics: [](mp.Metrics){
-			mp.Metrics{Name: "Innodb_row_lock_time", Label: "Lock Time", Diff: true, Stacked: false},
+		Metrics: []mp.Metrics{
+			{Name: "Innodb_row_lock_time", Label: "Lock Time", Diff: true, Stacked: false},
 		},
 	}
 	graphdef["innodb_row_lock_waits"] = mp.Graphs{
 		Label: prefix + ".innodb Row Lock Waits",
 		Unit:  "float",
-		Metrics: [](mp.Metrics){
-			mp.Metrics{Name: "Innodb_row_lock_waits", Label: "Lock Waits", Diff: true, Stacked: false},
+		Metrics: []mp.Metrics{
+			{Name: "Innodb_row_lock_waits", Label: "Lock Waits", Diff: true, Stacked: false},
 		},
 	}
 	graphdef["innodb_adaptive_hash_index"] = mp.Graphs{
 		Label: prefix + ".innodb Adaptive Hash Index",
 		Unit:  "integer",
-		Metrics: [](mp.Metrics){
-			mp.Metrics{Name: "hash_index_cells_total", Label: "Hash Index Cells Total", Diff: false, Stacked: false},
-			mp.Metrics{Name: "hash_index_cells_used", Label: "Hash Index Cells Used", Diff: false, Stacked: false},
+		Metrics: []mp.Metrics{
+			{Name: "hash_index_cells_total", Label: "Hash Index Cells Total", Diff: false, Stacked: false},
+			{Name: "hash_index_cells_used", Label: "Hash Index Cells Used", Diff: false, Stacked: false},
 		},
 	}
 	graphdef["innodb_buffer_pool_read"] = mp.Graphs{
 		Label: prefix + ".innodb Buffer Pool Read (/sec)",
 		Unit:  "float",
-		Metrics: [](mp.Metrics){
-			mp.Metrics{Name: "read_ahead", Label: "Pages Read Ahead", Diff: false, Stacked: false},
-			mp.Metrics{Name: "read_evicted", Label: "Evicted Without Access", Diff: false, Stacked: false},
-			mp.Metrics{Name: "read_random_ahead", Label: "Random Read Ahead", Diff: false, Stacked: false},
+		Metrics: []mp.Metrics{
+			{Name: "read_ahead", Label: "Pages Read Ahead", Diff: false, Stacked: false},
+			{Name: "read_evicted", Label: "Evicted Without Access", Diff: false, Stacked: false},
+			{Name: "read_random_ahead", Label: "Random Read Ahead", Diff: false, Stacked: false},
 		},
 	}
 	graphdef["innodb_buffer_pool_activity"] = mp.Graphs{
 		Label: prefix + ".innodb Buffer Pool Activity (Pages)",
 		Unit:  "integer",
-		Metrics: [](mp.Metrics){
-			mp.Metrics{Name: "pages_created", Label: "Created", Diff: true, Stacked: false},
-			mp.Metrics{Name: "pages_read", Label: "Read", Diff: true, Stacked: false},
-			mp.Metrics{Name: "pages_written", Label: "Written", Diff: true, Stacked: false},
+		Metrics: []mp.Metrics{
+			{Name: "pages_created", Label: "Created", Diff: true, Stacked: false},
+			{Name: "pages_read", Label: "Read", Diff: true, Stacked: false},
+			{Name: "pages_written", Label: "Written", Diff: true, Stacked: false},
 		},
 	}
 	graphdef["innodb_buffer_pool_efficiency"] = mp.Graphs{
 		Label: prefix + ".innodb Buffer Pool Efficiency",
 		Unit:  "integer",
-		Metrics: [](mp.Metrics){
-			mp.Metrics{Name: "Innodb_buffer_pool_reads", Label: "Reads", Diff: true, Stacked: false},
-			mp.Metrics{Name: "Innodb_buffer_pool_read_requests", Label: "Read Requests", Diff: true, Stacked: false},
+		Metrics: []mp.Metrics{
+			{Name: "Innodb_buffer_pool_reads", Label: "Reads", Diff: true, Stacked: false},
+			{Name: "Innodb_buffer_pool_read_requests", Label: "Read Requests", Diff: true, Stacked: false},
 		},
 	}
 	graphdef["innodb_buffer_pool"] = mp.Graphs{
 		Label: prefix + ".innodb Buffer Pool (Pages)",
 		Unit:  "integer",
-		Metrics: [](mp.Metrics){
-			mp.Metrics{Name: "pool_size", Label: "Pool Size", Diff: false, Stacked: false},
-			mp.Metrics{Name: "database_pages", Label: "Used", Diff: false, Stacked: true},
-			mp.Metrics{Name: "free_pages", Label: "Free", Diff: false, Stacked: true},
-			mp.Metrics{Name: "modified_pages", Label: "Modified", Diff: false, Stacked: false},
+		Metrics: []mp.Metrics{
+			{Name: "pool_size", Label: "Pool Size", Diff: false, Stacked: false},
+			{Name: "database_pages", Label: "Used", Diff: false, Stacked: true},
+			{Name: "free_pages", Label: "Free", Diff: false, Stacked: true},
+			{Name: "modified_pages", Label: "Modified", Diff: false, Stacked: false},
 		},
 	}
 	graphdef["innodb_checkpoint_age"] = mp.Graphs{
 		Label: prefix + ".innodb Checkpoint Age",
 		Unit:  "bytes",
-		Metrics: [](mp.Metrics){
-			mp.Metrics{Name: "uncheckpointed_bytes", Label: "Uncheckpointed", Diff: false, Stacked: false},
+		Metrics: []mp.Metrics{
+			{Name: "uncheckpointed_bytes", Label: "Uncheckpointed", Diff: false, Stacked: false},
 		},
 	}
 	graphdef["innodb_current_lock_waits"] = mp.Graphs{
 		Label: prefix + ".innodb Current Lock Waits (secs)",
 		Unit:  "integer",
-		Metrics: [](mp.Metrics){
-			mp.Metrics{Name: "innodb_lock_wait_secs", Label: "Innodb Lock Wait", Diff: false, Stacked: false},
+		Metrics: []mp.Metrics{
+			{Name: "innodb_lock_wait_secs", Label: "Innodb Lock Wait", Diff: false, Stacked: false},
 		},
 	}
 	graphdef["innodb_io"] = mp.Graphs{
 		Label: prefix + ".innodb I/O",
 		Unit:  "integer",
-		Metrics: [](mp.Metrics){
-			mp.Metrics{Name: "file_reads", Label: "File Reads", Diff: true, Stacked: false},
-			mp.Metrics{Name: "file_writes", Label: "File Writes", Diff: true, Stacked: false},
-			mp.Metrics{Name: "file_fsyncs", Label: "File fsyncs", Diff: true, Stacked: false},
-			mp.Metrics{Name: "log_writes", Label: "Log Writes", Diff: true, Stacked: false},
+		Metrics: []mp.Metrics{
+			{Name: "file_reads", Label: "File Reads", Diff: true, Stacked: false},
+			{Name: "file_writes", Label: "File Writes", Diff: true, Stacked: false},
+			{Name: "file_fsyncs", Label: "File fsyncs", Diff: true, Stacked: false},
+			{Name: "log_writes", Label: "Log Writes", Diff: true, Stacked: false},
 		},
 	}
 	graphdef["innodb_io_pending"] = mp.Graphs{
 		Label: prefix + ".innodb I/O Pending",
 		Unit:  "integer",
-		Metrics: [](mp.Metrics){
-			mp.Metrics{Name: "pending_normal_aio_reads", Label: "Normal AIO Reads", Diff: false, Stacked: false},
-			mp.Metrics{Name: "pending_normal_aio_writes", Label: "Normal AIO Writes", Diff: false, Stacked: false},
-			mp.Metrics{Name: "pending_ibuf_aio_reads", Label: "InnoDB Buffer AIO Reads", Diff: false, Stacked: false},
-			mp.Metrics{Name: "pending_aio_log_ios", Label: "AIO Log IOs", Diff: false, Stacked: false},
-			mp.Metrics{Name: "pending_aio_sync_ios", Label: "AIO Sync IOs", Diff: false, Stacked: false},
-			mp.Metrics{Name: "pending_log_flushes", Label: "Log Flushes", Diff: false, Stacked: false},
-			mp.Metrics{Name: "pending_buf_pool_flushes", Label: "Buffer Pool Flushes", Diff: false, Stacked: false},
-			mp.Metrics{Name: "pending_log_writes", Label: "Log Writes", Diff: false, Stacked: false},
-			mp.Metrics{Name: "pending_chkp_writes", Label: "Checkpoint Writes", Diff: false, Stacked: false},
+		Metrics: []mp.Metrics{
+			{Name: "pending_normal_aio_reads", Label: "Normal AIO Reads", Diff: false, Stacked: false},
+			{Name: "pending_normal_aio_writes", Label: "Normal AIO Writes", Diff: false, Stacked: false},
+			{Name: "pending_ibuf_aio_reads", Label: "InnoDB Buffer AIO Reads", Diff: false, Stacked: false},
+			{Name: "pending_aio_log_ios", Label: "AIO Log IOs", Diff: false, Stacked: false},
+			{Name: "pending_aio_sync_ios", Label: "AIO Sync IOs", Diff: false, Stacked: false},
+			{Name: "pending_log_flushes", Label: "Log Flushes", Diff: false, Stacked: false},
+			{Name: "pending_buf_pool_flushes", Label: "Buffer Pool Flushes", Diff: false, Stacked: false},
+			{Name: "pending_log_writes", Label: "Log Writes", Diff: false, Stacked: false},
+			{Name: "pending_chkp_writes", Label: "Checkpoint Writes", Diff: false, Stacked: false},
 		},
 	}
 	graphdef["innodb_insert_buffer"] = mp.Graphs{
 		Label: prefix + ".innodb Insert Buffer",
 		Unit:  "integer",
-		Metrics: [](mp.Metrics){
-			mp.Metrics{Name: "ibuf_inserts", Label: "Inserts", Diff: true, Stacked: false},
-			mp.Metrics{Name: "ibuf_merges", Label: "Merges", Diff: true, Stacked: false},
-			mp.Metrics{Name: "ibuf_merged", Label: "Merged", Diff: true, Stacked: false},
+		Metrics: []mp.Metrics{
+			{Name: "ibuf_inserts", Label: "Inserts", Diff: true, Stacked: false},
+			{Name: "ibuf_merges", Label: "Merges", Diff: true, Stacked: false},
+			{Name: "ibuf_merged", Label: "Merged", Diff: true, Stacked: false},
 		},
 	}
 	graphdef["innodb_insert_buffer_usage"] = mp.Graphs{
 		Label: prefix + ".innodb Insert Buffer Usage (Cells)",
 		Unit:  "integer",
-		Metrics: [](mp.Metrics){
-			mp.Metrics{Name: "ibuf_cell_count", Label: "Cell Count", Diff: false, Stacked: false},
-			mp.Metrics{Name: "ibuf_used_cells", Label: "Used", Diff: false, Stacked: true},
-			mp.Metrics{Name: "ibuf_free_cells", Label: "Free", Diff: false, Stacked: true},
+		Metrics: []mp.Metrics{
+			{Name: "ibuf_cell_count", Label: "Cell Count", Diff: false, Stacked: false},
+			{Name: "ibuf_used_cells", Label: "Used", Diff: false, Stacked: true},
+			{Name: "ibuf_free_cells", Label: "Free", Diff: false, Stacked: true},
 		},
 	}
 	graphdef["innodb_lock_structures"] = mp.Graphs{
 		Label: prefix + ".innodb Lock Structures",
 		Unit:  "integer",
-		Metrics: [](mp.Metrics){
-			mp.Metrics{Name: "innodb_lock_structs", Label: "Structures", Diff: false, Stacked: false},
+		Metrics: []mp.Metrics{
+			{Name: "innodb_lock_structs", Label: "Structures", Diff: false, Stacked: false},
 		},
 	}
 	graphdef["innodb_log"] = mp.Graphs{
 		Label: prefix + ".innodb Log",
 		Unit:  "bytes",
-		Metrics: [](mp.Metrics){
-			mp.Metrics{Name: "log_bytes_written", Label: "Written", Diff: true, Stacked: false},
-			mp.Metrics{Name: "log_bytes_flushed", Label: "Flushed", Diff: true, Stacked: false},
-			mp.Metrics{Name: "unflushed_log", Label: "Unflushed", Diff: false, Stacked: false},
-			mp.Metrics{Name: "innodb_log_buffer_size", Label: "Buffer Size", Diff: false, Stacked: true},
+		Metrics: []mp.Metrics{
+			{Name: "log_bytes_written", Label: "Written", Diff: true, Stacked: false},
+			{Name: "log_bytes_flushed", Label: "Flushed", Diff: true, Stacked: false},
+			{Name: "unflushed_log", Label: "Unflushed", Diff: false, Stacked: false},
+			{Name: "innodb_log_buffer_size", Label: "Buffer Size", Diff: false, Stacked: true},
 		},
 	}
 	graphdef["innodb_memory_allocation"] = mp.Graphs{
 		Label: prefix + ".innodb Memory Allocation",
 		Unit:  "integer",
-		Metrics: [](mp.Metrics){
-			mp.Metrics{Name: "additional_pool_alloc", Label: "Additional Pool Allocated", Diff: false, Stacked: false},
-			mp.Metrics{Name: "total_mem_alloc", Label: "Total Memory Allocated", Diff: false, Stacked: false},
+		Metrics: []mp.Metrics{
+			{Name: "additional_pool_alloc", Label: "Additional Pool Allocated", Diff: false, Stacked: false},
+			{Name: "total_mem_alloc", Label: "Total Memory Allocated", Diff: false, Stacked: false},
 		},
 	}
 	graphdef["innodb_semaphores"] = mp.Graphs{
 		Label: prefix + ".innodb Semaphores",
 		Unit:  "integer",
-		Metrics: [](mp.Metrics){
-			mp.Metrics{Name: "spin_waits", Label: "Spin Waits", Diff: true, Stacked: false},
-			mp.Metrics{Name: "spin_rounds", Label: "Spin Rounds", Diff: true, Stacked: false},
-			mp.Metrics{Name: "os_waits", Label: "OS Waits", Diff: true, Stacked: false},
+		Metrics: []mp.Metrics{
+			{Name: "spin_waits", Label: "Spin Waits", Diff: true, Stacked: false},
+			{Name: "spin_rounds", Label: "Spin Rounds", Diff: true, Stacked: false},
+			{Name: "os_waits", Label: "OS Waits", Diff: true, Stacked: false},
 		},
 	}
 	graphdef["innodb_tables_in_use"] = mp.Graphs{
 		Label: prefix + ".innodb Tables In Use",
 		Unit:  "integer",
-		Metrics: [](mp.Metrics){
-			mp.Metrics{Name: "innodb_locked_tables", Label: "Table in Use", Diff: false, Stacked: false},
-			mp.Metrics{Name: "innodb_tables_in_use", Label: "Locked Tables", Diff: false, Stacked: false},
+		Metrics: []mp.Metrics{
+			{Name: "innodb_locked_tables", Label: "Table in Use", Diff: false, Stacked: false},
+			{Name: "innodb_tables_in_use", Label: "Locked Tables", Diff: false, Stacked: false},
 		},
 	}
 	graphdef["innodb_transactions_active_locked"] = mp.Graphs{
 		Label: prefix + ".innodb Transactions Active/Locked",
 		Unit:  "integer",
-		Metrics: [](mp.Metrics){
-			mp.Metrics{Name: "current_transactions", Label: "Current", Diff: false, Stacked: false},
-			mp.Metrics{Name: "active_transactions", Label: "Active", Diff: false, Stacked: false},
-			mp.Metrics{Name: "locked_transactions", Label: "Locked", Diff: false, Stacked: false},
-			mp.Metrics{Name: "read_views", Label: "Read Views", Diff: false, Stacked: false},
+		Metrics: []mp.Metrics{
+			{Name: "current_transactions", Label: "Current", Diff: false, Stacked: false},
+			{Name: "active_transactions", Label: "Active", Diff: false, Stacked: false},
+			{Name: "locked_transactions", Label: "Locked", Diff: false, Stacked: false},
+			{Name: "read_views", Label: "Read Views", Diff: false, Stacked: false},
 		},
 	}
 	graphdef["innodb_transactions"] = mp.Graphs{
 		Label: prefix + ".innodb Transactions",
 		Unit:  "integer",
-		Metrics: [](mp.Metrics){
-			mp.Metrics{Name: "history_list", Label: "History List", Diff: false, Stacked: false},
-			mp.Metrics{Name: "innodb_transactions", Label: "InnoDB Transactions", Diff: true, Stacked: false},
+		Metrics: []mp.Metrics{
+			{Name: "history_list", Label: "History List", Diff: false, Stacked: false},
+			{Name: "innodb_transactions", Label: "InnoDB Transactions", Diff: true, Stacked: false},
 		},
 	}
 	return graphdef
 }
 
-func (m MySQLPlugin) addExtendedGraphdef(graphdef map[string](mp.Graphs)) map[string](mp.Graphs) {
+func (m MySQLPlugin) addExtendedGraphdef(graphdef map[string]mp.Graphs) map[string]mp.Graphs {
 	//TODO
 	prefix := m.MetricKeyPrefix()
 	graphdef["query_cache"] = mp.Graphs{
 		Label: prefix + ".query Cache",
 		Unit:  "float",
-		Metrics: [](mp.Metrics){
-			mp.Metrics{Name: "Qcache_queries_in_cache", Label: "Qcache Queries In Cache", Diff: false, Stacked: false, Type: "uint64"},
-			mp.Metrics{Name: "Qcache_hits", Label: "Qcache Hits", Diff: true, Stacked: false, Type: "uint64"},
-			mp.Metrics{Name: "Qcache_inserts", Label: "Qcache Inserts", Diff: true, Stacked: false, Type: "uint64"},
-			mp.Metrics{Name: "Qcache_not_cached", Label: "Qcache Not Cached", Diff: true, Stacked: false, Type: "uint64"},
-			mp.Metrics{Name: "Qcache_lowmem_prunes", Label: "Qcache Lowmem Prunes", Diff: true, Stacked: false, Type: "uint64"},
+		Metrics: []mp.Metrics{
+			{Name: "Qcache_queries_in_cache", Label: "Qcache Queries In Cache", Diff: false, Stacked: false, Type: "uint64"},
+			{Name: "Qcache_hits", Label: "Qcache Hits", Diff: true, Stacked: false, Type: "uint64"},
+			{Name: "Qcache_inserts", Label: "Qcache Inserts", Diff: true, Stacked: false, Type: "uint64"},
+			{Name: "Qcache_not_cached", Label: "Qcache Not Cached", Diff: true, Stacked: false, Type: "uint64"},
+			{Name: "Qcache_lowmem_prunes", Label: "Qcache Lowmem Prunes", Diff: true, Stacked: false, Type: "uint64"},
 		},
 	}
 	graphdef["query_cache_memory"] = mp.Graphs{
 		Label: prefix + ".query Cache Memory",
 		Unit:  "float",
-		Metrics: [](mp.Metrics){
-			mp.Metrics{Name: "query_cache_size", Label: "Query Cache Size", Diff: false, Stacked: false, Type: "uint64"},
-			mp.Metrics{Name: "Qcache_free_memory", Label: "Qcache Free Memory", Diff: false, Stacked: false, Type: "uint64"},
-			mp.Metrics{Name: "Qcache_total_blocks", Label: "Qcache Total Blocks", Diff: false, Stacked: false, Type: "uint64"},
-			mp.Metrics{Name: "Qcache_free_blocks", Label: "Qcache Free Blocks", Diff: false, Stacked: false, Type: "uint64"},
+		Metrics: []mp.Metrics{
+			{Name: "query_cache_size", Label: "Query Cache Size", Diff: false, Stacked: false, Type: "uint64"},
+			{Name: "Qcache_free_memory", Label: "Qcache Free Memory", Diff: false, Stacked: false, Type: "uint64"},
+			{Name: "Qcache_total_blocks", Label: "Qcache Total Blocks", Diff: false, Stacked: false, Type: "uint64"},
+			{Name: "Qcache_free_blocks", Label: "Qcache Free Blocks", Diff: false, Stacked: false, Type: "uint64"},
 		},
 	}
 	graphdef["temporary_objects"] = mp.Graphs{
 		Label: prefix + ".temporary Objects",
 		Unit:  "float",
-		Metrics: [](mp.Metrics){
-			mp.Metrics{Name: "Created_tmp_tables", Label: "Created Tmp Tables", Diff: true, Stacked: false, Type: "uint64"},
-			mp.Metrics{Name: "Created_tmp_disk_tables", Label: "Created Tmp Disk Tables", Diff: true, Stacked: false, Type: "uint64"},
-			mp.Metrics{Name: "Created_tmp_files", Label: "Created Tmp Files", Diff: true, Stacked: false, Type: "uint64"},
+		Metrics: []mp.Metrics{
+			{Name: "Created_tmp_tables", Label: "Created Tmp Tables", Diff: true, Stacked: false, Type: "uint64"},
+			{Name: "Created_tmp_disk_tables", Label: "Created Tmp Disk Tables", Diff: true, Stacked: false, Type: "uint64"},
+			{Name: "Created_tmp_files", Label: "Created Tmp Files", Diff: true, Stacked: false, Type: "uint64"},
 		},
 	}
 	graphdef["files_and_tables"] = mp.Graphs{
 		Label: prefix + ".files and Tables",
 		Unit:  "float",
-		Metrics: [](mp.Metrics){
-			mp.Metrics{Name: "table_cache", Label: "Table Cache", Diff: false, Stacked: false, Type: "uint64"},
-			mp.Metrics{Name: "Open_tables", Label: "Open Tables", Diff: false, Stacked: false, Type: "uint64"},
-			mp.Metrics{Name: "Open_files", Label: "Open Files", Diff: false, Stacked: false, Type: "uint64"},
-			mp.Metrics{Name: "Opened_tables", Label: "Opened Tables", Diff: false, Stacked: false, Type: "uint64"},
+		Metrics: []mp.Metrics{
+			{Name: "table_cache", Label: "Table Cache", Diff: false, Stacked: false, Type: "uint64"},
+			{Name: "Open_tables", Label: "Open Tables", Diff: false, Stacked: false, Type: "uint64"},
+			{Name: "Open_files", Label: "Open Files", Diff: false, Stacked: false, Type: "uint64"},
+			{Name: "Opened_tables", Label: "Opened Tables", Diff: false, Stacked: false, Type: "uint64"},
 		},
 	}
 	graphdef["processlist"] = mp.Graphs{
 		Label: prefix + ".processlist",
 		Unit:  "float",
-		Metrics: [](mp.Metrics){
-			mp.Metrics{Name: "State_closing_tables", Label: "State Closing Tables", Diff: false, Stacked: false, Type: "uint64"},
-			mp.Metrics{Name: "State_copying_to_tmp_table", Label: "State Copying To Tmp Table", Diff: false, Stacked: false, Type: "uint64"},
-			mp.Metrics{Name: "State_end", Label: "State End", Diff: false, Stacked: false, Type: "uint64"},
-			mp.Metrics{Name: "State_freeing_items", Label: "State Freeing Items", Diff: false, Stacked: false, Type: "uint64"},
-			mp.Metrics{Name: "State_init", Label: "State Init", Diff: false, Stacked: false, Type: "uint64"},
-			mp.Metrics{Name: "State_locked", Label: "State Locked", Diff: false, Stacked: false, Type: "uint64"},
-			mp.Metrics{Name: "State_login", Label: "State Login", Diff: false, Stacked: false, Type: "uint64"},
-			mp.Metrics{Name: "State_preparing", Label: "State Preparing", Diff: false, Stacked: false, Type: "uint64"},
-			mp.Metrics{Name: "State_reading_from_net", Label: "State Reading From Net", Diff: false, Stacked: false, Type: "uint64"},
-			mp.Metrics{Name: "State_sending_data", Label: "State Sending Data", Diff: false, Stacked: false, Type: "uint64"},
-			mp.Metrics{Name: "State_sorting_result", Label: "State Sorting Result", Diff: false, Stacked: false, Type: "uint64"},
-			mp.Metrics{Name: "State_statistics", Label: "State Statistics", Diff: false, Stacked: false, Type: "uint64"},
-			mp.Metrics{Name: "State_updating", Label: "State Updating", Diff: false, Stacked: false, Type: "uint64"},
-			mp.Metrics{Name: "State_writing_to_net", Label: "State Writing To Net", Diff: false, Stacked: false, Type: "uint64"},
-			mp.Metrics{Name: "State_none", Label: "State None", Diff: false, Stacked: false, Type: "uint64"},
-			mp.Metrics{Name: "State_other", Label: "State Other", Diff: false, Stacked: false, Type: "uint64"},
+		Metrics: []mp.Metrics{
+			{Name: "State_closing_tables", Label: "State Closing Tables", Diff: false, Stacked: false, Type: "uint64"},
+			{Name: "State_copying_to_tmp_table", Label: "State Copying To Tmp Table", Diff: false, Stacked: false, Type: "uint64"},
+			{Name: "State_end", Label: "State End", Diff: false, Stacked: false, Type: "uint64"},
+			{Name: "State_freeing_items", Label: "State Freeing Items", Diff: false, Stacked: false, Type: "uint64"},
+			{Name: "State_init", Label: "State Init", Diff: false, Stacked: false, Type: "uint64"},
+			{Name: "State_locked", Label: "State Locked", Diff: false, Stacked: false, Type: "uint64"},
+			{Name: "State_login", Label: "State Login", Diff: false, Stacked: false, Type: "uint64"},
+			{Name: "State_preparing", Label: "State Preparing", Diff: false, Stacked: false, Type: "uint64"},
+			{Name: "State_reading_from_net", Label: "State Reading From Net", Diff: false, Stacked: false, Type: "uint64"},
+			{Name: "State_sending_data", Label: "State Sending Data", Diff: false, Stacked: false, Type: "uint64"},
+			{Name: "State_sorting_result", Label: "State Sorting Result", Diff: false, Stacked: false, Type: "uint64"},
+			{Name: "State_statistics", Label: "State Statistics", Diff: false, Stacked: false, Type: "uint64"},
+			{Name: "State_updating", Label: "State Updating", Diff: false, Stacked: false, Type: "uint64"},
+			{Name: "State_writing_to_net", Label: "State Writing To Net", Diff: false, Stacked: false, Type: "uint64"},
+			{Name: "State_none", Label: "State None", Diff: false, Stacked: false, Type: "uint64"},
+			{Name: "State_other", Label: "State Other", Diff: false, Stacked: false, Type: "uint64"},
 		},
 	}
 	graphdef["sorts"] = mp.Graphs{
 		Label: prefix + ".sorts",
 		Unit:  "float",
-		Metrics: [](mp.Metrics){
-			mp.Metrics{Name: "Sort_rows", Label: "Sort Rows", Diff: true, Stacked: false, Type: "uint64"},
-			mp.Metrics{Name: "Sort_range", Label: "Sort Range", Diff: true, Stacked: false, Type: "uint64"},
-			mp.Metrics{Name: "Sort_merge_passes", Label: "Sort Merge Passes", Diff: true, Stacked: false, Type: "uint64"},
-			mp.Metrics{Name: "Sort_scan", Label: "Sort Scan", Diff: true, Stacked: false, Type: "uint64"},
+		Metrics: []mp.Metrics{
+			{Name: "Sort_rows", Label: "Sort Rows", Diff: true, Stacked: false, Type: "uint64"},
+			{Name: "Sort_range", Label: "Sort Range", Diff: true, Stacked: false, Type: "uint64"},
+			{Name: "Sort_merge_passes", Label: "Sort Merge Passes", Diff: true, Stacked: false, Type: "uint64"},
+			{Name: "Sort_scan", Label: "Sort Scan", Diff: true, Stacked: false, Type: "uint64"},
 		},
 	}
 

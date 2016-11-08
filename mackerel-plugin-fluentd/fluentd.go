@@ -100,27 +100,27 @@ func (f FluentdMetrics) FetchMetrics() (map[string]interface{}, error) {
 }
 
 // GraphDefinition interface for mackerelplugin
-func (f FluentdMetrics) GraphDefinition() map[string](mp.Graphs) {
-	return map[string](mp.Graphs){
-		"fluentd.retry_count": mp.Graphs{
+func (f FluentdMetrics) GraphDefinition() map[string]mp.Graphs {
+	return map[string]mp.Graphs{
+		"fluentd.retry_count": {
 			Label: "Fluentd retry count",
 			Unit:  "integer",
-			Metrics: [](mp.Metrics){
-				mp.Metrics{Name: "*", Label: "%1", Diff: false},
+			Metrics: []mp.Metrics{
+				{Name: "*", Label: "%1", Diff: false},
 			},
 		},
-		"fluentd.buffer_queue_length": mp.Graphs{
+		"fluentd.buffer_queue_length": {
 			Label: "Fluentd queue length",
 			Unit:  "integer",
-			Metrics: [](mp.Metrics){
-				mp.Metrics{Name: "*", Label: "%1", Diff: false},
+			Metrics: []mp.Metrics{
+				{Name: "*", Label: "%1", Diff: false},
 			},
 		},
-		"fluentd.buffer_total_queued_size": mp.Graphs{
+		"fluentd.buffer_total_queued_size": {
 			Label: "Fluentd buffer total queued size",
 			Unit:  "integer",
-			Metrics: [](mp.Metrics){
-				mp.Metrics{Name: "*", Label: "%1", Diff: false},
+			Metrics: []mp.Metrics{
+				{Name: "*", Label: "%1", Diff: false},
 			},
 		},
 	}

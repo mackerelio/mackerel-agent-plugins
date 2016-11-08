@@ -19,28 +19,28 @@ const (
 	metricsTypeSum     = "Sum"
 )
 
-var graphdef = map[string](mp.Graphs){
-	"cloudfront.Requests": mp.Graphs{
+var graphdef = map[string]mp.Graphs{
+	"cloudfront.Requests": {
 		Label: "CloudFront Requests",
 		Unit:  "integer",
-		Metrics: [](mp.Metrics){
-			mp.Metrics{Name: "Requests", Label: "Requests"},
+		Metrics: []mp.Metrics{
+			{Name: "Requests", Label: "Requests"},
 		},
 	},
-	"cloudfront.Transfer": mp.Graphs{
+	"cloudfront.Transfer": {
 		Label: "CloudFront Transfer",
 		Unit:  "bytes",
-		Metrics: [](mp.Metrics){
-			mp.Metrics{Name: "BytesDownloaded", Label: "Download", Stacked: true},
-			mp.Metrics{Name: "BytesUploaded", Label: "Upload", Stacked: true},
+		Metrics: []mp.Metrics{
+			{Name: "BytesDownloaded", Label: "Download", Stacked: true},
+			{Name: "BytesUploaded", Label: "Upload", Stacked: true},
 		},
 	},
-	"cloudfront.ErrorRate": mp.Graphs{
+	"cloudfront.ErrorRate": {
 		Label: "CloudFront ErrorRate",
 		Unit:  "percentage",
-		Metrics: [](mp.Metrics){
-			mp.Metrics{Name: "4xxErrorRate", Label: "4xx", Stacked: true},
-			mp.Metrics{Name: "5xxErrorRate", Label: "5xx", Stacked: true},
+		Metrics: []mp.Metrics{
+			{Name: "4xxErrorRate", Label: "4xx", Stacked: true},
+			{Name: "5xxErrorRate", Label: "5xx", Stacked: true},
 		},
 	},
 }
@@ -145,7 +145,7 @@ func (p CloudFrontPlugin) FetchMetrics() (map[string]float64, error) {
 }
 
 // GraphDefinition of CloudFrontPlugin
-func (p CloudFrontPlugin) GraphDefinition() map[string](mp.Graphs) {
+func (p CloudFrontPlugin) GraphDefinition() map[string]mp.Graphs {
 	return graphdef
 }
 

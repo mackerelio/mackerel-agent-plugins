@@ -17,89 +17,89 @@ import (
 
 var logger = logging.GetLogger("metrics.plugin.mongodb")
 
-var graphdef = map[string](mp.Graphs){
-	"mongodb.background_flushing": mp.Graphs{
+var graphdef = map[string]mp.Graphs{
+	"mongodb.background_flushing": {
 		Label: "MongoDB Command",
 		Unit:  "float",
-		Metrics: [](mp.Metrics){
-			mp.Metrics{Name: "duration_ms", Label: "Duration in ms", Diff: true, Type: "uint64"},
+		Metrics: []mp.Metrics{
+			{Name: "duration_ms", Label: "Duration in ms", Diff: true, Type: "uint64"},
 		},
 	},
-	"mongodb.connections": mp.Graphs{
+	"mongodb.connections": {
 		Label: "MongoDB Connections",
 		Unit:  "integer",
-		Metrics: [](mp.Metrics){
-			mp.Metrics{Name: "connections_current", Label: "current"},
+		Metrics: []mp.Metrics{
+			{Name: "connections_current", Label: "current"},
 		},
 	},
-	"mongodb.index_counters.btree": mp.Graphs{
+	"mongodb.index_counters.btree": {
 		Label: "MongoDB Index Counters Btree",
 		Unit:  "integer",
-		Metrics: [](mp.Metrics){
-			mp.Metrics{Name: "btree_hits", Label: "hits", Diff: true, Type: "uint64"},
+		Metrics: []mp.Metrics{
+			{Name: "btree_hits", Label: "hits", Diff: true, Type: "uint64"},
 		},
 	},
-	"mongodb.opcounters": mp.Graphs{
+	"mongodb.opcounters": {
 		Label: "MongoDB opcounters",
 		Unit:  "integer",
-		Metrics: [](mp.Metrics){
-			mp.Metrics{Name: "opcounters_insert", Label: "Insert", Diff: true, Type: "uint64"},
-			mp.Metrics{Name: "opcounters_query", Label: "Query", Diff: true, Type: "uint64"},
-			mp.Metrics{Name: "opcounters_update", Label: "Update", Diff: true, Type: "uint64"},
-			mp.Metrics{Name: "opcounters_delete", Label: "Delete", Diff: true, Type: "uint64"},
-			mp.Metrics{Name: "opcounters_getmore", Label: "Getmore", Diff: true, Type: "uint64"},
-			mp.Metrics{Name: "opcounters_command", Label: "Command", Diff: true, Type: "uint64"},
+		Metrics: []mp.Metrics{
+			{Name: "opcounters_insert", Label: "Insert", Diff: true, Type: "uint64"},
+			{Name: "opcounters_query", Label: "Query", Diff: true, Type: "uint64"},
+			{Name: "opcounters_update", Label: "Update", Diff: true, Type: "uint64"},
+			{Name: "opcounters_delete", Label: "Delete", Diff: true, Type: "uint64"},
+			{Name: "opcounters_getmore", Label: "Getmore", Diff: true, Type: "uint64"},
+			{Name: "opcounters_command", Label: "Command", Diff: true, Type: "uint64"},
 		},
 	},
 }
 
-var graphdef30 = map[string](mp.Graphs){
-	"mongodb.background_flushing": mp.Graphs{
+var graphdef30 = map[string]mp.Graphs{
+	"mongodb.background_flushing": {
 		Label: "MongoDB Command",
 		Unit:  "float",
-		Metrics: [](mp.Metrics){
-			mp.Metrics{Name: "duration_ms", Label: "Duration in ms", Diff: true, Type: "uint64"},
+		Metrics: []mp.Metrics{
+			{Name: "duration_ms", Label: "Duration in ms", Diff: true, Type: "uint64"},
 		},
 	},
-	"mongodb.connections": mp.Graphs{
+	"mongodb.connections": {
 		Label: "MongoDB Connections",
 		Unit:  "integer",
-		Metrics: [](mp.Metrics){
-			mp.Metrics{Name: "connections_current", Label: "current"},
+		Metrics: []mp.Metrics{
+			{Name: "connections_current", Label: "current"},
 		},
 	},
-	"mongodb.opcounters": mp.Graphs{
+	"mongodb.opcounters": {
 		Label: "MongoDB opcounters",
 		Unit:  "integer",
-		Metrics: [](mp.Metrics){
-			mp.Metrics{Name: "opcounters_insert", Label: "Insert", Diff: true, Type: "uint64"},
-			mp.Metrics{Name: "opcounters_query", Label: "Query", Diff: true, Type: "uint64"},
-			mp.Metrics{Name: "opcounters_update", Label: "Update", Diff: true, Type: "uint64"},
-			mp.Metrics{Name: "opcounters_delete", Label: "Delete", Diff: true, Type: "uint64"},
-			mp.Metrics{Name: "opcounters_getmore", Label: "Getmore", Diff: true, Type: "uint64"},
-			mp.Metrics{Name: "opcounters_command", Label: "Command", Diff: true, Type: "uint64"},
+		Metrics: []mp.Metrics{
+			{Name: "opcounters_insert", Label: "Insert", Diff: true, Type: "uint64"},
+			{Name: "opcounters_query", Label: "Query", Diff: true, Type: "uint64"},
+			{Name: "opcounters_update", Label: "Update", Diff: true, Type: "uint64"},
+			{Name: "opcounters_delete", Label: "Delete", Diff: true, Type: "uint64"},
+			{Name: "opcounters_getmore", Label: "Getmore", Diff: true, Type: "uint64"},
+			{Name: "opcounters_command", Label: "Command", Diff: true, Type: "uint64"},
 		},
 	},
 }
 
-var graphdef32 = map[string](mp.Graphs){
-	"mongodb.connections": mp.Graphs{
+var graphdef32 = map[string]mp.Graphs{
+	"mongodb.connections": {
 		Label: "MongoDB Connections",
 		Unit:  "integer",
-		Metrics: [](mp.Metrics){
-			mp.Metrics{Name: "connections_current", Label: "current"},
+		Metrics: []mp.Metrics{
+			{Name: "connections_current", Label: "current"},
 		},
 	},
-	"mongodb.opcounters": mp.Graphs{
+	"mongodb.opcounters": {
 		Label: "MongoDB opcounters",
 		Unit:  "integer",
-		Metrics: [](mp.Metrics){
-			mp.Metrics{Name: "opcounters_insert", Label: "Insert", Diff: true, Type: "uint64"},
-			mp.Metrics{Name: "opcounters_query", Label: "Query", Diff: true, Type: "uint64"},
-			mp.Metrics{Name: "opcounters_update", Label: "Update", Diff: true, Type: "uint64"},
-			mp.Metrics{Name: "opcounters_delete", Label: "Delete", Diff: true, Type: "uint64"},
-			mp.Metrics{Name: "opcounters_getmore", Label: "Getmore", Diff: true, Type: "uint64"},
-			mp.Metrics{Name: "opcounters_command", Label: "Command", Diff: true, Type: "uint64"},
+		Metrics: []mp.Metrics{
+			{Name: "opcounters_insert", Label: "Insert", Diff: true, Type: "uint64"},
+			{Name: "opcounters_query", Label: "Query", Diff: true, Type: "uint64"},
+			{Name: "opcounters_update", Label: "Update", Diff: true, Type: "uint64"},
+			{Name: "opcounters_delete", Label: "Delete", Diff: true, Type: "uint64"},
+			{Name: "opcounters_getmore", Label: "Getmore", Diff: true, Type: "uint64"},
+			{Name: "opcounters_command", Label: "Command", Diff: true, Type: "uint64"},
 		},
 	},
 }
@@ -248,7 +248,7 @@ func (m MongoDBPlugin) parseStatus(serverStatus bson.M) (map[string]interface{},
 }
 
 // GraphDefinition interface for mackerelplugin
-func (m MongoDBPlugin) GraphDefinition() map[string](mp.Graphs) {
+func (m MongoDBPlugin) GraphDefinition() map[string]mp.Graphs {
 	serverStatus, err := m.fetchStatus()
 	if err != nil {
 		return graphdef

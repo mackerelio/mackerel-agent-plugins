@@ -32,200 +32,200 @@ var metricsdefRedis = []string{
 	"SortedSetBasedCmds", "CurrItems",
 }
 
-var graphdefMemcached = map[string](mp.Graphs){
-	"ecache.CPUUtilization": mp.Graphs{
+var graphdefMemcached = map[string]mp.Graphs{
+	"ecache.CPUUtilization": {
 		Label: "ECache CPU Utilization",
 		Unit:  "percentage",
-		Metrics: [](mp.Metrics){
-			mp.Metrics{Name: "CPUUtilization", Label: "CPUUtilization"},
+		Metrics: []mp.Metrics{
+			{Name: "CPUUtilization", Label: "CPUUtilization"},
 		},
 	},
-	"ecache.SwapUsage": mp.Graphs{
+	"ecache.SwapUsage": {
 		Label: "ECache Swap Usage",
 		Unit:  "bytes",
-		Metrics: [](mp.Metrics){
-			mp.Metrics{Name: "SwapUsage", Label: "SwapUsage"},
+		Metrics: []mp.Metrics{
+			{Name: "SwapUsage", Label: "SwapUsage"},
 		},
 	},
-	"ecache.FreeableMemory": mp.Graphs{
+	"ecache.FreeableMemory": {
 		Label: "ECache Freeable Memory",
 		Unit:  "bytes",
-		Metrics: [](mp.Metrics){
-			mp.Metrics{Name: "FreeableMemory", Label: "FreeableMemory"},
+		Metrics: []mp.Metrics{
+			{Name: "FreeableMemory", Label: "FreeableMemory"},
 		},
 	},
-	"ecache.NetworkTraffic": mp.Graphs{
+	"ecache.NetworkTraffic": {
 		Label: "ECache Network Traffic",
 		Unit:  "bytes",
-		Metrics: [](mp.Metrics){
-			mp.Metrics{Name: "NetworkBytesIn", Label: "NetworkBytesIn"},
-			mp.Metrics{Name: "NetworkBytesOut", Label: "NetworkBytesOut"},
+		Metrics: []mp.Metrics{
+			{Name: "NetworkBytesIn", Label: "NetworkBytesIn"},
+			{Name: "NetworkBytesOut", Label: "NetworkBytesOut"},
 		},
 	},
-	"ecache.Command": mp.Graphs{
+	"ecache.Command": {
 		Label: "ECache Command",
 		Unit:  "integer",
-		Metrics: [](mp.Metrics){
-			mp.Metrics{Name: "CmdGet", Label: "CmdGet"},
-			mp.Metrics{Name: "CmdSet", Label: "CmdSet"},
-			mp.Metrics{Name: "CmdFlush", Label: "CmdFlush"},
-			mp.Metrics{Name: "CmdTouch", Label: "CmdTouch"},
-			mp.Metrics{Name: "CmdConfigGet", Label: "CmdConfigGet"},
-			mp.Metrics{Name: "CmdConfigSet", Label: "CmdConfigSet"},
+		Metrics: []mp.Metrics{
+			{Name: "CmdGet", Label: "CmdGet"},
+			{Name: "CmdSet", Label: "CmdSet"},
+			{Name: "CmdFlush", Label: "CmdFlush"},
+			{Name: "CmdTouch", Label: "CmdTouch"},
+			{Name: "CmdConfigGet", Label: "CmdConfigGet"},
+			{Name: "CmdConfigSet", Label: "CmdConfigSet"},
 		},
 	},
-	"ecache.CacheHitAndMiss": mp.Graphs{
+	"ecache.CacheHitAndMiss": {
 		Label: "ECache Hits/Misses",
 		Unit:  "integer",
-		Metrics: [](mp.Metrics){
-			mp.Metrics{Name: "GetHits", Label: "GetHits"},
-			mp.Metrics{Name: "GetMisses", Label: "GetMisses"},
-			mp.Metrics{Name: "DeleteHits", Label: "DeleteHits"},
-			mp.Metrics{Name: "DeleteMisses", Label: "DeleteMisses"},
-			mp.Metrics{Name: "IncrHits", Label: "IncrHits"},
-			mp.Metrics{Name: "IncrMisses", Label: "IncrMisses"},
-			mp.Metrics{Name: "DecrHits", Label: "DecrHits"},
-			mp.Metrics{Name: "DecrMisses", Label: "DecrMisses"},
-			mp.Metrics{Name: "CasBadval", Label: "CasBadval"},
-			mp.Metrics{Name: "CasHits", Label: "CasHits"},
-			mp.Metrics{Name: "CasMisses", Label: "CasMisses"},
-			mp.Metrics{Name: "TouchHits", Label: "TouchHits"},
-			mp.Metrics{Name: "TouchMisses", Label: "TouchMisses"},
+		Metrics: []mp.Metrics{
+			{Name: "GetHits", Label: "GetHits"},
+			{Name: "GetMisses", Label: "GetMisses"},
+			{Name: "DeleteHits", Label: "DeleteHits"},
+			{Name: "DeleteMisses", Label: "DeleteMisses"},
+			{Name: "IncrHits", Label: "IncrHits"},
+			{Name: "IncrMisses", Label: "IncrMisses"},
+			{Name: "DecrHits", Label: "DecrHits"},
+			{Name: "DecrMisses", Label: "DecrMisses"},
+			{Name: "CasBadval", Label: "CasBadval"},
+			{Name: "CasHits", Label: "CasHits"},
+			{Name: "CasMisses", Label: "CasMisses"},
+			{Name: "TouchHits", Label: "TouchHits"},
+			{Name: "TouchMisses", Label: "TouchMisses"},
 		},
 	},
-	"ecache.Evictions": mp.Graphs{
+	"ecache.Evictions": {
 		Label: "ECache Evictions",
 		Unit:  "integer",
-		Metrics: [](mp.Metrics){
-			mp.Metrics{Name: "Evictions", Label: "Evictions"},
+		Metrics: []mp.Metrics{
+			{Name: "Evictions", Label: "Evictions"},
 		},
 	},
-	"ecache.Unfetched": mp.Graphs{
+	"ecache.Unfetched": {
 		Label: "ECache Unfetched",
 		Unit:  "integer",
-		Metrics: [](mp.Metrics){
-			mp.Metrics{Name: "EvictedUnfetched", Label: "EvictedUnfetched"},
-			mp.Metrics{Name: "ExpiredUnfetched", Label: "ExpiredUnfetched"},
+		Metrics: []mp.Metrics{
+			{Name: "EvictedUnfetched", Label: "EvictedUnfetched"},
+			{Name: "ExpiredUnfetched", Label: "ExpiredUnfetched"},
 		},
 	},
-	"ecache.Bytes": mp.Graphs{
+	"ecache.Bytes": {
 		Label: "ECache Traffics",
 		Unit:  "bytes",
-		Metrics: [](mp.Metrics){
-			mp.Metrics{Name: "BytesReadIntoMemcached", Label: "BytesReadIntoMemcached"},
-			mp.Metrics{Name: "BytesWrittenOutFromMemcached", Label: "BytesWrittenOutFromMemcached"},
+		Metrics: []mp.Metrics{
+			{Name: "BytesReadIntoMemcached", Label: "BytesReadIntoMemcached"},
+			{Name: "BytesWrittenOutFromMemcached", Label: "BytesWrittenOutFromMemcached"},
 		},
 	},
-	"ecache.Connections": mp.Graphs{
+	"ecache.Connections": {
 		Label: "ECache Connections",
 		Unit:  "integer",
-		Metrics: [](mp.Metrics){
-			mp.Metrics{Name: "CurrConnections", Label: "CurrConnections"},
-			mp.Metrics{Name: "NewConnections", Label: "NewConnections"},
+		Metrics: []mp.Metrics{
+			{Name: "CurrConnections", Label: "CurrConnections"},
+			{Name: "NewConnections", Label: "NewConnections"},
 		},
 	},
-	"ecache.Items": mp.Graphs{
+	"ecache.Items": {
 		Label: "ECache Items",
 		Unit:  "integer",
-		Metrics: [](mp.Metrics){
-			mp.Metrics{Name: "CurrItems", Label: "CurrItems"},
-			mp.Metrics{Name: "NewItems", Label: "NewItems"},
-			mp.Metrics{Name: "Reclaimed", Label: "Reclaimed"},
-			mp.Metrics{Name: "CurrConfig", Label: "CurrConfig"},
-			mp.Metrics{Name: "SlabsMoved", Label: "SlabsMoved"},
+		Metrics: []mp.Metrics{
+			{Name: "CurrItems", Label: "CurrItems"},
+			{Name: "NewItems", Label: "NewItems"},
+			{Name: "Reclaimed", Label: "Reclaimed"},
+			{Name: "CurrConfig", Label: "CurrConfig"},
+			{Name: "SlabsMoved", Label: "SlabsMoved"},
 		},
 	},
-	"ecache.MemoryUsage": mp.Graphs{
+	"ecache.MemoryUsage": {
 		Label: "ECache Memory Usage",
 		Unit:  "bytes",
-		Metrics: [](mp.Metrics){
-			mp.Metrics{Name: "UnusedMemory", Label: "UnusedMemory"},
-			mp.Metrics{Name: "BytesUsedForHash", Label: "BytesUsedForHash"},
-			mp.Metrics{Name: "BytesUsedForCacheItems", Label: "BytesUsedForCacheItems"},
+		Metrics: []mp.Metrics{
+			{Name: "UnusedMemory", Label: "UnusedMemory"},
+			{Name: "BytesUsedForHash", Label: "BytesUsedForHash"},
+			{Name: "BytesUsedForCacheItems", Label: "BytesUsedForCacheItems"},
 		},
 	},
 }
 
-var graphdefRedis = map[string](mp.Graphs){
-	"ecache.CPUUtilization": mp.Graphs{
+var graphdefRedis = map[string]mp.Graphs{
+	"ecache.CPUUtilization": {
 		Label: "ECache CPU Utilization",
 		Unit:  "percentage",
-		Metrics: [](mp.Metrics){
-			mp.Metrics{Name: "CPUUtilization", Label: "CPUUtilization"},
+		Metrics: []mp.Metrics{
+			{Name: "CPUUtilization", Label: "CPUUtilization"},
 		},
 	},
-	"ecache.SwapUsage": mp.Graphs{
+	"ecache.SwapUsage": {
 		Label: "ECache Swap Usage",
 		Unit:  "bytes",
-		Metrics: [](mp.Metrics){
-			mp.Metrics{Name: "SwapUsage", Label: "SwapUsage"},
+		Metrics: []mp.Metrics{
+			{Name: "SwapUsage", Label: "SwapUsage"},
 		},
 	},
-	"ecache.FreeableMemory": mp.Graphs{
+	"ecache.FreeableMemory": {
 		Label: "ECache Freeable Memory",
 		Unit:  "bytes",
-		Metrics: [](mp.Metrics){
-			mp.Metrics{Name: "FreeableMemory", Label: "FreeableMemory"},
+		Metrics: []mp.Metrics{
+			{Name: "FreeableMemory", Label: "FreeableMemory"},
 		},
 	},
-	"ecache.NetworkTraffic": mp.Graphs{
+	"ecache.NetworkTraffic": {
 		Label: "ECache Network Traffic",
 		Unit:  "bytes",
-		Metrics: [](mp.Metrics){
-			mp.Metrics{Name: "NetworkBytesIn", Label: "NetworkBytesIn"},
-			mp.Metrics{Name: "NetworkBytesOut", Label: "NetworkBytesOut"},
+		Metrics: []mp.Metrics{
+			{Name: "NetworkBytesIn", Label: "NetworkBytesIn"},
+			{Name: "NetworkBytesOut", Label: "NetworkBytesOut"},
 		},
 	},
-	"ecache.Command": mp.Graphs{
+	"ecache.Command": {
 		Label: "ECache Command",
 		Unit:  "integer",
-		Metrics: [](mp.Metrics){
-			mp.Metrics{Name: "GetTypeCmds", Label: "GetTypeCmds"},
-			mp.Metrics{Name: "SetTypeCmds", Label: "SetTypeCmds"},
-			mp.Metrics{Name: "KeyBasedCmds", Label: "KeyBasedCmds"},
-			mp.Metrics{Name: "StringBasedCmds", Label: "StringBasedCmds"},
-			mp.Metrics{Name: "HashBasedCmds", Label: "HashBasedCmds"},
-			mp.Metrics{Name: "ListBasedCmds", Label: "ListBasedCmds"},
-			mp.Metrics{Name: "SetBasedCmds", Label: "SetBasedCmds"},
-			mp.Metrics{Name: "SortedSetBasedCmds", Label: "SortedSetBasedCmds"},
+		Metrics: []mp.Metrics{
+			{Name: "GetTypeCmds", Label: "GetTypeCmds"},
+			{Name: "SetTypeCmds", Label: "SetTypeCmds"},
+			{Name: "KeyBasedCmds", Label: "KeyBasedCmds"},
+			{Name: "StringBasedCmds", Label: "StringBasedCmds"},
+			{Name: "HashBasedCmds", Label: "HashBasedCmds"},
+			{Name: "ListBasedCmds", Label: "ListBasedCmds"},
+			{Name: "SetBasedCmds", Label: "SetBasedCmds"},
+			{Name: "SortedSetBasedCmds", Label: "SortedSetBasedCmds"},
 		},
 	},
-	"ecache.CacheHitAndMiss": mp.Graphs{
+	"ecache.CacheHitAndMiss": {
 		Label: "ECache Hits/Misses",
 		Unit:  "float",
-		Metrics: [](mp.Metrics){
-			mp.Metrics{Name: "CacheHits", Label: "CacheHits"},
-			mp.Metrics{Name: "CacheMisses", Label: "CacheMisses"},
+		Metrics: []mp.Metrics{
+			{Name: "CacheHits", Label: "CacheHits"},
+			{Name: "CacheMisses", Label: "CacheMisses"},
 		},
 	},
-	"ecache.Evictions": mp.Graphs{
+	"ecache.Evictions": {
 		Label: "ECache Evictions",
 		Unit:  "integer",
-		Metrics: [](mp.Metrics){
-			mp.Metrics{Name: "Evictions", Label: "Evictions"},
+		Metrics: []mp.Metrics{
+			{Name: "Evictions", Label: "Evictions"},
 		},
 	},
-	"ecache.Bytes": mp.Graphs{
+	"ecache.Bytes": {
 		Label: "ECache Traffics",
 		Unit:  "bytes",
-		Metrics: [](mp.Metrics){
-			mp.Metrics{Name: "BytesUsedForCache", Label: "BytesUsedForCache"},
+		Metrics: []mp.Metrics{
+			{Name: "BytesUsedForCache", Label: "BytesUsedForCache"},
 		},
 	},
-	"ecache.Connections": mp.Graphs{
+	"ecache.Connections": {
 		Label: "ECache Connections",
 		Unit:  "integer",
-		Metrics: [](mp.Metrics){
-			mp.Metrics{Name: "CurrConnections", Label: "CurrConnections"},
-			mp.Metrics{Name: "NewConnections", Label: "NewConnections"},
+		Metrics: []mp.Metrics{
+			{Name: "CurrConnections", Label: "CurrConnections"},
+			{Name: "NewConnections", Label: "NewConnections"},
 		},
 	},
-	"ecache.Items": mp.Graphs{
+	"ecache.Items": {
 		Label: "ECache Items",
 		Unit:  "integer",
-		Metrics: [](mp.Metrics){
-			mp.Metrics{Name: "CurrItems", Label: "CurrItems"},
-			mp.Metrics{Name: "Reclaimed", Label: "Reclaimed"},
+		Metrics: []mp.Metrics{
+			{Name: "CurrItems", Label: "CurrItems"},
+			{Name: "Reclaimed", Label: "Reclaimed"},
 		},
 	},
 }
@@ -314,7 +314,7 @@ func (p ECachePlugin) FetchMetrics() (map[string]float64, error) {
 }
 
 // GraphDefinition graph definition
-func (p ECachePlugin) GraphDefinition() map[string](mp.Graphs) {
+func (p ECachePlugin) GraphDefinition() map[string]mp.Graphs {
 	switch p.ElastiCacheType {
 	case "memcached":
 		return graphdefMemcached

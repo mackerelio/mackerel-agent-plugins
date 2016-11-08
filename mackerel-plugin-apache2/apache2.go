@@ -34,55 +34,55 @@ func (c Apache2Plugin) MetricKeyPrefix() string {
 }
 
 // GraphDefinition Graph definition
-func (c Apache2Plugin) GraphDefinition() map[string](mp.Graphs) {
+func (c Apache2Plugin) GraphDefinition() map[string]mp.Graphs {
 	labelPrefix := c.LabelPrefix
 
 	// metric value structure
-	var graphdef = map[string](mp.Graphs){
-		"workers": mp.Graphs{
+	var graphdef = map[string]mp.Graphs{
+		"workers": {
 			Label: (labelPrefix + " Workers"),
 			Unit:  "integer",
-			Metrics: [](mp.Metrics){
-				mp.Metrics{Name: "busy_workers", Label: "Busy Workers", Diff: false, Stacked: true},
-				mp.Metrics{Name: "idle_workers", Label: "Idle Workers", Diff: false, Stacked: true},
+			Metrics: []mp.Metrics{
+				{Name: "busy_workers", Label: "Busy Workers", Diff: false, Stacked: true},
+				{Name: "idle_workers", Label: "Idle Workers", Diff: false, Stacked: true},
 			},
 		},
-		"bytes": mp.Graphs{
+		"bytes": {
 			Label: (labelPrefix + " Bytes"),
 			Unit:  "bytes",
-			Metrics: [](mp.Metrics){
-				mp.Metrics{Name: "bytes_sent", Label: "Bytes Sent", Diff: true, Type: "uint64"},
+			Metrics: []mp.Metrics{
+				{Name: "bytes_sent", Label: "Bytes Sent", Diff: true, Type: "uint64"},
 			},
 		},
-		"cpu": mp.Graphs{
+		"cpu": {
 			Label: (labelPrefix + " CPU Load"),
 			Unit:  "float",
-			Metrics: [](mp.Metrics){
-				mp.Metrics{Name: "cpu_load", Label: "CPU Load", Diff: false},
+			Metrics: []mp.Metrics{
+				{Name: "cpu_load", Label: "CPU Load", Diff: false},
 			},
 		},
-		"req": mp.Graphs{
+		"req": {
 			Label: (labelPrefix + " Requests"),
 			Unit:  "integer",
-			Metrics: [](mp.Metrics){
-				mp.Metrics{Name: "requests", Label: "Requests", Diff: true, Type: "uint64"},
+			Metrics: []mp.Metrics{
+				{Name: "requests", Label: "Requests", Diff: true, Type: "uint64"},
 			},
 		},
-		"scoreboard": mp.Graphs{
+		"scoreboard": {
 			Label: (labelPrefix + " Scoreboard"),
 			Unit:  "integer",
-			Metrics: [](mp.Metrics){
-				mp.Metrics{Name: "score-_", Label: "Waiting for connection", Diff: false, Stacked: true},
-				mp.Metrics{Name: "score-S", Label: "Starting up", Diff: false, Stacked: true},
-				mp.Metrics{Name: "score-R", Label: "Reading request", Diff: false, Stacked: true},
-				mp.Metrics{Name: "scpre-W", Label: "Sending reply", Diff: false, Stacked: true},
-				mp.Metrics{Name: "score-K", Label: "Keepalive", Diff: false, Stacked: true},
-				mp.Metrics{Name: "score-D", Label: "DNS lookup", Diff: false, Stacked: true},
-				mp.Metrics{Name: "score-C", Label: "Closing connection", Diff: false, Stacked: true},
-				mp.Metrics{Name: "score-L", Label: "Logging", Diff: false, Stacked: true},
-				mp.Metrics{Name: "score-G", Label: "Gracefully finishing", Diff: false, Stacked: true},
-				mp.Metrics{Name: "score-I", Label: "Idle cleanup", Diff: false, Stacked: true},
-				mp.Metrics{Name: "score-.", Label: "Open slot", Diff: false, Stacked: true},
+			Metrics: []mp.Metrics{
+				{Name: "score-_", Label: "Waiting for connection", Diff: false, Stacked: true},
+				{Name: "score-S", Label: "Starting up", Diff: false, Stacked: true},
+				{Name: "score-R", Label: "Reading request", Diff: false, Stacked: true},
+				{Name: "scpre-W", Label: "Sending reply", Diff: false, Stacked: true},
+				{Name: "score-K", Label: "Keepalive", Diff: false, Stacked: true},
+				{Name: "score-D", Label: "DNS lookup", Diff: false, Stacked: true},
+				{Name: "score-C", Label: "Closing connection", Diff: false, Stacked: true},
+				{Name: "score-L", Label: "Logging", Diff: false, Stacked: true},
+				{Name: "score-G", Label: "Gracefully finishing", Diff: false, Stacked: true},
+				{Name: "score-I", Label: "Idle cleanup", Diff: false, Stacked: true},
+				{Name: "score-.", Label: "Open slot", Diff: false, Stacked: true},
 			},
 		},
 	}

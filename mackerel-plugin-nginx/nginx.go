@@ -15,30 +15,30 @@ import (
 	mp "github.com/mackerelio/go-mackerel-plugin-helper"
 )
 
-var graphdef = map[string](mp.Graphs){
-	"nginx.connections": mp.Graphs{
+var graphdef = map[string]mp.Graphs{
+	"nginx.connections": {
 		Label: "Nginx Connections",
 		Unit:  "integer",
-		Metrics: [](mp.Metrics){
-			mp.Metrics{Name: "connections", Label: "Active connections", Diff: false},
+		Metrics: []mp.Metrics{
+			{Name: "connections", Label: "Active connections", Diff: false},
 		},
 	},
-	"nginx.requests": mp.Graphs{
+	"nginx.requests": {
 		Label: "Nginx requests",
 		Unit:  "float",
-		Metrics: [](mp.Metrics){
-			mp.Metrics{Name: "accepts", Label: "Accepted connections", Diff: true, Type: "uint64"},
-			mp.Metrics{Name: "handled", Label: "Handled connections", Diff: true, Type: "uint64"},
-			mp.Metrics{Name: "requests", Label: "Handled requests", Diff: true, Type: "uint64"},
+		Metrics: []mp.Metrics{
+			{Name: "accepts", Label: "Accepted connections", Diff: true, Type: "uint64"},
+			{Name: "handled", Label: "Handled connections", Diff: true, Type: "uint64"},
+			{Name: "requests", Label: "Handled requests", Diff: true, Type: "uint64"},
 		},
 	},
-	"nginx.queue": mp.Graphs{
+	"nginx.queue": {
 		Label: "Nginx connection status",
 		Unit:  "integer",
-		Metrics: [](mp.Metrics){
-			mp.Metrics{Name: "reading", Label: "Reading", Diff: false},
-			mp.Metrics{Name: "writing", Label: "Writing", Diff: false},
-			mp.Metrics{Name: "waiting", Label: "Waiting", Diff: false},
+		Metrics: []mp.Metrics{
+			{Name: "reading", Label: "Reading", Diff: false},
+			{Name: "writing", Label: "Writing", Diff: false},
+			{Name: "waiting", Label: "Waiting", Diff: false},
 		},
 	},
 }
@@ -164,7 +164,7 @@ func (n NginxPlugin) parseStats(body io.Reader) (map[string]interface{}, error) 
 }
 
 // GraphDefinition interface for mackerelplugin
-func (n NginxPlugin) GraphDefinition() map[string](mp.Graphs) {
+func (n NginxPlugin) GraphDefinition() map[string]mp.Graphs {
 	return graphdef
 }
 

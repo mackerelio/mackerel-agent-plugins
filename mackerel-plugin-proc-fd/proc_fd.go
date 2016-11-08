@@ -41,13 +41,13 @@ func (p ProcfdPlugin) FetchMetrics() (map[string]interface{}, error) {
 }
 
 // GraphDefinition Graph definition
-func (p ProcfdPlugin) GraphDefinition() map[string](mp.Graphs) {
-	return map[string](mp.Graphs){
-		fmt.Sprintf("proc-fd.%s", p.NormalizedProcess): mp.Graphs{
+func (p ProcfdPlugin) GraphDefinition() map[string]mp.Graphs {
+	return map[string]mp.Graphs{
+		fmt.Sprintf("proc-fd.%s", p.NormalizedProcess): {
 			Label: fmt.Sprintf("Opening fd by %s", p.NormalizedProcess),
 			Unit:  "integer",
-			Metrics: [](mp.Metrics){
-				mp.Metrics{Name: "max_fd", Label: "Maximum opening fd", Diff: false, Type: "uint64"},
+			Metrics: []mp.Metrics{
+				{Name: "max_fd", Label: "Maximum opening fd", Diff: false, Type: "uint64"},
 			},
 		},
 	}

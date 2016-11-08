@@ -11,13 +11,13 @@ import (
 	mp "github.com/mackerelio/go-mackerel-plugin"
 )
 
-var graphdef = map[string](mp.Graphs){
-	"ec2.cpucredit": mp.Graphs{
+var graphdef = map[string]mp.Graphs{
+	"ec2.cpucredit": {
 		Label: "EC2 CPU Credit",
 		Unit:  "float",
-		Metrics: [](mp.Metrics){
-			mp.Metrics{Name: "usage", Label: "Usage", Diff: false},
-			mp.Metrics{Name: "balance", Label: "Balance", Diff: false},
+		Metrics: []mp.Metrics{
+			{Name: "usage", Label: "Usage", Diff: false},
+			{Name: "balance", Label: "Balance", Diff: false},
 		},
 	},
 }
@@ -99,7 +99,7 @@ func (p CPUCreditPlugin) FetchMetrics() (map[string]float64, error) {
 }
 
 // GraphDefinition for plugin
-func (p CPUCreditPlugin) GraphDefinition() map[string](mp.Graphs) {
+func (p CPUCreditPlugin) GraphDefinition() map[string]mp.Graphs {
 	return graphdef
 }
 

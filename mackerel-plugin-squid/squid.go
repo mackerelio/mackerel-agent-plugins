@@ -12,20 +12,20 @@ import (
 	mp "github.com/mackerelio/go-mackerel-plugin-helper"
 )
 
-var graphdef = map[string](mp.Graphs){
-	"squid.requests": mp.Graphs{
+var graphdef = map[string]mp.Graphs{
+	"squid.requests": {
 		Label: "Squid Client Requests",
 		Unit:  "integer",
-		Metrics: [](mp.Metrics){
-			mp.Metrics{Name: "requests", Label: "Requests", Diff: true},
+		Metrics: []mp.Metrics{
+			{Name: "requests", Label: "Requests", Diff: true},
 		},
 	},
-	"squid.cache_hit_ratio.5min": mp.Graphs{
+	"squid.cache_hit_ratio.5min": {
 		Label: "Squid Client Cache Hit Ratio (5min)",
 		Unit:  "percentage",
-		Metrics: [](mp.Metrics){
-			mp.Metrics{Name: "request_ratio", Label: "Request Ratio", Diff: false},
-			mp.Metrics{Name: "byte_ratio", Label: "Byte Ratio", Diff: false},
+		Metrics: []mp.Metrics{
+			{Name: "request_ratio", Label: "Request Ratio", Diff: false},
+			{Name: "byte_ratio", Label: "Byte Ratio", Diff: false},
 		},
 	},
 }
@@ -79,7 +79,7 @@ func (m SquidPlugin) FetchMetrics() (map[string]interface{}, error) {
 }
 
 // GraphDefinition interface for mackerelplugin
-func (m SquidPlugin) GraphDefinition() map[string](mp.Graphs) {
+func (m SquidPlugin) GraphDefinition() map[string]mp.Graphs {
 	return graphdef
 }
 

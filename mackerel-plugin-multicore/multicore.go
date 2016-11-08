@@ -14,28 +14,28 @@ import (
 	mp "github.com/mackerelio/go-mackerel-plugin-helper"
 )
 
-var graphDef = map[string](mp.Graphs){
-	"multicore.cpu.#": mp.Graphs{
+var graphDef = map[string]mp.Graphs{
+	"multicore.cpu.#": {
 		Label: "MultiCore CPU",
 		Unit:  "percentage",
-		Metrics: [](mp.Metrics){
-			mp.Metrics{Name: "user", Label: "user", Diff: false, Stacked: true},
-			mp.Metrics{Name: "nice", Label: "nice", Diff: false, Stacked: true},
-			mp.Metrics{Name: "system", Label: "system", Diff: false, Stacked: true},
-			mp.Metrics{Name: "idle", Label: "idle", Diff: false, Stacked: true},
-			mp.Metrics{Name: "iowait", Label: "ioWait", Diff: false, Stacked: true},
-			mp.Metrics{Name: "irq", Label: "irq", Diff: false, Stacked: true},
-			mp.Metrics{Name: "softirq", Label: "softirq", Diff: false, Stacked: true},
-			mp.Metrics{Name: "steal", Label: "steal", Diff: false, Stacked: true},
-			mp.Metrics{Name: "guest", Label: "guest", Diff: false, Stacked: true},
-			mp.Metrics{Name: "guest_nice", Label: "guest_nice", Diff: false, Stacked: true},
+		Metrics: []mp.Metrics{
+			{Name: "user", Label: "user", Diff: false, Stacked: true},
+			{Name: "nice", Label: "nice", Diff: false, Stacked: true},
+			{Name: "system", Label: "system", Diff: false, Stacked: true},
+			{Name: "idle", Label: "idle", Diff: false, Stacked: true},
+			{Name: "iowait", Label: "ioWait", Diff: false, Stacked: true},
+			{Name: "irq", Label: "irq", Diff: false, Stacked: true},
+			{Name: "softirq", Label: "softirq", Diff: false, Stacked: true},
+			{Name: "steal", Label: "steal", Diff: false, Stacked: true},
+			{Name: "guest", Label: "guest", Diff: false, Stacked: true},
+			{Name: "guest_nice", Label: "guest_nice", Diff: false, Stacked: true},
 		},
 	},
-	"multicore.loadavg_per_core": mp.Graphs{
+	"multicore.loadavg_per_core": {
 		Label: "MultiCore loadavg5 per core",
 		Unit:  "float",
-		Metrics: [](mp.Metrics){
-			mp.Metrics{Name: "loadavg5", Label: "loadavg5", Diff: false, Stacked: false},
+		Metrics: []mp.Metrics{
+			{Name: "loadavg5", Label: "loadavg5", Diff: false, Stacked: false},
 		},
 	},
 }

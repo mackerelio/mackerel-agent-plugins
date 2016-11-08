@@ -27,49 +27,49 @@ type JmxJolokiaResponse struct {
 	Error     string
 }
 
-var graphdef = map[string](mp.Graphs){
-	"jmx.jolokia.memory.heap_memory_usage": mp.Graphs{
+var graphdef = map[string]mp.Graphs{
+	"jmx.jolokia.memory.heap_memory_usage": {
 		Label: "Jmx HeapMemoryUsage",
 		Unit:  "bytes",
-		Metrics: [](mp.Metrics){
-			mp.Metrics{Name: "HeapMemoryInit", Label: "init", Diff: false, Type: "uint64"},
-			mp.Metrics{Name: "HeapMemoryCommitted", Label: "committed", Diff: false, Type: "uint64"},
-			mp.Metrics{Name: "HeapMemoryMax", Label: "max", Diff: false, Type: "uint64"},
-			mp.Metrics{Name: "HeapMemoryUsed", Label: "used", Diff: false, Type: "uint64"},
+		Metrics: []mp.Metrics{
+			{Name: "HeapMemoryInit", Label: "init", Diff: false, Type: "uint64"},
+			{Name: "HeapMemoryCommitted", Label: "committed", Diff: false, Type: "uint64"},
+			{Name: "HeapMemoryMax", Label: "max", Diff: false, Type: "uint64"},
+			{Name: "HeapMemoryUsed", Label: "used", Diff: false, Type: "uint64"},
 		},
 	},
-	"jmx.jolokia.memory.non_heap_memory_usage": mp.Graphs{
+	"jmx.jolokia.memory.non_heap_memory_usage": {
 		Label: "Jmx NonHeapMemoryUsage",
 		Unit:  "bytes",
-		Metrics: [](mp.Metrics){
-			mp.Metrics{Name: "NonHeapMemoryInit", Label: "init", Diff: false, Type: "uint64"},
-			mp.Metrics{Name: "NonHeapMemoryCommitted", Label: "committed", Diff: false, Type: "uint64"},
-			mp.Metrics{Name: "NonHeapMemoryMax", Label: "max", Diff: false, Type: "uint64"},
-			mp.Metrics{Name: "NonHeapMemoryUsed", Label: "used", Diff: false, Type: "uint64"},
+		Metrics: []mp.Metrics{
+			{Name: "NonHeapMemoryInit", Label: "init", Diff: false, Type: "uint64"},
+			{Name: "NonHeapMemoryCommitted", Label: "committed", Diff: false, Type: "uint64"},
+			{Name: "NonHeapMemoryMax", Label: "max", Diff: false, Type: "uint64"},
+			{Name: "NonHeapMemoryUsed", Label: "used", Diff: false, Type: "uint64"},
 		},
 	},
-	"jmx.jolokia.class_load": mp.Graphs{
+	"jmx.jolokia.class_load": {
 		Label: "Jmx ClassLoading",
 		Unit:  "integer",
-		Metrics: [](mp.Metrics){
-			mp.Metrics{Name: "LoadedClassCount", Label: "loaded", Diff: false, Type: "uint64"},
-			mp.Metrics{Name: "UnloadedClassCount", Label: "unloaded", Diff: false, Type: "uint64"},
-			mp.Metrics{Name: "TotalLoadedClassCount", Label: "total", Diff: false, Type: "uint64"},
+		Metrics: []mp.Metrics{
+			{Name: "LoadedClassCount", Label: "loaded", Diff: false, Type: "uint64"},
+			{Name: "UnloadedClassCount", Label: "unloaded", Diff: false, Type: "uint64"},
+			{Name: "TotalLoadedClassCount", Label: "total", Diff: false, Type: "uint64"},
 		},
 	},
-	"jmx.jolokia.thread": mp.Graphs{
+	"jmx.jolokia.thread": {
 		Label: "Jmx Threading",
 		Unit:  "integer",
-		Metrics: [](mp.Metrics){
-			mp.Metrics{Name: "ThreadCount", Label: "thread", Diff: false, Type: "uint64"},
+		Metrics: []mp.Metrics{
+			{Name: "ThreadCount", Label: "thread", Diff: false, Type: "uint64"},
 		},
 	},
-	"jmx.jolokia.ops.cpu_load": mp.Graphs{
+	"jmx.jolokia.ops.cpu_load": {
 		Label: "Jmx CpuLoad",
 		Unit:  "percentage",
-		Metrics: [](mp.Metrics){
-			mp.Metrics{Name: "ProcessCpuLoad", Label: "process", Diff: false, Type: "float64", Scale: 100},
-			mp.Metrics{Name: "SystemCpuLoad", Label: "system", Diff: false, Type: "float64", Scale: 100},
+		Metrics: []mp.Metrics{
+			{Name: "ProcessCpuLoad", Label: "process", Diff: false, Type: "float64", Scale: 100},
+			{Name: "SystemCpuLoad", Label: "system", Diff: false, Type: "float64", Scale: 100},
 		},
 	},
 }
@@ -164,7 +164,7 @@ func (j JmxJolokiaPlugin) executeGetRequest(mbean string) (*JmxJolokiaResponse, 
 }
 
 // GraphDefinition interface for mackerelplugin
-func (j JmxJolokiaPlugin) GraphDefinition() map[string](mp.Graphs) {
+func (j JmxJolokiaPlugin) GraphDefinition() map[string]mp.Graphs {
 	return graphdef
 }
 

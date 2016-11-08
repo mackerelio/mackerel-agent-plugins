@@ -127,7 +127,7 @@ func (u RackStatsPlugin) parseStats() (stats map[string]interface{}, err error) 
 }
 
 // GraphDefinition interface for mackerelplugin
-func (u RackStatsPlugin) GraphDefinition() map[string](mp.Graphs) {
+func (u RackStatsPlugin) GraphDefinition() map[string]mp.Graphs {
 	scheme, path, port, err := parseAddress(u.Address)
 	if err != nil {
 		log.Fatal(err)
@@ -147,15 +147,15 @@ func (u RackStatsPlugin) GraphDefinition() map[string](mp.Graphs) {
 		label = fmt.Sprintf("Rack %s Stats", u.MetricKey)
 	}
 
-	return map[string](mp.Graphs){
-		fmt.Sprintf("rack.%s.stats", u.MetricKey): mp.Graphs{
+	return map[string]mp.Graphs{
+		fmt.Sprintf("rack.%s.stats", u.MetricKey): {
 			Label: label,
 			Unit:  "integer",
-			Metrics: [](mp.Metrics){
-				mp.Metrics{Name: "queued", Label: "Queued", Diff: false},
-				mp.Metrics{Name: "active", Label: "Active", Diff: false},
-				mp.Metrics{Name: "writing", Label: "Writing", Diff: false},
-				mp.Metrics{Name: "calling", Label: "Calling", Diff: false},
+			Metrics: []mp.Metrics{
+				{Name: "queued", Label: "Queued", Diff: false},
+				{Name: "active", Label: "Active", Diff: false},
+				{Name: "writing", Label: "Writing", Diff: false},
+				{Name: "calling", Label: "Calling", Diff: false},
 			},
 		},
 	}

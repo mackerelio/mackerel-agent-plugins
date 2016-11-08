@@ -14,38 +14,38 @@ import (
 )
 
 // metric value structure
-var graphdef = map[string](mp.Graphs){
-	"php-apc.purges": mp.Graphs{
+var graphdef = map[string]mp.Graphs{
+	"php-apc.purges": {
 		Label: "PHP APC Cache Purge Count",
 		Unit:  "integer",
-		Metrics: [](mp.Metrics){
-			mp.Metrics{Name: "cache_full_count", Label: "File Cache", Diff: true, Stacked: false},
-			mp.Metrics{Name: "user_cache_full_count", Label: "User Cache", Diff: true, Stacked: false},
+		Metrics: []mp.Metrics{
+			{Name: "cache_full_count", Label: "File Cache", Diff: true, Stacked: false},
+			{Name: "user_cache_full_count", Label: "User Cache", Diff: true, Stacked: false},
 		},
 	},
-	"php-apc.stats": mp.Graphs{
+	"php-apc.stats": {
 		Label: "PHP APC File Cache Statistics",
 		Unit:  "integer",
-		Metrics: [](mp.Metrics){
-			mp.Metrics{Name: "cache_hits", Label: "Hits", Diff: true, Stacked: false},
-			mp.Metrics{Name: "cache_misses", Label: "Misses", Diff: true, Stacked: false},
+		Metrics: []mp.Metrics{
+			{Name: "cache_hits", Label: "Hits", Diff: true, Stacked: false},
+			{Name: "cache_misses", Label: "Misses", Diff: true, Stacked: false},
 		},
 	},
-	"php-apc.cache_size": mp.Graphs{
+	"php-apc.cache_size": {
 		Label: "PHP APC Cache Size",
 		Unit:  "bytes",
-		Metrics: [](mp.Metrics){
-			mp.Metrics{Name: "cached_files_size", Label: "File Cache", Diff: false, Stacked: true},
-			mp.Metrics{Name: "user_cache_vars_size", Label: "User Cache", Diff: false, Stacked: true},
-			mp.Metrics{Name: "total_memory", Label: "Total", Diff: false, Stacked: false},
+		Metrics: []mp.Metrics{
+			{Name: "cached_files_size", Label: "File Cache", Diff: false, Stacked: true},
+			{Name: "user_cache_vars_size", Label: "User Cache", Diff: false, Stacked: true},
+			{Name: "total_memory", Label: "Total", Diff: false, Stacked: false},
 		},
 	},
-	"php-apc.user_stats": mp.Graphs{
+	"php-apc.user_stats": {
 		Label: "PHP APC User Cache Statistics",
 		Unit:  "integer",
-		Metrics: [](mp.Metrics){
-			mp.Metrics{Name: "user_cache_hits", Label: "Hits", Diff: true, Stacked: false},
-			mp.Metrics{Name: "user_cache_misses", Label: "Misses", Diff: true, Stacked: false},
+		Metrics: []mp.Metrics{
+			{Name: "user_cache_hits", Label: "Hits", Diff: true, Stacked: false},
+			{Name: "user_cache_misses", Label: "Misses", Diff: true, Stacked: false},
 		},
 	},
 }
@@ -59,7 +59,7 @@ type PhpApcPlugin struct {
 }
 
 // GraphDefinition interface for mackerelplugin
-func (c PhpApcPlugin) GraphDefinition() map[string](mp.Graphs) {
+func (c PhpApcPlugin) GraphDefinition() map[string]mp.Graphs {
 	return graphdef
 }
 

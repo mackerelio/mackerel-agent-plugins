@@ -21,7 +21,7 @@ const (
 
 // metric value structure
 // note: all metrics are add dynamic at collect*().
-var graphdef = map[string](mp.Graphs){}
+var graphdef = map[string]mp.Graphs{}
 
 // LinuxPlugin mackerel plugin for linux
 type LinuxPlugin struct {
@@ -30,7 +30,7 @@ type LinuxPlugin struct {
 }
 
 // GraphDefinition interface for mackerelplugin
-func (c LinuxPlugin) GraphDefinition() map[string](mp.Graphs) {
+func (c LinuxPlugin) GraphDefinition() map[string]mp.Graphs {
 	var err error
 
 	p := make(map[string]interface{})
@@ -147,8 +147,8 @@ func collectWho(p *map[string]interface{}) error {
 	graphdef["linux.users"] = mp.Graphs{
 		Label: "Linux Users",
 		Unit:  "integer",
-		Metrics: [](mp.Metrics){
-			mp.Metrics{Name: "users", Label: "Users", Diff: false},
+		Metrics: []mp.Metrics{
+			{Name: "users", Label: "Users", Diff: false},
 		},
 	}
 
@@ -197,22 +197,22 @@ func collectProcStat(path string, p *map[string]interface{}) error {
 	graphdef["linux.interrupts"] = mp.Graphs{
 		Label: "Linux Interrupts",
 		Unit:  "integer",
-		Metrics: [](mp.Metrics){
-			mp.Metrics{Name: "interrupts", Label: "Interrupts", Diff: true},
+		Metrics: []mp.Metrics{
+			{Name: "interrupts", Label: "Interrupts", Diff: true},
 		},
 	}
 	graphdef["linux.context_switches"] = mp.Graphs{
 		Label: "Linux Context Switches",
 		Unit:  "integer",
-		Metrics: [](mp.Metrics){
-			mp.Metrics{Name: "context_switches", Label: "Context Switches", Diff: true},
+		Metrics: []mp.Metrics{
+			{Name: "context_switches", Label: "Context Switches", Diff: true},
 		},
 	}
 	graphdef["linux.forks"] = mp.Graphs{
 		Label: "Linux Forks",
 		Unit:  "integer",
-		Metrics: [](mp.Metrics){
-			mp.Metrics{Name: "forks", Label: "Forks", Diff: true},
+		Metrics: []mp.Metrics{
+			{Name: "forks", Label: "Forks", Diff: true},
 		},
 	}
 
@@ -322,19 +322,19 @@ func collectSs(p *map[string]interface{}) error {
 	graphdef["linux.ss"] = mp.Graphs{
 		Label: "Linux Network Connection States",
 		Unit:  "integer",
-		Metrics: [](mp.Metrics){
-			mp.Metrics{Name: "ESTAB", Label: "Established", Diff: false, Stacked: true},
-			mp.Metrics{Name: "SYN-SENT", Label: "Syn Sent", Diff: false, Stacked: true},
-			mp.Metrics{Name: "SYN-RECV", Label: "Syn Received", Diff: false, Stacked: true},
-			mp.Metrics{Name: "FIN-WAIT-1", Label: "Fin Wait 1", Diff: false, Stacked: true},
-			mp.Metrics{Name: "FIN-WAIT-2", Label: "Fin Wait 2", Diff: false, Stacked: true},
-			mp.Metrics{Name: "TIME-WAIT", Label: "Time Wait", Diff: false, Stacked: true},
-			mp.Metrics{Name: "UNCONN", Label: "Close", Diff: false, Stacked: true},
-			mp.Metrics{Name: "CLOSE-WAIT", Label: "Close Wait", Diff: false, Stacked: true},
-			mp.Metrics{Name: "LAST-ACK", Label: "Last Ack", Diff: false, Stacked: true},
-			mp.Metrics{Name: "LISTEN", Label: "Listen", Diff: false, Stacked: true},
-			mp.Metrics{Name: "CLOSING", Label: "Closing", Diff: false, Stacked: true},
-			mp.Metrics{Name: "UNKNOWN", Label: "Unknown", Diff: false, Stacked: true},
+		Metrics: []mp.Metrics{
+			{Name: "ESTAB", Label: "Established", Diff: false, Stacked: true},
+			{Name: "SYN-SENT", Label: "Syn Sent", Diff: false, Stacked: true},
+			{Name: "SYN-RECV", Label: "Syn Received", Diff: false, Stacked: true},
+			{Name: "FIN-WAIT-1", Label: "Fin Wait 1", Diff: false, Stacked: true},
+			{Name: "FIN-WAIT-2", Label: "Fin Wait 2", Diff: false, Stacked: true},
+			{Name: "TIME-WAIT", Label: "Time Wait", Diff: false, Stacked: true},
+			{Name: "UNCONN", Label: "Close", Diff: false, Stacked: true},
+			{Name: "CLOSE-WAIT", Label: "Close Wait", Diff: false, Stacked: true},
+			{Name: "LAST-ACK", Label: "Last Ack", Diff: false, Stacked: true},
+			{Name: "LISTEN", Label: "Listen", Diff: false, Stacked: true},
+			{Name: "CLOSING", Label: "Closing", Diff: false, Stacked: true},
+			{Name: "UNKNOWN", Label: "Unknown", Diff: false, Stacked: true},
 		},
 	}
 	data, err = getSs()
@@ -393,9 +393,9 @@ func collectProcVmstat(path string, p *map[string]interface{}) error {
 	graphdef["linux.swap"] = mp.Graphs{
 		Label: "Linux Swap Usage",
 		Unit:  "integer",
-		Metrics: [](mp.Metrics){
-			mp.Metrics{Name: "pswpin", Label: "Swap In", Diff: true},
-			mp.Metrics{Name: "pswpout", Label: "Swap Out", Diff: true},
+		Metrics: []mp.Metrics{
+			{Name: "pswpin", Label: "Swap In", Diff: true},
+			{Name: "pswpout", Label: "Swap Out", Diff: true},
 		},
 	}
 

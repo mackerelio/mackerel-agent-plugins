@@ -16,47 +16,47 @@ import (
 // This is generated dynamically at generateIndex
 var index = map[string]int{}
 
-var graphdef = map[string](mp.Graphs){
-	"xentop.cpu.#": mp.Graphs{
+var graphdef = map[string]mp.Graphs{
+	"xentop.cpu.#": {
 		Label: "Xentop CPU",
 		Unit:  "percentage",
-		Metrics: [](mp.Metrics){
-			mp.Metrics{Name: "cpu", Label: "cpu", Stacked: true, Diff: true},
+		Metrics: []mp.Metrics{
+			{Name: "cpu", Label: "cpu", Stacked: true, Diff: true},
 		},
 	},
-	"xentop.memory.#": mp.Graphs{
+	"xentop.memory.#": {
 		Label: "Xentop Memory",
 		Unit:  "percentage",
-		Metrics: [](mp.Metrics){
-			mp.Metrics{Name: "memory", Label: "memory", Stacked: true},
+		Metrics: []mp.Metrics{
+			{Name: "memory", Label: "memory", Stacked: true},
 		},
 	},
-	"xentop.nettx.#": mp.Graphs{
+	"xentop.nettx.#": {
 		Label: "Xentop Nettx",
 		Unit:  "bytes",
-		Metrics: [](mp.Metrics){
-			mp.Metrics{Name: "nettx", Label: "nettx", Stacked: true, Diff: true},
+		Metrics: []mp.Metrics{
+			{Name: "nettx", Label: "nettx", Stacked: true, Diff: true},
 		},
 	},
-	"xentop.netrx.#": mp.Graphs{
+	"xentop.netrx.#": {
 		Label: "Xentop Netrx",
 		Unit:  "bytes",
-		Metrics: [](mp.Metrics){
-			mp.Metrics{Name: "netrx", Label: "netrx", Stacked: true, Diff: true},
+		Metrics: []mp.Metrics{
+			{Name: "netrx", Label: "netrx", Stacked: true, Diff: true},
 		},
 	},
-	"xentop.vbdrd.#": mp.Graphs{
+	"xentop.vbdrd.#": {
 		Label: "Xentop VBD_RD",
 		Unit:  "iops",
-		Metrics: [](mp.Metrics){
-			mp.Metrics{Name: "vbdrd", Label: "vbdrd", Stacked: true, Diff: true},
+		Metrics: []mp.Metrics{
+			{Name: "vbdrd", Label: "vbdrd", Stacked: true, Diff: true},
 		},
 	},
-	"xentop.vbdwr.#": mp.Graphs{
+	"xentop.vbdwr.#": {
 		Label: "Xentop VBD_WR",
 		Unit:  "iops",
-		Metrics: [](mp.Metrics){
-			mp.Metrics{Name: "vbdwr", Label: "vbdwr", Stacked: true, Diff: true},
+		Metrics: []mp.Metrics{
+			{Name: "vbdwr", Label: "vbdwr", Stacked: true, Diff: true},
 		},
 	},
 }
@@ -151,7 +151,7 @@ func (m XentopPlugin) FetchMetrics() (map[string]interface{}, error) {
 }
 
 // GraphDefinition interface for mackerelplugin
-func (m XentopPlugin) GraphDefinition() map[string](mp.Graphs) {
+func (m XentopPlugin) GraphDefinition() map[string]mp.Graphs {
 	return graphdef
 }
 

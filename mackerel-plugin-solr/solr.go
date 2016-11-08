@@ -152,16 +152,16 @@ func (s SolrPlugin) FetchMetrics() (map[string]interface{}, error) {
 }
 
 // GraphDefinition interface for mackerelplugin
-func (s SolrPlugin) GraphDefinition() map[string](mp.Graphs) {
-	graphdef := make(map[string](mp.Graphs))
+func (s SolrPlugin) GraphDefinition() map[string]mp.Graphs {
+	graphdef := make(map[string]mp.Graphs)
 
 	for _, core := range s.Cores {
 		graphdef[fmt.Sprintf("%s.%s.docsCount", s.Prefix, core)] = mp.Graphs{
 			Label: fmt.Sprintf("%s DocsCount", core),
 			Unit:  "integer",
-			Metrics: [](mp.Metrics){
-				mp.Metrics{Name: core + "_numDocs", Label: "NumDocs"},
-				mp.Metrics{Name: core + "_deletedDocs", Label: "DeletedDocs"},
+			Metrics: []mp.Metrics{
+				{Name: core + "_numDocs", Label: "NumDocs"},
+				{Name: core + "_deletedDocs", Label: "DeletedDocs"},
 			},
 		}
 
@@ -170,14 +170,14 @@ func (s SolrPlugin) GraphDefinition() map[string](mp.Graphs) {
 			graphdef[fmt.Sprintf("%s.%s.%s", s.Prefix, core, key)] = mp.Graphs{
 				Label: fmt.Sprintf("%s %s", core, metricLabel),
 				Unit:  "integer",
-				Metrics: [](mp.Metrics){
-					mp.Metrics{Name: core + "_" + key, Label: metricLabel},
+				Metrics: []mp.Metrics{
+					{Name: core + "_" + key, Label: metricLabel},
 				},
 			}
 		}
 
 		for _, key := range queryHandlerStatKeys {
-			var metrics [](mp.Metrics)
+			var metrics []mp.Metrics
 			for _, path := range queryHandlerPaths {
 				path = escapeSlash(path)
 				metricLabel := strings.Title(path)
@@ -198,7 +198,7 @@ func (s SolrPlugin) GraphDefinition() map[string](mp.Graphs) {
 		}
 
 		for _, key := range cacheStatKeys {
-			var metrics [](mp.Metrics)
+			var metrics []mp.Metrics
 			for _, cacheType := range cacheTypes {
 				metricLabel := strings.Title(cacheType)
 				metrics = append(metrics,

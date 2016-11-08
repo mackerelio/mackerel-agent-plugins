@@ -254,8 +254,8 @@ func (p MuninPlugin) FetchMetrics() (map[string]float64, error) {
 }
 
 // GraphDefinition interface for mackerelplugin
-func (p MuninPlugin) GraphDefinition() map[string](mp.Graphs) {
-	metrics := make([](mp.Metrics), 0, len(p.MuninMetrics))
+func (p MuninPlugin) GraphDefinition() map[string]mp.Graphs {
+	metrics := make([]mp.Metrics, 0, len(p.MuninMetrics))
 	for name, mmet := range p.MuninMetrics {
 		met := mp.Metrics{Name: name}
 		if mmet.Label == "" {
@@ -274,7 +274,7 @@ func (p MuninPlugin) GraphDefinition() map[string](mp.Graphs) {
 		metrics = append(metrics, met)
 	}
 
-	return map[string](mp.Graphs){p.GraphName: mp.Graphs{
+	return map[string]mp.Graphs{p.GraphName: {
 		Label:   p.GraphTitle,
 		Unit:    "float",
 		Metrics: metrics,

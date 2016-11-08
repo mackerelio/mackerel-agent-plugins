@@ -37,51 +37,51 @@ type PhpFpmStatus struct {
 }
 
 // GraphDefinition interface for mackerelplugin
-func (p PhpFpmPlugin) GraphDefinition() map[string](mp.Graphs) {
-	return map[string](mp.Graphs){
-		p.Prefix + ".processes": mp.Graphs{
+func (p PhpFpmPlugin) GraphDefinition() map[string]mp.Graphs {
+	return map[string]mp.Graphs{
+		p.Prefix + ".processes": {
 			Label: "PHP-FPM Processes",
 			Unit:  "integer",
-			Metrics: [](mp.Metrics){
-				mp.Metrics{Name: "total_processes", Label: "Total Processes", Diff: false, Type: "uint64"},
-				mp.Metrics{Name: "active_processes", Label: "Active Processes", Diff: false, Type: "uint64"},
-				mp.Metrics{Name: "idle_processes", Label: "Idle Processes", Diff: false, Type: "uint64"},
+			Metrics: []mp.Metrics{
+				{Name: "total_processes", Label: "Total Processes", Diff: false, Type: "uint64"},
+				{Name: "active_processes", Label: "Active Processes", Diff: false, Type: "uint64"},
+				{Name: "idle_processes", Label: "Idle Processes", Diff: false, Type: "uint64"},
 			},
 		},
-		p.Prefix + ".max_active_processes": mp.Graphs{
+		p.Prefix + ".max_active_processes": {
 			Label: "PHP-FPM Max Active Processes",
 			Unit:  "integer",
-			Metrics: [](mp.Metrics){
-				mp.Metrics{Name: "max_active_processes", Label: "Max Active Processes", Diff: false, Type: "uint64"},
+			Metrics: []mp.Metrics{
+				{Name: "max_active_processes", Label: "Max Active Processes", Diff: false, Type: "uint64"},
 			},
 		},
-		p.Prefix + ".max_children_reached": mp.Graphs{
+		p.Prefix + ".max_children_reached": {
 			Label: "PHP-FPM Max Children Reached",
 			Unit:  "integer",
-			Metrics: [](mp.Metrics){
-				mp.Metrics{Name: "max_children_reached", Label: "Max Children Reached", Diff: false, Type: "uint64"},
+			Metrics: []mp.Metrics{
+				{Name: "max_children_reached", Label: "Max Children Reached", Diff: false, Type: "uint64"},
 			},
 		},
-		p.Prefix + ".queue": mp.Graphs{
+		p.Prefix + ".queue": {
 			Label: "PHP-FPM Queue",
 			Unit:  "integer",
-			Metrics: [](mp.Metrics){
-				mp.Metrics{Name: "listen_queue", Label: "Listen Queue", Diff: false, Type: "uint64"},
-				mp.Metrics{Name: "listen_queue_len", Label: "Listen Queue Len", Diff: false, Type: "uint64"},
+			Metrics: []mp.Metrics{
+				{Name: "listen_queue", Label: "Listen Queue", Diff: false, Type: "uint64"},
+				{Name: "listen_queue_len", Label: "Listen Queue Len", Diff: false, Type: "uint64"},
 			},
 		},
-		p.Prefix + ".max_listen_queue": mp.Graphs{
+		p.Prefix + ".max_listen_queue": {
 			Label: "PHP-FPM Max Listen Queue",
 			Unit:  "integer",
-			Metrics: [](mp.Metrics){
-				mp.Metrics{Name: "max_listen_queue", Label: "Max Listen Queue", Diff: false, Type: "uint64"},
+			Metrics: []mp.Metrics{
+				{Name: "max_listen_queue", Label: "Max Listen Queue", Diff: false, Type: "uint64"},
 			},
 		},
-		p.Prefix + ".slow_requests": mp.Graphs{
+		p.Prefix + ".slow_requests": {
 			Label: "PHP-FPM Slow Requests",
 			Unit:  "integer",
-			Metrics: [](mp.Metrics){
-				mp.Metrics{Name: "slow_requests", Label: "Slow Requests", Diff: false, Type: "uint64"},
+			Metrics: []mp.Metrics{
+				{Name: "slow_requests", Label: "Slow Requests", Diff: false, Type: "uint64"},
 			},
 		},
 	}
