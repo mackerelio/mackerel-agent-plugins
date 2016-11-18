@@ -127,7 +127,7 @@ func (n NVidiaSMIPlugin) parseLine(id int, line string, stats *map[string]interf
 	for i, value := range strings.Split(line, ",") {
 		value, err := strconv.ParseUint(strings.TrimSpace(value), 10, 64)
 		if err != nil {
-			return err
+			continue
 		}
 		(*stats)[n.getMetricKey(i, id)] = value
 	}

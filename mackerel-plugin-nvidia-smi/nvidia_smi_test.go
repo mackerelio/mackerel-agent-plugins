@@ -20,6 +20,7 @@ func TestParse(t *testing.T) {
 	plugin.Prefix = "nvidia.gpu"
 	data := `10, 20, 30, 40, 1024, 64, 962
 11, 21, 31, 41, 1024, 65, 961
+12, 22, [Not Supported], [Not Supported], 1024, 66, 960
 `
 
 	stats, err := plugin.parseStats(data)
@@ -41,4 +42,12 @@ func TestParse(t *testing.T) {
 	assert.EqualValues(t, 1024, stats["memory.usage.gpu1.total"])
 	assert.EqualValues(t, 65, stats["memory.usage.gpu1.used"])
 	assert.EqualValues(t, 961, stats["memory.usage.gpu1.free"])
+
+	assert.EqualValues(t, 12, stats["gpu.util.gpu2"])
+	assert.EqualValues(t, 22, stats["memory.util.gpu2"])
+	assert.Nil(t, stats["temperature.gpu2"])
+	assert.Nil(t, stats["fanspeed.gpu2"])
+	assert.EqualValues(t, 1024, stats["memory.usage.gpu2.total"])
+	assert.EqualValues(t, 66, stats["memory.usage.gpu2.used"])
+	assert.EqualValues(t, 960, stats["memory.usage.gpu2.free"])
 }
