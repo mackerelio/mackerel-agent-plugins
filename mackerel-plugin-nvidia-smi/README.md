@@ -6,7 +6,7 @@ GPU custom metrics plugin using nvidia-smi for mackerel.io agent.
 ## Synopsis
 
 ```shell
-mackerel-plugin-nvidia-smi [-prefix=<prefix>]
+mackerel-plugin-nvidia-smi [-metric-key-prefix=<Metric key prefix>]
 ```
 
 ## Example of mackerel-agent.conf

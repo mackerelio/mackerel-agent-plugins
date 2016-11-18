@@ -135,7 +135,7 @@ func (n NVidiaSMIPlugin) parseLine(id int, line string, stats *map[string]interf
 }
 
 func main() {
-	optPrefix := flag.String("prefix", "nvidia.gpu", "Metric key prefix")
+	optPrefix := flag.String("metric-key-prefix", "nvidia.gpu", "Metric key prefix")
 	flag.Parse()
 	var plugin NVidiaSMIPlugin
 	plugin.Prefix = *optPrefix
