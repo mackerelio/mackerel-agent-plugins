@@ -50,33 +50,33 @@ type NVidiaSMIPlugin struct {
 }
 
 // GraphDefinition interface for mackerelplugin
-func (n NVidiaSMIPlugin) GraphDefinition() map[string](mp.Graphs) {
-	var graphdef = map[string](mp.Graphs){
+func (n NVidiaSMIPlugin) GraphDefinition() map[string]mp.Graphs {
+	var graphdef = map[string]mp.Graphs{
 		"gpu.util": mp.Graphs{
 			Label: "GPU Utilization",
 			Unit:  "percentage",
-			Metrics: [](mp.Metrics){
+			Metrics: []mp.Metrics{
 				mp.Metrics{Name: "#", Label: "util"},
 			},
 		},
 		"memory.util": mp.Graphs{
 			Label: "GPU Memory Utilization",
 			Unit:  "percentage",
-			Metrics: [](mp.Metrics){
+			Metrics: []mp.Metrics{
 				mp.Metrics{Name: "#", Label: "util"},
 			},
 		},
 		"temperature": mp.Graphs{
 			Label: "GPU Temperature",
 			Unit:  "integer",
-			Metrics: [](mp.Metrics){
+			Metrics: []mp.Metrics{
 				mp.Metrics{Name: "#", Label: "temp"},
 			},
 		},
 		"fanspeed": mp.Graphs{
 			Label: "GPU Fan Speed",
 			Unit:  "percentage",
-			Metrics: [](mp.Metrics){
+			Metrics: []mp.Metrics{
 				mp.Metrics{Name: "#", Label: "fan speed"},
 			},
 		},
@@ -84,7 +84,7 @@ func (n NVidiaSMIPlugin) GraphDefinition() map[string](mp.Graphs) {
 			Label: "GPU Memory Usage",
 			Unit:  "bytes",
 
-			Metrics: [](mp.Metrics){
+			Metrics: []mp.Metrics{
 				mp.Metrics{Name: "total", Label: "total", Scale: 1024 * 1024},
 				mp.Metrics{Name: "used", Label: "used", Scale: 1024 * 1024, Stacked: true},
 				mp.Metrics{Name: "free", Label: "free", Scale: 1024 * 1024, Stacked: true},
