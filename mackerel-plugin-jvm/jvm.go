@@ -51,7 +51,7 @@ func fetchLvmidByAppname(appname, target, jpsPath string) (string, error) {
 			return lvmid, nil
 		}
 	}
-	return "", fmt.Errorf("Cannot get lvmid from %s. Please run with the java process user.", appname)
+	return "", fmt.Errorf("cannot get lvmid from %s (please run with the java process user)", appname)
 }
 
 func fetchJstatMetrics(lvmid, option, jstatPath string) (map[string]float64, error) {

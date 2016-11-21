@@ -95,7 +95,7 @@ func parsePhpOpcacheStatus(str string, p *map[string]float64) error {
 	}
 
 	if len(*p) == 0 {
-		return errors.New("Status data not found.")
+		return errors.New("status data not found")
 	}
 
 	return nil
