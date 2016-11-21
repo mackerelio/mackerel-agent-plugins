@@ -150,7 +150,7 @@ func parseApache2Scoreboard(str string, p *map[string]interface{}) error {
 		return nil
 	}
 
-	return errors.New("Scoreboard data is not found.")
+	return errors.New("scoreboard data is not found")
 }
 
 // parsing metrics from server-status?auto
@@ -176,7 +176,7 @@ func parseApache2Status(str string, p *map[string]interface{}) error {
 	}
 
 	if len(*p) == 0 {
-		return errors.New("Status data not found.")
+		return errors.New("status data not found")
 	}
 
 	return nil

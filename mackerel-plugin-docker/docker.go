@@ -136,7 +136,7 @@ func findPrefixPath() (string, error) {
 			return path, nil
 		}
 	}
-	return "", errors.New("No prefix path is found.")
+	return "", errors.New("no prefix path is found")
 }
 
 type pathBuilder struct {
