@@ -16,6 +16,11 @@ mackerel-plugin-twemproxy [-metric-key-prefix=twemproxy] [-timeout=5] [-address=
 command = "/path/to/mackerel-plugin-twemproxy"
 ```
 
+## Notes
+
+This plugin does not collect metrics of `fragments` and `server_ejected_at`.
+See https://github.com/mackerelio/mackerel-agent-plugins/pull/283 for details.
+
 ## References
 
 - https://github.com/twitter/twemproxy#observability
