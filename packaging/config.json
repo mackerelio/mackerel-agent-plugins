@@ -35,6 +35,7 @@
        "squid",
        "td-table-count",
        "trafficserver",
+       "twemproxy",
        "varnish",
        "xentop",
        "aws-cloudfront",
