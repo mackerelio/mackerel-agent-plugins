@@ -11,6 +11,7 @@ my $plugin_dir = $ARGV[0];
 
 my $package_name = $plugin_dir =~ s/^mackerel-plugin-//r;
    $package_name = "mp$package_name";
+   $package_name =~ s/-//g;
 
 my $libdir = File::Spec->catfile($plugin_dir, 'lib');
 if (-e $libdir) {
