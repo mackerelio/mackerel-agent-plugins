@@ -166,12 +166,7 @@ func (p ELBPlugin) FetchMetrics() (map[string]float64, error) {
 		}
 	}
 
-	glb := []cloudwatch.Dimension{
-		{
-			Name:  "Service",
-			Value: "ELB",
-		},
-	}
+	glb := []cloudwatch.Dimension{}
 	if p.Lbname != "" {
 		g2 := cloudwatch.Dimension{
 			Name:  "LoadBalancerName",
