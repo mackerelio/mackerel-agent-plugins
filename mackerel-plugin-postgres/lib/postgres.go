@@ -6,6 +6,7 @@ import (
 	"os"
 
 	"github.com/jmoiron/sqlx"
+	// PostgreSQL Driver
 	_ "github.com/lib/pq"
 	mp "github.com/mackerelio/go-mackerel-plugin-helper"
 	"github.com/mackerelio/mackerel-agent/logging"

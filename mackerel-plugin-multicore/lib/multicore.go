@@ -394,7 +394,6 @@ func outputMulticore(tempFileName string) {
 	outputLoadavgPerCore(loadPerCPUCount, now)
 }
 
-// main function
 // Do the plugin
 func Do() {
 	optTempfile := flag.String("tempfile", "", "Temp file name")

@@ -9,6 +9,7 @@ import (
 
 	mp "github.com/mackerelio/go-mackerel-plugin-helper"
 	"github.com/ziutek/mymysql/mysql"
+	// MySQL Driver
 	_ "github.com/ziutek/mymysql/native"
 )
 
