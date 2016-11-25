@@ -25,59 +25,59 @@ type EC2Plugin struct {
 	CloudWatch  *cloudwatch.CloudWatch
 }
 
-var graphdef = map[string](mp.Graphs){
-	"ec2.CPUUtilization": mp.Graphs{
+var graphdef = map[string]mp.Graphs{
+	"ec2.CPUUtilization": {
 		Label: "CPU Utilization",
 		Unit:  "percentage",
-		Metrics: [](mp.Metrics){
-			mp.Metrics{Name: "CPUUtilization", Label: "CPUUtilization"},
+		Metrics: []mp.Metrics{
+			{Name: "CPUUtilization", Label: "CPUUtilization"},
 		},
 	},
-	"ec2.DiskBytes": mp.Graphs{
+	"ec2.DiskBytes": {
 		Label: "Disk Bytes",
 		Unit:  "bytes",
-		Metrics: [](mp.Metrics){
-			mp.Metrics{Name: "DiskReadBytes", Label: "DiskReadBytes"},
-			mp.Metrics{Name: "DiskWriteBytes", Label: "DiskWriteBytes"},
+		Metrics: []mp.Metrics{
+			{Name: "DiskReadBytes", Label: "DiskReadBytes"},
+			{Name: "DiskWriteBytes", Label: "DiskWriteBytes"},
 		},
 	},
-	"ec2.DiskOps": mp.Graphs{
+	"ec2.DiskOps": {
 		Label: "Disk Ops",
 		Unit:  "float",
-		Metrics: [](mp.Metrics){
-			mp.Metrics{Name: "DiskReadOps", Label: "DiskReadOps"},
-			mp.Metrics{Name: "DiskWriteOps", Label: "DiskWriteOps"},
+		Metrics: []mp.Metrics{
+			{Name: "DiskReadOps", Label: "DiskReadOps"},
+			{Name: "DiskWriteOps", Label: "DiskWriteOps"},
 		},
 	},
-	"ec2.Network": mp.Graphs{
+	"ec2.Network": {
 		Label: "Network",
 		Unit:  "bytes",
-		Metrics: [](mp.Metrics){
-			mp.Metrics{Name: "NetworkIn", Label: "NetworkIn"},
-			mp.Metrics{Name: "NetworkOut", Label: "NetworkOut"},
+		Metrics: []mp.Metrics{
+			{Name: "NetworkIn", Label: "NetworkIn"},
+			{Name: "NetworkOut", Label: "NetworkOut"},
 		},
 	},
-	"ec2.NetworkPackets": mp.Graphs{
+	"ec2.NetworkPackets": {
 		Label: "Network",
 		Unit:  "bytes",
-		Metrics: [](mp.Metrics){
-			mp.Metrics{Name: "NetworkPacketsIn", Label: "NetworkPacketsIn"},
-			mp.Metrics{Name: "NetworkPacketsOut", Label: "NetworkPacketsOut"},
+		Metrics: []mp.Metrics{
+			{Name: "NetworkPacketsIn", Label: "NetworkPacketsIn"},
+			{Name: "NetworkPacketsOut", Label: "NetworkPacketsOut"},
 		},
 	},
-	"ec2.StatusCheckFailed": mp.Graphs{
+	"ec2.StatusCheckFailed": {
 		Label: "StatusCheckFailed",
 		Unit:  "integer",
-		Metrics: [](mp.Metrics){
-			mp.Metrics{Name: "StatusCheckFailed", Label: "StatusCheckFailed"},
-			mp.Metrics{Name: "StatusCheckFailed_Instance", Label: "StatusCheckFailed_Instance"},
-			mp.Metrics{Name: "StatusCheckFailed_System", Label: "StatusCheckFailed_System"},
+		Metrics: []mp.Metrics{
+			{Name: "StatusCheckFailed", Label: "StatusCheckFailed"},
+			{Name: "StatusCheckFailed_Instance", Label: "StatusCheckFailed_Instance"},
+			{Name: "StatusCheckFailed_System", Label: "StatusCheckFailed_System"},
 		},
 	},
 }
 
 // GraphDefinition returns graphdef
-func (p EC2Plugin) GraphDefinition() map[string](mp.Graphs) {
+func (p EC2Plugin) GraphDefinition() map[string]mp.Graphs {
 	return graphdef
 }
 
