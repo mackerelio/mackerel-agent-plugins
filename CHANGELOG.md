@@ -1,5 +1,17 @@
 # Changelog
 
+## 0.24.0 (2016-11-29)
+
+* Implement mackerel-plugin-aws-ec2 #248 (yyoshiki41)
+* [postgres] support Pg9.1 #274 (Songmu)
+* Add new nvidia-smi plugin #280 (ksauzz)
+* [jvm] Add notice about user to README #281 (astj)
+* Implement mackerel-plugin-twemproxy #283 (yoheimuta)
+* fix cloudwatch dimensions for elb #284 (ki38sato)
+* Change error strings to pass current golint #285 (astj)
+* Add mackerel-plugin-twemproxy to package #286 (stefafafan)
+
+
 ## 0.23.1 (2016-10-27)
 
 * [redis] Fix a bug to fetch no metrics of keys and expired #272 (yoheimuta)
