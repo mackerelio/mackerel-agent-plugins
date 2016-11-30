@@ -17,6 +17,7 @@ const (
 
 var helpReg = regexp.MustCompile(`--?h(?:elp)?`)
 
+//go:generate sh -c "perl tool/gen_mackerel_plugin.pl > mackerel-plugin_gen.go"
 func run(args []string) int {
 	if len(args) < 2 {
 		printHelp()
