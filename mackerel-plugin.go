@@ -24,7 +24,7 @@ var helpReg = regexp.MustCompile(`--?h(?:elp)?`)
 func run(args []string) int {
 	var plug string
 	f := args[0]
-    fi, err := os.Lstat(f)
+	fi, err := os.Lstat(f)
 	if err != nil {
 		log.Println(err)
 		return exitError
@@ -66,7 +66,6 @@ Usage: mackerel-plugin <plugin> [<args>]
 Following plugins are available:
     %s
 
-See ` + "`mackerel-plugin <plugin> -h` " + `for more information on a specific plugin
+See `+"`mackerel-plugin <plugin> -h` "+`for more information on a specific plugin
 `, version, strings.Join(plugins, "\n    "))
-
 }
