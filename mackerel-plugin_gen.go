@@ -141,7 +141,7 @@ func runPlugin(plug string) error {
 	case "xentop":
 		mpxentop.Do()
 	default:
-		return fmt.Errorf("unknown plugin: %s", plug)
+		return fmt.Errorf("unknown plugin: %q", plug)
 	}
 	return nil
 }

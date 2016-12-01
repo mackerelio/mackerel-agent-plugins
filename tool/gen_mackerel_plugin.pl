@@ -41,7 +41,7 @@ $imports)
 func runPlugin(plug string) error {
 	switch plug {
 ${case}\tdefault:
-		return fmt.Errorf("unknown plugin: %s", plug)
+		return fmt.Errorf("unknown plugin: %q", plug)
 	}
 	return nil
 }
