@@ -31,6 +31,7 @@ func run(args []string) int {
 	}
 	base := filepath.Base(f)
 	if fi.Mode()&os.ModeSymlink == os.ModeSymlink && strings.HasPrefix(base, "mackerel-plugin-") {
+		// if mackerel-plugin is symbolic linked from mackerel-plugin-memcached, run the memcached plugin
 		plug = strings.TrimPrefix(base, "mackerel-plugin-")
 	} else {
 		if len(args) < 2 {
@@ -55,6 +56,17 @@ func run(args []string) int {
 	return exitOK
 }
 
+var version, gitcommit string
+
 func printHelp() {
-	fmt.Println("please specify the plugin by argument")
+	fmt.Printf(`mackerel-plugin %s
+
+Usage: mackerel-plugin <plugin> [<args>]
+
+Following plugins are available:
+    %s
+
+See ` + "`mackerel-plugin <plugin> -h` " + `for more information on a specific plugin
+`, version, strings.Join(plugins, "\n    "))
+
 }
