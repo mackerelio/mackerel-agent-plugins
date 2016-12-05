@@ -75,7 +75,7 @@ func (c Apache2Plugin) GraphDefinition() map[string]mp.Graphs {
 				{Name: "score-_", Label: "Waiting for connection", Diff: false, Stacked: true},
 				{Name: "score-S", Label: "Starting up", Diff: false, Stacked: true},
 				{Name: "score-R", Label: "Reading request", Diff: false, Stacked: true},
-				{Name: "scpre-W", Label: "Sending reply", Diff: false, Stacked: true},
+				{Name: "score-W", Label: "Sending reply", Diff: false, Stacked: true},
 				{Name: "score-K", Label: "Keepalive", Diff: false, Stacked: true},
 				{Name: "score-D", Label: "DNS lookup", Diff: false, Stacked: true},
 				{Name: "score-C", Label: "Closing connection", Diff: false, Stacked: true},
