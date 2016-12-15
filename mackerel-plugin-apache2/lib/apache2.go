@@ -140,6 +140,9 @@ func parseApache2Scoreboard(str string, p *map[string]interface{}) error {
 		}
 		record := strings.Split(line, ":")
 		for _, sb := range strings.Split(strings.Trim(record[1], " "), "") {
+			if sb == "." {
+				sb = ""
+			}
 			name := fmt.Sprintf("score-%s", sb)
 			c, assert := (*p)[name].(float64)
 			if !assert {
