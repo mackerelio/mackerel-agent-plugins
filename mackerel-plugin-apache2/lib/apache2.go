@@ -82,7 +82,7 @@ func (c Apache2Plugin) GraphDefinition() map[string]mp.Graphs {
 				{Name: "score-L", Label: "Logging", Diff: false, Stacked: true},
 				{Name: "score-G", Label: "Gracefully finishing", Diff: false, Stacked: true},
 				{Name: "score-I", Label: "Idle cleanup", Diff: false, Stacked: true},
-				{Name: "score-.", Label: "Open slot", Diff: false, Stacked: true},
+				{Name: "score-", Label: "Open slot", Diff: false, Stacked: true},
 			},
 		},
 	}
