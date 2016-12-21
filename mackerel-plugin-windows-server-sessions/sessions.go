@@ -56,18 +56,13 @@ func (m WindowsServerSessionsPlugin) FetchMetrics() (map[string]interface{}, err
 
 // GraphDefinition interface for mackerelplugin
 func (m WindowsServerSessionsPlugin) GraphDefinition() map[string](mp.Graphs) {
-	metrics := []mp.Metrics{{
-		Name:    "windows.server.sessions.#.count",
-		Label:   "Windows Server Sessions",
-		Diff:    false,
-		Stacked: true,
-	}}
-
 	return map[string](mp.Graphs){
 		"windows.server.sessions.#": mp.Graphs{
-			Label:   "Windows Server Sessions",
-			Unit:    "uint64",
-			Metrics: metrics,
+			Label: "Windows Server Sessions",
+			Unit:  "uint64",
+			Metrics: []mp.Metrics{
+				{Name: "count", Label: "count", Diff: false, Stacked: true},
+			},
 		},
 	}
 }
