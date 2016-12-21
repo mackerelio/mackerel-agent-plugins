@@ -59,7 +59,7 @@ func (m WindowsServerSessionsPlugin) GraphDefinition() map[string](mp.Graphs) {
 	return map[string](mp.Graphs){
 		"windows.server.sessions.#": mp.Graphs{
 			Label: "Windows Server Sessions",
-			Unit:  "uint64",
+			Unit:  "integer",
 			Metrics: []mp.Metrics{
 				{Name: "count", Label: "count", Diff: false, Stacked: true},
 			},
