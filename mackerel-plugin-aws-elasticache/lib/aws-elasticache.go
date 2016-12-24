@@ -8,8 +8,10 @@ import (
 	"os"
 	"time"
 
-	"github.com/crowdmob/goamz/aws"
-	"github.com/crowdmob/goamz/cloudwatch"
+	"github.com/aws/aws-sdk-go/aws"
+	"github.com/aws/aws-sdk-go/aws/credentials"
+	"github.com/aws/aws-sdk-go/aws/session"
+	"github.com/aws/aws-sdk-go/service/cloudwatch"
 	mp "github.com/mackerelio/go-mackerel-plugin"
 )
 
@@ -241,36 +243,36 @@ type ECachePlugin struct {
 	CacheMetrics    []string
 }
 
-func getLastPoint(cloudWatch *cloudwatch.CloudWatch, dimensions *[]cloudwatch.Dimension, metricName string) (float64, error) {
+func getLastPoint(cloudWatch *cloudwatch.CloudWatch, dimensions []*cloudwatch.Dimension, metricName string) (float64, error) {
 	now := time.Now()
 
-	response, err := cloudWatch.GetMetricStatistics(&cloudwatch.GetMetricStatisticsRequest{
-		Dimensions: *dimensions,
-		StartTime:  now.Add(time.Duration(180) * time.Second * -1), // 3 mins (to fetch at least 1 data-point)
-		EndTime:    now,
-		MetricName: metricName,
-		Period:     60,
-		Statistics: []string{"Average"},
-		Namespace:  "AWS/ElastiCache",
+	response, err := cloudWatch.GetMetricStatistics(&cloudwatch.GetMetricStatisticsInput{
+		Dimensions: dimensions,
+		StartTime:  aws.Time(now.Add(time.Duration(180) * time.Second * -1)), // 3 mins (to fetch at least 1 data-point)
+		EndTime:    aws.Time(now),
+		MetricName: aws.String(metricName),
+		Period:     aws.Int64(60),
+		Statistics: []*string{aws.String("Average")},
+		Namespace:  aws.String("AWS/ElastiCache"),
 	})
 	if err != nil {
 		return 0, err
 	}
 
-	datapoints := response.GetMetricStatisticsResult.Datapoints
+	datapoints := response.Datapoints
 	if len(datapoints) == 0 {
 		return 0, errors.New("fetched no datapoints")
 	}
 
-	latest := time.Unix(0, 0)
+	latest := new(time.Time)
 	var latestVal float64
 	for _, dp := range datapoints {
-		if dp.Timestamp.Before(latest) {
+		if dp.Timestamp.Before(*latest) {
 			continue
 		}
 
 		latest = dp.Timestamp
-		latestVal = dp.Average
+		latestVal = *dp.Average
 	}
 
 	return latestVal, nil
@@ -278,26 +280,31 @@ func getLastPoint(cloudWatch *cloudwatch.CloudWatch, dimensions *[]cloudwatch.Di
 
 // FetchMetrics fetch elasticache values
 func (p ECachePlugin) FetchMetrics() (map[string]float64, error) {
-	auth, err := aws.GetAuth(p.AccessKeyID, p.SecretAccessKey, "", time.Now())
+	sess, err := session.NewSession()
 	if err != nil {
 		return nil, err
 	}
 
-	cloudWatch, err := cloudwatch.NewCloudWatch(auth, aws.Regions[p.Region].CloudWatchServicepoint)
-	if err != nil {
-		return nil, err
+	config := aws.NewConfig()
+	if p.AccessKeyID != "" && p.SecretAccessKey != "" {
+		config = config.WithCredentials(credentials.NewStaticCredentials(p.AccessKeyID, p.SecretAccessKey, ""))
 	}
+	if p.Region != "" {
+		config = config.WithRegion(p.Region)
+	}
+
+	cloudWatch := cloudwatch.New(sess, config)
 
 	stat := make(map[string]float64)
 
-	perInstances := &[]cloudwatch.Dimension{
+	perInstances := []*cloudwatch.Dimension{
 		{
-			Name:  "CacheClusterId",
-			Value: p.CacheClusterID,
+			Name:  aws.String("CacheClusterId"),
+			Value: aws.String(p.CacheClusterID),
 		},
 		{
-			Name:  "CacheNodeId",
-			Value: p.CacheNodeID,
+			Name:  aws.String("CacheNodeId"),
+			Value: aws.String(p.CacheNodeID),
 		},
 	}
 
@@ -339,12 +346,7 @@ func Do() {
 
 	var ecache ECachePlugin
 
-	if *optRegion == "" {
-		ecache.Region = aws.InstanceRegion()
-	} else {
-		ecache.Region = *optRegion
-	}
-
+	ecache.Region = *optRegion
 	ecache.AccessKeyID = *optAccessKeyID
 	ecache.SecretAccessKey = *optSecretAccessKey
 	ecache.CacheClusterID = *optCacheClusterID
