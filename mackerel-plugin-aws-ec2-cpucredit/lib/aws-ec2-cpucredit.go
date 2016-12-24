@@ -6,8 +6,11 @@ import (
 	"os"
 	"time"
 
-	"github.com/crowdmob/goamz/aws"
-	"github.com/crowdmob/goamz/cloudwatch"
+	"github.com/aws/aws-sdk-go/aws"
+	"github.com/aws/aws-sdk-go/aws/credentials"
+	"github.com/aws/aws-sdk-go/aws/ec2metadata"
+	"github.com/aws/aws-sdk-go/aws/session"
+	"github.com/aws/aws-sdk-go/service/cloudwatch"
 	mp "github.com/mackerelio/go-mackerel-plugin"
 )
 
@@ -35,35 +38,35 @@ func getLastPointAverage(cw *cloudwatch.CloudWatch, dimension *cloudwatch.Dimens
 	now := time.Now()
 	prev := now.Add(time.Duration(600) * time.Second * -1) // 10 min (to fetch at least 1 data-point)
 
-	request := &cloudwatch.GetMetricStatisticsRequest{
-		Dimensions: []cloudwatch.Dimension{*dimension},
-		EndTime:    now,
-		StartTime:  prev,
-		MetricName: metricName,
-		Period:     60,
-		Statistics: []string{"Average"},
-		Namespace:  namespace,
+	input := &cloudwatch.GetMetricStatisticsInput{
+		Dimensions: []*cloudwatch.Dimension{dimension},
+		EndTime:    aws.Time(now),
+		StartTime:  aws.Time(prev),
+		MetricName: aws.String(metricName),
+		Period:     aws.Int64(60),
+		Statistics: []*string{aws.String("Average")},
+		Namespace:  aws.String(namespace),
 	}
 
-	response, err := cw.GetMetricStatistics(request)
+	response, err := cw.GetMetricStatistics(input)
 	if err != nil {
 		return 0, err
 	}
 
-	datapoints := response.GetMetricStatisticsResult.Datapoints
+	datapoints := response.Datapoints
 	if len(datapoints) == 0 {
 		return 0, errors.New("fetched no datapoints")
 	}
 
-	latest := time.Unix(0, 0)
+	latest := new(time.Time)
 	var latestVal float64
 	for _, dp := range datapoints {
-		if dp.Timestamp.Before(latest) {
+		if dp.Timestamp.Before(*latest) {
 			continue
 		}
 
 		latest = dp.Timestamp
-		latestVal = dp.Average
+		latestVal = *dp.Average
 	}
 
 	return latestVal, nil
@@ -71,17 +74,25 @@ func getLastPointAverage(cw *cloudwatch.CloudWatch, dimension *cloudwatch.Dimens
 
 // FetchMetrics fetch the metrics
 func (p CPUCreditPlugin) FetchMetrics() (map[string]float64, error) {
-	region := aws.Regions[p.Region]
-	dimension := &cloudwatch.Dimension{
-		Name:  "InstanceId",
-		Value: p.InstanceID,
-	}
-
-	auth, err := aws.GetAuth(p.AccessKeyID, p.SecretAccessKey, "", time.Now())
+	sess, err := session.NewSession()
 	if err != nil {
 		return nil, err
 	}
-	cw, err := cloudwatch.NewCloudWatch(auth, region.CloudWatchServicepoint)
+
+	config := aws.NewConfig()
+	if p.AccessKeyID != "" && p.SecretAccessKey != "" {
+		config = config.WithCredentials(credentials.NewStaticCredentials(p.AccessKeyID, p.SecretAccessKey, ""))
+	}
+	if p.Region != "" {
+		config = config.WithRegion(p.Region)
+	}
+
+	cw := cloudwatch.New(sess, config)
+
+	dimension := &cloudwatch.Dimension{
+		Name:  aws.String("InstanceId"),
+		Value: aws.String(p.InstanceID),
+	}
 
 	stat := make(map[string]float64)
 
@@ -115,8 +126,11 @@ func Do() {
 	var cpucredit CPUCreditPlugin
 
 	if *optRegion == "" || *optInstanceID == "" {
-		cpucredit.Region = aws.InstanceRegion()
-		cpucredit.InstanceID = aws.InstanceId()
+		ec2metadata := ec2metadata.New(session.New())
+		if ec2metadata.Available() {
+			cpucredit.Region, _ = ec2metadata.Region()
+			cpucredit.InstanceID, _ = ec2metadata.GetMetadata("instance-id")
+		}
 	} else {
 		cpucredit.Region = *optRegion
 		cpucredit.InstanceID = *optInstanceID
