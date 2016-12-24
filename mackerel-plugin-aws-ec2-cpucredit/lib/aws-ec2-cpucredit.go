@@ -140,11 +140,7 @@ func Do() {
 	cpucredit.SecretAccessKey = *optSecretAccessKey
 
 	helper := mp.NewMackerelPlugin(cpucredit)
-	if *optTempfile != "" {
-		helper.Tempfile = *optTempfile
-	} else {
-		helper.Tempfile = "/tmp/mackerel-plugin-cpucredit"
-	}
+	helper.Tempfile = *optTempfile
 
 	if os.Getenv("MACKEREL_AGENT_PLUGIN_META") != "" {
 		helper.OutputDefinitions()
