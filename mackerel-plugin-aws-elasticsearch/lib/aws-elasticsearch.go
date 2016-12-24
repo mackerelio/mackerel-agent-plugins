@@ -9,6 +9,7 @@ import (
 
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/credentials"
+	"github.com/aws/aws-sdk-go/aws/ec2metadata"
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/cloudwatch"
 	mp "github.com/mackerelio/go-mackerel-plugin"
@@ -258,6 +259,15 @@ func Do() {
 	flag.Parse()
 
 	var es ESPlugin
+
+	if *optRegion == "" {
+		ec2metadata := ec2metadata.New(session.New())
+		if ec2metadata.Available() {
+			es.Region, _ = ec2metadata.Region()
+		}
+	} else {
+		es.Region = *optRegion
+	}
 
 	es.Region = *optRegion
 	es.Domain = *optDomain
