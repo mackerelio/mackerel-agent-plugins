@@ -247,11 +247,7 @@ func Do() {
 	}
 
 	helper := mp.NewMackerelPlugin(elb)
-	if *optTempfile != "" {
-		helper.Tempfile = *optTempfile
-	} else {
-		helper.Tempfile = "/tmp/mackerel-plugin-elb"
-	}
+	helper.Tempfile = *optTempfile
 
 	if os.Getenv("MACKEREL_AGENT_PLUGIN_META") != "" {
 		helper.OutputDefinitions()
