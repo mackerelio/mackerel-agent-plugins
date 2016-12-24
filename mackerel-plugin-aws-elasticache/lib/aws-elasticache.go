@@ -10,6 +10,7 @@ import (
 
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/credentials"
+	"github.com/aws/aws-sdk-go/aws/ec2metadata"
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/cloudwatch"
 	mp "github.com/mackerelio/go-mackerel-plugin"
@@ -345,6 +346,15 @@ func Do() {
 	flag.Parse()
 
 	var ecache ECachePlugin
+
+	if *optRegion == "" {
+		ec2metadata := ec2metadata.New(session.New())
+		if ec2metadata.Available() {
+			ecache.Region, _ = ec2metadata.Region()
+		}
+	} else {
+		ecache.Region = *optRegion
+	}
 
 	ecache.Region = *optRegion
 	ecache.AccessKeyID = *optAccessKeyID
