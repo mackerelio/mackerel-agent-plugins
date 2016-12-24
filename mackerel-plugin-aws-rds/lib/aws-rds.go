@@ -10,6 +10,7 @@ import (
 
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/credentials"
+	"github.com/aws/aws-sdk-go/aws/ec2metadata"
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/cloudwatch"
 	mp "github.com/mackerelio/go-mackerel-plugin"
@@ -229,7 +230,15 @@ func Do() {
 		rds.LabelPrefix = *optLabelPrefix
 	}
 
-	rds.Region = *optRegion
+	if *optRegion == "" {
+		ec2metadata := ec2metadata.New(session.New())
+		if ec2metadata.Available() {
+			rds.Region, _ = ec2metadata.Region()
+		}
+	} else {
+		rds.Region = *optRegion
+	}
+
 	rds.Identifier = *optIdentifier
 	rds.AccessKeyID = *optAccessKeyID
 	rds.SecretAccessKey = *optSecretAccessKey
