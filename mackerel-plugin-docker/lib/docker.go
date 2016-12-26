@@ -299,7 +299,7 @@ func (m DockerPlugin) FetchMetricsWithAPI(containers []docker.APIContainers) (ma
 			statsC := make(chan *docker.Stats)
 			done := make(chan bool)
 			go func() {
-				errC <- client.Stats(docker.StatsOptions{ID: name, Stats: statsC, Stream: false, Done: done, Timeout: 0})
+				errC <- client.Stats(docker.StatsOptions{ID: name, Stats: statsC, Stream: false, Done: done, Timeout: 20})
 				close(errC)
 			}()
 			var resultStats []*docker.Stats
