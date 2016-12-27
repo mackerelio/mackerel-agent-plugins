@@ -67,6 +67,7 @@ func (m WindowsServerSessionsPlugin) GraphDefinition() map[string](mp.Graphs) {
 	}
 }
 
+// Do the plugin
 func Do() {
 	optTempfile := flag.String("tempfile", "", "Temp file name")
 	flag.Parse()
