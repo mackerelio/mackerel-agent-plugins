@@ -1,4 +1,4 @@
-package main
+package mpwinservsess
 
 import (
 	"encoding/csv"
@@ -67,7 +67,8 @@ func (m WindowsServerSessionsPlugin) GraphDefinition() map[string](mp.Graphs) {
 	}
 }
 
-func main() {
+// Do the plugin
+func Do() {
 	optTempfile := flag.String("tempfile", "", "Temp file name")
 	flag.Parse()
 
@@ -80,6 +81,5 @@ func main() {
 	} else {
 		helper.Tempfile = "/tmp/mackerel-plugin-windows-server-sessions"
 	}
-
 	helper.Run()
 }
