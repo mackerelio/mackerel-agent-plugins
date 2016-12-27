@@ -12,6 +12,7 @@ import (
 	"strconv"
 	"strings"
 	"sync"
+	"time"
 
 	"github.com/fsouza/go-dockerclient"
 	mp "github.com/mackerelio/go-mackerel-plugin-helper"
@@ -299,7 +300,7 @@ func (m DockerPlugin) FetchMetricsWithAPI(containers []docker.APIContainers) (ma
 			statsC := make(chan *docker.Stats)
 			done := make(chan bool)
 			go func() {
-				errC <- client.Stats(docker.StatsOptions{ID: name, Stats: statsC, Stream: false, Done: done, Timeout: 0})
+				errC <- client.Stats(docker.StatsOptions{ID: name, Stats: statsC, Stream: false, Done: done, Timeout: time.Duration(20) * time.Second})
 				close(errC)
 			}()
 			var resultStats []*docker.Stats
