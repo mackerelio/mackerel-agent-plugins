@@ -7,8 +7,11 @@ import (
 	"os"
 	"time"
 
-	"github.com/crowdmob/goamz/aws"
-	"github.com/crowdmob/goamz/cloudwatch"
+	"github.com/aws/aws-sdk-go/aws"
+	"github.com/aws/aws-sdk-go/aws/credentials"
+	"github.com/aws/aws-sdk-go/aws/ec2metadata"
+	"github.com/aws/aws-sdk-go/aws/session"
+	"github.com/aws/aws-sdk-go/service/cloudwatch"
 	mp "github.com/mackerelio/go-mackerel-plugin"
 )
 
@@ -55,41 +58,46 @@ type ELBPlugin struct {
 	Region          string
 	AccessKeyID     string
 	SecretAccessKey string
-	AZs             []string
+	AZs             []*string
 	CloudWatch      *cloudwatch.CloudWatch
 	Lbname          string
 }
 
 func (p *ELBPlugin) prepare() error {
-	auth, err := aws.GetAuth(p.AccessKeyID, p.SecretAccessKey, "", time.Now())
+	sess, err := session.NewSession()
 	if err != nil {
 		return err
 	}
 
-	p.CloudWatch, err = cloudwatch.NewCloudWatch(auth, aws.Regions[p.Region].CloudWatchServicepoint)
-	if err != nil {
-		return err
+	config := aws.NewConfig()
+	if p.AccessKeyID != "" && p.SecretAccessKey != "" {
+		config = config.WithCredentials(credentials.NewStaticCredentials(p.AccessKeyID, p.SecretAccessKey, ""))
+	}
+	if p.Region != "" {
+		config = config.WithRegion(p.Region)
 	}
 
-	ret, err := p.CloudWatch.ListMetrics(&cloudwatch.ListMetricsRequest{
-		Namespace: "AWS/ELB",
-		Dimensions: []cloudwatch.Dimension{
+	p.CloudWatch = cloudwatch.New(sess, config)
+
+	ret, err := p.CloudWatch.ListMetrics(&cloudwatch.ListMetricsInput{
+		Namespace: aws.String("AWS/ELB"),
+		Dimensions: []*cloudwatch.DimensionFilter{
 			{
-				Name: "AvailabilityZone",
+				Name: aws.String("AvailabilityZone"),
 			},
 		},
-		MetricName: "HealthyHostCount",
+		MetricName: aws.String("HealthyHostCount"),
 	})
 
 	if err != nil {
 		return err
 	}
 
-	p.AZs = make([]string, 0, len(ret.ListMetricsResult.Metrics))
-	for _, met := range ret.ListMetricsResult.Metrics {
+	p.AZs = make([]*string, 0, len(ret.Metrics))
+	for _, met := range ret.Metrics {
 		if len(met.Dimensions) > 1 {
 			continue
-		} else if met.Dimensions[0].Name != "AvailabilityZone" {
+		} else if *met.Dimensions[0].Name != "AvailabilityZone" {
 			continue
 		}
 
@@ -99,40 +107,40 @@ func (p *ELBPlugin) prepare() error {
 	return nil
 }
 
-func (p ELBPlugin) getLastPoint(dimensions *[]cloudwatch.Dimension, metricName string, sTyp statType) (float64, error) {
+func (p ELBPlugin) getLastPoint(dimensions []*cloudwatch.Dimension, metricName string, sTyp statType) (float64, error) {
 	now := time.Now()
 
-	response, err := p.CloudWatch.GetMetricStatistics(&cloudwatch.GetMetricStatisticsRequest{
-		Dimensions: *dimensions,
-		StartTime:  now.Add(time.Duration(120) * time.Second * -1), // 2 min (to fetch at least 1 data-point)
-		EndTime:    now,
-		MetricName: metricName,
-		Period:     60,
-		Statistics: []string{sTyp.String()},
-		Namespace:  "AWS/ELB",
+	response, err := p.CloudWatch.GetMetricStatistics(&cloudwatch.GetMetricStatisticsInput{
+		Dimensions: dimensions,
+		StartTime:  aws.Time(now.Add(time.Duration(120) * time.Second * -1)), // 2 min (to fetch at least 1 data-point)
+		EndTime:    aws.Time(now),
+		MetricName: aws.String(metricName),
+		Period:     aws.Int64(60),
+		Statistics: []*string{aws.String(sTyp.String())},
+		Namespace:  aws.String("AWS/ELB"),
 	})
 	if err != nil {
 		return 0, err
 	}
 
-	datapoints := response.GetMetricStatisticsResult.Datapoints
+	datapoints := response.Datapoints
 	if len(datapoints) == 0 {
 		return 0, errors.New("fetched no datapoints")
 	}
 
-	latest := time.Unix(0, 0)
+	latest := new(time.Time)
 	var latestVal float64
 	for _, dp := range datapoints {
-		if dp.Timestamp.Before(latest) {
+		if dp.Timestamp.Before(*latest) {
 			continue
 		}
 
 		latest = dp.Timestamp
 		switch sTyp {
 		case stAve:
-			latestVal = dp.Average
+			latestVal = *dp.Average
 		case stSum:
-			latestVal = dp.Sum
+			latestVal = *dp.Sum
 		}
 	}
 
@@ -145,43 +153,43 @@ func (p ELBPlugin) FetchMetrics() (map[string]float64, error) {
 
 	// HostCount per AZ
 	for _, az := range p.AZs {
-		d := []cloudwatch.Dimension{
+		d := []*cloudwatch.Dimension{
 			{
-				Name:  "AvailabilityZone",
+				Name:  aws.String("AvailabilityZone"),
 				Value: az,
 			},
 		}
 		if p.Lbname != "" {
-			d2 := cloudwatch.Dimension{
-				Name:  "LoadBalancerName",
-				Value: p.Lbname,
+			d2 := &cloudwatch.Dimension{
+				Name:  aws.String("LoadBalancerName"),
+				Value: aws.String(p.Lbname),
 			}
 			d = append(d, d2)
 		}
 		for _, met := range []string{"HealthyHostCount", "UnHealthyHostCount"} {
-			v, err := p.getLastPoint(&d, met, stAve)
+			v, err := p.getLastPoint(d, met, stAve)
 			if err == nil {
-				stat[met+"_"+az] = v
+				stat[met+"_"+*az] = v
 			}
 		}
 	}
 
-	glb := []cloudwatch.Dimension{}
+	glb := []*cloudwatch.Dimension{}
 	if p.Lbname != "" {
-		g2 := cloudwatch.Dimension{
-			Name:  "LoadBalancerName",
-			Value: p.Lbname,
+		g2 := &cloudwatch.Dimension{
+			Name:  aws.String("LoadBalancerName"),
+			Value: aws.String(p.Lbname),
 		}
 		glb = append(glb, g2)
 	}
 
-	v, err := p.getLastPoint(&glb, "Latency", stAve)
+	v, err := p.getLastPoint(glb, "Latency", stAve)
 	if err == nil {
 		stat["Latency"] = v
 	}
 
 	for _, met := range [...]string{"HTTPCode_Backend_2XX", "HTTPCode_Backend_3XX", "HTTPCode_Backend_4XX", "HTTPCode_Backend_5XX"} {
-		v, err := p.getLastPoint(&glb, met, stSum)
+		v, err := p.getLastPoint(glb, met, stSum)
 		if err == nil {
 			stat[met] = v
 		}
@@ -206,7 +214,7 @@ func (p ELBPlugin) GraphDefinition() map[string]mp.Graphs {
 
 		var metrics []mp.Metrics
 		for _, az := range p.AZs {
-			metrics = append(metrics, mp.Metrics{Name: namePre + az, Label: az, Stacked: true})
+			metrics = append(metrics, mp.Metrics{Name: namePre + *az, Label: *az, Stacked: true})
 		}
 		graphdef[grp] = mp.Graphs{
 			Label:   label,
@@ -230,11 +238,13 @@ func Do() {
 	var elb ELBPlugin
 
 	if *optRegion == "" {
-		elb.Region = aws.InstanceRegion()
+		ec2metadata := ec2metadata.New(session.New())
+		if ec2metadata.Available() {
+			elb.Region, _ = ec2metadata.Region()
+		}
 	} else {
 		elb.Region = *optRegion
 	}
-
 	elb.AccessKeyID = *optAccessKeyID
 	elb.SecretAccessKey = *optSecretAccessKey
 	elb.Lbname = *optLbname
@@ -245,11 +255,7 @@ func Do() {
 	}
 
 	helper := mp.NewMackerelPlugin(elb)
-	if *optTempfile != "" {
-		helper.Tempfile = *optTempfile
-	} else {
-		helper.Tempfile = "/tmp/mackerel-plugin-elb"
-	}
+	helper.Tempfile = *optTempfile
 
 	if os.Getenv("MACKEREL_AGENT_PLUGIN_META") != "" {
 		helper.OutputDefinitions()

@@ -7,8 +7,11 @@ import (
 	"os"
 	"time"
 
-	"github.com/crowdmob/goamz/aws"
-	"github.com/crowdmob/goamz/cloudwatch"
+	"github.com/aws/aws-sdk-go/aws"
+	"github.com/aws/aws-sdk-go/aws/credentials"
+	"github.com/aws/aws-sdk-go/aws/ec2metadata"
+	"github.com/aws/aws-sdk-go/aws/session"
+	"github.com/aws/aws-sdk-go/service/cloudwatch"
 	mp "github.com/mackerelio/go-mackerel-plugin"
 )
 
@@ -138,49 +141,54 @@ type ESPlugin struct {
 const esNameSpace = "AWS/ES"
 
 func (p *ESPlugin) prepare() error {
-	auth, err := aws.GetAuth(p.AccessKeyID, p.SecretAccessKey, "", time.Now())
+	sess, err := session.NewSession()
 	if err != nil {
 		return err
 	}
 
-	p.CloudWatch, err = cloudwatch.NewCloudWatch(auth, aws.Regions[p.Region].CloudWatchServicepoint)
-	if err != nil {
-		return err
+	config := aws.NewConfig()
+	if p.AccessKeyID != "" && p.SecretAccessKey != "" {
+		config = config.WithCredentials(credentials.NewStaticCredentials(p.AccessKeyID, p.SecretAccessKey, ""))
 	}
+	if p.Region != "" {
+		config = config.WithRegion(p.Region)
+	}
+
+	p.CloudWatch = cloudwatch.New(sess, config)
 	return nil
 }
 
-func (p ESPlugin) getLastPoint(dimensions *[]cloudwatch.Dimension, metricName string) (float64, error) {
+func (p ESPlugin) getLastPoint(dimensions []*cloudwatch.Dimension, metricName *string) (float64, error) {
 	now := time.Now()
 
-	response, err := p.CloudWatch.GetMetricStatistics(&cloudwatch.GetMetricStatisticsRequest{
-		Dimensions: *dimensions,
-		StartTime:  now.Add(time.Duration(180) * time.Second * -1),
-		EndTime:    now,
+	response, err := p.CloudWatch.GetMetricStatistics(&cloudwatch.GetMetricStatisticsInput{
+		Dimensions: dimensions,
+		StartTime:  aws.Time(now.Add(time.Duration(180) * time.Second * -1)),
+		EndTime:    aws.Time(now),
 		MetricName: metricName,
-		Period:     60,
-		Statistics: []string{"Average"},
-		Namespace:  esNameSpace,
+		Period:     aws.Int64(60),
+		Statistics: []*string{aws.String("Average")},
+		Namespace:  aws.String(esNameSpace),
 	})
 
 	if err != nil {
 		return 0, err
 	}
 
-	datapoints := response.GetMetricStatisticsResult.Datapoints
+	datapoints := response.Datapoints
 	if len(datapoints) == 0 {
 		return 0, errors.New("fetched no datapoints")
 	}
 
-	latest := time.Unix(0, 0)
+	latest := new(time.Time)
 	var latestVal float64
 	for _, dp := range datapoints {
-		if dp.Timestamp.Before(latest) {
+		if dp.Timestamp.Before(*latest) {
 			continue
 		}
 
 		latest = dp.Timestamp
-		latestVal = dp.Average
+		latestVal = *dp.Average
 	}
 
 	return latestVal, nil
@@ -188,20 +196,20 @@ func (p ESPlugin) getLastPoint(dimensions *[]cloudwatch.Dimension, metricName st
 
 // FetchMetrics interface for mackerelplugin
 func (p ESPlugin) FetchMetrics() (map[string]float64, error) {
-	dimensions := []cloudwatch.Dimension{
+	dimensionFilters := []*cloudwatch.DimensionFilter{
 		{
-			Name:  "DomainName",
-			Value: p.Domain,
+			Name:  aws.String("DomainName"),
+			Value: aws.String(p.Domain),
 		},
 		{
-			Name:  "ClientId",
-			Value: p.ClientID,
+			Name:  aws.String("ClientId"),
+			Value: aws.String(p.ClientID),
 		},
 	}
 
-	ret, err := p.CloudWatch.ListMetrics(&cloudwatch.ListMetricsRequest{
-		Namespace:  esNameSpace,
-		Dimensions: dimensions,
+	ret, err := p.CloudWatch.ListMetrics(&cloudwatch.ListMetricsInput{
+		Namespace:  aws.String(esNameSpace),
+		Dimensions: dimensionFilters,
 	})
 	if err != nil {
 		log.Printf("%s", err)
@@ -209,14 +217,24 @@ func (p ESPlugin) FetchMetrics() (map[string]float64, error) {
 
 	stat := make(map[string]float64)
 
-	for _, met := range ret.ListMetricsResult.Metrics {
-		v, err := p.getLastPoint(&dimensions, met.MetricName)
+	dimensions := []*cloudwatch.Dimension{
+		{
+			Name:  aws.String("DomainName"),
+			Value: aws.String(p.Domain),
+		},
+		{
+			Name:  aws.String("ClientId"),
+			Value: aws.String(p.ClientID),
+		},
+	}
+	for _, met := range ret.Metrics {
+		v, err := p.getLastPoint(dimensions, met.MetricName)
 		if err == nil {
-			if met.MetricName == "MasterFreeStorageSpace" || met.MetricName == "FreeStorageSpace" {
+			if *met.MetricName == "MasterFreeStorageSpace" || *met.MetricName == "FreeStorageSpace" {
 				// MBytes -> Bytes
 				v = v * 1024 * 1024
 			}
-			stat[met.MetricName] = v
+			stat[*met.MetricName] = v
 		} else {
 			log.Printf("%s: %s", met.MetricName, err)
 		}
@@ -243,11 +261,15 @@ func Do() {
 	var es ESPlugin
 
 	if *optRegion == "" {
-		es.Region = aws.InstanceRegion()
+		ec2metadata := ec2metadata.New(session.New())
+		if ec2metadata.Available() {
+			es.Region, _ = ec2metadata.Region()
+		}
 	} else {
 		es.Region = *optRegion
 	}
 
+	es.Region = *optRegion
 	es.Domain = *optDomain
 	es.ClientID = *optClientID
 	es.AccessKeyID = *optAccessKeyID
@@ -259,11 +281,7 @@ func Do() {
 	}
 
 	helper := mp.NewMackerelPlugin(es)
-	if *optTempfile != "" {
-		helper.Tempfile = *optTempfile
-	} else {
-		helper.Tempfile = "/tmp/mackerel-plugin-aws-elasticsearch"
-	}
+	helper.Tempfile = *optTempfile
 
 	if os.Getenv("MACKEREL_AGENT_PLUGIN_META") != "" {
 		helper.OutputDefinitions()
