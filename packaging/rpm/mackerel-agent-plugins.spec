@@ -49,6 +49,16 @@ done
 %{__oldtargetdir}/*
 
 %changelog
+* Tue Nov 29 2016 <mackerel-developers@hatena.ne.jp> - 0.24.0-1
+- Implement mackerel-plugin-aws-ec2 (by yyoshiki41)
+- [postgres] support Pg9.1 (by Songmu)
+- Add new nvidia-smi plugin (by ksauzz)
+- [jvm] Add notice about user to README (by astj)
+- Implement mackerel-plugin-twemproxy (by yoheimuta)
+- fix cloudwatch dimensions for elb (by ki38sato)
+- Change error strings to pass current golint (by astj)
+- Add mackerel-plugin-twemproxy to package (by stefafafan)
+
 * Thu Oct 27 2016 <mackerel-developers@hatena.ne.jp> - 0.23.1-1
 - [redis] Fix a bug to fetch no metrics of keys and expired (by yoheimuta)
 - fix: "open file descriptors" property in elasticsearch  (by kamijin-fanta)

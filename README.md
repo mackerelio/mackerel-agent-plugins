@@ -9,6 +9,7 @@ Documentation for each plugin is located in its respective sub directory.
 
 * [mackerel-plugin-apache2](./mackerel-plugin-apache2/README.md)
 * [mackerel-plugin-aws-cloudfront](./mackerel-plugin-aws-cloudfront/README.md)
+* [mackerel-plugin-aws-ec2](./mackerel-plugin-aws-ec2/README.md)
 * [mackerel-plugin-aws-ec2-cpucredit](./mackerel-plugin-aws-ec2-cpucredit/README.md)
 * [mackerel-plugin-aws-ec2-ebs](./mackerel-plugin-aws-ec2-ebs/README.md)
 * [mackerel-plugin-aws-elasticache](./mackerel-plugin-aws-elasticache/README.md)
@@ -48,6 +49,7 @@ Documentation for each plugin is located in its respective sub directory.
 * [mackerel-plugin-squid](./mackerel-plugin-squid/README.md)
 * [mackerel-plugin-td-table-count](./mackerel-plugin-td-table-count/README.md)
 * [mackerel-plugin-trafficserver](./mackerel-plugin-trafficserver/README.md)
+* [mackerel-plugin-twemproxy](./mackerel-plugin-twemproxy/README.md)
 * [mackerel-plugin-unicorn](./mackerel-plugin-unicorn/README.md)
 * [mackerel-plugin-uptime](./mackerel-plugin-uptime/README.md)
 * [mackerel-plugin-varnish](./mackerel-plugin-varnish/README.md)
