@@ -6,8 +6,8 @@ import (
 	"os"
 	"time"
 
-	mumble "github.com/layeh/gumble/gumble"
 	mp "github.com/mackerelio/go-mackerel-plugin-helper"
+	mumble "layeh.com/gumble/gumble"
 )
 
 var graphdef = map[string]mp.Graphs{
