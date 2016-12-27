@@ -7,8 +7,10 @@ import (
 	"os"
 	"time"
 
-	"github.com/crowdmob/goamz/aws"
-	"github.com/crowdmob/goamz/cloudwatch"
+	"github.com/aws/aws-sdk-go/aws"
+	"github.com/aws/aws-sdk-go/aws/credentials"
+	"github.com/aws/aws-sdk-go/aws/session"
+	"github.com/aws/aws-sdk-go/service/cloudwatch"
 	mp "github.com/mackerelio/go-mackerel-plugin"
 )
 
@@ -59,15 +61,18 @@ type CloudFrontPlugin struct {
 }
 
 func (p *CloudFrontPlugin) prepare() error {
-	auth, err := aws.GetAuth(p.AccessKeyID, p.SecretAccessKey, "", time.Now())
+	sess, err := session.NewSession()
 	if err != nil {
 		return err
 	}
 
-	p.CloudWatch, err = cloudwatch.NewCloudWatch(auth, aws.Regions[region].CloudWatchServicepoint)
-	if err != nil {
-		return err
+	config := aws.NewConfig()
+	if p.AccessKeyID != "" && p.SecretAccessKey != "" {
+		config = config.WithCredentials(credentials.NewStaticCredentials(p.AccessKeyID, p.SecretAccessKey, ""))
 	}
+	config = config.WithRegion(region)
+
+	p.CloudWatch = cloudwatch.New(sess, config)
 
 	return nil
 }
@@ -75,46 +80,46 @@ func (p *CloudFrontPlugin) prepare() error {
 func (p CloudFrontPlugin) getLastPoint(metric metrics) (float64, error) {
 	now := time.Now()
 
-	dimensions := []cloudwatch.Dimension{
+	dimensions := []*cloudwatch.Dimension{
 		{
-			Name:  "DistributionId",
-			Value: p.Name,
+			Name:  aws.String("DistributionId"),
+			Value: aws.String(p.Name),
 		},
 		{
-			Name:  "Region",
-			Value: "Global",
+			Name:  aws.String("Region"),
+			Value: aws.String("Global"),
 		},
 	}
 
-	response, err := p.CloudWatch.GetMetricStatistics(&cloudwatch.GetMetricStatisticsRequest{
+	response, err := p.CloudWatch.GetMetricStatistics(&cloudwatch.GetMetricStatisticsInput{
 		Dimensions: dimensions,
-		StartTime:  now.Add(time.Duration(180) * time.Second * -1), // 3 min (to fetch at least 1 data-point)
-		EndTime:    now,
-		MetricName: metric.Name,
-		Period:     60,
-		Statistics: []string{metric.Type},
-		Namespace:  namespace,
+		StartTime:  aws.Time(now.Add(time.Duration(180) * time.Second * -1)), // 3 min (to fetch at least 1 data-point)
+		EndTime:    aws.Time(now),
+		MetricName: aws.String(metric.Name),
+		Period:     aws.Int64(60),
+		Statistics: []*string{aws.String(metric.Type)},
+		Namespace:  aws.String(namespace),
 	})
 	if err != nil {
 		return 0, err
 	}
 
-	datapoints := response.GetMetricStatisticsResult.Datapoints
+	datapoints := response.Datapoints
 	if len(datapoints) == 0 {
 		return 0, errors.New("fetched no datapoints")
 	}
 
 	// get a least recently datapoint
 	// because a most recently datapoint is not stable.
-	least := now
+	least := new(time.Time)
 	var latestVal float64
 	for _, dp := range datapoints {
-		if dp.Timestamp.Before(least) {
+		if dp.Timestamp.Before(*least) {
 			least = dp.Timestamp
 			if metric.Type == metricsTypeAverage {
-				latestVal = dp.Average
+				latestVal = *dp.Average
 			} else if metric.Type == metricsTypeSum {
-				latestVal = dp.Sum
+				latestVal = *dp.Sum
 			}
 		}
 	}
@@ -169,11 +174,7 @@ func Do() {
 	}
 
 	helper := mp.NewMackerelPlugin(plugin)
-	if *optTempfile != "" {
-		helper.Tempfile = *optTempfile
-	} else {
-		helper.Tempfile = "/tmp/mackerel-plugin-cloudfront"
-	}
+	helper.Tempfile = *optTempfile
 
 	if os.Getenv("MACKEREL_AGENT_PLUGIN_META") != "" {
 		helper.OutputDefinitions()
