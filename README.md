@@ -53,6 +53,7 @@ Documentation for each plugin is located in its respective sub directory.
 * [mackerel-plugin-unicorn](./mackerel-plugin-unicorn/README.md)
 * [mackerel-plugin-uptime](./mackerel-plugin-uptime/README.md)
 * [mackerel-plugin-varnish](./mackerel-plugin-varnish/README.md)
+* [mackerel-plugin-windows-server-sessions](./mackerel-plugin-windows-server-sessions/README.md)
 * [mackerel-plugin-xentop](./mackerel-plugin-xentop/README.md)
 
 Installation
