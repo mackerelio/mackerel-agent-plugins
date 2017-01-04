@@ -1,3 +1,28 @@
+mackerel-agent-plugins (0.25.0-1) stable; urgency=low
+
+  * Test case is corresponding to httpd stub. (by koemu)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/2>
+  * Better installation testing library on TravisCI (by yuuki)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/4>
+  * Change directory structure convention of each plugin (by Songmu)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/289>
+  * [apache2] fix typo in graphdef (by astj)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/291>
+  * [apache2] Change metric name not to end with dot (by astj)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/293>
+  * add mackerel-plugin-windows-server-sessions (by daiksy)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/294>
+  * migrate from goamz to aws-sdk-go (by astj)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/295>
+  * [docker] Add timeout for API request (by astj)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/296>
+  * fix directory structure (by mattn)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/298>
+  * [ci skip]Update readme (by mattn)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/299>
+
+ -- mackerel <mackerel-developers@hatena.ne.jp>  Wed, 04 Jan 2017 07:28:06 +0000
+
 mackerel-agent-plugins (0.24.0-1) stable; urgency=low
 
   * Implement mackerel-plugin-aws-ec2 (by yyoshiki41)
