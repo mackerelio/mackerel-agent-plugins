@@ -2,16 +2,12 @@
 
 ## 0.25.0 (2017-01-04)
 
-* Test case is corresponding to httpd stub. #2 (koemu)
-* Better installation testing library on TravisCI #4 (yuuki)
 * Change directory structure convention of each plugin #289 (Songmu)
 * [apache2] fix typo in graphdef #291 (astj)
 * [apache2] Change metric name not to end with dot #293 (astj)
 * add mackerel-plugin-windows-server-sessions #294 (daiksy)
 * migrate from goamz to aws-sdk-go #295 (astj)
 * [docker] Add timeout for API request #296 (astj)
-* fix directory structure #298 (mattn)
-* [ci skip]Update readme #299 (mattn)
 
 
 ## 0.24.0 (2016-11-29)

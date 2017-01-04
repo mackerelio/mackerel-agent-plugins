@@ -50,16 +50,12 @@ done
 
 %changelog
 * Wed Jan 04 2017 <mackerel-developers@hatena.ne.jp> - 0.25.0-1
-- Test case is corresponding to httpd stub. (by koemu)
-- Better installation testing library on TravisCI (by yuuki)
 - Change directory structure convention of each plugin (by Songmu)
 - [apache2] fix typo in graphdef (by astj)
 - [apache2] Change metric name not to end with dot (by astj)
 - add mackerel-plugin-windows-server-sessions (by daiksy)
 - migrate from goamz to aws-sdk-go (by astj)
 - [docker] Add timeout for API request (by astj)
-- fix directory structure (by mattn)
-- [ci skip]Update readme (by mattn)
 
 * Tue Nov 29 2016 <mackerel-developers@hatena.ne.jp> - 0.24.0-1
 - Implement mackerel-plugin-aws-ec2 (by yyoshiki41)
