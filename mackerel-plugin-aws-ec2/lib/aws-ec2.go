@@ -181,11 +181,7 @@ func Do() {
 	}
 
 	helper := mp.NewMackerelPlugin(ec2)
-	if *optTempfile != "" {
-		helper.Tempfile = *optTempfile
-	} else {
-		helper.Tempfile = fmt.Sprintf("/tmp/mackerel-plugin-aws-ec2-%s", ec2.InstanceID)
-	}
+	helper.Tempfile = *optTempfile
 
 	if os.Getenv("MACKEREL_AGENT_PLUGIN_META") != "" {
 		helper.OutputDefinitions()
