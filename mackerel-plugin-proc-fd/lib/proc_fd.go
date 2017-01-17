@@ -78,11 +78,7 @@ func Do() {
 	fd.NormalizedProcess = normalizeForMetricName(*optProcess)
 
 	helper := mp.NewMackerelPlugin(fd)
-	if *optTempfile != "" {
-		helper.Tempfile = *optTempfile
-	} else {
-		helper.Tempfile = fmt.Sprintf("/tmp/mackerel-plugin-proc-fd")
-	}
+	helper.Tempfile = *optTempfile
 
 	if os.Getenv("MACKEREL_AGENT_PLUGIN_META") != "" {
 		helper.OutputDefinitions()
