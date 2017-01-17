@@ -113,11 +113,7 @@ func Do() {
 	ses.SecretAccessKey = *optSecretAccessKey
 
 	helper := mp.NewMackerelPlugin(ses)
-	if *optTempfile != "" {
-		helper.Tempfile = *optTempfile
-	} else {
-		helper.Tempfile = "/tmp/mackerel-plugin-ses"
-	}
+	helper.Tempfile = *optTempfile
 
 	if os.Getenv("MACKEREL_AGENT_PLUGIN_META") != "" {
 		helper.OutputDefinitions()
