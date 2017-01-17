@@ -162,11 +162,7 @@ func Do() {
 	}
 
 	helper := mp.NewMackerelPlugin(gosrv)
-	if *optTempfile != "" {
-		helper.Tempfile = *optTempfile
-	} else {
-		helper.Tempfile = fmt.Sprintf("/tmp/mackerel-plugin-gosrv")
-	}
+	helper.Tempfile = *optTempfile
 
 	helper.Run()
 }
