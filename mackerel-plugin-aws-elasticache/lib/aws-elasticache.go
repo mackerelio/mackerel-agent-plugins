@@ -373,7 +373,11 @@ func Do() {
 	}
 
 	helper := mp.NewMackerelPlugin(ecache)
-	helper.Tempfile = *optTempfile
+	if *optTempfile != "" {
+		helper.Tempfile = *optTempfile
+	} else {
+		helper.Tempfile = fmt.Sprintf("/tmp/mackerel-plugin-aws-elasticache-%s-%s", *optCacheClusterID, *optCacheNodeID)
+	}
 
 	if os.Getenv("MACKEREL_AGENT_PLUGIN_META") != "" {
 		helper.OutputDefinitions()
