@@ -189,10 +189,6 @@ func Do() {
 	nginx.Header = *optHeader
 
 	helper := mp.NewMackerelPlugin(nginx)
-	if *optTempfile != "" {
-		helper.Tempfile = *optTempfile
-	} else {
-		helper.Tempfile = fmt.Sprintf("/tmp/mackerel-plugin-nginx")
-	}
+	helper.Tempfile = *optTempfile
 	helper.Run()
 }

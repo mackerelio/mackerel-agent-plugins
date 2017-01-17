@@ -175,7 +175,7 @@ func Do() {
 	flag.StringVar(mta, "M", "", "shorthand for -mta")
 	command := flag.String("command", "", "path to queue-printing command (guessed by -M flag if not given)")
 	flag.StringVar(command, "c", "", "shorthand for -command")
-	tempfile := flag.String("tempfile", "/tmp/mackerel-plugin-mailq", "path to tempfile")
+	tempfile := flag.String("tempfile", "", "path to tempfile")
 	keyPrefix := flag.String("metric-key-prefix", "mailq", "prefix to metric key")
 	labelPrefix := flag.String("metric-label-prefix", "Mailq", "prefix to metric label")
 

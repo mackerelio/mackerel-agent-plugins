@@ -398,16 +398,10 @@ func outputMulticore(tempFileName string) {
 func Do() {
 	optTempfile := flag.String("tempfile", "", "Temp file name")
 	flag.Parse()
-	var tempFileName string
-	if *optTempfile != "" {
-		tempFileName = *optTempfile
-	} else {
-		tempFileName = "/tmp/mackerel-plugin-multicore"
-	}
 
 	if os.Getenv("MACKEREL_AGENT_PLUGIN_META") != "" {
 		outputDefinitions()
 	} else {
-		outputMulticore(tempFileName)
+		outputMulticore(*optTempfile)
 	}
 }
