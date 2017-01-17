@@ -76,10 +76,6 @@ func Do() {
 
 	helper := mp.NewMackerelPlugin(plugin)
 
-	if *optTempfile != "" {
-		helper.Tempfile = *optTempfile
-	} else {
-		helper.Tempfile = "/tmp/mackerel-plugin-windows-server-sessions"
-	}
+	helper.Tempfile = *optTempfile
 	helper.Run()
 }
