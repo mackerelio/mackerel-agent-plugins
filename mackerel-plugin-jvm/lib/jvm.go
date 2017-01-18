@@ -233,8 +233,8 @@ func (m JVMPlugin) GraphDefinition() map[string]mp.Graphs {
 			Unit:  "percentage",
 			Metrics: []mp.Metrics{
 				// gc_time_percentage is the percentage of gc time to 60 sec.
-				{Name: "YGCT", Label: "Young GC time", Diff: true, Scale: (0.001 / 60)},
-				{Name: "FGCT", Label: "Full GC time", Diff: true, Scale: (0.001 / 60)},
+				{Name: "YGCT", Label: "Young GC time", Diff: true, Scale: (100.0 / 60)},
+				{Name: "FGCT", Label: "Full GC time", Diff: true, Scale: (100.0 / 60)},
 			},
 		},
 		fmt.Sprintf("jvm.%s.new_space", lowerJavaName): {
