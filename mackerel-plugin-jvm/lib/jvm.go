@@ -221,7 +221,7 @@ func (m JVMPlugin) GraphDefinition() map[string]mp.Graphs {
 			},
 		},
 		fmt.Sprintf("jvm.%s.gc_time", lowerJavaName): {
-			Label: fmt.Sprintf("JVM %s GC time (msec)", rawJavaName),
+			Label: fmt.Sprintf("JVM %s GC time (sec)", rawJavaName),
 			Unit:  "float",
 			Metrics: []mp.Metrics{
 				{Name: "YGCT", Label: "Young GC time", Diff: true},
