@@ -3,7 +3,7 @@ package main
 import (
 	"./lib"
 	"flag"
-	"fmt"
+	"time"
 )
 
 func main() {
