@@ -100,13 +100,6 @@ func (p RDSPlugin) FetchMetrics() (map[string]float64, error) {
 
 func (p RDSPlugin) baseGraphDefs() map[string]mp.Graphs {
 	return map[string]mp.Graphs{
-		p.Prefix + ".BinLogDiskUsage": {
-			Label: p.LabelPrefix + " BinLogDiskUsage",
-			Unit:  "bytes",
-			Metrics: []mp.Metrics{
-				{Name: "BinLogDiskUsage", Label: "Usage"},
-			},
-		},
 		p.Prefix + ".DiskQueueDepth": {
 			Label: p.LabelPrefix + " BinLogDiskUsage",
 			Unit:  "bytes",
@@ -119,6 +112,22 @@ func (p RDSPlugin) baseGraphDefs() map[string]mp.Graphs {
 			Unit:  "percentage",
 			Metrics: []mp.Metrics{
 				{Name: "CPUUtilization", Label: "CPUUtilization"},
+			},
+		},
+		// .CPUCreditBalance ...Only valid for T2 instances
+		p.Prefix + ".CPUCreditBalance": {
+			Label: p.LabelPrefix + " CPU CreditBalance",
+			Unit:  "float",
+			Metrics: []mp.Metrics{
+				{Name: "CPUCreditBalance", Label: "CPUCreditBalance"},
+			},
+		},
+		// .CPUCreditUsage ...Only valid for T2 instances
+		p.Prefix + ".CPUCreditUsage": {
+			Label: p.LabelPrefix + " CPU CreditUsage",
+			Unit:  "float",
+			Metrics: []mp.Metrics{
+				{Name: "CPUCreditUsage", Label: "CPUCreditUsage"},
 			},
 		},
 		p.Prefix + ".DatabaseConnections": {
@@ -140,13 +149,6 @@ func (p RDSPlugin) baseGraphDefs() map[string]mp.Graphs {
 			Unit:  "bytes",
 			Metrics: []mp.Metrics{
 				{Name: "FreeStorageSpace", Label: "FreeStorageSpace"},
-			},
-		},
-		p.Prefix + ".ReplicaLag": {
-			Label: p.LabelPrefix + " Replica Lag",
-			Unit:  "float",
-			Metrics: []mp.Metrics{
-				{Name: "ReplicaLag", Label: "ReplicaLag"},
 			},
 		},
 		p.Prefix + ".SwapUsage": {
@@ -197,10 +199,10 @@ func (p RDSPlugin) GraphDefinition() map[string]mp.Graphs {
 	switch p.Engine {
 	case "mysql", "mariadb":
 		graphdef = mergeGraphDefs(graphdef, p.mySQLGraphDefinition())
-	case "aurora":
-		graphdef = mergeGraphDefs(graphdef, p.auroraGraphDefinition())
 	case "postgresql":
 		graphdef = mergeGraphDefs(graphdef, p.postgreSQLGraphDefinition())
+	case "aurora":
+		graphdef = p.auroraGraphDefinition()
 	}
 	return graphdef
 }
