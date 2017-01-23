@@ -38,35 +38,35 @@ func (p RDSPlugin) postgreSQLGraphDefinition() map[string]mp.Graphs {
 			Label: p.LabelPrefix + " Maximum Used Transaction IDs",
 			Unit:  "float",
 			Metrics: []mp.Metrics{
-				{Name: "MaximumUsedTransactionIDs", Label: "MaximumUsedTransactionIDs"},
+				{Name: "MaximumUsedTransactionIDs", Label: "IDs"},
 			},
 		},
 		p.Prefix + ".OldestReplicationSlotLag": {
 			Label: p.LabelPrefix + " Oldest Replication Slot Lag",
 			Unit:  "bytes",
 			Metrics: []mp.Metrics{
-				{Name: "OldestReplicationSlotLag", Label: "OldestReplicationSlotLag"},
+				{Name: "OldestReplicationSlotLag", Label: "SlotLag"},
 			},
 		},
 		p.Prefix + ".ReplicationSlotDiskUsage": {
 			Label: p.LabelPrefix + " Replication Slot Disk Usage",
 			Unit:  "bytes",
 			Metrics: []mp.Metrics{
-				{Name: "ReplicationSlotDiskUsage", Label: "ReplicationSlotDiskUsage"},
+				{Name: "ReplicationSlotDiskUsage", Label: "SlotDiskUsage"},
 			},
 		},
 		p.Prefix + ".TransactionLogsDiskUsage": {
 			Label: p.LabelPrefix + " Transaction Logs Disk Usage",
 			Unit:  "bytes",
 			Metrics: []mp.Metrics{
-				{Name: "TransactionLogsDiskUsage", Label: "TransactionLogsDiskUsage"},
+				{Name: "TransactionLogsDiskUsage", Label: "DiskUsage"},
 			},
 		},
 		p.Prefix + ".TransactionLogsGeneration": {
 			Label: p.LabelPrefix + " Transaction Logs Generation",
 			Unit:  "bytes/sec",
 			Metrics: []mp.Metrics{
-				{Name: "TransactionLogsGeneration", Label: "TransactionLogsGeneration"},
+				{Name: "TransactionLogsGeneration", Label: "Generation"},
 			},
 		},
 	}
@@ -148,15 +148,15 @@ func (p RDSPlugin) auroraGraphDefinition() map[string]mp.Graphs {
 			Label: p.LabelPrefix + " Aurora Binlog ReplicaLag",
 			Unit:  "integer",
 			Metrics: []mp.Metrics{
-				{Name: "AuroraBinlogReplicaLag", Label: "AuroraBinlogReplicaLag"},
+				{Name: "AuroraBinlogReplicaLag", Label: "BinlogReplicaLag"},
 			},
 		},
 		p.Prefix + ".AuroraReplicaLag": {
 			Label: p.LabelPrefix + " Aurora ReplicaLag",
 			Unit:  "float",
 			Metrics: []mp.Metrics{
-				{Name: "AuroraReplicaLagMaximum", Label: "ReplicaLagMaximum"},
-				{Name: "AuroraBinlogReplicaLag", Label: "ReplicaLagMinimum"},
+				{Name: "AuroraReplicaLagMaximum", Label: "Maximum"},
+				{Name: "AuroraReplicaLagMinimum", Label: "Minimum"},
 			},
 		},
 	}
