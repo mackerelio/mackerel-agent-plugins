@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"os"
 	"time"
+	"strings"
 
 	"golang.org/x/net/context"
 	"golang.org/x/oauth2/google"
@@ -40,55 +41,55 @@ func (c Option) Get() (string, string) {
 var graphdef = map[string]mp.Graphs{
 	"firewall.dropped_bytes_count": mp.Graphs{
 		Label: "FireWall Dropped Bytes Count",
-		Unit:  "float",
+		Unit:  "bytes",
 		Metrics: []mp.Metrics{
-			{Name: "/firewall/dropped_bytes_count", Label: "Dropped Bytes Count"},
+			{Name: "dropped_bytes_count", Label: "Dropped Bytes Count"},
 		},
 	},
 	"firewall.dropped_packets_count": mp.Graphs{
 		Label: "FireWall Dropped Packets Count",
 		Unit:  "float",
 		Metrics: []mp.Metrics{
-			{Name: "/firewall/dropped_packets_count", Label: "Dropped Packets Count"},
+			{Name: "dropped_packets_count", Label: "Dropped Packets Count"},
 		},
 	},
 	"cpu.utilization": mp.Graphs{
 		Label: "CPU Utilization",
 		Unit:  "percentage",
 		Metrics: []mp.Metrics{
-			{Name: "/instance/cpu/utilization", Label: "Utilization"},
+			{Name: "utilization", Label: "Utilization"},
 		},
 	},
 	"disk.bytes_count": mp.Graphs{
 		Label: "Disk Read Bytes Count",
-		Unit:  "float",
+		Unit:  "bytes",
 		Metrics: []mp.Metrics{
-			{Name: "/instance/disk/read_bytes_count", Label: "Read Bytes Count"},
-			{Name: "/instance/disk/write_bytes_count", Label: "Write Bytes Count"},
+			{Name: "read_bytes_count", Label: "Read Bytes Count"},
+			{Name: "write_bytes_count", Label: "Write Bytes Count"},
 		},
 	},
 	"disk.ops_count": mp.Graphs{
 		Label: "Disk Read Ops Count",
 		Unit:  "float",
 		Metrics: []mp.Metrics{
-			{Name: "/instance/disk/read_ops_count", Label: "Read Ops Count"},
-			{Name: "/instance/disk/write_ops_count", Label: "Write Ops Count"},
+			{Name: "read_ops_count", Label: "Read Ops Count"},
+			{Name: "write_ops_count", Label: "Write Ops Count"},
 		},
 	},
 	"network.bytes_count": mp.Graphs{
 		Label: "Network Received Bytes Count",
-		Unit:  "float",
+		Unit:  "bytes",
 		Metrics: []mp.Metrics{
-			{Name: "/instance/network/received_bytes_count", Label: "Received Bytes Count"},
-			{Name: "/instance/network/sent_bytes_count", Label: "Sent Bytes Count"},
+			{Name: "received_bytes_count", Label: "Received Bytes Count"},
+			{Name: "sent_bytes_count", Label: "Sent Bytes Count"},
 		},
 	},
 	"network.packets_count": mp.Graphs{
 		Label: "Network Received Packets Count",
 		Unit:  "float",
 		Metrics: []mp.Metrics{
-			{Name: "/instance/network/received_packets_count", Label: "Received Packets Count"},
-			{Name: "/instance/network/sent_packets_count", Label: "Sent Packets Count"},
+			{Name: "received_packets_count", Label: "Received Packets Count"},
+			{Name: "sent_packets_count", Label: "Sent Packets Count"},
 		},
 	},
 }
@@ -153,7 +154,8 @@ func (p ComputeEnginePlugin) FetchMetrics() (map[string]float64, error) {
 		if err != nil {
 			continue
 		}
-		stat[metricName] = value
+		splited := strings.Split(metricName, "/")
+		stat[splited[len(splited) - 1]] = value
 	}
 
 	return stat, nil
