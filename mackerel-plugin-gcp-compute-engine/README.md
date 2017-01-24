@@ -1,24 +1,21 @@
 mackerel-plugin-gcp-compute-engine
 ====
 
-Overview
+## Overview
 
-mackerel-plugin-gcp-compute-engine is mackerel plugin that collect metric from Google Compute Engine by using [Google Monitoring API](https://cloud.google.com/monitoring/api/v3/).
+mackerel-plugin-gcp-compute-engine is mackerel plugin that collects metrics from Google Compute Engine by using [Google Monitoring API](https://cloud.google.com/monitoring/api/v3/).
 
 ## Description
 
-mackerel-plugin-gcp-compute-engineはmackerel-agentのプラグインで、Google Compute Engineのサーバーメトリックを収集します。  
 
-Google Monitoring APIを使い、mackerelがデフォルトで収集するメトリックよりも多くのメトリックを取得します。  
-
-注意: このプラグインは、Compute Engine APIへのアクセス権を持ったインスタンスの中でのみ使用可能です。
+This plugin uses Google Monitoring API to get more metrics than mackerel-agent defalut metrics. 
+Caution: This Plugin works only on Compute Engien instance that is enabled Compute Engine API. 
 
 ## Usage
 
-## Contribution
-
-## Licence
-
+```shell
+mackerel-plugin-gcp-compute-engine [-api-key=<APIKey>] [-project=<project_id_or_number>] [-instance-name=<target instance name>]
+```
 ## Author
 
 [littlekbt](https://github.com/littlekbt)

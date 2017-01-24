@@ -22,7 +22,6 @@ const computeDomain string = "compute.googleapis.com"
 // ComputeEnginePlugin is mackerel plugin for Google Compute Engine
 type ComputeEnginePlugin struct {
 	Project           string
-	InstanceID        string
 	InstanceName      string
 	MonitoringService *monitoring.Service
 	Option            *Option
@@ -164,11 +163,10 @@ func (p ComputeEnginePlugin) FetchMetrics() (map[string]float64, error) {
 func Do() {
 	optProject := flag.String("project", "", "Project No")
 	optInstanceName := flag.String("instance-name", "", "Instance Name")
-	optInstanceID := flag.String("instance-id", "", "Instance ID")
 	optAPIKey := flag.String("api-key", "", "API key")
 	flag.Parse()
 
-	if *optProject == "" || *optInstanceName == "" || *optInstanceID == "" || *optAPIKey == "" {
+	if *optProject == "" || *optInstanceName == "" || *optAPIKey == "" {
 		fmt.Println("Errors:", errors.New("Not enough arguments"))
 		return
 	}
@@ -189,7 +187,6 @@ func Do() {
 		MonitoringService: service,
 		Project:           "projects/" + *optProject,
 		InstanceName:      *optInstanceName,
-		InstanceID:        *optInstanceID,
 		Option:            &Option{Key: *optAPIKey},
 	}
 
