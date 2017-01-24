@@ -106,8 +106,7 @@ func getLatestValue(listCall *monitoring.ProjectsTimeSeriesListCall, filter stri
 		return 0, err
 	}
 
-	ps := res.TimeSeries[0].Points
-	valuePtr := ps[len(ps)-1].Value
+	valuePtr := res.TimeSeries[0].Points[0].Value
 
 	var value float64
 	if valuePtr.Int64Value != nil {
