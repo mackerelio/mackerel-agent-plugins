@@ -18,8 +18,8 @@ import (
 const zuluFormat string = "2006-01-02T15:4:05Z"
 const duration string = "3m0s"
 const computeDomain string = "compute.googleapis.com"
-const agentDomain string = "agent.googleapis.com"
 
+// ComputeEnginePlugin is mackerel plugin for Google Compute Engine
 type ComputeEnginePlugin struct {
 	Project           string
 	InstanceID        string
@@ -28,10 +28,12 @@ type ComputeEnginePlugin struct {
 	Option            *Option
 }
 
+// Option is optional argument to an API call
 type Option struct {
 	Key string
 }
 
+// Get returns key and value
 func (c Option) Get() (string, string) {
 	return "key", c.Key
 }
@@ -92,6 +94,7 @@ var graphdef = map[string]mp.Graphs{
 	},
 }
 
+// GraphDefinition is return graphdef
 func (p ComputeEnginePlugin) GraphDefinition() map[string]mp.Graphs {
 	return graphdef
 }
@@ -121,13 +124,12 @@ func mkFilter(domain string, metricName string, instance string) string {
 	switch domain {
 	case computeDomain:
 		filter += " AND metric.label.instance_name = " + instance
-	case agentDomain:
-		filter += " AND resouce.label.instance_id = " + instance
 	}
 
 	return filter
 }
 
+// FetchMetrics fetches metrics from Google Monitoring API
 func (p ComputeEnginePlugin) FetchMetrics() (map[string]float64, error) {
 	now := time.Now()
 	formattedEnd := now.Format(zuluFormat)
@@ -159,6 +161,7 @@ func (p ComputeEnginePlugin) FetchMetrics() (map[string]float64, error) {
 	return stat, nil
 }
 
+// Do the plugin
 func Do() {
 	optProject := flag.String("project", "", "Project No")
 	optInstanceName := flag.String("instance-name", "", "Instance Name")
