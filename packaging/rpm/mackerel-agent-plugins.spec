@@ -49,6 +49,11 @@ done
 %{__oldtargetdir}/*
 
 %changelog
+* Wed Jan 25 2017 <mackerel-developers@hatena.ne.jp> - 0.25.1-1
+- Make more plugins to support MACKEREL_PLUGIN_WORKDIR (by astj)
+- [jvm] Fix the label and scale (by itchyny)
+- [aws-rds] Support Aurora metrics and refactoring (by sioncojp)
+
 * Wed Jan 04 2017 <mackerel-developers@hatena.ne.jp> - 0.25.0-1
 - Change directory structure convention of each plugin (by Songmu)
 - [apache2] fix typo in graphdef (by astj)
