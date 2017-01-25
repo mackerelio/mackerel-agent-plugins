@@ -3,8 +3,8 @@
 ## 0.25.1 (2017-01-25)
 
 * Make more plugins to support MACKEREL_PLUGIN_WORKDIR #301 (astj)
-* Fix the label and scale in jvm plugin #302 (itchyny)
-* [aws-rds] Make it possible to get normal value from all engine. #303 (sioncojp)
+* [jvm] Fix the label and scale #302 (itchyny)
+* [aws-rds] Support Aurora metrics and refactoring #303 (sioncojp)
 
 
 ## 0.25.0 (2017-01-04)

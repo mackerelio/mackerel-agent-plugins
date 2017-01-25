@@ -51,8 +51,8 @@ done
 %changelog
 * Wed Jan 25 2017 <mackerel-developers@hatena.ne.jp> - 0.25.1-1
 - Make more plugins to support MACKEREL_PLUGIN_WORKDIR (by astj)
-- Fix the label and scale in jvm plugin (by itchyny)
-- [aws-rds] Make it possible to get normal value from all engine. (by sioncojp)
+- [jvm] Fix the label and scale (by itchyny)
+- [aws-rds] Support Aurora metrics and refactoring (by sioncojp)
 
 * Wed Jan 04 2017 <mackerel-developers@hatena.ne.jp> - 0.25.0-1
 - Change directory structure convention of each plugin (by Songmu)
