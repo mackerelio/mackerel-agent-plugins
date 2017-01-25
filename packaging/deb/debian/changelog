@@ -1,3 +1,14 @@
+mackerel-agent-plugins (0.25.1-1) stable; urgency=low
+
+  * Make more plugins to support MACKEREL_PLUGIN_WORKDIR (by astj)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/301>
+  * Fix the label and scale in jvm plugin (by itchyny)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/302>
+  * [aws-rds] Make it possible to get normal value from all engine. (by sioncojp)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/303>
+
+ -- mackerel <mackerel-developers@hatena.ne.jp>  Wed, 25 Jan 2017 06:45:39 +0000
+
 mackerel-agent-plugins (0.25.0-1) stable; urgency=low
 
   * Change directory structure convention of each plugin (by Songmu)
