@@ -15,7 +15,7 @@ Caution: This Plugin works only on Compute Engien instance that is enabled Stack
 ## Usage
 
 ```shell
-mackerel-plugin-gcp-compute-engine [-api-key=<APIKey>] [-project=<project_id_or_number>] [-instance-name=<target instance name>]
+mackerel-plugin-gcp-compute-engine [-api-key=<APIKey>]
 ```
 
 
@@ -23,7 +23,7 @@ mackerel-plugin-gcp-compute-engine [-api-key=<APIKey>] [-project=<project_id_or_
 
 ```
 [plugin.metrics.gcp-compute-engine]
-command = "/path/to/mackerel-plugin-gcp-compute-engine/main" ... //arguments
+command = "/path/to/mackerel-plugin-gcp-compute-engine"
 ```
 
 ## Author
