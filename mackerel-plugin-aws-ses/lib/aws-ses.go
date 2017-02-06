@@ -29,7 +29,7 @@ var graphdef = map[string]mp.Graphs{
 	},
 	"ses.stats": {
 		Label: "SES Stats",
-		Unit:  "int",
+		Unit:  "integer",
 		Metrics: []mp.Metrics{
 			{Name: "Complaints", Label: "Complaints"},
 			{Name: "DeliveryAttempts", Label: "DeliveryAttempts"},
