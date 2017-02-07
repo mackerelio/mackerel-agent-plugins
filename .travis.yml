@@ -1,6 +1,8 @@
 language: go
 go:
 - 1.7
+git:
+  depth: 99999
 env:
   global:
   - PATH=~/gopath/bin:$PATH DEBIAN_FRONTEND=noninteractive
