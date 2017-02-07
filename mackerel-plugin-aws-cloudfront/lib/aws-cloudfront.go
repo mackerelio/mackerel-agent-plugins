@@ -111,11 +111,11 @@ func (p CloudFrontPlugin) getLastPoint(metric metrics) (float64, error) {
 
 	// get a least recently datapoint
 	// because a most recently datapoint is not stable.
-	least := new(time.Time)
+	least := time.Now()
 	var latestVal float64
 	for _, dp := range datapoints {
-		if dp.Timestamp.Before(*least) {
-			least = dp.Timestamp
+		if dp.Timestamp.Before(least) {
+			least = *dp.Timestamp
 			if metric.Type == metricsTypeAverage {
 				latestVal = *dp.Average
 			} else if metric.Type == metricsTypeSum {
