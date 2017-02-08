@@ -74,11 +74,48 @@ func (p RDSPlugin) postgreSQLGraphDefinition() map[string]mp.Graphs {
 
 func (p RDSPlugin) auroraGraphDefinition() map[string]mp.Graphs {
 	return map[string]mp.Graphs{
+		p.Prefix + ".CPUUtilization": {
+			Label: p.LabelPrefix + " CPU Utilization",
+			Unit:  "percentage",
+			Metrics: []mp.Metrics{
+				{Name: "CPUUtilization", Label: "CPUUtilization"},
+			},
+		},
+		// .CPUCreditBalance ...Only valid for T2 instances
+		p.Prefix + ".CPUCreditBalance": {
+			Label: p.LabelPrefix + " CPU CreditBalance",
+			Unit:  "float",
+			Metrics: []mp.Metrics{
+				{Name: "CPUCreditBalance", Label: "CPUCreditBalance"},
+			},
+		},
+		// .CPUCreditUsage ...Only valid for T2 instances
+		p.Prefix + ".CPUCreditUsage": {
+			Label: p.LabelPrefix + " CPU CreditUsage",
+			Unit:  "float",
+			Metrics: []mp.Metrics{
+				{Name: "CPUCreditUsage", Label: "CPUCreditUsage"},
+			},
+		},
 		p.Prefix + ".Deadlocks": {
 			Label: p.LabelPrefix + " Dead Locks",
 			Unit:  "float",
 			Metrics: []mp.Metrics{
 				{Name: "Deadlocks", Label: "Deadlocks"},
+			},
+		},
+		p.Prefix + ".DatabaseConnections": {
+			Label: p.LabelPrefix + " Database Connections",
+			Unit:  "float",
+			Metrics: []mp.Metrics{
+				{Name: "DatabaseConnections", Label: "DatabaseConnections"},
+			},
+		},
+		p.Prefix + ".FreeableMemory": {
+			Label: p.LabelPrefix + " Freeable Memory",
+			Unit:  "bytes",
+			Metrics: []mp.Metrics{
+				{Name: "FreeableMemory", Label: "FreeableMemory"},
 			},
 		},
 		p.Prefix + ".Transaction": {
