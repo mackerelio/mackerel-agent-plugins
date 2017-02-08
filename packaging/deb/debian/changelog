@@ -1,3 +1,14 @@
+mackerel-agent-plugins (0.25.2-1) stable; urgency=low
+
+  * [aws-rds] fix metric name (by TakashiKaga)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/306>
+  * [aws-ses] ses.stats is unit type (by holidayworking)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/308>
+  * [aws-cloudfront] Fix regression #295 (by astj)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/309>
+
+ -- mackerel <mackerel-developers@hatena.ne.jp>  Wed, 08 Feb 2017 02:09:23 +0000
+
 mackerel-agent-plugins (0.25.1-1) stable; urgency=low
 
   * Make more plugins to support MACKEREL_PLUGIN_WORKDIR (by astj)

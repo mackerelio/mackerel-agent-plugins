@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.25.2 (2017-02-08)
+
+* [aws-rds] fix metric name #306 (TakashiKaga)
+* [aws-ses] ses.stats is unit type #308 (holidayworking)
+* [aws-cloudfront] Fix regression #295 #309 (astj)
+
+
 ## 0.25.1 (2017-01-25)
 
 * Make more plugins to support MACKEREL_PLUGIN_WORKDIR #301 (astj)
