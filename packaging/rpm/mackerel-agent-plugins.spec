@@ -49,6 +49,11 @@ done
 %{__oldtargetdir}/*
 
 %changelog
+* Wed Feb 08 2017 <mackerel-developers@hatena.ne.jp> - 0.25.2-1
+- [aws-rds] fix metric name (by TakashiKaga)
+- [aws-ses] ses.stats is unit type (by holidayworking)
+- [aws-cloudfront] Fix regression #295 (by astj)
+
 * Wed Jan 25 2017 <mackerel-developers@hatena.ne.jp> - 0.25.1-1
 - Make more plugins to support MACKEREL_PLUGIN_WORKDIR (by astj)
 - [jvm] Fix the label and scale (by itchyny)
