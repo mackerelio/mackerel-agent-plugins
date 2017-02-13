@@ -217,7 +217,7 @@ func Do() {
 	flag.Parse()
 
 	if *optAPIKey == "" {
-		fmt.Println("Errors:", errors.New("Not enough arguments."))
+		fmt.Println("Errors:", errors.New("not enough arguments"))
 		return
 	}
 
@@ -225,7 +225,7 @@ func Do() {
 	instanceName := getInstanceName()
 
 	if projectID == "" || instanceName == "" {
-		fmt.Println("Errors:", errors.New("Can not get project id or instance name."))
+		fmt.Println("Errors:", errors.New("can not get project id or instance name"))
 	}
 
 	ctx := context.Background()
