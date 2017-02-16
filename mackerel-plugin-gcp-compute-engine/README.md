@@ -15,10 +15,10 @@ Caution: This Plugin works only on Compute Engien instance that is enabled Stack
 ## Usage
 
 ```shell
-mackerel-plugin-gcp-compute-engine -api-key=<APIKey> [-project=<project_id_or_number>] [-instance-name=<target instance name>]
+mackerel-plugin-gcp-compute-engine -api-key=<api key> [-project=<project id or number>] [-instance-name=<target instance name>]
 ```
 
-If `-project` or `-instance-name` are not specified, they are obtained from Google Compiute Engine Metadata API for the instance executing this plugin.
+If `-project` or `-instance-name` are not specified, they are obtained from Google Compute Engine Metadata API for the instance executing this plugin.
 It means you don't need to specify them to monitor the instance itself.
 
 ### Example of mackerel-agent.conf
