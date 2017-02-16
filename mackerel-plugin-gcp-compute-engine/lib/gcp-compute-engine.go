@@ -1,10 +1,10 @@
 package gcpce
 
 import (
-	"errors"
 	"flag"
 	"fmt"
 	"io/ioutil"
+	"log"
 	"net/http"
 	"strings"
 	"time"
@@ -220,8 +220,7 @@ func Do() {
 	flag.Parse()
 
 	if *optAPIKey == "" {
-		fmt.Println("Errors:", errors.New("api-key is required"))
-		return
+		log.Fatalln("-api-key is required")
 	}
 
 	// Auto detect projectID/instanceName unless specified
@@ -235,19 +234,19 @@ func Do() {
 	}
 
 	if projectID == "" || instanceName == "" {
-		fmt.Println("Errors:", errors.New("can not get project id or instance name"))
+		log.Fatalln("Could not get project id and/or instance name")
 	}
 
 	ctx := context.Background()
 
 	client, err := google.DefaultClient(ctx, monitoring.CloudPlatformScope)
 	if err != nil {
-		return
+		log.Fatalln("Error while preparing Google OAuth client:", err)
 	}
 
 	service, err := monitoring.New(client)
 	if err != nil {
-		return
+		log.Fatalln("Error while preparing monitoring client:", err)
 	}
 
 	var computeEngine = ComputeEnginePlugin{
