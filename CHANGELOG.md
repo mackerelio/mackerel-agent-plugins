@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.25.3 (2017-02-16)
+
+* Feature/gcp compute engine #304 (littlekbt)
+* [aws-rds] Make it possible to get metrics from Aurora. #307 (TakashiKaga)
+* [multicore]fix tempfile path #311 (daiksy)
+
+
 ## 0.25.2 (2017-02-08)
 
 * [aws-rds] fix metric name #306 (TakashiKaga)
