@@ -7,23 +7,25 @@ mackerel-plugin-gcp-compute-engine is mackerel plugin that collects metrics from
 
 ## Description
 
-This plugin uses Google Monitoring API to get more metrics than mackerel-agent defalut metrics.   
+This plugin uses Google Monitoring API to get more metrics than mackerel-agent defalut metrics.
 
 
-Caution: This Plugin works only on Compute Engien instance that is enabled Stackdriver Monitoring API full access. 
+Caution: This Plugin works only on Compute Engien instance that is enabled Stackdriver Monitoring API full access.
 
 ## Usage
 
 ```shell
-mackerel-plugin-gcp-compute-engine [-api-key=<APIKey>]
+mackerel-plugin-gcp-compute-engine -api-key=<APIKey> [-project=<project_id_or_number>] [-instance-name=<target instance name>]
 ```
 
+If `-project` or `-instance-name` are not specified, they are obtained from Google Compiute Engine Metadata API for the instance executing this plugin.
+It means you don't need to specify them to monitor the instance itself.
 
 ### Example of mackerel-agent.conf
 
 ```
 [plugin.metrics.gcp-compute-engine]
-command = "/path/to/mackerel-plugin-gcp-compute-engine"
+command = "/path/to/mackerel-plugin-gcp-compute-engine -api-key=<YOUR-API-KEY>"
 ```
 
 ## Author
