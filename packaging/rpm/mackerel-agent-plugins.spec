@@ -49,6 +49,11 @@ done
 %{__oldtargetdir}/*
 
 %changelog
+* Thu Feb 16 2017 <mackerel-developers@hatena.ne.jp> - 0.25.3-1
+- Feature/gcp compute engine (by littlekbt)
+- [aws-rds] Make it possible to get metrics from Aurora. (by TakashiKaga)
+- [multicore]fix tempfile path (by daiksy)
+
 * Wed Feb 08 2017 <mackerel-developers@hatena.ne.jp> - 0.25.2-1
 - [aws-rds] fix metric name (by TakashiKaga)
 - [aws-ses] ses.stats is unit type (by holidayworking)
