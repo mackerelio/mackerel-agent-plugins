@@ -214,7 +214,7 @@ func getInstanceName() string {
 
 // Do the plugin
 func Do() {
-	optProject := flag.String("project", "", "Project No")
+	optProject := flag.String("project", "", "Project Identifier (Name or ID)")
 	optInstanceName := flag.String("instance-name", "", "Instance Name")
 
 	optAPIKey := flag.String("api-key", "", "API key")
