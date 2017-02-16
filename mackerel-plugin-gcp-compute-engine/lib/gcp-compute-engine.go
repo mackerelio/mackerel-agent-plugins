@@ -1,10 +1,10 @@
 package gcpce
 
 import (
-	"errors"
 	"flag"
 	"fmt"
 	"io/ioutil"
+	"log"
 	"net/http"
 	"strings"
 	"time"
@@ -162,6 +162,7 @@ func (p ComputeEnginePlugin) FetchMetrics() (map[string]interface{}, error) {
 	} {
 		value, err := getLatestValue(listCall, mkFilter(computeDomain, metricName, p.InstanceName), formattedStart, formattedEnd, p.Option)
 		if err != nil {
+			log.Printf("Failed to fetch a datapoint for %s: %s\n", metricName, err)
 			continue
 		}
 		splited := strings.Split(metricName, "/")
@@ -176,12 +177,14 @@ func getMetaData(url string) string {
 
 	req, err := http.NewRequest("GET", url, nil)
 	if err != nil {
+		log.Println("Failed to getMetaData:", err)
 		return ""
 	}
 	req.Header.Add("Metadata-Flavor", "Google")
 
 	res, err := httpClient.Do(req)
 	if err != nil {
+		log.Println("Failed to getMetaData:", err)
 		return ""
 	}
 
@@ -211,33 +214,42 @@ func getInstanceName() string {
 
 // Do the plugin
 func Do() {
+	optProject := flag.String("project", "", "Project Identifier (Name or ID)")
+	optInstanceName := flag.String("instance-name", "", "Instance Name")
+
 	optAPIKey := flag.String("api-key", "", "API key")
 	optTempfile := flag.String("tempfile", "", "Temp file name")
 
 	flag.Parse()
 
 	if *optAPIKey == "" {
-		fmt.Println("Errors:", errors.New("not enough arguments"))
-		return
+		log.Fatalln("-api-key is required")
 	}
 
-	projectID := getProjectID()
-	instanceName := getInstanceName()
+	// Auto detect projectID/instanceName unless specified
+	projectID := *optProject
+	instanceName := *optInstanceName
+	if projectID == "" {
+		projectID = getProjectID()
+	}
+	if instanceName == "" {
+		instanceName = getInstanceName()
+	}
 
 	if projectID == "" || instanceName == "" {
-		fmt.Println("Errors:", errors.New("can not get project id or instance name"))
+		log.Fatalln("Could not get project id and/or instance name")
 	}
 
 	ctx := context.Background()
 
 	client, err := google.DefaultClient(ctx, monitoring.CloudPlatformScope)
 	if err != nil {
-		return
+		log.Fatalln("Error while preparing Google OAuth client:", err)
 	}
 
 	service, err := monitoring.New(client)
 	if err != nil {
-		return
+		log.Fatalln("Error while preparing monitoring client:", err)
 	}
 
 	var computeEngine = ComputeEnginePlugin{
