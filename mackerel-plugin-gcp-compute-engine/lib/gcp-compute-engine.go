@@ -217,7 +217,7 @@ func Do() {
 	flag.Parse()
 
 	if *optAPIKey == "" {
-		fmt.Println("Errors:", errors.New("not enough arguments"))
+		fmt.Println("Errors:", errors.New("api-key is required"))
 		return
 	}
 
