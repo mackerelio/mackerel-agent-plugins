@@ -162,6 +162,7 @@ func (p ComputeEnginePlugin) FetchMetrics() (map[string]interface{}, error) {
 	} {
 		value, err := getLatestValue(listCall, mkFilter(computeDomain, metricName, p.InstanceName), formattedStart, formattedEnd, p.Option)
 		if err != nil {
+			log.Printf("Failed to fetch a datapoint for %s: %s\n", metricName, err)
 			continue
 		}
 		splited := strings.Split(metricName, "/")
@@ -176,12 +177,14 @@ func getMetaData(url string) string {
 
 	req, err := http.NewRequest("GET", url, nil)
 	if err != nil {
+		log.Println("Failed to getMetaData:", err)
 		return ""
 	}
 	req.Header.Add("Metadata-Flavor", "Google")
 
 	res, err := httpClient.Do(req)
 	if err != nil {
+		log.Println("Failed to getMetaData:", err)
 		return ""
 	}
 
