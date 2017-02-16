@@ -211,6 +211,9 @@ func getInstanceName() string {
 
 // Do the plugin
 func Do() {
+	optProject := flag.String("project", "", "Project No")
+	optInstanceName := flag.String("instance-name", "", "Instance Name")
+
 	optAPIKey := flag.String("api-key", "", "API key")
 	optTempfile := flag.String("tempfile", "", "Temp file name")
 
@@ -221,8 +224,15 @@ func Do() {
 		return
 	}
 
-	projectID := getProjectID()
-	instanceName := getInstanceName()
+	// Auto detect projectID/instanceName unless specified
+	projectID := *optProject
+	instanceName := *optInstanceName
+	if projectID == "" {
+		projectID = getProjectID()
+	}
+	if instanceName == "" {
+		instanceName = getInstanceName()
+	}
 
 	if projectID == "" || instanceName == "" {
 		fmt.Println("Errors:", errors.New("can not get project id or instance name"))
