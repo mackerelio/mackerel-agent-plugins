@@ -49,6 +49,9 @@ done
 %{__oldtargetdir}/*
 
 %changelog
+* Wed Feb 22 2017 <mackerel-developers@hatena.ne.jp> - 0.25.4-1
+- Improve gce plugin (by astj)
+
 * Thu Feb 16 2017 <mackerel-developers@hatena.ne.jp> - 0.25.3-1
 - Feature/gcp compute engine (by littlekbt)
 - [aws-rds] Make it possible to get metrics from Aurora. (by TakashiKaga)

@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.25.4 (2017-02-22)
+
+* Improve gce plugin #313 (astj)
+
+
 ## 0.25.3 (2017-02-16)
 
 * Feature/gcp compute engine #304 (littlekbt)
