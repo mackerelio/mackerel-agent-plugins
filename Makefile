@@ -62,10 +62,13 @@ deb: build
 	cd packaging/deb && debuild --no-tgz-check -rfakeroot -uc -us
 
 build/mackerel-plugin:
-	TARGET_OSARCH="linux/amd64" go build -o build/mackerel-plugin
+	GOOS=linux GOARCH=amd64 go build -o build/mackerel-plugin
 
 rpm-v1: build/mackerel-plugin
-	rpmbuild --define "_sourcedir `pwd`"  --define "_version ${CURRENT_VERSION}" --define "buildarch x86_64" -bb packaging/rpm/mackerel-agent-plugins-v1.spec
+	docker run --rm -v "$(PWD)":/workspace -v "$(PWD)/rpmbuild":/rpmbuild astj/mackerel-rpm-builder:c7 \
+	  --define "_sourcedir /workspace" \
+	  --define "_version ${CURRENT_VERSION}" --define "buildarch x86_64" \
+	  -bb packaging/rpm/mackerel-agent-plugins-v1.spec
 
 gox:
 	go get github.com/mitchellh/gox

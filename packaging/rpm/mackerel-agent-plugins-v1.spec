@@ -30,7 +30,7 @@ This package provides metric plugins for Mackerel.
 
 %{__install} -m0755 %{_sourcedir}/build/mackerel-plugin %{buildroot}%{__targetdir}/
 
-for i in `cat %{_sourcedir}/packaging/config.json | jq -r '.plugins[]'`; do \
+for i in apache2 aws-ec2-cpucredit aws-elasticache aws-elasticsearch aws-elb aws-rds aws-ses conntrack elasticsearch gostats graphite haproxy jmx-jolokia jvm linux mailq memcached mongodb multicore munin mysql nginx php-apc php-fpm php-opcache plack postgres proc-fd rabbitmq redis snmp squid td-table-count trafficserver twemproxy varnish xentop aws-cloudfront aws-ec2-ebs fluentd docker unicorn uptime inode; do \
     ln -s ./mackerel-plugin %{buildroot}%{__targetdir}/mackerel-plugin-$i; \
 done
 
