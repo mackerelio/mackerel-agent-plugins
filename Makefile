@@ -61,6 +61,12 @@ deb: build
 	cp build/mackerel-plugin-* packaging/deb/debian/
 	cd packaging/deb && debuild --no-tgz-check -rfakeroot -uc -us
 
+build/mackerel-plugin:
+	TARGET_OSARCH="linux/amd64" go build -o build/mackerel-plugin
+
+rpm-v1: build/mackerel-plugin
+	rpmbuild --define "_sourcedir `pwd`"  --define "_version ${CURRENT_VERSION}" --define "buildarch x86_64" -bb packaging/rpm/mackerel-agent-plugins-v1.spec
+
 gox:
 	go get github.com/mitchellh/gox
 	gox -build-toolchain -osarch=$(TARGET_OSARCH)
@@ -74,4 +80,4 @@ clean:
 release:
 	tool/releng
 
-.PHONY: all build test testgo deps testdeps rpm deb gox clean release lint cover testtool
+.PHONY: all build test testgo deps testdeps rpm deb rpm-v1 gox clean release lint cover testtool
