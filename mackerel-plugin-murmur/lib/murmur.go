@@ -6,7 +6,7 @@ import (
 	"os"
 	"time"
 
-	mumble "github.com/layeh/gumble/gumble"
+	"layeh.com/gumble/gumble"
 	mp "github.com/mackerelio/go-mackerel-plugin-helper"
 )
 
@@ -29,7 +29,7 @@ type MurmurPlugin struct {
 
 // FetchMetrics interface for mackerelplugin
 func (m MurmurPlugin) FetchMetrics() (map[string]interface{}, error) {
-	resp, err := mumble.Ping(m.Host, 0, time.Millisecond*time.Duration(m.Timeout))
+	resp, err := gumble.Ping(m.Host, 0, time.Millisecond*time.Duration(m.Timeout))
 
 	if err != nil {
 		return nil, err
