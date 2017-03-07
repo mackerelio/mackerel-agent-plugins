@@ -12,7 +12,7 @@ check-variables:
 	echo "CURRENT_VERSION: ${CURRENT_VERSION}"
 	echo "TARGET_OSARCH: ${TARGET_OSARCH}"
 
-all: lint cover testtool rpm deb
+all: lint cover testtool testconvention rpm deb
 
 build: deps
 	mkdir -p build
@@ -22,13 +22,16 @@ build: deps
 			`pwd | sed -e "s|${GOPATH}/src/||"`/$$i; \
 	done
 
-test: testgo lint testtool
+test: testgo lint testtool testconvention
 
 testtool:
 	prove tool/releng tool/autotag
 
 testgo: testdeps
 	go test $(VERBOSE_FLAG) ./...
+
+testconvention:
+	prove -r t/
 
 deps:
 	go get -d -v ./...
@@ -74,4 +77,4 @@ clean:
 release:
 	tool/releng
 
-.PHONY: all build test testgo deps testdeps rpm deb gox clean release lint cover testtool
+.PHONY: all build test testgo deps testdeps rpm deb gox clean release lint cover testtool testconvention
