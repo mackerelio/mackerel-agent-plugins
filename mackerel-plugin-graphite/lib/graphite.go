@@ -251,11 +251,7 @@ func Do() {
 	plugin := newGraphitePlugin(*optHost, *optWebHost, *optWebPort, *optType, *optInstance, *optLabelPrefix)
 
 	helper := mp.NewMackerelPlugin(plugin)
-	if *optTempfile != "" {
-		helper.Tempfile = *optTempfile
-	} else {
-		helper.Tempfile = "/tmp/mackerel-plugin-graphite"
-	}
+	helper.Tempfile = *optTempfile
 
 	if os.Getenv("MACKEREL_AGENT_PLUGIN_META") != "" {
 		helper.OutputDefinitions()

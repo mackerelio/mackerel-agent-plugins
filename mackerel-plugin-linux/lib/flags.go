@@ -11,7 +11,7 @@ var flags = []cli.Flag{
 
 var cliTempFile = cli.StringFlag{
 	Name:   "tempfile, t",
-	Value:  "/tmp/mackerel-plugin-linux",
+	Value:  "",
 	Usage:  "Set temporary file path.",
 	EnvVar: "ENVVAR_TEMPFILE",
 }

@@ -8,8 +8,11 @@ import (
 	"strings"
 	"time"
 
-	"github.com/crowdmob/goamz/aws"
-	"github.com/crowdmob/goamz/cloudwatch"
+	"github.com/aws/aws-sdk-go/aws"
+	"github.com/aws/aws-sdk-go/aws/credentials"
+	"github.com/aws/aws-sdk-go/aws/ec2metadata"
+	"github.com/aws/aws-sdk-go/aws/session"
+	"github.com/aws/aws-sdk-go/service/cloudwatch"
 	mp "github.com/mackerelio/go-mackerel-plugin"
 )
 
@@ -27,33 +30,33 @@ type RDSPlugin struct {
 func getLastPoint(cloudWatch *cloudwatch.CloudWatch, dimension *cloudwatch.Dimension, metricName string) (float64, error) {
 	now := time.Now()
 
-	response, err := cloudWatch.GetMetricStatistics(&cloudwatch.GetMetricStatisticsRequest{
-		Dimensions: []cloudwatch.Dimension{*dimension},
-		StartTime:  now.Add(time.Duration(180) * time.Second * -1), // 3 min (to fetch at least 1 data-point)
-		EndTime:    now,
-		MetricName: metricName,
-		Period:     60,
-		Statistics: []string{"Average"},
-		Namespace:  "AWS/RDS",
+	response, err := cloudWatch.GetMetricStatistics(&cloudwatch.GetMetricStatisticsInput{
+		Dimensions: []*cloudwatch.Dimension{dimension},
+		StartTime:  aws.Time(now.Add(time.Duration(180) * time.Second * -1)), // 3 min (to fetch at least 1 data-point)
+		EndTime:    aws.Time(now),
+		MetricName: aws.String(metricName),
+		Period:     aws.Int64(60),
+		Statistics: []*string{aws.String("Average")},
+		Namespace:  aws.String("AWS/RDS"),
 	})
 	if err != nil {
 		return 0, err
 	}
 
-	datapoints := response.GetMetricStatisticsResult.Datapoints
+	datapoints := response.Datapoints
 	if len(datapoints) == 0 {
 		return 0, errors.New("fetched no datapoints")
 	}
 
-	latest := time.Unix(0, 0)
+	latest := new(time.Time)
 	var latestVal float64
 	for _, dp := range datapoints {
-		if dp.Timestamp.Before(latest) {
+		if dp.Timestamp.Before(*latest) {
 			continue
 		}
 
 		latest = dp.Timestamp
-		latestVal = dp.Average
+		latestVal = *dp.Average
 	}
 
 	return latestVal, nil
@@ -61,21 +64,26 @@ func getLastPoint(cloudWatch *cloudwatch.CloudWatch, dimension *cloudwatch.Dimen
 
 // FetchMetrics interface for mackerel-plugin
 func (p RDSPlugin) FetchMetrics() (map[string]float64, error) {
-	auth, err := aws.GetAuth(p.AccessKeyID, p.SecretAccessKey, "", time.Now())
+	sess, err := session.NewSession()
 	if err != nil {
 		return nil, err
 	}
 
-	cloudWatch, err := cloudwatch.NewCloudWatch(auth, aws.Regions[p.Region].CloudWatchServicepoint)
-	if err != nil {
-		return nil, err
+	config := aws.NewConfig()
+	if p.AccessKeyID != "" && p.SecretAccessKey != "" {
+		config = config.WithCredentials(credentials.NewStaticCredentials(p.AccessKeyID, p.SecretAccessKey, ""))
 	}
+	if p.Region != "" {
+		config = config.WithRegion(p.Region)
+	}
+
+	cloudWatch := cloudwatch.New(sess, config)
 
 	stat := make(map[string]float64)
 
 	perInstance := &cloudwatch.Dimension{
-		Name:  "DBInstanceIdentifier",
-		Value: p.Identifier,
+		Name:  aws.String("DBInstanceIdentifier"),
+		Value: aws.String(p.Identifier),
 	}
 
 	for _, met := range p.rdsMetrics() {
@@ -92,13 +100,6 @@ func (p RDSPlugin) FetchMetrics() (map[string]float64, error) {
 
 func (p RDSPlugin) baseGraphDefs() map[string]mp.Graphs {
 	return map[string]mp.Graphs{
-		p.Prefix + ".BinLogDiskUsage": {
-			Label: p.LabelPrefix + " BinLogDiskUsage",
-			Unit:  "bytes",
-			Metrics: []mp.Metrics{
-				{Name: "BinLogDiskUsage", Label: "Usage"},
-			},
-		},
 		p.Prefix + ".DiskQueueDepth": {
 			Label: p.LabelPrefix + " BinLogDiskUsage",
 			Unit:  "bytes",
@@ -111,6 +112,22 @@ func (p RDSPlugin) baseGraphDefs() map[string]mp.Graphs {
 			Unit:  "percentage",
 			Metrics: []mp.Metrics{
 				{Name: "CPUUtilization", Label: "CPUUtilization"},
+			},
+		},
+		// .CPUCreditBalance ...Only valid for T2 instances
+		p.Prefix + ".CPUCreditBalance": {
+			Label: p.LabelPrefix + " CPU CreditBalance",
+			Unit:  "float",
+			Metrics: []mp.Metrics{
+				{Name: "CPUCreditBalance", Label: "CPUCreditBalance"},
+			},
+		},
+		// .CPUCreditUsage ...Only valid for T2 instances
+		p.Prefix + ".CPUCreditUsage": {
+			Label: p.LabelPrefix + " CPU CreditUsage",
+			Unit:  "float",
+			Metrics: []mp.Metrics{
+				{Name: "CPUCreditUsage", Label: "CPUCreditUsage"},
 			},
 		},
 		p.Prefix + ".DatabaseConnections": {
@@ -132,13 +149,6 @@ func (p RDSPlugin) baseGraphDefs() map[string]mp.Graphs {
 			Unit:  "bytes",
 			Metrics: []mp.Metrics{
 				{Name: "FreeStorageSpace", Label: "FreeStorageSpace"},
-			},
-		},
-		p.Prefix + ".ReplicaLag": {
-			Label: p.LabelPrefix + " Replica Lag",
-			Unit:  "float",
-			Metrics: []mp.Metrics{
-				{Name: "ReplicaLag", Label: "ReplicaLag"},
 			},
 		},
 		p.Prefix + ".SwapUsage": {
@@ -189,10 +199,10 @@ func (p RDSPlugin) GraphDefinition() map[string]mp.Graphs {
 	switch p.Engine {
 	case "mysql", "mariadb":
 		graphdef = mergeGraphDefs(graphdef, p.mySQLGraphDefinition())
-	case "aurora":
-		graphdef = mergeGraphDefs(graphdef, p.auroraGraphDefinition())
 	case "postgresql":
 		graphdef = mergeGraphDefs(graphdef, p.postgreSQLGraphDefinition())
+	case "aurora":
+		graphdef = p.auroraGraphDefinition()
 	}
 	return graphdef
 }
@@ -223,7 +233,10 @@ func Do() {
 	}
 
 	if *optRegion == "" {
-		rds.Region = aws.InstanceRegion()
+		ec2metadata := ec2metadata.New(session.New())
+		if ec2metadata.Available() {
+			rds.Region, _ = ec2metadata.Region()
+		}
 	} else {
 		rds.Region = *optRegion
 	}
@@ -234,11 +247,7 @@ func Do() {
 	rds.Engine = *optEngine
 
 	helper := mp.NewMackerelPlugin(rds)
-	if *optTempfile != "" {
-		helper.Tempfile = *optTempfile
-	} else {
-		helper.Tempfile = "/tmp/mackerel-plugin-rds"
-	}
+	helper.Tempfile = *optTempfile
 
 	if os.Getenv("MACKEREL_AGENT_PLUGIN_META") != "" {
 		helper.OutputDefinitions()

@@ -1,5 +1,41 @@
 # Changelog
 
+## 0.25.4 (2017-02-22)
+
+* Improve gce plugin #313 (astj)
+
+
+## 0.25.3 (2017-02-16)
+
+* Feature/gcp compute engine #304 (littlekbt)
+* [aws-rds] Make it possible to get metrics from Aurora. #307 (TakashiKaga)
+* [multicore]fix tempfile path #311 (daiksy)
+
+
+## 0.25.2 (2017-02-08)
+
+* [aws-rds] fix metric name #306 (TakashiKaga)
+* [aws-ses] ses.stats is unit type #308 (holidayworking)
+* [aws-cloudfront] Fix regression #295 #309 (astj)
+
+
+## 0.25.1 (2017-01-25)
+
+* Make more plugins to support MACKEREL_PLUGIN_WORKDIR #301 (astj)
+* [jvm] Fix the label and scale #302 (itchyny)
+* [aws-rds] Support Aurora metrics and refactoring #303 (sioncojp)
+
+
+## 0.25.0 (2017-01-04)
+
+* Change directory structure convention of each plugin #289 (Songmu)
+* [apache2] fix typo in graphdef #291 (astj)
+* [apache2] Change metric name not to end with dot #293 (astj)
+* add mackerel-plugin-windows-server-sessions #294 (daiksy)
+* migrate from goamz to aws-sdk-go #295 (astj)
+* [docker] Add timeout for API request #296 (astj)
+
+
 ## 0.24.0 (2016-11-29)
 
 * Implement mackerel-plugin-aws-ec2 #248 (yyoshiki41)

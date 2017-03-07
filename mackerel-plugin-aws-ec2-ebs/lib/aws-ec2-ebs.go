@@ -331,11 +331,7 @@ func Do() {
 	}
 
 	helper := mp.NewMackerelPlugin(ebs)
-	if *optTempfile != "" {
-		helper.Tempfile = *optTempfile
-	} else {
-		helper.Tempfile = "/tmp/mackerel-plugin-ebs"
-	}
+	helper.Tempfile = *optTempfile
 
 	helper.Run()
 }

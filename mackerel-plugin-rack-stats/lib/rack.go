@@ -181,11 +181,7 @@ func Do() {
 	rack.MetricKey = *optMetricKey
 
 	helper := mp.NewMackerelPlugin(rack)
-	if *optTempfile != "" {
-		helper.Tempfile = *optTempfile
-	} else {
-		helper.Tempfile = fmt.Sprintf("/tmp/mackerel-plugin-rack-stats")
-	}
+	helper.Tempfile = *optTempfile
 
 	helper.Run()
 }
