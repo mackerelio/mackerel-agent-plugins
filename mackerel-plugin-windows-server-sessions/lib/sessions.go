@@ -1,4 +1,4 @@
-package mpwinservsess
+package mpwindowsserversessions
 
 import (
 	"encoding/csv"
