@@ -32,6 +32,7 @@ testgo: testdeps
 
 testconvention:
 	prove -r t/
+	test `go generate ./... && git diff | wc -l` = 0 || (echo 'please `go generate ./...` and commit them' && exit 1)
 
 deps:
 	go get -d -v ./...
