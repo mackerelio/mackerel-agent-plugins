@@ -1,11 +1,7 @@
 VERBOSE_FLAG = $(if $(VERBOSE),-verbose)
-
 CURRENT_VERSION = $(shell git log --merges --oneline | perl -ne 'if(m/^.+Merge pull request \#[0-9]+ from .+\/bump-version-([0-9\.]+)/){print $$1;exit}')
-
-BUILD_FLAGS = -ldflags "\
-	      -s -w \
-	      "
-
+CURRENT_REVISION = $(shell git rev-parse --short HEAD)
+BUILD_LDFLAGS = "-s -w"
 TARGET_OSARCH="linux/amd64"
 
 check-variables:
@@ -17,10 +13,15 @@ all: lint cover testtool testconvention rpm deb
 build: deps
 	mkdir -p build
 	for i in mackerel-plugin-*; do \
-	  gox $(VERBOSE_FLAG) $(BUILD_FLAGS) \
+	  gox $(VERBOSE_FLAG) -ldflags="-s -w" \
 	    -osarch=$(TARGET_OSARCH) -output build/$$i \
 			`pwd | sed -e "s|${GOPATH}/src/||"`/$$i; \
 	done
+
+build/mackerel-plugin: deps
+	mkdir -p build
+	go build -ldflags="-s -w -X main.version=$(CURRENT_VERSION) -X main.gitcommit=$(CURRENT_REVISION)" \
+	  -o build/mackerel-plugin
 
 test: testgo lint testtool testconvention
 
