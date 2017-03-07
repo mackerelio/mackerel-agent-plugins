@@ -1,4 +1,4 @@
-use 5.016;
+use 5.014;
 use warnings;
 use utf8;
 use File::Spec;
@@ -10,7 +10,9 @@ for my $dir (<mackerel-plugin-*>) {
     my $readmemd = File::Spec->catfile($dir, 'README.md');
     ok -f -r $readmemd or diag "$readmemd is not available.";
 
-    my $package = 'mp' . ($dir =~ s/(mackerel-plugin)?-//gr);
+    my $package = $dir;
+       $package =~ s/(mackerel-plugin)?-//g;
+       $package = "mp$package";
     my $expect = qq[package main
 
 import "github.com/mackerelio/mackerel-agent-plugins/$dir/lib"
