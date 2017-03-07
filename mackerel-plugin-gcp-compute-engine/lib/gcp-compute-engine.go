@@ -1,4 +1,4 @@
-package gcpce
+package mpgcpcomputeengine
 
 import (
 	"flag"
