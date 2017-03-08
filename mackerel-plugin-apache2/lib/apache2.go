@@ -82,7 +82,7 @@ func (c Apache2Plugin) GraphDefinition() map[string]mp.Graphs {
 				{Name: "score-L", Label: "Logging", Diff: false, Stacked: true},
 				{Name: "score-G", Label: "Gracefully finishing", Diff: false, Stacked: true},
 				{Name: "score-I", Label: "Idle cleanup", Diff: false, Stacked: true},
-				{Name: "score-.", Label: "Open slot", Diff: false, Stacked: true},
+				{Name: "score-", Label: "Open slot", Diff: false, Stacked: true},
 			},
 		},
 	}
@@ -140,6 +140,9 @@ func parseApache2Scoreboard(str string, p *map[string]interface{}) error {
 		}
 		record := strings.Split(line, ":")
 		for _, sb := range strings.Split(strings.Trim(record[1], " "), "") {
+			if sb == "." {
+				sb = ""
+			}
 			name := fmt.Sprintf("score-%s", sb)
 			c, assert := (*p)[name].(float64)
 			if !assert {

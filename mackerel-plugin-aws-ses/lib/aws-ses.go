@@ -29,7 +29,7 @@ var graphdef = map[string]mp.Graphs{
 	},
 	"ses.stats": {
 		Label: "SES Stats",
-		Unit:  "int",
+		Unit:  "integer",
 		Metrics: []mp.Metrics{
 			{Name: "Complaints", Label: "Complaints"},
 			{Name: "DeliveryAttempts", Label: "DeliveryAttempts"},
@@ -113,11 +113,7 @@ func Do() {
 	ses.SecretAccessKey = *optSecretAccessKey
 
 	helper := mp.NewMackerelPlugin(ses)
-	if *optTempfile != "" {
-		helper.Tempfile = *optTempfile
-	} else {
-		helper.Tempfile = "/tmp/mackerel-plugin-ses"
-	}
+	helper.Tempfile = *optTempfile
 
 	if os.Getenv("MACKEREL_AGENT_PLUGIN_META") != "" {
 		helper.OutputDefinitions()

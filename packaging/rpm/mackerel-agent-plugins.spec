@@ -49,6 +49,32 @@ done
 %{__oldtargetdir}/*
 
 %changelog
+* Wed Feb 22 2017 <mackerel-developers@hatena.ne.jp> - 0.25.4-1
+- Improve gce plugin (by astj)
+
+* Thu Feb 16 2017 <mackerel-developers@hatena.ne.jp> - 0.25.3-1
+- Feature/gcp compute engine (by littlekbt)
+- [aws-rds] Make it possible to get metrics from Aurora. (by TakashiKaga)
+- [multicore]fix tempfile path (by daiksy)
+
+* Wed Feb 08 2017 <mackerel-developers@hatena.ne.jp> - 0.25.2-1
+- [aws-rds] fix metric name (by TakashiKaga)
+- [aws-ses] ses.stats is unit type (by holidayworking)
+- [aws-cloudfront] Fix regression #295 (by astj)
+
+* Wed Jan 25 2017 <mackerel-developers@hatena.ne.jp> - 0.25.1-1
+- Make more plugins to support MACKEREL_PLUGIN_WORKDIR (by astj)
+- [jvm] Fix the label and scale (by itchyny)
+- [aws-rds] Support Aurora metrics and refactoring (by sioncojp)
+
+* Wed Jan 04 2017 <mackerel-developers@hatena.ne.jp> - 0.25.0-1
+- Change directory structure convention of each plugin (by Songmu)
+- [apache2] fix typo in graphdef (by astj)
+- [apache2] Change metric name not to end with dot (by astj)
+- add mackerel-plugin-windows-server-sessions (by daiksy)
+- migrate from goamz to aws-sdk-go (by astj)
+- [docker] Add timeout for API request (by astj)
+
 * Tue Nov 29 2016 <mackerel-developers@hatena.ne.jp> - 0.24.0-1
 - Implement mackerel-plugin-aws-ec2 (by yyoshiki41)
 - [postgres] support Pg9.1 (by Songmu)

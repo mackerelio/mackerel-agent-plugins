@@ -221,7 +221,7 @@ func (m JVMPlugin) GraphDefinition() map[string]mp.Graphs {
 			},
 		},
 		fmt.Sprintf("jvm.%s.gc_time", lowerJavaName): {
-			Label: fmt.Sprintf("JVM %s GC time (msec)", rawJavaName),
+			Label: fmt.Sprintf("JVM %s GC time (sec)", rawJavaName),
 			Unit:  "float",
 			Metrics: []mp.Metrics{
 				{Name: "YGCT", Label: "Young GC time", Diff: true},
@@ -233,8 +233,8 @@ func (m JVMPlugin) GraphDefinition() map[string]mp.Graphs {
 			Unit:  "percentage",
 			Metrics: []mp.Metrics{
 				// gc_time_percentage is the percentage of gc time to 60 sec.
-				{Name: "YGCT", Label: "Young GC time", Diff: true, Scale: (0.001 / 60)},
-				{Name: "FGCT", Label: "Full GC time", Diff: true, Scale: (0.001 / 60)},
+				{Name: "YGCT", Label: "Young GC time", Diff: true, Scale: (100.0 / 60)},
+				{Name: "FGCT", Label: "Full GC time", Diff: true, Scale: (100.0 / 60)},
 			},
 		},
 		fmt.Sprintf("jvm.%s.new_space", lowerJavaName): {

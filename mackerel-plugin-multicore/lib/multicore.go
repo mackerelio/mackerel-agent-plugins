@@ -10,6 +10,7 @@ import (
 	"strconv"
 	"strings"
 	"time"
+	"path/filepath"
 
 	mp "github.com/mackerelio/go-mackerel-plugin-helper"
 )
@@ -394,15 +395,23 @@ func outputMulticore(tempFileName string) {
 	outputLoadavgPerCore(loadPerCPUCount, now)
 }
 
+func generateTempfilePath() string {
+	dir := os.Getenv("MACKEREL_PLUGIN_WORKDIR")
+	if dir == "" {
+		dir = os.TempDir()
+	}
+	return filepath.Join(dir, "mackerel-plugin-multicore")
+}
+
 // Do the plugin
 func Do() {
+	var tempFileName string
 	optTempfile := flag.String("tempfile", "", "Temp file name")
 	flag.Parse()
-	var tempFileName string
-	if *optTempfile != "" {
-		tempFileName = *optTempfile
-	} else {
-		tempFileName = "/tmp/mackerel-plugin-multicore"
+
+	tempFileName = *optTempfile
+	if tempFileName == "" {
+		tempFileName = generateTempfilePath()
 	}
 
 	if os.Getenv("MACKEREL_AGENT_PLUGIN_META") != "" {

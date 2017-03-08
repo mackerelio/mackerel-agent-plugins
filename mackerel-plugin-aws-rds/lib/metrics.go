@@ -22,18 +22,51 @@ func mergeGraphDefs(a, b map[string]mp.Graphs) map[string]mp.Graphs {
 
 func (p RDSPlugin) mySQLGraphDefinition() map[string]mp.Graphs {
 	return map[string]mp.Graphs{
-		p.Prefix + ".CPUCreditBalance": {
-			Label: p.LabelPrefix + " CPU CreditBalance",
-			Unit:  "float",
+		p.Prefix + ".BinLogDiskUsage": {
+			Label: p.LabelPrefix + " BinLogDiskUsage",
+			Unit:  "bytes",
 			Metrics: []mp.Metrics{
-				{Name: "CPUCreditBalance", Label: "CPUCreditBalance"},
+				{Name: "BinLogDiskUsage", Label: "Usage"},
 			},
 		},
-		p.Prefix + ".CPUCreditUsage": {
-			Label: p.LabelPrefix + " CPU CreditUsage",
+	}
+}
+
+func (p RDSPlugin) postgreSQLGraphDefinition() map[string]mp.Graphs {
+	return map[string]mp.Graphs{
+		p.Prefix + ".MaximumUsedTransactionIDs": {
+			Label: p.LabelPrefix + " Maximum Used Transaction IDs",
 			Unit:  "float",
 			Metrics: []mp.Metrics{
-				{Name: "CPUCreditUsage", Label: "CPUCreditUsage"},
+				{Name: "MaximumUsedTransactionIDs", Label: "IDs"},
+			},
+		},
+		p.Prefix + ".OldestReplicationSlotLag": {
+			Label: p.LabelPrefix + " Oldest Replication Slot Lag",
+			Unit:  "bytes",
+			Metrics: []mp.Metrics{
+				{Name: "OldestReplicationSlotLag", Label: "SlotLag"},
+			},
+		},
+		p.Prefix + ".ReplicationSlotDiskUsage": {
+			Label: p.LabelPrefix + " Replication Slot Disk Usage",
+			Unit:  "bytes",
+			Metrics: []mp.Metrics{
+				{Name: "ReplicationSlotDiskUsage", Label: "SlotDiskUsage"},
+			},
+		},
+		p.Prefix + ".TransactionLogsDiskUsage": {
+			Label: p.LabelPrefix + " Transaction Logs Disk Usage",
+			Unit:  "bytes",
+			Metrics: []mp.Metrics{
+				{Name: "TransactionLogsDiskUsage", Label: "DiskUsage"},
+			},
+		},
+		p.Prefix + ".TransactionLogsGeneration": {
+			Label: p.LabelPrefix + " Transaction Logs Generation",
+			Unit:  "bytes/sec",
+			Metrics: []mp.Metrics{
+				{Name: "TransactionLogsGeneration", Label: "Generation"},
 			},
 		},
 	}
@@ -41,11 +74,48 @@ func (p RDSPlugin) mySQLGraphDefinition() map[string]mp.Graphs {
 
 func (p RDSPlugin) auroraGraphDefinition() map[string]mp.Graphs {
 	return map[string]mp.Graphs{
+		p.Prefix + ".CPUUtilization": {
+			Label: p.LabelPrefix + " CPU Utilization",
+			Unit:  "percentage",
+			Metrics: []mp.Metrics{
+				{Name: "CPUUtilization", Label: "CPUUtilization"},
+			},
+		},
+		// .CPUCreditBalance ...Only valid for T2 instances
+		p.Prefix + ".CPUCreditBalance": {
+			Label: p.LabelPrefix + " CPU CreditBalance",
+			Unit:  "float",
+			Metrics: []mp.Metrics{
+				{Name: "CPUCreditBalance", Label: "CPUCreditBalance"},
+			},
+		},
+		// .CPUCreditUsage ...Only valid for T2 instances
+		p.Prefix + ".CPUCreditUsage": {
+			Label: p.LabelPrefix + " CPU CreditUsage",
+			Unit:  "float",
+			Metrics: []mp.Metrics{
+				{Name: "CPUCreditUsage", Label: "CPUCreditUsage"},
+			},
+		},
 		p.Prefix + ".Deadlocks": {
 			Label: p.LabelPrefix + " Dead Locks",
 			Unit:  "float",
 			Metrics: []mp.Metrics{
 				{Name: "Deadlocks", Label: "Deadlocks"},
+			},
+		},
+		p.Prefix + ".DatabaseConnections": {
+			Label: p.LabelPrefix + " Database Connections",
+			Unit:  "float",
+			Metrics: []mp.Metrics{
+				{Name: "DatabaseConnections", Label: "DatabaseConnections"},
+			},
+		},
+		p.Prefix + ".FreeableMemory": {
+			Label: p.LabelPrefix + " Freeable Memory",
+			Unit:  "bytes",
+			Metrics: []mp.Metrics{
+				{Name: "FreeableMemory", Label: "FreeableMemory"},
 			},
 		},
 		p.Prefix + ".Transaction": {
@@ -61,6 +131,32 @@ func (p RDSPlugin) auroraGraphDefinition() map[string]mp.Graphs {
 			Unit:  "float",
 			Metrics: []mp.Metrics{
 				{Name: "EngineUptime", Label: "EngineUptime"},
+			},
+		},
+		p.Prefix + ".Latency": {
+			Label: p.LabelPrefix + " Latency in second",
+			Unit:  "float",
+			Metrics: []mp.Metrics{
+				{Name: "SelectLatency", Label: "Select"},
+				{Name: "InsertLatency", Label: "Insert"},
+				{Name: "UpdateLatency", Label: "Update"},
+				{Name: "DeleteLatency", Label: "Delete"},
+				{Name: "CommitLatency", Label: "Commit"},
+				{Name: "DDLLatency", Label: "DDL"},
+				{Name: "DMLLatency", Label: "DML"},
+			},
+		},
+		p.Prefix + ".Throughput": {
+			Label: p.LabelPrefix + " Throughput",
+			Unit:  "bytes/sec",
+			Metrics: []mp.Metrics{
+				{Name: "SelectThroughput", Label: "Select"},
+				{Name: "InsertThroughput", Label: "Insert"},
+				{Name: "UpdateThroughput", Label: "Update"},
+				{Name: "DeleteThroughput", Label: "Delete"},
+				{Name: "CommitThroughput", Label: "Commit"},
+				{Name: "DDLThroughput", Label: "DDL"},
+				{Name: "DMLThroughput", Label: "DML"},
 			},
 		},
 		p.Prefix + ".Queries": {
@@ -89,69 +185,15 @@ func (p RDSPlugin) auroraGraphDefinition() map[string]mp.Graphs {
 			Label: p.LabelPrefix + " Aurora Binlog ReplicaLag",
 			Unit:  "integer",
 			Metrics: []mp.Metrics{
-				{Name: "AuroraBinlogReplicaLag", Label: "AuroraBinlogReplicaLag"},
+				{Name: "AuroraBinlogReplicaLag", Label: "BinlogReplicaLag"},
 			},
 		},
 		p.Prefix + ".AuroraReplicaLag": {
 			Label: p.LabelPrefix + " Aurora ReplicaLag",
 			Unit:  "float",
 			Metrics: []mp.Metrics{
-				{Name: "AuroraReplicaLagMaximum", Label: "ReplicaLagMaximum"},
-				{Name: "AuroraBinlogReplicaLag", Label: "ReplicaLagMinimum"},
-			},
-		},
-	}
-}
-
-func (p RDSPlugin) postgreSQLGraphDefinition() map[string]mp.Graphs {
-	return map[string]mp.Graphs{
-		p.Prefix + ".CPUCreditBalance": {
-			Label: p.LabelPrefix + " CPU CreditBalance",
-			Unit:  "float",
-			Metrics: []mp.Metrics{
-				{Name: "CPUCreditBalance", Label: "CPUCreditBalance"},
-			},
-		},
-		p.Prefix + ".CPUCreditUsage": {
-			Label: p.LabelPrefix + " CPU CreditUsage",
-			Unit:  "float",
-			Metrics: []mp.Metrics{
-				{Name: "CPUCreditUsage", Label: "CPUCreditUsage"},
-			},
-		},
-		p.Prefix + ".MaximumUsedTransactionIDs": {
-			Label: p.LabelPrefix + " Maximum Used Transaction IDs",
-			Unit:  "float",
-			Metrics: []mp.Metrics{
-				{Name: "MaximumUsedTransactionIDs", Label: "MaximumUsedTransactionIDs"},
-			},
-		},
-		p.Prefix + ".OldestReplicationSlotLag": {
-			Label: p.LabelPrefix + " Oldest Replication Slot Lag",
-			Unit:  "bytes",
-			Metrics: []mp.Metrics{
-				{Name: "OldestReplicationSlotLag", Label: "OldestReplicationSlotLag"},
-			},
-		},
-		p.Prefix + ".ReplicationSlotDiskUsage": {
-			Label: p.LabelPrefix + " Replication Slot Disk Usage",
-			Unit:  "bytes",
-			Metrics: []mp.Metrics{
-				{Name: "ReplicationSlotDiskUsage", Label: "ReplicationSlotDiskUsage"},
-			},
-		},
-		p.Prefix + ".TransactionLogsDiskUsage": {
-			Label: p.LabelPrefix + " Transaction Logs Disk Usage",
-			Unit:  "bytes",
-			Metrics: []mp.Metrics{
-				{Name: "TransactionLogsDiskUsage", Label: "TransactionLogsDiskUsage"},
-			},
-		},
-		p.Prefix + ".TransactionLogsGeneration": {
-			Label: p.LabelPrefix + " Transaction Logs Generation",
-			Unit:  "bytes/sec",
-			Metrics: []mp.Metrics{
-				{Name: "TransactionLogsGeneration", Label: "TransactionLogsGeneration"},
+				{Name: "AuroraReplicaLagMaximum", Label: "Maximum"},
+				{Name: "AuroraReplicaLagMinimum", Label: "Minimum"},
 			},
 		},
 	}

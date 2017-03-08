@@ -27,7 +27,7 @@ func TestParseApache2Scoreboard(t *testing.T) {
 	assert.EqualValues(t, stat["score-L"], 1)
 	assert.EqualValues(t, stat["score-G"], 1)
 	assert.EqualValues(t, stat["score-I"], 1)
-	assert.EqualValues(t, stat["score-."], 5)
+	assert.EqualValues(t, stat["score-"], 5)
 }
 
 func TestParseApache2Status(t *testing.T) {

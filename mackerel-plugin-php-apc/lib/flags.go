@@ -34,7 +34,7 @@ var cliStatusPage = cli.StringFlag{
 
 var cliTempFile = cli.StringFlag{
 	Name:   "tempfile, t",
-	Value:  "/tmp/mackerel-plugin-php-apc",
+	Value:  "",
 	Usage:  "Set temporary file path.",
 	EnvVar: "ENVVAR_TEMPFILE",
 }

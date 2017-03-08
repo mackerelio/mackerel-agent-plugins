@@ -170,11 +170,7 @@ func Do() {
 	}
 
 	helper := mp.NewMackerelPlugin(plack)
-	if *optTempfile != "" {
-		helper.Tempfile = *optTempfile
-	} else {
-		helper.Tempfile = fmt.Sprintf("/tmp/mackerel-plugin-plack")
-	}
+	helper.Tempfile = *optTempfile
 
 	if os.Getenv("MACKEREL_AGENT_PLUGIN_META") != "" {
 		helper.OutputDefinitions()
