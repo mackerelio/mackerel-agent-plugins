@@ -6,7 +6,7 @@ git:
 env:
   global:
   - PATH=~/gopath/bin:$PATH DEBIAN_FRONTEND=noninteractive
-  - secure: "F3xcTvoqUKDaZ8W2gmroc0Ty2XfCH74FSqj+zy6+SvBfvo/qOjZyYFdOLf9DyowJPrWJHpCEM0D3pXWaSazkHSL3ZgzcqwaiULFALGxh0ly0nPBFjfj290LDT8INs4ypkv2YnkcT5ZwBNe17k1n2fqMQHXks1DXdDdI+oRnLGdo="
+  - secure: "hN9YTBJDTuBY/wrB7Iws87mD4sLU+5+t85Tgvlyw1BEgmV7FM0hjJcrW4BKeVR80xGt3jn4W7jfM2LHS0mfNXbsquRUoXpzY001lV1jcUKhCrZwS59zu4OgDQb6crDBuGSNClYBn6l1RAOLPPIC7MK8JtIundwFA85B6a/toAaI="
 install:
 - go get github.com/mitchellh/gox
 - sudo apt-get update
@@ -29,12 +29,12 @@ before_deploy:
 - git fetch --tags --depth=1000 || true
 deploy:
 - provider: script
-  script: tool/releng --task=upload-to-github-release -v && tool/releng --task=upload-master-to-github-release -v
+  script: tool/releng --task=upload-to-github-release && tool/releng --task=upload-master-to-github-release
   skip_cleanup: true
   on:
     branch: master
 - provider: script
-  script: tool/releng --task=create-pullrequest --current-branch=$TRAVIS_BRANCH -v
+  script: tool/releng --task=create-pullrequest --current-branch=$TRAVIS_BRANCH
   skip_cleanup: true
   on:
     all_branches: true
