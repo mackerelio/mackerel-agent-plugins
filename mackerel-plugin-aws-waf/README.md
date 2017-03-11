@@ -18,3 +18,7 @@ the credential provided manually or fetched automatically by IAM Role should hav
 [plugin.metrics.aws-waf]
 command = "/path/to/mackerel-plugin-aws-waf -web-acl-id=your-web-acl-id"
 ```
+
+## Notes
+
+This plugin only supports AWS WAF for CloudFront, and not the metrics of WAF for ALB.
