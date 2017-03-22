@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.25.5 (2017-03-22)
+
+* add `mackerel-plugin` command #315 (Songmu)
+* Add AWS WAF Plugin #316 (holidayworking)
+* use new bot token #318 (daiksy)
+* use new bot token #319 (daiksy)
+
+
 ## 0.25.4 (2017-02-22)
 
 * Improve gce plugin #313 (astj)
