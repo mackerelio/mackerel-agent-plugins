@@ -1,3 +1,16 @@
+mackerel-agent-plugins (0.25.5-1) stable; urgency=low
+
+  * add `mackerel-plugin` command (by Songmu)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/315>
+  * Add AWS WAF Plugin (by holidayworking)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/316>
+  * use new bot token (by daiksy)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/318>
+  * use new bot token (by daiksy)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/319>
+
+ -- mackerel <mackerel-developers@hatena.ne.jp>  Wed, 22 Mar 2017 08:13:37 +0000
+
 mackerel-agent-plugins (0.25.4-1) stable; urgency=low
 
   * Improve gce plugin (by astj)

@@ -49,6 +49,12 @@ done
 %{__oldtargetdir}/*
 
 %changelog
+* Wed Mar 22 2017 <mackerel-developers@hatena.ne.jp> - 0.25.5-1
+- add `mackerel-plugin` command (by Songmu)
+- Add AWS WAF Plugin (by holidayworking)
+- use new bot token (by daiksy)
+- use new bot token (by daiksy)
+
 * Wed Feb 22 2017 <mackerel-developers@hatena.ne.jp> - 0.25.4-1
 - Improve gce plugin (by astj)
 
