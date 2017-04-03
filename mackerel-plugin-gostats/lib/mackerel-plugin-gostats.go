@@ -58,7 +58,7 @@ func (m GostatsPlugin) GraphDefinition() map[string]mp.Graphs {
 			Label: (labelPrefix + " Runtime"),
 			Unit:  "integer",
 			Metrics: []mp.Metrics{
-				{Name: "goroutine_num", Label: "Gorotine Num"},
+				{Name: "goroutine_num", Label: "Goroutine Num"},
 				{Name: "cgo_call_num", Label: "CGO Call Num", Diff: true},
 			},
 		},
