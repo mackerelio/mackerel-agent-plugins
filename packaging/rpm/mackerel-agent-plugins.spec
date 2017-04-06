@@ -49,6 +49,10 @@ done
 %{__oldtargetdir}/*
 
 %changelog
+* Thu Apr 06 2017 <mackerel-developers@hatena.ne.jp> - 0.25.6-1
+- Cross compile by go's native cross build, not by gox (by astj)
+- fix a label of gostats plugin (by itchyny)
+
 * Wed Mar 22 2017 <mackerel-developers@hatena.ne.jp> - 0.25.5-1
 - add `mackerel-plugin` command (by Songmu)
 - Add AWS WAF Plugin (by holidayworking)
