@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.25.6 (2017-04-06)
+
+* Cross compile by go's native cross build, not by gox #321 (astj)
+* fix a label of gostats plugin #323 (itchyny)
+
+
 ## 0.25.5 (2017-03-22)
 
 * add `mackerel-plugin` command #315 (Songmu)
