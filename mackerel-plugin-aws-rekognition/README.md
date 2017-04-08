@@ -6,7 +6,7 @@ AWS Rekognition custom metrics plugin for mackerel.io agent.
 ## Synopsis
 
 ```shell
-mackerel-plugin-aws-rekognition [-region=<aws-region>] -access-key-id=<id>] [-secret-access-key=<key>] [-tempfile=<tempfile>]
+mackerel-plugin-aws-rekognition [-operation=<aws-rekognition-operation>] [-region=<aws-region>] [-access-key-id=<id>] [-secret-access-key=<key>] [-tempfile=<tempfile>]
 ```
 
 ## AWS IAM Policy

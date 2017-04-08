@@ -47,6 +47,7 @@ type RekognitionPlugin struct {
 	Region          string
 	AccessKeyID     string
 	SecretAccessKey string
+	Operation       string
 	CloudWatch      *cloudwatch.CloudWatch
 }
 
@@ -72,14 +73,22 @@ func (p *RekognitionPlugin) prepare() error {
 func (p RekognitionPlugin) getLastPoint(metricName string) (float64, error) {
 	now := time.Now()
 
-	response, err := p.CloudWatch.GetMetricStatistics(&cloudwatch.GetMetricStatisticsInput{
+	input := &cloudwatch.GetMetricStatisticsInput{
 		Namespace:  aws.String("AWS/Rekognition"),
 		MetricName: aws.String(metricName),
 		StartTime:  aws.Time(now.Add(time.Duration(180) * time.Second * -1)),
 		EndTime:    aws.Time(now),
 		Period:     aws.Int64(60),
 		Statistics: []*string{aws.String("Average")},
-	})
+	}
+	if p.Operation != "" {
+		input.Dimensions = []*cloudwatch.Dimension{{
+			Name:  aws.String("Operation"),
+			Value: aws.String(p.Operation),
+		}}
+	}
+
+	response, err := p.CloudWatch.GetMetricStatistics(input)
 
 	if err != nil {
 		return 0, err
@@ -138,6 +147,7 @@ func Do() {
 	optRegion := flag.String("region", "", "AWS Region")
 	optAccessKeyID := flag.String("access-key-id", "", "AWS Access Key ID")
 	optSecretAccessKey := flag.String("secret-access-key", "", "AWS Secret Access Key")
+	optOperation := flag.String("operation", "", "AWS Rekognition Operation")
 	optTempfile := flag.String("tempfile", "", "Temp file name")
 	flag.Parse()
 
@@ -155,6 +165,7 @@ func Do() {
 	rekognition.Region = *optRegion
 	rekognition.AccessKeyID = *optAccessKeyID
 	rekognition.SecretAccessKey = *optSecretAccessKey
+	rekognition.Operation = *optOperation
 
 	err := rekognition.prepare()
 	if err != nil {
