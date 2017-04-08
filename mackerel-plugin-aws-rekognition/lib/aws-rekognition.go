@@ -1,4 +1,4 @@
-package mpawswaf
+package mpawsrekognition
 
 import (
 	"errors"

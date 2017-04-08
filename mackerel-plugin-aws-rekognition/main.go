@@ -3,5 +3,5 @@ package main
 import "github.com/mackerelio/mackerel-agent-plugins/mackerel-plugin-aws-rekognition/lib"
 
 func main() {
-	mpawswaf.Do()
+	mpawsrekognition.Do()
 }
