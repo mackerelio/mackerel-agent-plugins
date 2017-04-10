@@ -83,7 +83,7 @@ func getLastPointFromCloudWatch(cw cloudwatchiface.CloudWatchAPI, functionName s
 		StartTime:  aws.Time(now.Add(time.Duration(180) * time.Second * -1)), // 3 min
 		EndTime:    aws.Time(now),
 		MetricName: aws.String(metric.CloudWatchName),
-		Period:     aws.Int64(600),
+		Period:     aws.Int64(60),
 		Statistics: statsInput,
 		Namespace:  aws.String(namespace),
 	}
