@@ -25,7 +25,7 @@ func TestGraphDefinition(t *testing.T) {
 	}
 }
 
-func ExampleGraphDefinition() {
+func ExampleLambdaPlugin_GraphDefinition() {
 	helperForDefault := mp.NewMackerelPlugin(defaultLambda())
 	helperForDefault.OutputDefinitions()
 
