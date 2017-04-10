@@ -120,13 +120,13 @@ func getLastPointFromCloudWatch(cw cloudwatchiface.CloudWatchAPI, functionName s
 // TransformMetrics converts some of datapoints to post differences of two metrics
 func transformMetrics(stats map[string]interface{}) map[string]interface{} {
 	// Although stats are interface{}, those values from cloudwatch.Datapoint are guaranteed to be float64.
-	if totalCount, ok := stats["TEMPORARY_invocations_total"].(float64); ok {
+	if totalCount, ok := stats["invocations_total"].(float64); ok {
 		if errorCount, ok := stats["invocations_error"].(float64); ok {
 			stats["invocations_success"] = totalCount - errorCount
 		} else {
 			stats["invocations_success"] = totalCount
 		}
-		delete(stats, "TEMPORARY_invocations_total")
+		delete(stats, "invocations_total")
 	}
 	return stats
 }
@@ -149,7 +149,7 @@ func mergeStatsFromDatapoint(stats map[string]interface{}, dp *cloudwatch.Datapo
 
 var lambdaMetricsGroup = []metricsGroup{
 	{CloudWatchName: "Invocations", Metrics: []metric{
-		{MackerelName: "TEMPORARY_invocations_total", Type: metricsTypeSum},
+		{MackerelName: "invocations_total", Type: metricsTypeSum},
 	}},
 	{CloudWatchName: "Errors", Metrics: []metric{
 		{MackerelName: "invocations_error", Type: metricsTypeSum},

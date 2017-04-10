@@ -45,9 +45,9 @@ func TestPrepare(t *testing.T) {
 
 func TestTransformMetrics(t *testing.T) {
 	regularStats := map[string]interface{}{
-		"TEMPORARY_invocations_total": 150.0,
-		"invocations_error":           30.0,
-		"durations_avg":               250.3,
+		"invocations_total": 150.0,
+		"invocations_error": 30.0,
+		"durations_avg":     250.3,
 	}
 	assert.Equal(t,
 		map[string]interface{}{
@@ -70,8 +70,8 @@ func TestTransformMetrics(t *testing.T) {
 
 	// I don't know this case may happen in practice, but anyway I test.
 	nonErrorStats := map[string]interface{}{
-		"TEMPORARY_invocations_total": 150.0,
-		"durations_avg":               250.3,
+		"invocations_total": 150.0,
+		"durations_avg":     250.3,
 	}
 	assert.Equal(t,
 		map[string]interface{}{
@@ -195,12 +195,12 @@ func TestMergeStatsFromDatapoint(t *testing.T) {
 	stats = mergeStatsFromDatapoint(stats,
 		&dp,
 		metricsGroup{CloudWatchName: "Invocations", Metrics: []metric{
-			{MackerelName: "TEMPORARY_invocations_total", Type: metricsTypeSum},
+			{MackerelName: "invocations_total", Type: metricsTypeSum},
 		}})
 
 	assert.Equal(t,
 		map[string]interface{}{
-			"TEMPORARY_invocations_total": 500.0,
+			"invocations_total": 500.0,
 		},
 		stats,
 		"Can merge single stat",
@@ -216,10 +216,10 @@ func TestMergeStatsFromDatapoint(t *testing.T) {
 
 	assert.Equal(t,
 		map[string]interface{}{
-			"TEMPORARY_invocations_total": 500.0,
-			"duration_avg":                25.0,
-			"duration_max":                45.0,
-			"duration_min":                5.0,
+			"invocations_total": 500.0,
+			"duration_avg":      25.0,
+			"duration_max":      45.0,
+			"duration_min":      5.0,
 		},
 		stats,
 		"Can merge already existing stats / can merge multiple stats at once",
