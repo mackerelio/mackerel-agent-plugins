@@ -1,7 +1,6 @@
 package mpawslambda
 
 import (
-	"errors"
 	"flag"
 	"log"
 	"strings"
@@ -100,7 +99,7 @@ func getLastPointFromCloudWatch(cw cloudwatchiface.CloudWatchAPI, functionName s
 
 	datapoints := response.Datapoints
 	if len(datapoints) == 0 {
-		return nil, errors.New("fetched no datapoints")
+		return nil, nil
 	}
 
 	latest := new(time.Time)
