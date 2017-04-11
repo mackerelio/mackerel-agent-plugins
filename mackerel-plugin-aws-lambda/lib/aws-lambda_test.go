@@ -200,6 +200,20 @@ func TestMergeStatsFromDatapoint(t *testing.T) {
 	)
 
 	stats = mergeStatsFromDatapoint(stats,
+		nil,
+		metricsGroup{CloudWatchName: "DeadLetterErrors", Metrics: []metric{
+			{MackerelName: "dead_letter_errors", Type: metricsTypeSum},
+		}})
+
+	assert.Equal(t,
+		map[string]interface{}{
+			"invocations_total": 500.0,
+		},
+		stats,
+		"Does not panic on nil",
+	)
+
+	stats = mergeStatsFromDatapoint(stats,
 		&dp,
 		metricsGroup{CloudWatchName: "Duration", Metrics: []metric{
 			{MackerelName: "duration_avg", Type: metricsTypeAverage},

@@ -132,16 +132,18 @@ func transformMetrics(stats map[string]interface{}) map[string]interface{} {
 }
 
 func mergeStatsFromDatapoint(stats map[string]interface{}, dp *cloudwatch.Datapoint, mg metricsGroup) map[string]interface{} {
-	for _, met := range mg.Metrics {
-		switch met.Type {
-		case metricsTypeAverage:
-			stats[met.MackerelName] = *dp.Average
-		case metricsTypeSum:
-			stats[met.MackerelName] = *dp.Sum
-		case metricsTypeMaximum:
-			stats[met.MackerelName] = *dp.Maximum
-		case metricsTypeMinimum:
-			stats[met.MackerelName] = *dp.Minimum
+	if dp != nil {
+		for _, met := range mg.Metrics {
+			switch met.Type {
+			case metricsTypeAverage:
+				stats[met.MackerelName] = *dp.Average
+			case metricsTypeSum:
+				stats[met.MackerelName] = *dp.Sum
+			case metricsTypeMaximum:
+				stats[met.MackerelName] = *dp.Maximum
+			case metricsTypeMinimum:
+				stats[met.MackerelName] = *dp.Minimum
+			}
 		}
 	}
 	return stats
