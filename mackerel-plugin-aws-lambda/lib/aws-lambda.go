@@ -154,6 +154,9 @@ var lambdaMetricsGroup = []metricsGroup{
 	{CloudWatchName: "Errors", Metrics: []metric{
 		{MackerelName: "invocations_error", Type: metricsTypeSum},
 	}},
+	{CloudWatchName: "DeadLetterErrors", Metrics: []metric{
+		{MackerelName: "dead_letter_errors", Type: metricsTypeSum},
+	}},
 	{CloudWatchName: "Throttles", Metrics: []metric{
 		{MackerelName: "invocations_throttles", Type: metricsTypeSum},
 	}},
@@ -190,6 +193,7 @@ func (p LambdaPlugin) GraphDefinition() map[string]mp.Graphs {
 			Metrics: []mp.Metrics{
 				{Name: "invocations_success", Label: "Success", Stacked: true},
 				{Name: "invocations_error", Label: "Error", Stacked: true},
+				{Name: "dead_letter_errors", Label: "Dead Letter Errors", Stacked: true},
 				{Name: "invocations_throttles", Label: "Throttles", Stacked: true},
 			},
 		},

@@ -31,7 +31,7 @@ func ExampleLambdaPlugin_GraphDefinition() {
 
 	// Output:
 	// # mackerel-agent-plugin
-	// {"graphs":{"lambda.duration":{"label":"Lambda Duration","unit":"float","metrics":[{"name":"duration_avg","label":"Average","stacked":false},{"name":"duration_max","label":"Maximum","stacked":false},{"name":"duration_min","label":"Minimum","stacked":false}]},"lambda.invocations":{"label":"Lambda Invocations","unit":"integer","metrics":[{"name":"invocations_success","label":"Success","stacked":true},{"name":"invocations_error","label":"Error","stacked":true},{"name":"invocations_throttles","label":"Throttles","stacked":true}]}}}
+	// {"graphs":{"lambda.duration":{"label":"Lambda Duration","unit":"float","metrics":[{"name":"duration_avg","label":"Average","stacked":false},{"name":"duration_max","label":"Maximum","stacked":false},{"name":"duration_min","label":"Minimum","stacked":false}]},"lambda.invocations":{"label":"Lambda Invocations","unit":"integer","metrics":[{"name":"invocations_success","label":"Success","stacked":true},{"name":"invocations_error","label":"Error","stacked":true},{"name":"dead_letter_errors","label":"Dead Letter Errors","stacked":true},{"name":"invocations_throttles","label":"Throttles","stacked":true}]}}}
 }
 
 func TestPrepare(t *testing.T) {
