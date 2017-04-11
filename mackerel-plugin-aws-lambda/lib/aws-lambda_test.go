@@ -18,13 +18,6 @@ func defaultLambda() LambdaPlugin {
 	return defaultLambda
 }
 
-func TestGraphDefinition(t *testing.T) {
-	graphdef := defaultLambda().GraphDefinition()
-	if len(graphdef) != 3 {
-		t.Errorf("GraphDefinition: %d should be 3", len(graphdef))
-	}
-}
-
 func ExampleLambdaPlugin_GraphDefinition() {
 	helperForDefault := mp.NewMackerelPlugin(defaultLambda())
 	helperForDefault.OutputDefinitions()
