@@ -193,8 +193,14 @@ func (p LambdaPlugin) GraphDefinition() map[string]mp.Graphs {
 			Metrics: []mp.Metrics{
 				{Name: "invocations_success", Label: "Success", Stacked: true},
 				{Name: "invocations_error", Label: "Error", Stacked: true},
-				{Name: "dead_letter_errors", Label: "Dead Letter Errors", Stacked: true},
 				{Name: "invocations_throttles", Label: "Throttles", Stacked: true},
+			},
+		},
+		"dead_letters": {
+			Label: (labelPrefix + " Dead Letter"),
+			Unit:  "integer",
+			Metrics: []mp.Metrics{
+				{Name: "dead_letter_errors", Label: "Errors"},
 			},
 		},
 		"duration": {
