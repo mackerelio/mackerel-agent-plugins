@@ -193,9 +193,9 @@ func (p LambdaPlugin) GraphDefinition() map[string]mp.Graphs {
 			Label: (labelPrefix + " Invocations"),
 			Unit:  "integer",
 			Metrics: []mp.Metrics{
-				{Name: "invocations_success", Label: "Success", Stacked: true},
-				{Name: "invocations_error", Label: "Error", Stacked: true},
-				{Name: "invocations_throttles", Label: "Throttles", Stacked: true},
+				{Name: "invocations_success", Label: "Success"},
+				{Name: "invocations_error", Label: "Error"},
+				{Name: "invocations_throttles", Label: "Throttles"},
 			},
 		},
 		"dead_letters": {

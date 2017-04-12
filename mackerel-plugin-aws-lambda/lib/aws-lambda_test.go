@@ -24,7 +24,7 @@ func ExampleLambdaPlugin_GraphDefinition() {
 
 	// Output:
 	// # mackerel-agent-plugin
-	// {"graphs":{"lambda.dead_letters":{"label":"Lambda Dead Letter","unit":"integer","metrics":[{"name":"dead_letter_errors","label":"Errors","stacked":false}]},"lambda.duration":{"label":"Lambda Duration","unit":"float","metrics":[{"name":"duration_avg","label":"Average","stacked":false},{"name":"duration_max","label":"Maximum","stacked":false},{"name":"duration_min","label":"Minimum","stacked":false}]},"lambda.invocations":{"label":"Lambda Invocations","unit":"integer","metrics":[{"name":"invocations_success","label":"Success","stacked":true},{"name":"invocations_error","label":"Error","stacked":true},{"name":"invocations_throttles","label":"Throttles","stacked":true}]}}}
+	// {"graphs":{"lambda.dead_letters":{"label":"Lambda Dead Letter","unit":"integer","metrics":[{"name":"dead_letter_errors","label":"Errors","stacked":false}]},"lambda.duration":{"label":"Lambda Duration","unit":"float","metrics":[{"name":"duration_avg","label":"Average","stacked":false},{"name":"duration_max","label":"Maximum","stacked":false},{"name":"duration_min","label":"Minimum","stacked":false}]},"lambda.invocations":{"label":"Lambda Invocations","unit":"integer","metrics":[{"name":"invocations_success","label":"Success","stacked":false},{"name":"invocations_error","label":"Error","stacked":false},{"name":"invocations_throttles","label":"Throttles","stacked":false}]}}}
 }
 
 func TestPrepare(t *testing.T) {
