@@ -122,8 +122,10 @@ func (p KinesisStreamsPlugin) FetchMetrics() (map[string]interface{}, error) {
 
 	for _, met := range [...]metrics{
 		{CloudWatchName: "GetRecords.Bytes", MackerelName: "GetRecordsBytes", Type: metricsTypeAverage},
+		// Max of IteratorAgeMilliseconds is useful especially when few of iterators are in trouble
 		{CloudWatchName: "GetRecords.IteratorAgeMilliseconds", MackerelName: "GetRecordsDelayMaxMilliseconds", Type: metricsTypeMaximum},
 		{CloudWatchName: "GetRecords.IteratorAgeMilliseconds", MackerelName: "GetRecordsDelayMinMilliseconds", Type: metricsTypeMinimum},
+		{CloudWatchName: "GetRecords.IteratorAgeMilliseconds", MackerelName: "GetRecordsDelayAverageMilliseconds", Type: metricsTypeAverage},
 		{CloudWatchName: "GetRecords.Latency", MackerelName: "GetRecordsLatency", Type: metricsTypeAverage},
 		{CloudWatchName: "GetRecords.Records", MackerelName: "GetRecordsRecords", Type: metricsTypeAverage},
 		{CloudWatchName: "GetRecords.Success", MackerelName: "GetRecordsSuccess", Type: metricsTypeAverage},
@@ -169,6 +171,7 @@ func (p KinesisStreamsPlugin) GraphDefinition() map[string]mp.Graphs {
 			Label: (labelPrefix + " Read Delay"),
 			Unit:  "integer",
 			Metrics: []mp.Metrics{
+				{Name: "GetRecordsDelayAverageMilliseconds", Label: "Average"},
 				{Name: "GetRecordsDelayMaxMilliseconds", Label: "Max"},
 				{Name: "GetRecordsDelayMinMilliseconds", Label: "Min"},
 			},
