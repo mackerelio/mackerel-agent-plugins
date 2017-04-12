@@ -79,7 +79,8 @@ func getLastPointFromCloudWatch(cw cloudwatchiface.CloudWatchAPI, functionName s
 		statsInput[i] = aws.String(typ.Type)
 	}
 	input := &cloudwatch.GetMetricStatisticsInput{
-		StartTime:  aws.Time(now.Add(time.Duration(180) * time.Second * -1)), // 3 min
+		// Usually Cloudwatch datapoints delays about 2 mins, so retrieve last 3 mins (with 1 min buffer)
+		StartTime:  aws.Time(now.Add(time.Duration(180) * time.Second * -1)),
 		EndTime:    aws.Time(now),
 		MetricName: aws.String(metric.CloudWatchName),
 		Period:     aws.Int64(60),
