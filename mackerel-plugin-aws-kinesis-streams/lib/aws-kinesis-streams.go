@@ -17,7 +17,6 @@ import (
 const (
 	namespace          = "AWS/Kinesis"
 	metricsTypeAverage = "Average"
-	metricsTypeSum     = "Sum"
 	metricsTypeMaximum = "Maximum"
 	metricsTypeMinimum = "Minimum"
 )
@@ -107,8 +106,6 @@ func (p KinesisStreamsPlugin) getLastPoint(metric metrics) (float64, error) {
 		switch metric.Type {
 		case metricsTypeAverage:
 			latestVal = *dp.Average
-		case metricsTypeSum:
-			latestVal = *dp.Sum
 		case metricsTypeMaximum:
 			latestVal = *dp.Maximum
 		case metricsTypeMinimum:
