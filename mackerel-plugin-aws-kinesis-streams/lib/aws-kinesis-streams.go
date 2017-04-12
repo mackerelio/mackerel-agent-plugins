@@ -170,7 +170,7 @@ func (p KinesisStreamsPlugin) GraphDefinition() map[string]mp.Graphs {
 			Unit:  "integer",
 			Metrics: []mp.Metrics{
 				{Name: "GetRecordsDelayMaxMilliseconds", Label: "Max"},
-				{Name: "GetRecordsDelayMinMilliseconds", Label: "min"},
+				{Name: "GetRecordsDelayMinMilliseconds", Label: "Min"},
 			},
 		},
 		"latency": {
