@@ -6,6 +6,8 @@
        "aws-elasticache",
        "aws-elasticsearch",
        "aws-elb",
+       "aws-kinesis-streams",
+       "aws-lambda",
        "aws-rds",
        "aws-ses",
        "conntrack",
