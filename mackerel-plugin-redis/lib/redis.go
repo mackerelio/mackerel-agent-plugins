@@ -226,7 +226,7 @@ func (m RedisPlugin) GraphDefinition() map[string]mp.Graphs {
 			Metrics: []mp.Metrics{
 				{Name: "connected_clients", Label: "Connected Clients", Diff: false, Stacked: true},
 				{Name: "blocked_clients", Label: "Blocked Clients", Diff: false, Stacked: true},
-				{Name: "connected_slaves", Label: "Blocked Clients", Diff: false, Stacked: true},
+				{Name: "connected_slaves", Label: "Connected Slaves", Diff: false, Stacked: true},
 			},
 		},
 		"keys": {
