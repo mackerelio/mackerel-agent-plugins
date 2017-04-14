@@ -239,12 +239,6 @@ func TestFetchMetricsFail(t *testing.T) {
 		Timeout: 5,
 	}
 
-	// panic against a lacking stats json
-	noTotalConnectionsJSONStr := strings.Replace(
-		jsonStr, "\"total_connections\": 3895,\n", "", 1)
-	stats = noTotalConnectionsJSONStr
-	assertPanic(t, p.FetchMetrics)
-
 	noClientErrJSONStr := strings.Replace(
 		jsonStr, "\"client_err\": 10,\n", "", 1)
 	stats = noClientErrJSONStr
