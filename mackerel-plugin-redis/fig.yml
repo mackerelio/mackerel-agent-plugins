@@ -1,0 +1,6 @@
+redis:
+  image: redis:2.8
+plugin:
+  build: .
+  links:
+    - redis
