@@ -11,7 +11,7 @@ mackerel-plugin-gunicorn [-status-file=<path>]
 
 ## Requirements
 
-This plugin require that gunicorn include the following code in its `config.py`.
+This plugin requires that gunicorn include the following code in its `config.py`.
 
 ``` python
 import fcntl
