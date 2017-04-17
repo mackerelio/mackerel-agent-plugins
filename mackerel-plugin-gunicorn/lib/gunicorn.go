@@ -22,7 +22,7 @@ type GunicornPlugin struct {
 // {
 //   "BusyWorkers": "0",
 //   "IdleWorkers": "4",
-//   "TotalAccesses": "440"
+//   "TotalAccesses": "440",
 //   "stats": [
 //     {
 //       "uri": "/",
@@ -52,7 +52,7 @@ type GunicornPlugin struct {
 //       "pid": 26724,
 //       "status": "_"
 //     }
-//   ],
+//   ]
 // }
 
 // field types vary between versions
