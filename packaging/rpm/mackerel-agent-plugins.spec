@@ -49,6 +49,14 @@ done
 %{__oldtargetdir}/*
 
 %changelog
+* Wed Apr 19 2017 <mackerel-developers@hatena.ne.jp> - 0.26.0-1
+- Add AWS Rekognition Plugin (by holidayworking)
+- Add aws-kinesis-streams plugin (by astj)
+- Add AWS Lambda plugin (by astj)
+- [redis] fix metrics lable (by y-kuno)
+- Add aws-lambda and aws-kinesis-streams to package (by astj)
+- Support twemproxy v0.3, Add total_server_error (by masahide)
+
 * Thu Apr 06 2017 <mackerel-developers@hatena.ne.jp> - 0.25.6-1
 - Cross compile by go's native cross build, not by gox (by astj)
 - fix a label of gostats plugin (by itchyny)

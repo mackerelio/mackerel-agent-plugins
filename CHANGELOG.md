@@ -1,5 +1,15 @@
 # Changelog
 
+## 0.26.0 (2017-04-19)
+
+* Add AWS Rekognition Plugin #322 (holidayworking)
+* Add aws-kinesis-streams plugin #326 (astj)
+* Add AWS Lambda plugin #327 (astj)
+* [redis] fix metrics lable #329 (y-kuno)
+* Add aws-lambda and aws-kinesis-streams to package #330 (astj)
+* Support twemproxy v0.3, Add total_server_error #332 (masahide)
+
+
 ## 0.25.6 (2017-04-06)
 
 * Cross compile by go's native cross build, not by gox #321 (astj)
