@@ -11,6 +11,8 @@ import (
 	"github.com/mackerelio/mackerel-agent-plugins/mackerel-plugin-aws-elasticache/lib"
 	"github.com/mackerelio/mackerel-agent-plugins/mackerel-plugin-aws-elasticsearch/lib"
 	"github.com/mackerelio/mackerel-agent-plugins/mackerel-plugin-aws-elb/lib"
+	"github.com/mackerelio/mackerel-agent-plugins/mackerel-plugin-aws-kinesis-streams/lib"
+	"github.com/mackerelio/mackerel-agent-plugins/mackerel-plugin-aws-lambda/lib"
 	"github.com/mackerelio/mackerel-agent-plugins/mackerel-plugin-aws-rds/lib"
 	"github.com/mackerelio/mackerel-agent-plugins/mackerel-plugin-aws-ses/lib"
 	"github.com/mackerelio/mackerel-agent-plugins/mackerel-plugin-conntrack/lib"
@@ -66,6 +68,10 @@ func runPlugin(plug string) error {
 		mpawselasticsearch.Do()
 	case "aws-elb":
 		mpawselb.Do()
+	case "aws-kinesis-streams":
+		mpawskinesisstreams.Do()
+	case "aws-lambda":
+		mpawslambda.Do()
 	case "aws-rds":
 		mpawsrds.Do()
 	case "aws-ses":
@@ -154,6 +160,8 @@ var plugins = []string{
 	"aws-elasticache",
 	"aws-elasticsearch",
 	"aws-elb",
+	"aws-kinesis-streams",
+	"aws-lambda",
 	"aws-rds",
 	"aws-ses",
 	"conntrack",
