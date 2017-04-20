@@ -1,0 +1,211 @@
+package mpuwsgivassal
+
+import (
+	"encoding/json"
+	"flag"
+	"net"
+	"net/http"
+	"os"
+	"reflect"
+	"strings"
+
+	mp "github.com/mackerelio/go-mackerel-plugin-helper"
+)
+
+// UWSGIVassalPlugin mackerel plugin for uWSGI
+type UWSGIVassalPlugin struct {
+	Socket      string
+	Prefix      string
+	LabelPrefix string
+}
+
+// {
+//   "workers": [{
+//     "id": 1,
+//     "pid": 31759,
+//     "requests": 0,
+//     "exceptions": 0,
+//     "status": "idle",
+//     "rss": 0,
+//     "vsz": 0,
+//     "running_time": 0,
+//     "last_spawn": 1317235041,
+//     "respawn_count": 1,
+//     "tx": 0,
+//     "avg_rt": 0,
+//     "apps": [{
+//       "id": 0,
+//       "modifier1": 0,
+//       "mountpoint": "",
+//       "requests": 0,
+//       "exceptions": 0,
+//       "chdir": ""
+//     }]
+//   }, {
+//     "id": 2,
+//     "pid": 31760,
+//     "requests": 0,
+//     "exceptions": 0,
+//     "status": "idle",
+//     "rss": 0,
+//     "vsz": 0,
+//     "running_time": 0,
+//     "last_spawn": 1317235041,
+//     "respawn_count": 1,
+//     "tx": 0,
+//     "avg_rt": 0,
+//     "apps": [{
+//       "id": 0,
+//       "modifier1": 0,
+//       "mountpoint": "",
+//       "requests": 0,
+//       "exceptions": 0,
+//       "chdir": ""
+//     }]
+//   }, {
+//     "id": 3,
+//     "pid": 31761,
+//     "requests": 0,
+//     "exceptions": 0,
+//     "status": "idle",
+//     "rss": 0,
+//     "vsz": 0,
+//     "running_time": 0,
+//     "last_spawn": 1317235041,
+//     "respawn_count": 1,
+//     "tx": 0,
+//     "avg_rt": 0,
+//     "apps": [{
+//       "id": 0,
+//       "modifier1": 0,
+//       "mountpoint": "",
+//       "requests": 0,
+//       "exceptions": 0,
+//       "chdir": ""
+//     }]
+//   }, {
+//     "id": 4,
+//     "pid": 31762,
+//     "requests": 0,
+//     "exceptions": 0,
+//     "status": "idle",
+//     "rss": 0,
+//     "vsz": 0,
+//     "running_time": 0,
+//     "last_spawn": 1317235041,
+//     "respawn_count": 1,
+//     "tx": 0,
+//     "avg_rt": 0,
+//     "apps": [{
+//       "id": 0,
+//       "modifier1": 0,
+//       "mountpoint": "",
+//       "requests": 0,
+//       "exceptions": 0,
+//       "chdir": ""
+//     }]
+//   }
+// }
+
+// field types vary between versions
+
+// UWSGIWorker struct
+type UWSGIWorker struct {
+	Requests uint64 `json:"requests"`
+	Status   string `json:"status"`
+}
+
+// UWSGIWorkers sturct for json struct
+type UWSGIWorkers struct {
+	Workers []UWSGIWorker `json:"workers"`
+}
+
+// FetchMetrics interface for mackerelplugin
+func (p UWSGIVassalPlugin) FetchMetrics() (map[string]interface{}, error) {
+	stat := make(map[string]interface{})
+	stat["busy"] = uint64(0)
+	stat["idle"] = uint64(0)
+	stat["cheap"] = uint64(0)
+	stat["pause"] = uint64(0)
+	stat["requests"] = uint64(0)
+
+	var decoder *json.Decoder
+	if strings.HasPrefix(p.Socket, "unix://") {
+		conn, err := net.Dial("unix", strings.TrimPrefix(p.Socket, "unix://"))
+		if err != nil {
+			return nil, err
+		}
+		defer conn.Close()
+		decoder = json.NewDecoder(conn)
+	} else if strings.HasPrefix(p.Socket, "http://") {
+		resp, err := http.Get(p.Socket)
+		if err != nil {
+			return nil, err
+		}
+		defer resp.Body.Close()
+		decoder = json.NewDecoder(resp.Body)
+	}
+
+	var workers UWSGIWorkers
+	if err := decoder.Decode(&workers); err != nil {
+		return nil, err
+	}
+
+	for _, worker := range workers.Workers {
+		switch worker.Status {
+		case "idle", "busy", "cheap", "pause":
+			stat[worker.Status] = reflect.ValueOf(stat[worker.Status]).Uint() + 1
+		}
+		stat["requests"] = reflect.ValueOf(stat["requests"]).Uint() + 1
+	}
+
+	return stat, nil
+}
+
+// GraphDefinition interface for mackerelplugin
+func (p UWSGIVassalPlugin) GraphDefinition() map[string]mp.Graphs {
+	var graphdef = map[string]mp.Graphs{
+		(p.Prefix + ".workers"): {
+			Label: p.LabelPrefix + " Workers",
+			Unit:  "integer",
+			Metrics: []mp.Metrics{
+				{Name: "busy", Label: "Busy", Diff: false, Stacked: true},
+				{Name: "idle", Label: "Idle", Diff: false, Stacked: true},
+				{Name: "cheap", Label: "Cheap", Diff: false, Stacked: true},
+				{Name: "pause", Label: "Pause", Diff: false, Stacked: true},
+			},
+		},
+		(p.Prefix + ".req"): {
+			Label: p.LabelPrefix + " Requests",
+			Unit:  "integer",
+			Metrics: []mp.Metrics{
+				{Name: "requests", Label: "Requests", Diff: true, Type: "uint64"},
+			},
+		},
+	}
+
+	return graphdef
+}
+
+// Do the plugin
+func Do() {
+	optSocket := flag.String("socket", "", "Socket")
+	optPrefix := flag.String("metric-key-prefix", "uwsgi", "Prefix")
+	optLabelPrefix := flag.String("metric-label-prefix", "uWSGI", "Label Prefix")
+	optTempfile := flag.String("tempfile", "", "Temp file name")
+	flag.Parse()
+
+	uwsgi := UWSGIVassalPlugin{Socket: *optSocket, Prefix: *optPrefix, LabelPrefix: *optLabelPrefix}
+	if uwsgi.LabelPrefix == "" {
+		uwsgi.LabelPrefix = strings.Title(uwsgi.Prefix)
+	}
+
+	helper := mp.NewMackerelPlugin(uwsgi)
+	helper.Tempfile = *optTempfile
+
+	if os.Getenv("MACKEREL_AGENT_PLUGIN_META") != "" {
+		helper.OutputDefinitions()
+	} else {
+		helper.OutputValues()
+	}
+}
