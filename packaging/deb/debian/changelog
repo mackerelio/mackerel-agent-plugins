@@ -1,3 +1,42 @@
+mackerel-agent-plugins (0.26.0-1) stable; urgency=low
+
+  * Add AWS Rekognition Plugin (by holidayworking)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/322>
+  * Add aws-kinesis-streams plugin (by astj)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/326>
+  * Add AWS Lambda plugin (by astj)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/327>
+  * [redis] fix metrics lable (by y-kuno)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/329>
+  * Add aws-lambda and aws-kinesis-streams to package (by astj)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/330>
+  * Support twemproxy v0.3, Add total_server_error (by masahide)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/332>
+
+ -- mackerel <mackerel-developers@hatena.ne.jp>  Wed, 19 Apr 2017 06:33:06 +0000
+
+mackerel-agent-plugins (0.25.6-1) stable; urgency=low
+
+  * Cross compile by go's native cross build, not by gox (by astj)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/321>
+  * fix a label of gostats plugin (by itchyny)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/323>
+
+ -- mackerel <mackerel-developers@hatena.ne.jp>  Thu, 06 Apr 2017 02:50:55 +0000
+
+mackerel-agent-plugins (0.25.5-1) stable; urgency=low
+
+  * add `mackerel-plugin` command (by Songmu)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/315>
+  * Add AWS WAF Plugin (by holidayworking)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/316>
+  * use new bot token (by daiksy)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/318>
+  * use new bot token (by daiksy)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/319>
+
+ -- mackerel <mackerel-developers@hatena.ne.jp>  Wed, 22 Mar 2017 08:13:37 +0000
+
 mackerel-agent-plugins (0.25.4-1) stable; urgency=low
 
   * Improve gce plugin (by astj)

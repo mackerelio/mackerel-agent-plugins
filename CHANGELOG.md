@@ -1,5 +1,29 @@
 # Changelog
 
+## 0.26.0 (2017-04-19)
+
+* Add AWS Rekognition Plugin #322 (holidayworking)
+* Add aws-kinesis-streams plugin #326 (astj)
+* Add AWS Lambda plugin #327 (astj)
+* [redis] fix metrics lable #329 (y-kuno)
+* Add aws-lambda and aws-kinesis-streams to package #330 (astj)
+* Support twemproxy v0.3, Add total_server_error #332 (masahide)
+
+
+## 0.25.6 (2017-04-06)
+
+* Cross compile by go's native cross build, not by gox #321 (astj)
+* fix a label of gostats plugin #323 (itchyny)
+
+
+## 0.25.5 (2017-03-22)
+
+* add `mackerel-plugin` command #315 (Songmu)
+* Add AWS WAF Plugin #316 (holidayworking)
+* use new bot token #318 (daiksy)
+* use new bot token #319 (daiksy)
+
+
 ## 0.25.4 (2017-02-22)
 
 * Improve gce plugin #313 (astj)

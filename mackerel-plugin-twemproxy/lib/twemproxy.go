@@ -37,6 +37,17 @@ func (p TwemproxyPlugin) GraphDefinition() map[string]mp.Graphs {
 				{Name: "curr_connections", Label: "Current Connections", Diff: false},
 			},
 		},
+		"total_server_error": {
+			Label: (labelPrefix + " Total Server Error"),
+			Unit:  "integer",
+			Metrics: []mp.Metrics{
+				{Name: "total_pool_client_error", Label: "Pool Client Error", Diff: true},
+				{Name: "total_pool_server_ejects", Label: "Pool Server Ejects", Diff: true},
+				{Name: "total_pool_forward_error", Label: "Pool Forward Error", Diff: true},
+				{Name: "total_server_timeout", Label: "Server Error", Diff: true},
+				{Name: "total_server_error", Label: "Server Timeout", Diff: true},
+			},
+		},
 		"pool_error.#": {
 			Label: (labelPrefix + " Pool Error"),
 			Unit:  "integer",
@@ -113,11 +124,20 @@ func (p TwemproxyPlugin) FetchMetrics() (map[string]interface{}, error) {
 		return nil, fmt.Errorf("Failed to fetch twemproxy metrics: %s", err)
 	}
 
-	metrics := map[string]interface{}{
-		"total_connections": *stats.TotalConnections,
-		"curr_connections":  *stats.CurrConnections,
+	metrics := make(map[string]interface{})
+
+	if stats.TotalConnections != nil {
+		metrics["total_connections"] = *stats.TotalConnections
+	}
+	if stats.CurrConnections != nil {
+		metrics["curr_connections"] = *stats.CurrConnections
 	}
 
+	totalPoolClientErr := uint64(0)
+	totalPoolServerEjects := uint64(0)
+	totalPoolForwardErr := uint64(0)
+	totalServerTimeout := uint64(0)
+	totalServerErr := uint64(0)
 	// NOTE: Each custom metric name contains a wildcard.
 	for pName, p := range stats.Pools {
 		// A normalized pool name corresponds a wildcard
@@ -128,6 +148,9 @@ func (p TwemproxyPlugin) FetchMetrics() (map[string]interface{}, error) {
 		metrics["pool_error"+wp+"forward_error"] = *p.ForwardError
 		metrics["pool_client_connections"+wp+"client_eof"] = *p.ClientEOF
 		metrics["pool_client_connections"+wp+"client_connections"] = *p.ClientConnections
+		totalPoolClientErr += *p.ClientErr
+		totalPoolServerEjects += *p.ServerEjects
+		totalPoolForwardErr += *p.ForwardError
 
 		for sName, s := range p.Servers {
 			// A concat of normalized pool and server names corresponds a wildcard
@@ -145,8 +168,15 @@ func (p TwemproxyPlugin) FetchMetrics() (map[string]interface{}, error) {
 			metrics["server_communications"+ws+"responses"] = *s.Responses
 			metrics["server_communication_bytes"+ws+"request_bytes"] = *s.RequestBytes
 			metrics["server_communication_bytes"+ws+"response_bytes"] = *s.ResponseBytes
+			totalServerTimeout += *s.ServerTimedout
+			totalServerErr += *s.ServerErr
 		}
 	}
+	metrics["total_pool_client_error"] = totalPoolClientErr
+	metrics["total_pool_server_ejects"] = totalPoolServerEjects
+	metrics["total_pool_forward_error"] = totalPoolForwardErr
+	metrics["total_server_timeout"] = totalServerTimeout
+	metrics["total_server_error"] = totalServerErr
 	return metrics, nil
 }
 

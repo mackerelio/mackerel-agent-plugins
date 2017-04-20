@@ -2,20 +2,14 @@ VERBOSE_FLAG = $(if $(VERBOSE),-verbose)
 CURRENT_VERSION = $(shell git log --merges --oneline | perl -ne 'if(m/^.+Merge pull request \#[0-9]+ from .+\/bump-version-([0-9\.]+)/){print $$1;exit}')
 CURRENT_REVISION = $(shell git rev-parse --short HEAD)
 BUILD_LDFLAGS = "-s -w"
-TARGET_OSARCH="linux/amd64"
-
-check-variables:
-	echo "CURRENT_VERSION: ${CURRENT_VERSION}"
-	echo "TARGET_OSARCH: ${TARGET_OSARCH}"
 
 all: lint cover testtool testconvention rpm deb
 
 build: deps
 	mkdir -p build
 	for i in mackerel-plugin-*; do \
-	  gox $(VERBOSE_FLAG) -ldflags="-s -w" \
-	    -osarch=$(TARGET_OSARCH) -output build/$$i \
-			`pwd | sed -e "s|${GOPATH}/src/||"`/$$i; \
+		go build  -ldflags="-s -w" -o build/$$i \
+		`pwd | sed -e "s|${GOPATH}/src/||"`/$$i; \
 	done
 
 build/mackerel-plugin: deps
@@ -33,7 +27,7 @@ testgo: testdeps
 
 testconvention:
 	prove -r t/
-	test `go generate ./... && git diff | wc -l` = 0 || (echo 'please `go generate ./...` and commit them' && exit 1)
+	go generate ./... && git diff --exit-code || (echo 'please `go generate ./...` and commit them' && false)
 
 deps:
 	go get -d -v ./...
@@ -53,13 +47,13 @@ cover: testdeps
 	gotestcover -v -covermode=count -coverprofile=.profile.cov -parallelpackages=4 ./...
 
 rpm: build
-	make build TARGET_OSARCH="linux/386"
+	make build GOOS=linux GOARCH=386
 	rpmbuild --define "_sourcedir `pwd`"  --define "_version ${CURRENT_VERSION}" --define "buildarch noarch" -bb packaging/rpm/mackerel-agent-plugins.spec
-	make build TARGET_OSARCH="linux/amd64"
+	make build GOOS=linux GOARCH=amd64
 	rpmbuild --define "_sourcedir `pwd`"  --define "_version ${CURRENT_VERSION}" --define "buildarch x86_64" -bb packaging/rpm/mackerel-agent-plugins.spec
 
 deb: build
-	make build TARGET_OSARCH="linux/386"
+	make build GOOS=linux GOARCH=386
 	cp build/mackerel-plugin-* packaging/deb/debian/
 	cd packaging/deb && debuild --no-tgz-check -rfakeroot -uc -us
 
@@ -68,10 +62,6 @@ rpm-v1: build/mackerel-plugin
 	  --define "_sourcedir /workspace" \
 	  --define "_version ${CURRENT_VERSION}" --define "buildarch x86_64" \
 	  -bb packaging/rpm/mackerel-agent-plugins-v1.spec
-
-gox:
-	go get github.com/mitchellh/gox
-	gox -build-toolchain -osarch=$(TARGET_OSARCH)
 
 clean:
 	if [ -d build ]; then \
@@ -82,4 +72,4 @@ clean:
 release:
 	tool/releng
 
-.PHONY: all build test testgo deps testdeps rpm deb rpm-v1 gox clean release lint cover testtool testconvention
+.PHONY: all build test testgo deps testdeps rpm deb rpm-v1 clean release lint cover testtool testconvention
