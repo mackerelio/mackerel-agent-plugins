@@ -57,11 +57,12 @@ deb: build
 	cp build/mackerel-plugin-* packaging/deb/debian/
 	cd packaging/deb && debuild --no-tgz-check -rfakeroot -uc -us
 
-rpm-v1: build/mackerel-plugin
+rpm-v2:
+	make build/mackerel-plugin GOOS=linux GOARCH=amd64
 	docker run --rm -v "$(PWD)":/workspace -v "$(PWD)/rpmbuild":/rpmbuild astj/mackerel-rpm-builder:c7 \
 	  --define "_sourcedir /workspace" \
 	  --define "_version ${CURRENT_VERSION}" --define "buildarch x86_64" \
-	  -bb packaging/rpm/mackerel-agent-plugins-v1.spec
+	  -bb packaging/rpm/mackerel-agent-plugins-v2.spec
 
 clean:
 	if [ -d build ]; then \
@@ -72,4 +73,4 @@ clean:
 release:
 	tool/releng
 
-.PHONY: all build test testgo deps testdeps rpm deb rpm-v1 clean release lint cover testtool testconvention
+.PHONY: all build test testgo deps testdeps rpm deb rpm-v2 clean release lint cover testtool testconvention
