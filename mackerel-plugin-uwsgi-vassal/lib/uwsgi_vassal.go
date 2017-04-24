@@ -188,6 +188,14 @@ func (p UWSGIVassalPlugin) GraphDefinition() map[string]mp.Graphs {
 	return graphdef
 }
 
+// MetricKeyPrefix interface for PluginWithPrefix
+func (p UWSGIVassalPlugin) MetricKeyPrefix() string {
+	if p.Prefix == "" {
+		p.Prefix = "uWSGI"
+	}
+	return p.Prefix
+}
+
 // Do the plugin
 func Do() {
 	optSocket := flag.String("socket", "", "Socket")
