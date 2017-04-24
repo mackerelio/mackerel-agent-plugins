@@ -5,10 +5,9 @@ import (
 	"flag"
 	"net"
 	"net/http"
-	"reflect"
 	"strings"
 
-	mp "github.com/mackerelio/go-mackerel-plugin-helper"
+	mp "github.com/mackerelio/go-mackerel-plugin"
 )
 
 // UWSGIVassalPlugin mackerel plugin for uWSGI
@@ -120,13 +119,13 @@ type UWSGIWorkers struct {
 }
 
 // FetchMetrics interface for mackerelplugin
-func (p UWSGIVassalPlugin) FetchMetrics() (map[string]interface{}, error) {
-	stat := make(map[string]interface{})
-	stat["busy"] = uint64(0)
-	stat["idle"] = uint64(0)
-	stat["cheap"] = uint64(0)
-	stat["pause"] = uint64(0)
-	stat["requests"] = uint64(0)
+func (p UWSGIVassalPlugin) FetchMetrics() (map[string]float64, error) {
+	stat := make(map[string]float64)
+	stat["busy"] = 0.0
+	stat["idle"] = 0.0
+	stat["cheap"] = 0.0
+	stat["pause"] = 0.0
+	stat["requests"] = 0.0
 
 	var decoder *json.Decoder
 	if strings.HasPrefix(p.Socket, "unix://") {
@@ -153,9 +152,9 @@ func (p UWSGIVassalPlugin) FetchMetrics() (map[string]interface{}, error) {
 	for _, worker := range workers.Workers {
 		switch worker.Status {
 		case "idle", "busy", "cheap", "pause":
-			stat[worker.Status] = reflect.ValueOf(stat[worker.Status]).Uint() + 1
+			stat[worker.Status]++
 		}
-		stat["requests"] = reflect.ValueOf(stat["requests"]).Uint() + worker.Requests
+		stat["requests"] += float64(worker.Requests)
 	}
 
 	return stat, nil
@@ -178,9 +177,9 @@ func (p UWSGIVassalPlugin) GraphDefinition() map[string]mp.Graphs {
 		},
 		(p.Prefix + ".req"): {
 			Label: labelPrefix + " Requests",
-			Unit:  "integer",
+			Unit:  "float",
 			Metrics: []mp.Metrics{
-				{Name: "requests", Label: "Requests", Diff: true, Type: "uint64"},
+				{Name: "requests", Label: "Requests", Diff: true},
 			},
 		},
 	}
