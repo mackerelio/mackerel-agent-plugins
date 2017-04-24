@@ -155,7 +155,7 @@ func (p UWSGIVassalPlugin) FetchMetrics() (map[string]interface{}, error) {
 		case "idle", "busy", "cheap", "pause":
 			stat[worker.Status] = reflect.ValueOf(stat[worker.Status]).Uint() + 1
 		}
-		stat["requests"] = reflect.ValueOf(stat["requests"]).Uint() + 1
+		stat["requests"] = reflect.ValueOf(stat["requests"]).Uint() + worker.Requests
 	}
 
 	return stat, nil
