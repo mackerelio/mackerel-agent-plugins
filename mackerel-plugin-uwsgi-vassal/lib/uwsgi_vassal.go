@@ -164,9 +164,11 @@ func (p UWSGIVassalPlugin) FetchMetrics() (map[string]interface{}, error) {
 
 // GraphDefinition interface for mackerelplugin
 func (p UWSGIVassalPlugin) GraphDefinition() map[string]mp.Graphs {
+	labelPrefix := strings.Title(p.Prefix)
+
 	var graphdef = map[string]mp.Graphs{
 		(p.Prefix + ".workers"): {
-			Label: p.LabelPrefix + " Workers",
+			Label: labelPrefix + " Workers",
 			Unit:  "integer",
 			Metrics: []mp.Metrics{
 				{Name: "busy", Label: "Busy", Diff: false, Stacked: true},
@@ -176,7 +178,7 @@ func (p UWSGIVassalPlugin) GraphDefinition() map[string]mp.Graphs {
 			},
 		},
 		(p.Prefix + ".req"): {
-			Label: p.LabelPrefix + " Requests",
+			Label: labelPrefix + " Requests",
 			Unit:  "integer",
 			Metrics: []mp.Metrics{
 				{Name: "requests", Label: "Requests", Diff: true, Type: "uint64"},
@@ -190,12 +192,11 @@ func (p UWSGIVassalPlugin) GraphDefinition() map[string]mp.Graphs {
 // Do the plugin
 func Do() {
 	optSocket := flag.String("socket", "", "Socket")
-	optPrefix := flag.String("metric-key-prefix", "uwsgi", "Prefix")
-	optLabelPrefix := flag.String("metric-label-prefix", "uWSGI", "Label Prefix")
+	optPrefix := flag.String("metric-key-prefix", "uWSGI", "Prefix")
 	optTempfile := flag.String("tempfile", "", "Temp file name")
 	flag.Parse()
 
-	uwsgi := UWSGIVassalPlugin{Socket: *optSocket, Prefix: *optPrefix, LabelPrefix: *optLabelPrefix}
+	uwsgi := UWSGIVassalPlugin{Socket: *optSocket, Prefix: *optPrefix}
 	if uwsgi.LabelPrefix == "" {
 		uwsgi.LabelPrefix = strings.Title(uwsgi.Prefix)
 	}
