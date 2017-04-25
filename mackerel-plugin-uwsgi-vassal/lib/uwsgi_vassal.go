@@ -203,9 +203,7 @@ func Do() {
 	flag.Parse()
 
 	uwsgi := UWSGIVassalPlugin{Socket: *optSocket, Prefix: *optPrefix}
-	if uwsgi.LabelPrefix == "" {
-		uwsgi.LabelPrefix = strings.Title(uwsgi.Prefix)
-	}
+	uwsgi.LabelPrefix = strings.Title(uwsgi.Prefix)
 
 	helper := mp.NewMackerelPlugin(uwsgi)
 	helper.Tempfile = *optTempfile
