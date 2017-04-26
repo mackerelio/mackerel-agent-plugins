@@ -2,6 +2,7 @@ package mpuwsgivassal
 
 import (
 	"encoding/json"
+	"errors"
 	"flag"
 	"net"
 	"net/http"
@@ -142,6 +143,9 @@ func (p UWSGIVassalPlugin) FetchMetrics() (map[string]float64, error) {
 		}
 		defer resp.Body.Close()
 		decoder = json.NewDecoder(resp.Body)
+	} else {
+		err := errors.New("'--socket' is neither http endpoint nor the unix domain socket, try '--help' for more information")
+		return nil, err
 	}
 
 	var workers UWSGIWorkers
@@ -197,7 +201,7 @@ func (p UWSGIVassalPlugin) MetricKeyPrefix() string {
 
 // Do the plugin
 func Do() {
-	optSocket := flag.String("socket", "", "Socket")
+	optSocket := flag.String("socket", "", "Socket (must be with prefix of 'http://' or 'unix://')")
 	optPrefix := flag.String("metric-key-prefix", "uWSGI", "Prefix")
 	optTempfile := flag.String("tempfile", "", "Temp file name")
 	flag.Parse()
