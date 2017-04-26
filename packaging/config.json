@@ -38,6 +38,7 @@
        "td-table-count",
        "trafficserver",
        "twemproxy",
+       "uwsgi-vassal",
        "varnish",
        "xentop",
        "aws-cloudfront",
