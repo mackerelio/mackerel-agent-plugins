@@ -48,6 +48,7 @@ import (
 	"github.com/mackerelio/mackerel-agent-plugins/mackerel-plugin-twemproxy/lib"
 	"github.com/mackerelio/mackerel-agent-plugins/mackerel-plugin-unicorn/lib"
 	"github.com/mackerelio/mackerel-agent-plugins/mackerel-plugin-uptime/lib"
+	"github.com/mackerelio/mackerel-agent-plugins/mackerel-plugin-usgi-vassal/lib"
 	"github.com/mackerelio/mackerel-agent-plugins/mackerel-plugin-varnish/lib"
 	"github.com/mackerelio/mackerel-agent-plugins/mackerel-plugin-xentop/lib"
 )
@@ -142,6 +143,8 @@ func runPlugin(plug string) error {
 		mpunicorn.Do()
 	case "uptime":
 		mpuptime.Do()
+	case "usgi-vassal":
+		mpusgivassal.Do()
 	case "varnish":
 		mpvarnish.Do()
 	case "xentop":
@@ -197,6 +200,7 @@ var plugins = []string{
 	"twemproxy",
 	"unicorn",
 	"uptime",
+	"usgi-vassal",
 	"varnish",
 	"xentop",
 }
