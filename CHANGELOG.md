@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.27.0 (2017-04-27)
+
+* Add uWSGI vassal plugin #335 (kizkoh)
+* add mackerel-plugin-uwsgi-vassal to package #336 (astj)
+
+
 ## 0.26.0 (2017-04-19)
 
 * Add AWS Rekognition Plugin #322 (holidayworking)
