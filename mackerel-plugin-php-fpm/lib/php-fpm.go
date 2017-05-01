@@ -13,9 +13,10 @@ import (
 
 // PhpFpmPlugin mackerel plugin
 type PhpFpmPlugin struct {
-	URL     string
-	Prefix  string
-	Timeout uint
+	URL         string
+	Prefix      string
+	LabelPrefix string
+	Timeout     uint
 }
 
 // PhpFpmStatus struct for PhpFpmPlugin mackerel plugin
@@ -36,11 +37,16 @@ type PhpFpmStatus struct {
 	SlowRequests       uint64 `json:"slow requests"`
 }
 
+// MetricKeyPrefix interface for PluginWithPrefix
+func (p PhpFpmPlugin) MetricKeyPrefix() string {
+	return p.Prefix
+}
+
 // GraphDefinition interface for mackerelplugin
 func (p PhpFpmPlugin) GraphDefinition() map[string]mp.Graphs {
 	return map[string]mp.Graphs{
-		p.Prefix + ".processes": {
-			Label: "PHP-FPM Processes",
+		"processes": {
+			Label: p.LabelPrefix + " Processes",
 			Unit:  "integer",
 			Metrics: []mp.Metrics{
 				{Name: "total_processes", Label: "Total Processes", Diff: false, Type: "uint64"},
@@ -48,37 +54,37 @@ func (p PhpFpmPlugin) GraphDefinition() map[string]mp.Graphs {
 				{Name: "idle_processes", Label: "Idle Processes", Diff: false, Type: "uint64"},
 			},
 		},
-		p.Prefix + ".max_active_processes": {
-			Label: "PHP-FPM Max Active Processes",
+		"max_active_processes": {
+			Label: p.LabelPrefix + " Max Active Processes",
 			Unit:  "integer",
 			Metrics: []mp.Metrics{
 				{Name: "max_active_processes", Label: "Max Active Processes", Diff: false, Type: "uint64"},
 			},
 		},
-		p.Prefix + ".max_children_reached": {
-			Label: "PHP-FPM Max Children Reached",
+		"max_children_reached": {
+			Label: p.LabelPrefix + " Max Children Reached",
 			Unit:  "integer",
 			Metrics: []mp.Metrics{
 				{Name: "max_children_reached", Label: "Max Children Reached", Diff: false, Type: "uint64"},
 			},
 		},
-		p.Prefix + ".queue": {
-			Label: "PHP-FPM Queue",
+		"queue": {
+			Label: p.LabelPrefix + " Queue",
 			Unit:  "integer",
 			Metrics: []mp.Metrics{
 				{Name: "listen_queue", Label: "Listen Queue", Diff: false, Type: "uint64"},
 				{Name: "listen_queue_len", Label: "Listen Queue Len", Diff: false, Type: "uint64"},
 			},
 		},
-		p.Prefix + ".max_listen_queue": {
-			Label: "PHP-FPM Max Listen Queue",
+		"max_listen_queue": {
+			Label: p.LabelPrefix + " Max Listen Queue",
 			Unit:  "integer",
 			Metrics: []mp.Metrics{
 				{Name: "max_listen_queue", Label: "Max Listen Queue", Diff: false, Type: "uint64"},
 			},
 		},
-		p.Prefix + ".slow_requests": {
-			Label: "PHP-FPM Slow Requests",
+		"slow_requests": {
+			Label: p.LabelPrefix + " Slow Requests",
 			Unit:  "integer",
 			Metrics: []mp.Metrics{
 				{Name: "slow_requests", Label: "Slow Requests", Diff: false, Type: "uint64"},
@@ -134,20 +140,19 @@ func getStatus(p PhpFpmPlugin) (*PhpFpmStatus, error) {
 func Do() {
 	optURL := flag.String("url", "http://localhost/status?json", "PHP-FPM status page URL")
 	optPrefix := flag.String("metric-key-prefix", "php-fpm", "Metric key prefix")
+	optLabelPrefix := flag.String("metric-label-prefix", "PHP-FPM", "Metric label prefix")
 	optTimeout := flag.Uint("timeout", 5, "Timeout")
 	optTempfile := flag.String("tempfile", "", "Temp file name")
 	flag.Parse()
 
 	p := PhpFpmPlugin{
-		URL:     *optURL,
-		Prefix:  *optPrefix,
-		Timeout: *optTimeout,
+		URL:         *optURL,
+		Prefix:      *optPrefix,
+		LabelPrefix: *optLabelPrefix,
+		Timeout:     *optTimeout,
 	}
 	helper := mp.NewMackerelPlugin(p)
 	helper.Tempfile = *optTempfile
-	if helper.Tempfile == "" {
-		helper.Tempfile = fmt.Sprintf("/tmp/mackerel-plugin-%s", *optPrefix)
-	}
 
 	helper.Run()
 }
