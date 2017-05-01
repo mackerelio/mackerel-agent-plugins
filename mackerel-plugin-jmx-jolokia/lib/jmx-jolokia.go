@@ -182,7 +182,7 @@ func Do() {
 	if *optTempfile != "" {
 		helper.Tempfile = *optTempfile
 	} else {
-		helper.Tempfile = fmt.Sprintf("/tmp/mackerel-plugin-jmx-jolokia-%s-%s", *optHost, *optPort)
+		helper.SetTempfileByBasename(fmt.Sprintf("mackerel-plugin-jmx-jolokia-%s-%s", *optHost, *optPort))
 	}
 	helper.Run()
 }

@@ -310,7 +310,7 @@ func Do() {
 	if *optTempfile != "" {
 		helper.Tempfile = *optTempfile
 	} else {
-		helper.Tempfile = fmt.Sprintf("/tmp/mackerel-plugin-munin-%s", munin.GraphName)
+		helper.SetTempfileByBasename(fmt.Sprintf("mackerel-plugin-munin-%s", munin.GraphName))
 	}
 
 	helper.Run()

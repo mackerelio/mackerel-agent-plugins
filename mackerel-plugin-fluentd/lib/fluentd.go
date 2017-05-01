@@ -163,7 +163,7 @@ func Do() {
 		if *pluginIDPatternString != "" {
 			tempFileSuffix = append(tempFileSuffix, fmt.Sprintf("%x", md5.Sum([]byte(*pluginIDPatternString))))
 		}
-		helper.Tempfile = fmt.Sprintf("/tmp/mackerel-plugin-fluentd-%s", strings.Join(tempFileSuffix, "-"))
+		helper.SetTempfileByBasename(fmt.Sprintf("mackerel-plugin-fluentd-%s", strings.Join(tempFileSuffix, "-")))
 	}
 
 	helper.Run()

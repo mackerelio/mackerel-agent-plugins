@@ -183,7 +183,7 @@ func Do() {
 	if *optTempfile != "" {
 		helper.Tempfile = *optTempfile
 	} else {
-		helper.Tempfile = fmt.Sprintf("/tmp/mackerel-plugin-aws-ec2-%s", ec2.InstanceID)
+		helper.SetTempfileByBasename(fmt.Sprintf("mackerel-plugin-aws-ec2-%s", ec2.InstanceID))
 	}
 
 	helper.Run()

@@ -170,9 +170,9 @@ func Do() {
 		helper.Tempfile = *optTempfile
 	} else {
 		if gearmand.Socket != "" {
-			helper.Tempfile = fmt.Sprintf("/tmp/mackerel-plugin-gearmand-%s", fmt.Sprintf("%x", md5.Sum([]byte(gearmand.Socket))))
+			helper.SetTempfileByBasename(fmt.Sprintf("mackerel-plugin-gearmand-%s", fmt.Sprintf("%x", md5.Sum([]byte(gearmand.Socket)))))
 		} else {
-			helper.Tempfile = fmt.Sprintf("/tmp/mackerel-plugin-gearmand-%s-%s", *optHost, *optPort)
+			helper.SetTempfileByBasename(fmt.Sprintf("mackerel-plugin-gearmand-%s-%s", *optHost, *optPort))
 		}
 	}
 	helper.Run()

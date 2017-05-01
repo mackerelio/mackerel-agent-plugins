@@ -337,7 +337,7 @@ func Do() {
 	if *optTempfile != "" {
 		helper.Tempfile = *optTempfile
 	} else {
-		helper.Tempfile = fmt.Sprintf("/tmp/mackerel-plugin-jvm-%s", *optHost)
+		helper.SetTempfileByBasename(fmt.Sprintf("mackerel-plugin-jvm-%s", *optHost))
 	}
 
 	helper.Run()

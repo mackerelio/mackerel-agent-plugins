@@ -376,7 +376,7 @@ func Do() {
 	if *optTempfile != "" {
 		helper.Tempfile = *optTempfile
 	} else {
-		helper.Tempfile = fmt.Sprintf("/tmp/mackerel-plugin-aws-elasticache-%s-%s", *optCacheClusterID, *optCacheNodeID)
+		helper.SetTempfileByBasename(fmt.Sprintf("mackerel-plugin-aws-elasticache-%s-%s", *optCacheClusterID, *optCacheNodeID))
 	}
 
 	helper.Run()
