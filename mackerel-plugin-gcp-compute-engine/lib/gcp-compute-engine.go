@@ -263,7 +263,7 @@ func Do() {
 	if *optTempfile != "" {
 		helper.Tempfile = *optTempfile
 	} else {
-		helper.Tempfile = fmt.Sprintf("/tmp/mackerel-plugin-gcp-compute-engine-%s", computeEngine.InstanceName)
+		helper.SetTempfileByBasename(fmt.Sprintf("mackerel-plugin-gcp-compute-engine-%s", computeEngine.InstanceName))
 	}
 
 	helper.Run()
