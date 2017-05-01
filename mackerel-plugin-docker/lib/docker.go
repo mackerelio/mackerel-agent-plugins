@@ -474,9 +474,5 @@ func Do() {
 		helper.Tempfile = fmt.Sprintf("/tmp/mackerel-plugin-docker-%s", normalizeMetricName(*optHost))
 	}
 
-	if os.Getenv("MACKEREL_AGENT_PLUGIN_META") != "" {
-		helper.OutputDefinitions()
-	} else {
-		helper.OutputValues()
-	}
+	helper.Run()
 }

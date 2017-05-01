@@ -80,9 +80,5 @@ func Do() {
 	helper := mp.NewMackerelPlugin(fd)
 	helper.Tempfile = *optTempfile
 
-	if os.Getenv("MACKEREL_AGENT_PLUGIN_META") != "" {
-		helper.OutputDefinitions()
-	} else {
-		helper.OutputValues()
-	}
+	helper.Run()
 }
