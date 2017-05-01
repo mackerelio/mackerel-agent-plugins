@@ -2,7 +2,6 @@ package mprabbitmq
 
 import (
 	"flag"
-	"os"
 
 	mp "github.com/mackerelio/go-mackerel-plugin-helper"
 	"github.com/michaelklishin/rabbit-hole"

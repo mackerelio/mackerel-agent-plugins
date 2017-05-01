@@ -3,7 +3,6 @@ package mpawsec2cpucredit
 import (
 	"errors"
 	"flag"
-	"os"
 	"time"
 
 	"github.com/aws/aws-sdk-go/aws"

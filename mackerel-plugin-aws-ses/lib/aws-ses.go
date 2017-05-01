@@ -3,7 +3,6 @@ package mpawsses
 import (
 	"errors"
 	"flag"
-	"os"
 	"time"
 
 	"github.com/crowdmob/goamz/aws"

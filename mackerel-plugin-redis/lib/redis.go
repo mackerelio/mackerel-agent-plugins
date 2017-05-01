@@ -3,7 +3,6 @@ package mpredis
 import (
 	"flag"
 	"fmt"
-	"os"
 	"regexp"
 	"strconv"
 	"strings"

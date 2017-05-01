@@ -6,7 +6,6 @@ import (
 	"flag"
 	"fmt"
 	"net/http"
-	"os"
 	"strings"
 
 	mp "github.com/mackerelio/go-mackerel-plugin"

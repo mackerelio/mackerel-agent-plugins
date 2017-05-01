@@ -3,7 +3,6 @@ package mpvarnish
 import (
 	"flag"
 	"fmt"
-	"os"
 	"os/exec"
 	"regexp"
 	"strconv"

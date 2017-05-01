@@ -3,7 +3,6 @@ package mptdtablecount
 import (
 	"flag"
 	"fmt"
-	"os"
 	"strings"
 
 	mp "github.com/mackerelio/go-mackerel-plugin-helper"

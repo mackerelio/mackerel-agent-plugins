@@ -7,7 +7,6 @@ import (
 	"fmt"
 	"net/http"
 	"net/url"
-	"os"
 	"strings"
 
 	mp "github.com/mackerelio/go-mackerel-plugin-helper"

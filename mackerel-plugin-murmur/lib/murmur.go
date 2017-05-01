@@ -3,7 +3,6 @@ package mpmurmur
 import (
 	"flag"
 	"fmt"
-	"os"
 	"time"
 
 	mp "github.com/mackerelio/go-mackerel-plugin-helper"
