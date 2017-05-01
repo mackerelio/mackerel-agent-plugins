@@ -45,7 +45,7 @@ func (p PhpFpmPlugin) MetricKeyPrefix() string {
 // GraphDefinition interface for mackerelplugin
 func (p PhpFpmPlugin) GraphDefinition() map[string]mp.Graphs {
 	return map[string]mp.Graphs{
-		p.Prefix + ".processes": {
+		"processes": {
 			Label: p.LabelPrefix + " Processes",
 			Unit:  "integer",
 			Metrics: []mp.Metrics{
@@ -54,21 +54,21 @@ func (p PhpFpmPlugin) GraphDefinition() map[string]mp.Graphs {
 				{Name: "idle_processes", Label: "Idle Processes", Diff: false, Type: "uint64"},
 			},
 		},
-		p.Prefix + ".max_active_processes": {
+		"max_active_processes": {
 			Label: p.LabelPrefix + " Max Active Processes",
 			Unit:  "integer",
 			Metrics: []mp.Metrics{
 				{Name: "max_active_processes", Label: "Max Active Processes", Diff: false, Type: "uint64"},
 			},
 		},
-		p.Prefix + ".max_children_reached": {
+		"max_children_reached": {
 			Label: p.LabelPrefix + " Max Children Reached",
 			Unit:  "integer",
 			Metrics: []mp.Metrics{
 				{Name: "max_children_reached", Label: "Max Children Reached", Diff: false, Type: "uint64"},
 			},
 		},
-		p.Prefix + ".queue": {
+		"queue": {
 			Label: p.LabelPrefix + " Queue",
 			Unit:  "integer",
 			Metrics: []mp.Metrics{
@@ -76,14 +76,14 @@ func (p PhpFpmPlugin) GraphDefinition() map[string]mp.Graphs {
 				{Name: "listen_queue_len", Label: "Listen Queue Len", Diff: false, Type: "uint64"},
 			},
 		},
-		p.Prefix + ".max_listen_queue": {
+		"max_listen_queue": {
 			Label: p.LabelPrefix + " Max Listen Queue",
 			Unit:  "integer",
 			Metrics: []mp.Metrics{
 				{Name: "max_listen_queue", Label: "Max Listen Queue", Diff: false, Type: "uint64"},
 			},
 		},
-		p.Prefix + ".slow_requests": {
+		"slow_requests": {
 			Label: p.LabelPrefix + " Slow Requests",
 			Unit:  "integer",
 			Metrics: []mp.Metrics{
