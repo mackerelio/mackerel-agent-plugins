@@ -471,7 +471,7 @@ func Do() {
 	if *optTempfile != "" {
 		helper.Tempfile = *optTempfile
 	} else {
-		helper.Tempfile = fmt.Sprintf("/tmp/mackerel-plugin-docker-%s", normalizeMetricName(*optHost))
+		helper.SetTempfileByBasename(fmt.Sprintf("mackerel-plugin-docker-%s", normalizeMetricName(*optHost)))
 	}
 
 	if os.Getenv("MACKEREL_AGENT_PLUGIN_META") != "" {
