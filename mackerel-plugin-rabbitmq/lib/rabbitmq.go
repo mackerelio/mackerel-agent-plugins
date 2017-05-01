@@ -2,7 +2,6 @@ package mprabbitmq
 
 import (
 	"flag"
-	"os"
 
 	mp "github.com/mackerelio/go-mackerel-plugin-helper"
 	"github.com/michaelklishin/rabbit-hole"
@@ -81,9 +80,5 @@ func Do() {
 
 	helper := mp.NewMackerelPlugin(rabbitmq)
 
-	if os.Getenv("MACKEREL_AGENT_PLUGIN_META") != "" {
-		helper.OutputDefinitions()
-	} else {
-		helper.OutputValues()
-	}
+	helper.Run()
 }

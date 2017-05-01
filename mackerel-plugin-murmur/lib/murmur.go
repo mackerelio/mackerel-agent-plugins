@@ -3,7 +3,6 @@ package mpmurmur
 import (
 	"flag"
 	"fmt"
-	"os"
 	"time"
 
 	mp "github.com/mackerelio/go-mackerel-plugin-helper"
@@ -68,9 +67,5 @@ func Do() {
 		helper.Tempfile = fmt.Sprintf("/tmp/mackerel-plugin-murmur-%s-%s", *optHost, *optPort)
 	}
 
-	if os.Getenv("MACKEREL_AGENT_PLUGIN_META") != "" {
-		helper.OutputDefinitions()
-	} else {
-		helper.OutputValues()
-	}
+	helper.Run()
 }

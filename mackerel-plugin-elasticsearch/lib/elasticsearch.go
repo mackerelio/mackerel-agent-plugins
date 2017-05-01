@@ -6,7 +6,6 @@ import (
 	"flag"
 	"fmt"
 	"net/http"
-	"os"
 	"strings"
 
 	mp "github.com/mackerelio/go-mackerel-plugin"
@@ -269,9 +268,5 @@ func Do() {
 		helper.Tempfile = fmt.Sprintf("/tmp/mackerel-plugin-elasticsearch-%s-%s", *optHost, *optPort)
 	}
 
-	if os.Getenv("MACKEREL_AGENT_PLUGIN_META") != "" {
-		helper.OutputDefinitions()
-	} else {
-		helper.OutputValues()
-	}
+	helper.Run()
 }

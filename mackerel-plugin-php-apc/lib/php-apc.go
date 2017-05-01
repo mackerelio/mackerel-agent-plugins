@@ -75,11 +75,7 @@ func doMain(c *cli.Context) error {
 	helper := mp.NewMackerelPlugin(phpapc)
 	helper.Tempfile = c.String("tempfile")
 
-	if os.Getenv("MACKEREL_AGENT_PLUGIN_META") != "" {
-		helper.OutputDefinitions()
-	} else {
-		helper.OutputValues()
-	}
+	helper.Run()
 	return nil
 }
 

@@ -5,7 +5,6 @@ import (
 	"flag"
 	"fmt"
 	"net"
-	"os"
 	"regexp"
 	"strconv"
 
@@ -95,9 +94,5 @@ func Do() {
 	helper := mp.NewMackerelPlugin(squid)
 	helper.Tempfile = *optTempfile
 
-	if os.Getenv("MACKEREL_AGENT_PLUGIN_META") != "" {
-		helper.OutputDefinitions()
-	} else {
-		helper.OutputValues()
-	}
+	helper.Run()
 }
