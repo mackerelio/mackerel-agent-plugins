@@ -266,7 +266,7 @@ func Do() {
 	if *optTempfile != "" {
 		helper.Tempfile = *optTempfile
 	} else {
-		helper.Tempfile = fmt.Sprintf("/tmp/mackerel-plugin-elasticsearch-%s-%s", *optHost, *optPort)
+		helper.SetTempfileByBasename(fmt.Sprintf("mackerel-plugin-elasticsearch-%s-%s", *optHost, *optPort))
 	}
 
 	if os.Getenv("MACKEREL_AGENT_PLUGIN_META") != "" {
