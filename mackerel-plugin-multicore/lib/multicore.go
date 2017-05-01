@@ -7,10 +7,10 @@ import (
 	"io/ioutil"
 	"log"
 	"os"
+	"path/filepath"
 	"strconv"
 	"strings"
 	"time"
-	"path/filepath"
 
 	mp "github.com/mackerelio/go-mackerel-plugin-helper"
 )
