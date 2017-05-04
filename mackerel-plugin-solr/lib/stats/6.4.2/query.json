@@ -1,7 +1,7 @@
 {
   "responseHeader": {
     "status": 0,
-    "QTime": 0
+    "QTime": 1
   },
   "solr-mbeans": [
     "QUERYHANDLER",
@@ -12,7 +12,7 @@
         "description": "Search using components: ",
         "src": null,
         "stats": {
-          "handlerStart": 1493875832540,
+          "handlerStart": 1493905304324,
           "requests": 0,
           "errors": 0,
           "serverErrors": 0,
@@ -49,7 +49,7 @@
         "description": "SQLHandler",
         "src": null,
         "stats": {
-          "handlerStart": 1493875832529,
+          "handlerStart": 1493905304318,
           "requests": 0,
           "errors": 0,
           "serverErrors": 0,
@@ -72,21 +72,21 @@
         "description": "Search using components: ",
         "src": null,
         "stats": {
-          "handlerStart": 1493875832538,
-          "requests": 777,
-          "errors": 14,
+          "handlerStart": 1493905304323,
+          "requests": 111,
+          "errors": 222,
           "serverErrors": 0,
           "clientErrors": 0,
-          "timeouts": 3,
-          "avgRequestsPerSecond": 5,
-          "5minRateRequestsPerSecond": 4,
-          "15minRateRequestsPerSecond": 7,
-          "avgTimePerRequest": 0.3,
-          "medianRequestTime": 0.4,
-          "75thPcRequestTime": 0.5,
-          "95thPcRequestTime": 0.6,
-          "99thPcRequestTime": 0.7,
-          "999thPcRequestTime": 0.8
+          "timeouts": 333,
+          "avgRequestsPerSecond": 444,
+          "5minRateRequestsPerSecond": 555,
+          "15minRateRequestsPerSecond": 666,
+          "avgTimePerRequest": 777,
+          "medianRequestTime": 888,
+          "75thPcRequestTime": 999,
+          "95thPcRequestTime": 100.1,
+          "99thPcRequestTime": 100.2,
+          "999thPcRequestTime": 100.3
         }
       },
       "expand": {
@@ -112,7 +112,7 @@
         "description": "Dump handler (debug)",
         "src": null,
         "stats": {
-          "handlerStart": 1493875832533,
+          "handlerStart": 1493905304320,
           "requests": 0,
           "errors": 0,
           "serverErrors": 0,
@@ -135,7 +135,7 @@
         "description": "Search using components: ",
         "src": null,
         "stats": {
-          "handlerStart": 1493875832498,
+          "handlerStart": 1493905304277,
           "requests": 0,
           "errors": 0,
           "serverErrors": 0,
@@ -158,7 +158,7 @@
         "description": "The realtime get handler",
         "src": null,
         "stats": {
-          "handlerStart": 1493875832413,
+          "handlerStart": 1493905304222,
           "requests": 0,
           "errors": 0,
           "serverErrors": 0,
@@ -188,7 +188,7 @@
         "description": "Search using components: ",
         "src": null,
         "stats": {
-          "handlerStart": 1493875832538,
+          "handlerStart": 1493905304324,
           "requests": 0,
           "errors": 0,
           "serverErrors": 0,
@@ -218,7 +218,7 @@
         "description": "StreamHandler",
         "src": null,
         "stats": {
-          "handlerStart": 1493875832504,
+          "handlerStart": 1493905304280,
           "requests": 0,
           "errors": 0,
           "serverErrors": 0,
@@ -248,7 +248,7 @@
         "description": "StreamHandler",
         "src": null,
         "stats": {
-          "handlerStart": 1493875832513,
+          "handlerStart": 1493905304285,
           "requests": 0,
           "errors": 0,
           "serverErrors": 0,
@@ -281,7 +281,7 @@
         "description": "Search using components: ",
         "src": null,
         "stats": {
-          "handlerStart": 1493875832540,
+          "handlerStart": 1493905304324,
           "requests": 0,
           "errors": 0,
           "serverErrors": 0,
@@ -318,7 +318,7 @@
         "description": "SQLHandler",
         "src": null,
         "stats": {
-          "handlerStart": 1493875832529,
+          "handlerStart": 1493905304318,
           "requests": 0,
           "errors": 0,
           "serverErrors": 0,
@@ -341,7 +341,7 @@
         "description": "Search using components: ",
         "src": null,
         "stats": {
-          "handlerStart": 1493875832538,
+          "handlerStart": 1493905304323,
           "requests": 0,
           "errors": 0,
           "serverErrors": 0,
@@ -381,7 +381,7 @@
         "description": "Dump handler (debug)",
         "src": null,
         "stats": {
-          "handlerStart": 1493875832533,
+          "handlerStart": 1493905304320,
           "requests": 0,
           "errors": 0,
           "serverErrors": 0,
@@ -404,7 +404,7 @@
         "description": "Search using components: ",
         "src": null,
         "stats": {
-          "handlerStart": 1493875832498,
+          "handlerStart": 1493905304277,
           "requests": 0,
           "errors": 0,
           "serverErrors": 0,
@@ -427,7 +427,7 @@
         "description": "The realtime get handler",
         "src": null,
         "stats": {
-          "handlerStart": 1493875832413,
+          "handlerStart": 1493905304222,
           "requests": 0,
           "errors": 0,
           "serverErrors": 0,
@@ -457,7 +457,7 @@
         "description": "Search using components: ",
         "src": null,
         "stats": {
-          "handlerStart": 1493875832538,
+          "handlerStart": 1493905304324,
           "requests": 0,
           "errors": 0,
           "serverErrors": 0,
@@ -487,7 +487,7 @@
         "description": "StreamHandler",
         "src": null,
         "stats": {
-          "handlerStart": 1493875832504,
+          "handlerStart": 1493905304280,
           "requests": 0,
           "errors": 0,
           "serverErrors": 0,
@@ -517,7 +517,7 @@
         "description": "StreamHandler",
         "src": null,
         "stats": {
-          "handlerStart": 1493875832513,
+          "handlerStart": 1493905304285,
           "requests": 0,
           "errors": 0,
           "serverErrors": 0,

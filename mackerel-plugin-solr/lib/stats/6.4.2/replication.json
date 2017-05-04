@@ -1,0 +1,44 @@
+{
+  "responseHeader": {
+    "status": 0,
+    "QTime": 2
+  },
+  "solr-mbeans": [
+    "REPLICATION",
+    {
+      "/replication": {
+        "class": "org.apache.solr.handler.ReplicationHandler",
+        "version": "6.4.2",
+        "description": "ReplicationHandler provides replication of index and configuration files from Master to Slaves",
+        "src": null,
+        "stats": {
+          "handlerStart": 1493905651268,
+          "requests": 11111,
+          "errors": 22222,
+          "serverErrors": 0,
+          "clientErrors": 0,
+          "timeouts": 33333,
+          "avgRequestsPerSecond": 44444,
+          "5minRateRequestsPerSecond": 55555,
+          "15minRateRequestsPerSecond": 66666,
+          "avgTimePerRequest": 77777,
+          "medianRequestTime": 88888,
+          "75thPcRequestTime": 99999,
+          "95thPcRequestTime": 10000.1,
+          "99thPcRequestTime": 10000.2,
+          "999thPcRequestTime": 10000.3,
+          "indexSize": "71 bytes",
+          "indexVersion": 0,
+          "generation": 1,
+          "indexPath": "/opt/solr/server/solr/gettingstarted/data/index/",
+          "isMaster": "true",
+          "isSlave": "false",
+          "replicateAfter": [
+            "commit"
+          ],
+          "replicationEnabled": "true"
+        }
+      }
+    }
+  ]
+}

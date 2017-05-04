@@ -1,0 +1,37 @@
+{
+  "responseHeader": {
+    "status": 0,
+    "QTime": 0
+  },
+  "solr-mbeans": [
+    "UPDATEHANDLER",
+    {
+      "updateHandler": {
+        "class": "org.apache.solr.update.DirectUpdateHandler2",
+        "version": "1.0",
+        "description": "Update handler that efficiently directly updates the on-disk main lucene index",
+        "src": null,
+        "stats": {
+          "commits": 0,
+          "autocommit maxTime": "15000ms",
+          "autocommits": 0,
+          "soft autocommits": 0,
+          "optimizes": 0,
+          "rollbacks": 0,
+          "expungeDeletes": 0,
+          "docsPending": 0,
+          "adds": 0,
+          "deletesById": 0,
+          "deletesByQuery": 0,
+          "errors": 0,
+          "cumulative_adds": 0,
+          "cumulative_deletesById": 0,
+          "cumulative_deletesByQuery": 0,
+          "cumulative_errors": 0,
+          "transaction_logs_total_size": 0,
+          "transaction_logs_total_number": 0
+        }
+      }
+    }
+  ]
+}

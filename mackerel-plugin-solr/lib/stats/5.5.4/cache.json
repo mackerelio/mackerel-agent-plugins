@@ -1,7 +1,7 @@
 {
   "responseHeader": {
     "status": 0,
-    "QTime": 2
+    "QTime": 1
   },
   "solr-mbeans": [
     "CACHE",
@@ -29,7 +29,7 @@
       "perSegFilter": {
         "class": "org.apache.solr.search.LRUCache",
         "version": "1.0",
-        "description": "LRU Cache(maxSize=10, initialSize=0, autowarmCount=10, regenerator=org.apache.solr.search.NoOpRegenerator@2d8b8d7c)",
+        "description": "LRU Cache(maxSize=10, initialSize=0, autowarmCount=10, regenerator=org.apache.solr.search.NoOpRegenerator@f92d2b8)",
         "src": null,
         "stats": {
           "lookups": 357,
@@ -112,8 +112,7 @@
         "description": "Provides introspection of the Solr FieldCache ",
         "src": null,
         "stats": {
-          "entries_count": 0,
-          "total_size": "0 bytes"
+          "entries_count": 0
         }
       }
     }

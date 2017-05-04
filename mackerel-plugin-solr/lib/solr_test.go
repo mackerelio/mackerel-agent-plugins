@@ -10,6 +10,8 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
+var solrVersion string
+
 var testHandler = http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 	switch r.URL.Path {
 	case "/solr/admin/cores":
@@ -23,7 +25,8 @@ var testHandler = http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) 
 })
 
 func fetchJSON(name string) string {
-	json, err := ioutil.ReadFile("./stats/6.4.2/" + name + ".json")
+	path := fmt.Sprintf("./stats/%s/%s.json", solrVersion, name)
+	json, err := ioutil.ReadFile(path)
 	if err != nil {
 		panic(err)
 	}
@@ -33,7 +36,11 @@ func fetchJSON(name string) string {
 func fetchJSONForMbeans(key string) string {
 	switch key {
 	case "QUERYHANDLER":
-		return fetchJSON("queryhandler")
+		return fetchJSON("query")
+	case "UPDATEHANDLER":
+		return fetchJSON("update")
+	case "REPLICATION":
+		return fetchJSON("replication")
 	case "CACHE":
 		return fetchJSON("cache")
 	default:
@@ -100,40 +107,92 @@ func TestFetchMetrics(t *testing.T) {
 	ts := httptest.NewServer(testHandler)
 	defer ts.Close()
 
-	solr := SolrPlugin{
-		BaseURL: ts.URL + "/solr",
-		Cores:   []string{"testcore"},
-		Prefix:  "solr",
+	for _, version := range []string{"5.5.4", "6.4.2"} {
+		solrVersion = version
+		solr := SolrPlugin{
+			BaseURL: ts.URL + "/solr",
+			Cores:   []string{"testcore"},
+			Prefix:  "solr",
+		}
+		solr.loadStats()
+		stat, err := solr.FetchMetrics()
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		msgPrefix := "Solr Version: " + solrVersion + ", Stat Key: "
+
+		assert.EqualValues(t, 12345, stat["testcore_numDocs"], msgPrefix+"testcore_numDocs")
+		assert.EqualValues(t, 54321, stat["testcore_deletedDocs"], msgPrefix+"testcore_deletedDocs")
+
+		assert.EqualValues(t, 128, stat["testcore_indexHeapUsageBytes"], msgPrefix+"testcore_indexHeapUsageBytes")
+		assert.EqualValues(t, 256, stat["testcore_segmentCount"], msgPrefix+"testcore_segmentCount")
+		assert.EqualValues(t, 512, stat["testcore_sizeInBytes"], msgPrefix+"testcore_sizeInBytes")
+
+		assert.EqualValues(t, 111.0, stat["testcore_requests_select"], msgPrefix+"testcore_requests_select")
+		assert.EqualValues(t, 222.0, stat["testcore_errors_select"], msgPrefix+"testcore_errors_select")
+		assert.EqualValues(t, 333.0, stat["testcore_timeouts_select"], msgPrefix+"testcore_timeouts_select")
+		assert.EqualValues(t, 444.0, stat["testcore_avgRequestsPerSecond_select"], msgPrefix+"testcore_avgRequestsPerSecond_select")
+		switch version {
+		case "5.5.4":
+			assert.EqualValues(t, 555.0, stat["testcore_5minRateReqsPerSecond_select"], msgPrefix+"testcore_5minRateRequestsPerSecond_select")
+			assert.EqualValues(t, 666.0, stat["testcore_15minRateReqsPerSecond_select"], msgPrefix+"testcore_15minRateRequestsPerSecond_select")
+		case "6.4.2":
+			assert.EqualValues(t, 555.0, stat["testcore_5minRateRequestsPerSecond_select"], msgPrefix+"testcore_5minRateRequestsPerSecond_select")
+			assert.EqualValues(t, 666.0, stat["testcore_15minRateRequestsPerSecond_select"], msgPrefix+"testcore_15minRateRequestsPerSecond_select")
+		default:
+		}
+		assert.EqualValues(t, 777.0, stat["testcore_avgTimePerRequest_select"], msgPrefix+"testcore_avgTimePerRequest_select")
+		assert.EqualValues(t, 888.0, stat["testcore_medianRequestTime_select"], msgPrefix+"testcore_medianRequestTime_select")
+		assert.EqualValues(t, 999.0, stat["testcore_75thPcRequestTime_select"], msgPrefix+"testcore_75thPcRequestTime_select")
+		assert.EqualValues(t, 100.1, stat["testcore_95thPcRequestTime_select"], msgPrefix+"testcore_95thPcRequestTime_select")
+		assert.EqualValues(t, 100.2, stat["testcore_99thPcRequestTime_select"], msgPrefix+"testcore_99thPcRequestTime_select")
+		assert.EqualValues(t, 100.3, stat["testcore_999thPcRequestTime_select"], msgPrefix+"testcore_999thPcRequestTime_select")
+
+		assert.EqualValues(t, 1111.0, stat["testcore_requests_update"], msgPrefix+"testcore_requests_update")
+		assert.EqualValues(t, 2222.0, stat["testcore_errors_update"], msgPrefix+"testcore_errors_update")
+		assert.EqualValues(t, 3333.0, stat["testcore_timeouts_update"], msgPrefix+"testcore_timeouts_update")
+		assert.EqualValues(t, 4444.0, stat["testcore_avgRequestsPerSecond_update"], msgPrefix+"testcore_avgRequestsPerSecond_update")
+		switch version {
+		case "5.5.4":
+			assert.EqualValues(t, 5555.0, stat["testcore_5minRateReqsPerSecond_update"], msgPrefix+"testcore_5minRateRequestsPerSecond_update")
+			assert.EqualValues(t, 6666.0, stat["testcore_15minRateReqsPerSecond_update"], msgPrefix+"testcore_15minRateRequestsPerSecond_update")
+		case "6.4.2":
+			assert.EqualValues(t, 5555.0, stat["testcore_5minRateRequestsPerSecond_update"], msgPrefix+"testcore_5minRateRequestsPerSecond_update")
+			assert.EqualValues(t, 6666.0, stat["testcore_15minRateRequestsPerSecond_update"], msgPrefix+"testcore_15minRateRequestsPerSecond_update")
+		default:
+		}
+		assert.EqualValues(t, 7777.0, stat["testcore_avgTimePerRequest_update"], msgPrefix+"testcore_avgTimePerRequest_update")
+		assert.EqualValues(t, 8888.0, stat["testcore_medianRequestTime_update"], msgPrefix+"testcore_medianRequestTime_update")
+		assert.EqualValues(t, 9999.0, stat["testcore_75thPcRequestTime_update"], msgPrefix+"testcore_75thPcRequestTime_update")
+		assert.EqualValues(t, 1000.1, stat["testcore_95thPcRequestTime_update"], msgPrefix+"testcore_95thPcRequestTime_update")
+		assert.EqualValues(t, 1000.2, stat["testcore_99thPcRequestTime_update"], msgPrefix+"testcore_99thPcRequestTime_update")
+		assert.EqualValues(t, 1000.3, stat["testcore_999thPcRequestTime_update"], msgPrefix+"testcore_999thPcRequestTime_update")
+
+		assert.EqualValues(t, 11111.0, stat["testcore_requests_replication"], msgPrefix+"testcore_requests_replication")
+		assert.EqualValues(t, 22222.0, stat["testcore_errors_replication"], msgPrefix+"testcore_errors_replication")
+		assert.EqualValues(t, 33333.0, stat["testcore_timeouts_replication"], msgPrefix+"testcore_timeouts_replication")
+		assert.EqualValues(t, 44444.0, stat["testcore_avgRequestsPerSecond_replication"], msgPrefix+"testcore_avgRequestsPerSecond_replication")
+		switch version {
+		case "5.5.4":
+			assert.EqualValues(t, 55555.0, stat["testcore_5minRateReqsPerSecond_replication"], msgPrefix+"testcore_5minRateRequestsPerSecond_replication")
+			assert.EqualValues(t, 66666.0, stat["testcore_15minRateReqsPerSecond_replication"], msgPrefix+"testcore_15minRateRequestsPerSecond_replication")
+		case "6.4.2":
+			assert.EqualValues(t, 55555.0, stat["testcore_5minRateRequestsPerSecond_replication"], msgPrefix+"testcore_5minRateRequestsPerSecond_replication")
+			assert.EqualValues(t, 66666.0, stat["testcore_15minRateRequestsPerSecond_replication"], msgPrefix+"testcore_15minRateRequestsPerSecond_replication")
+		default:
+		}
+		assert.EqualValues(t, 77777.0, stat["testcore_avgTimePerRequest_replication"], msgPrefix+"testcore_avgTimePerRequest_replication")
+		assert.EqualValues(t, 88888.0, stat["testcore_medianRequestTime_replication"], msgPrefix+"testcore_medianRequestTime_replication")
+		assert.EqualValues(t, 99999.0, stat["testcore_75thPcRequestTime_replication"], msgPrefix+"testcore_75thPcRequestTime_replication")
+		assert.EqualValues(t, 10000.1, stat["testcore_95thPcRequestTime_replication"], msgPrefix+"testcore_95thPcRequestTime_replication")
+		assert.EqualValues(t, 10000.2, stat["testcore_99thPcRequestTime_replication"], msgPrefix+"testcore_99thPcRequestTime_replication")
+		assert.EqualValues(t, 10000.3, stat["testcore_999thPcRequestTime_replication"], msgPrefix+"testcore_999thPcRequestTime_replication")
+
+		assert.EqualValues(t, 135, stat["testcore_lookups_filterCache"], msgPrefix+"testcore_lookups_filterCache")
+		assert.EqualValues(t, 357, stat["testcore_lookups_perSegFilter"], msgPrefix+"testcore_lookups_perSegFilter")
+		assert.EqualValues(t, 579, stat["testcore_lookups_queryResultCache"], msgPrefix+"testcore_lookups_queryResultCache")
+		assert.EqualValues(t, 246, stat["testcore_lookups_documentCache"], msgPrefix+"testcore_lookups_documentCache")
+		assert.EqualValues(t, 468, stat["testcore_lookups_fieldValueCache"], msgPrefix+"testcore_lookups_fieldValueCache")
 	}
-	solr.loadStats()
-	stat, err := solr.FetchMetrics()
-	if err != nil {
-		t.Fatal(err)
-	}
-
-	assert.EqualValues(t, 12345, stat["testcore_numDocs"])
-	assert.EqualValues(t, 13, stat["testcore_deletedDocs"])
-
-	assert.EqualValues(t, 64, stat["testcore_indexHeapUsageBytes"])
-	assert.EqualValues(t, 7, stat["testcore_segmentCount"])
-	assert.EqualValues(t, 71, stat["testcore_sizeInBytes"])
-
-	assert.EqualValues(t, 777.0, stat["testcore_requests_select"])
-	assert.EqualValues(t, 14.0, stat["testcore_errors_select"])
-	assert.EqualValues(t, 3.0, stat["testcore_timeouts_select"])
-	assert.EqualValues(t, 5.0, stat["testcore_avgRequestsPerSecond_select"])
-	assert.EqualValues(t, 4.0, stat["testcore_5minRateRequestsPerSecond_select"])
-	assert.EqualValues(t, 7.0, stat["testcore_15minRateRequestsPerSecond_select"])
-	assert.EqualValues(t, 0.3, stat["testcore_avgTimePerRequest_select"])
-	assert.EqualValues(t, 0.4, stat["testcore_medianRequestTime_select"])
-	assert.EqualValues(t, 0.5, stat["testcore_75thPcRequestTime_select"])
-	assert.EqualValues(t, 0.6, stat["testcore_95thPcRequestTime_select"])
-	assert.EqualValues(t, 0.7, stat["testcore_99thPcRequestTime_select"])
-	assert.EqualValues(t, 0.8, stat["testcore_999thPcRequestTime_select"])
-
-	assert.EqualValues(t, 1, stat["testcore_lookups_filterCache"])
-	assert.EqualValues(t, 2, stat["testcore_lookups_perSegFilter"])
-	assert.EqualValues(t, 3, stat["testcore_lookups_queryResultCache"])
-	assert.EqualValues(t, 4, stat["testcore_lookups_documentCache"])
-	assert.EqualValues(t, 5, stat["testcore_lookups_fieldValueCache"])
 }
