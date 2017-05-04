@@ -1,0 +1,111 @@
+{
+  "responseHeader": {
+    "status": 0,
+    "QTime": 0
+  },
+  "solr-mbeans": [
+    "CACHE",
+    {
+      "filterCache": {
+        "class": "org.apache.solr.search.FastLRUCache",
+        "version": "1.0",
+        "description": "Concurrent LRU Cache(maxSize=512, initialSize=512, minSize=460, acceptableSize=486, cleanupThread=false)",
+        "src": null,
+        "stats": {
+          "lookups": 1,
+          "hits": 0,
+          "hitratio": 0,
+          "inserts": 0,
+          "evictions": 0,
+          "size": 0,
+          "warmupTime": 0,
+          "cumulative_lookups": 0,
+          "cumulative_hits": 0,
+          "cumulative_hitratio": 0,
+          "cumulative_inserts": 0,
+          "cumulative_evictions": 0
+        }
+      },
+      "perSegFilter": {
+        "class": "org.apache.solr.search.LRUCache",
+        "version": "1.0",
+        "description": "LRU Cache(maxSize=10, initialSize=0, autowarmCount=10, regenerator=org.apache.solr.search.NoOpRegenerator@139ca505)",
+        "src": null,
+        "stats": {
+          "lookups": 2,
+          "hits": 0,
+          "hitratio": 0,
+          "inserts": 0,
+          "evictions": 0,
+          "size": 0,
+          "warmupTime": 0,
+          "cumulative_lookups": 0,
+          "cumulative_hits": 0,
+          "cumulative_hitratio": 0,
+          "cumulative_inserts": 0,
+          "cumulative_evictions": 0
+        }
+      },
+      "queryResultCache": {
+        "class": "org.apache.solr.search.LRUCache",
+        "version": "1.0",
+        "description": "LRU Cache(maxSize=512, initialSize=512)",
+        "src": null,
+        "stats": {
+          "lookups": 3,
+          "hits": 0,
+          "hitratio": 0,
+          "inserts": 0,
+          "evictions": 0,
+          "size": 0,
+          "warmupTime": 0,
+          "cumulative_lookups": 0,
+          "cumulative_hits": 0,
+          "cumulative_hitratio": 0,
+          "cumulative_inserts": 0,
+          "cumulative_evictions": 0
+        }
+      },
+      "documentCache": {
+        "class": "org.apache.solr.search.LRUCache",
+        "version": "1.0",
+        "description": "LRU Cache(maxSize=512, initialSize=512)",
+        "src": null,
+        "stats": {
+          "lookups": 4,
+          "hits": 0,
+          "hitratio": 0,
+          "inserts": 0,
+          "evictions": 0,
+          "size": 0,
+          "warmupTime": 0,
+          "cumulative_lookups": 0,
+          "cumulative_hits": 0,
+          "cumulative_hitratio": 0,
+          "cumulative_inserts": 0,
+          "cumulative_evictions": 0
+        }
+      },
+      "fieldValueCache": {
+        "class": "org.apache.solr.search.FastLRUCache",
+        "version": "1.0",
+        "description": "Concurrent LRU Cache(maxSize=10000, initialSize=10, minSize=9000, acceptableSize=9500, cleanupThread=false)",
+        "src": null,
+        "stats": {
+          "lookups": 5,
+          "hits": 0,
+          "hitratio": 0,
+          "inserts": 0,
+          "evictions": 0,
+          "size": 0,
+          "warmupTime": 0,
+          "cumulative_lookups": 0,
+          "cumulative_hits": 0,
+          "cumulative_hitratio": 0,
+          "cumulative_inserts": 0,
+          "cumulative_evictions": 0
+        }
+      }
+    }
+  ]
+}

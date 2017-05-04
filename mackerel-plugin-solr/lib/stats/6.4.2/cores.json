@@ -1,0 +1,34 @@
+{
+  "responseHeader": {
+    "status": 0,
+    "QTime": 0
+  },
+  "initFailures": {},
+  "status": {
+    "testcore": {
+      "name": "testcore",
+      "instanceDir": "/opt/solr/server/solr/testcore",
+      "dataDir": "/opt/solr/server/solr/testcore/data/",
+      "config": "solrconfig.xml",
+      "schema": "managed-schema",
+      "startTime": "2017-05-04T05:30:31.925Z",
+      "uptime": 2975195,
+      "index": {
+        "numDocs": 12345,
+        "maxDoc": 0,
+        "deletedDocs": 13,
+        "indexHeapUsageBytes": 64,
+        "version": 2,
+        "segmentCount": 7,
+        "current": true,
+        "hasDeletions": false,
+        "directory": "org.apache.lucene.store.NRTCachingDirectory:NRTCachingDirectory(MMapDirectory@/opt/solr/server/solr/testcore/data/index lockFactory=org.apache.lucene.store.NativeFSLockFactory@4a39532e; maxCacheMB=48.0 maxMergeSizeMB=4.0)",
+        "segmentsFile": "segments_1",
+        "segmentsFileSizeInBytes": 71,
+        "userData": {},
+        "sizeInBytes": 71,
+        "size": "71 bytes"
+      }
+    }
+  }
+}

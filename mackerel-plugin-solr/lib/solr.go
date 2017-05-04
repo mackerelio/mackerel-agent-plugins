@@ -14,10 +14,12 @@ import (
 )
 
 var (
-	logger               = logging.GetLogger("metrics.plugin.solr")
-	coreStatKeys         = []string{"numDocs", "deletedDocs", "indexHeapUsageBytes", "version", "segmentCount", "sizeInBytes"}
-	queryHandlerPaths    = []string{"/update/json", "/select", "/update/json/docs", "/get", "/update/csv", "/replication", "/update", "/dataimport"}
-	queryHandlerStatKeys = []string{"requests", "errors", "timeouts", "avgRequestsPerSecond", "5minRateReqsPerSecond", "15minRateReqsPerSecond", "avgTimePerRequest", "medianRequestTime", "75thPcRequestTime", "95thPcRequestTime", "99thPcRequestTime", "999thPcRequestTime"}
+	logger            = logging.GetLogger("metrics.plugin.solr")
+	coreStatKeys      = []string{"numDocs", "deletedDocs", "indexHeapUsageBytes", "version", "segmentCount", "sizeInBytes"}
+	queryHandlerPaths = []string{"/update/json", "/select", "/update/json/docs", "/get", "/update/csv", "/replication", "/update", "/dataimport"}
+	// Solr5 ... "5minRateReqsPerSecond", "15minRateReqsPerSecond"
+	// Solr6 ... "5minRateRequestsPerSecond", "15minRateRequestsPerSecond"
+	queryHandlerStatKeys = []string{"requests", "errors", "timeouts", "avgRequestsPerSecond", "5minRateReqsPerSecond", "5minRateRequestsPerSecond", "15minRateReqsPerSecond", "15minRateRequestsPerSecond", "avgTimePerRequest", "medianRequestTime", "75thPcRequestTime", "95thPcRequestTime", "99thPcRequestTime", "999thPcRequestTime"}
 	cacheTypes           = []string{"filterCache", "perSegFilter", "queryResultCache", "documentCache", "fieldValueCache"}
 	cacheStatKeys        = []string{"lookups", "hits", "hitratio", "inserts", "evictions", "size", "warmupTime"}
 )
@@ -75,13 +77,20 @@ func (s *SolrPlugin) setStatsMbean(core string, stats map[string]interface{}, al
 					if k != "stats" {
 						continue
 					}
+					if v == nil {
+						continue
+					}
 					v2 := v.(map[string]interface{})
 					for _, allowKey := range allowKeys {
+						if v2[allowKey] == nil {
+							continue
+						}
 						s.Stats[core][allowKey+"_"+escapeSlash(key)] = v2[allowKey].(float64)
 					}
 				}
 			}
 		}
+		break // if QUERYHANDLER and QUERY
 	}
 }
 
