@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.27.1 (2017-05-09)
+
+* [php-fpm] Implement PluginWithPrefix interfarce #338 (astj)
+* Use SetTempfileByBasename to support MACKEREL_PLUGIN_WORKDIR #339 (astj)
+
+
 ## 0.27.0 (2017-04-27)
 
 * Add uWSGI vassal plugin #335 (kizkoh)
