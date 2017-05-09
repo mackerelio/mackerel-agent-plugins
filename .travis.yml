@@ -6,7 +6,7 @@ git:
 env:
   global:
   - PATH=~/gopath/bin:$PATH DEBIAN_FRONTEND=noninteractive
-  - secure: "eLpMK47AnVEw3GJw+FGS/LwCPlZ+lLPZ2gHDgOk9v3FWQc1pdDvC/Ot9fUWR/H1h0TWZ6W7Jly1h9ZbCS/VclgbBa3g1PqNDjLLZDUVGVjzAe666zGmkgyvdjIXnqDD0NCwA6BmdoQv1xwAovquKagRMi58Hb9Zy0RclZ/fx4SI="
+  - secure: "V0XY5XWhVQuGsE35J5QqIKa77tgfIYIa6z6k1qgRjW+Wy7DDFhIsPRdziayZZJOhwBqQBsVikIP4rXgkByEVhkUv8oIfL/V0BLkHsuNUjJVtloOqe9mpDlWzeMyi3KUfBTb9IW0nrwcEwZF8/dtQEmSW62RbupO3F/lpVEbrxXY="
 install:
 - sudo apt-get update
 - DEBIAN_FRONTEND=noninteractive sudo apt-get install -y rpm devscripts debhelper
