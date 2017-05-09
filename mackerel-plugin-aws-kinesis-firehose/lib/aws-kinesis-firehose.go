@@ -1,7 +1,6 @@
 package mpawskinesisfirehose
 
 import (
-	"errors"
 	"flag"
 	"log"
 	"strings"
@@ -11,6 +10,7 @@ import (
 	"github.com/aws/aws-sdk-go/aws/credentials"
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/cloudwatch"
+	"github.com/aws/aws-sdk-go/service/cloudwatch/cloudwatchiface"
 	mp "github.com/mackerelio/go-mackerel-plugin-helper"
 )
 
@@ -61,20 +61,19 @@ func (p *KinesisFirehosePlugin) prepare() error {
 	return nil
 }
 
-// getLastPoint fetches a CloudWatch metric and parse
-func (p KinesisFirehosePlugin) getLastPoint(metric metrics) (float64, error) {
+func getLastPointFromCloudWatch(cw cloudwatchiface.CloudWatchAPI, deliveryStreamName string, metric metrics) (*cloudwatch.Datapoint, error) {
 	now := time.Now()
 
 	dimensions := []*cloudwatch.Dimension{
 		{
 			Name:  aws.String("DeliveryStreamName"),
-			Value: aws.String(p.Name),
+			Value: aws.String(deliveryStreamName),
 		},
 	}
 
-	response, err := p.CloudWatch.GetMetricStatistics(&cloudwatch.GetMetricStatisticsInput{
+	response, err := cw.GetMetricStatistics(&cloudwatch.GetMetricStatisticsInput{
 		Dimensions: dimensions,
-		StartTime:  aws.Time(now.Add(time.Duration(180) * time.Second * -1)), // 3 min
+		StartTime:  aws.Time(now.Add(time.Duration(480) * time.Second * -1)), // 8 min, since some metrics are aggregated over 5 min
 		EndTime:    aws.Time(now),
 		MetricName: aws.String(metric.CloudWatchName),
 		Period:     aws.Int64(60),
@@ -82,31 +81,38 @@ func (p KinesisFirehosePlugin) getLastPoint(metric metrics) (float64, error) {
 		Namespace:  aws.String(namespace),
 	})
 	if err != nil {
-		return 0, err
+		return nil, err
 	}
 
 	datapoints := response.Datapoints
 	if len(datapoints) == 0 {
-		return 0, errors.New("fetched no datapoints")
+		return nil, nil
 	}
 
 	latest := new(time.Time)
-	var latestVal float64
+	var latestDp *cloudwatch.Datapoint
 	for _, dp := range datapoints {
 		if dp.Timestamp.Before(*latest) {
 			continue
 		}
 
 		latest = dp.Timestamp
-		latestVal = *dp.Average
+		latestDp = dp
 	}
 
-	return latestVal, nil
+	return latestDp, nil
+}
+
+func mergeStatsFromDatapoint(stats map[string]interface{}, dp *cloudwatch.Datapoint, metric metrics) map[string]interface{} {
+	if dp != nil {
+		stats[metric.MackerelName] = *dp.Average
+	}
+	return stats
 }
 
 // FetchMetrics fetch the metrics
 func (p KinesisFirehosePlugin) FetchMetrics() (map[string]interface{}, error) {
-	stat := make(map[string]interface{})
+	stats := make(map[string]interface{})
 
 	for _, met := range [...]metrics{
 		{CloudWatchName: "DeliveryToElasticsearch.Bytes", MackerelName: "DeliveryToElasticsearchBytes"},
@@ -133,15 +139,15 @@ func (p KinesisFirehosePlugin) FetchMetrics() (map[string]interface{}, error) {
 		{CloudWatchName: "UpdateDeliveryStream.Latency", MackerelName: "UpdateDeliveryStreamLatency"},
 		{CloudWatchName: "UpdateDeliveryStream.Requests", MackerelName: "UpdateDeliveryStreamRequests"},
 	} {
-		v, err := p.getLastPoint(met)
+		v, err := getLastPointFromCloudWatch(p.CloudWatch, p.Name, met)
 		if err == nil {
-			stat[met.MackerelName] = v
+			stats = mergeStatsFromDatapoint(stats, v, met)
 		} else {
 			log.Printf("%s: %s", met, err)
 		}
 	}
 
-	return stat, nil
+	return stats, nil
 }
 
 // GraphDefinition of KinesisFirehosePlugin
