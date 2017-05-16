@@ -1,6 +1,5 @@
 VERBOSE_FLAG = $(if $(VERBOSE),-verbose)
 CURRENT_REVISION = $(shell git rev-parse --short HEAD)
-BUILD_LDFLAGS = "-s -w"
 
 all: lint cover testtool testconvention rpm deb
 
