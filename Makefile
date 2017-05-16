@@ -37,6 +37,16 @@ testdeps:
 	go get github.com/pierrre/gotestcover
 	go get github.com/mattn/goveralls
 
+check-release-deps:
+	@have_error=0; \
+	for command in cpanm hub ghch gobump; do \
+	  if ! command -v $$command > /dev/null; then \
+	    have_error=1; \
+	    echo "\`$$command\` command is required for releasing"; \
+	  fi; \
+	done; \
+	test $$have_error = 0
+
 lint: testdeps
 	go vet ./...
 	golint -set_exit_status ./...
@@ -55,13 +65,14 @@ deb: build
 	cp build/mackerel-plugin-* packaging/deb/debian/
 	cd packaging/deb && debuild --no-tgz-check -rfakeroot -uc -us
 
+release: check-release-deps
+	(cd tool && cpanm -qn --installdeps .)
+	perl tool/create-release-pullrequest
+
 clean:
 	if [ -d build ]; then \
 	  rm -f build/mackerel-plugin-*; \
 	  rmdir build; \
 	fi
-
-release:
-	tool/releng
 
 .PHONY: all build test testgo deps testdeps rpm deb clean release lint cover testtool testconvention
