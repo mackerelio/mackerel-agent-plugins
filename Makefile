@@ -1,7 +1,7 @@
 VERBOSE_FLAG = $(if $(VERBOSE),-verbose)
 CURRENT_REVISION = $(shell git rev-parse --short HEAD)
 
-all: lint cover testtool testconvention rpm deb
+all: lint cover testconvention rpm deb
 
 build: deps
 	mkdir -p build
@@ -15,10 +15,7 @@ build/mackerel-plugin: deps
 	go build -ldflags="-s -w -X main.gitcommit=$(CURRENT_REVISION)" \
 	  -o build/mackerel-plugin
 
-testtool:
-	prove tool/create-release-pullrequest
-
-test: testgo lint testtool testconvention
+test: testgo lint testconvention
 
 testgo: testdeps
 	go test $(VERBOSE_FLAG) ./...
@@ -75,4 +72,4 @@ clean:
 	  rmdir build; \
 	fi
 
-.PHONY: all build test testgo deps testdeps rpm deb clean release lint cover testtool testconvention
+.PHONY: all build test testgo deps testdeps rpm deb clean release lint cover testconvention
