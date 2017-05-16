@@ -1,5 +1,4 @@
 VERBOSE_FLAG = $(if $(VERBOSE),-verbose)
-CURRENT_VERSION = $(shell git log --merges --oneline | perl -ne 'if(m/^.+Merge pull request \#[0-9]+ from .+\/bump-version-([0-9\.]+)/){print $$1;exit}')
 CURRENT_REVISION = $(shell git rev-parse --short HEAD)
 BUILD_LDFLAGS = "-s -w"
 
@@ -14,7 +13,7 @@ build: deps
 
 build/mackerel-plugin: deps
 	mkdir -p build
-	go build -ldflags="-s -w -X main.version=$(CURRENT_VERSION) -X main.gitcommit=$(CURRENT_REVISION)" \
+	go build -ldflags="-s -w -X main.gitcommit=$(CURRENT_REVISION)" \
 	  -o build/mackerel-plugin
 
 test: testgo lint testtool testconvention
@@ -48,9 +47,9 @@ cover: testdeps
 
 rpm: build
 	make build GOOS=linux GOARCH=386
-	rpmbuild --define "_sourcedir `pwd`"  --define "_version ${CURRENT_VERSION}" --define "buildarch noarch" -bb packaging/rpm/mackerel-agent-plugins.spec
+	rpmbuild --define "_sourcedir `pwd`"  --define "_version 0.27.1" --define "buildarch noarch" -bb packaging/rpm/mackerel-agent-plugins.spec
 	make build GOOS=linux GOARCH=amd64
-	rpmbuild --define "_sourcedir `pwd`"  --define "_version ${CURRENT_VERSION}" --define "buildarch x86_64" -bb packaging/rpm/mackerel-agent-plugins.spec
+	rpmbuild --define "_sourcedir `pwd`"  --define "_version 0.27.1" --define "buildarch x86_64" -bb packaging/rpm/mackerel-agent-plugins.spec
 
 deb: build
 	make build GOOS=linux GOARCH=386
