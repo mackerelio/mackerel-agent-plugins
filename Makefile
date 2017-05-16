@@ -15,10 +15,10 @@ build/mackerel-plugin: deps
 	go build -ldflags="-s -w -X main.gitcommit=$(CURRENT_REVISION)" \
 	  -o build/mackerel-plugin
 
-test: testgo lint testtool testconvention
-
 testtool:
-	prove tool/releng tool/autotag
+	prove tool/create-release-pullrequest
+
+test: testgo lint testtool testconvention
 
 testgo: testdeps
 	go test $(VERBOSE_FLAG) ./...
