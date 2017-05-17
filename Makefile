@@ -51,13 +51,13 @@ lint: testdeps
 cover: testdeps
 	gotestcover -v -covermode=count -coverprofile=.profile.cov -parallelpackages=4 ./...
 
-rpm: build
+rpm:
 	make build GOOS=linux GOARCH=386
 	rpmbuild --define "_sourcedir `pwd`"  --define "_version 0.27.1" --define "buildarch noarch" -bb packaging/rpm/mackerel-agent-plugins.spec
 	make build GOOS=linux GOARCH=amd64
 	rpmbuild --define "_sourcedir `pwd`"  --define "_version 0.27.1" --define "buildarch x86_64" -bb packaging/rpm/mackerel-agent-plugins.spec
 
-deb: build
+deb:
 	make build GOOS=linux GOARCH=386
 	cp build/mackerel-plugin-* packaging/deb/debian/
 	cd packaging/deb && debuild --no-tgz-check -rfakeroot -uc -us
