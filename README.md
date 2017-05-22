@@ -69,7 +69,7 @@ If the mackerel-agent has already be installed this step can be ignored.
 ## Install mackerel-agent-plugins
 
 Install the plugin pack from either the yum or the apt repository.
-To setup those package repositories, see documentation about installation of mackerel-agent ([rpm](https://mackerel.io/docs/entry/howto/install-agent/rpm) / [deb](https://mackerel.io/docs/entry/howto/install-agent/deb)).
+To setup these package repositories, see the documentation regarding the installation of mackerel-agent ([rpm](https://mackerel.io/docs/entry/howto/install-agent/rpm) / [deb](https://mackerel.io/docs/entry/howto/install-agent/deb)).
 
 mackerel-agent-plugins will be installed to ```/usr/bin/mackerel-plugin-*``` (and some plugins are symlinked as ```/usr/local/bin/mackerel-plugin-*```, for backward compatibility.).
 
