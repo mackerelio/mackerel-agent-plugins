@@ -134,7 +134,7 @@ func (p RDSPlugin) auroraGraphDefinition() map[string]mp.Graphs {
 			},
 		},
 		p.Prefix + ".Latency": {
-			Label: p.LabelPrefix + " Latency in second",
+			Label: p.LabelPrefix + " Latency [msec]",
 			Unit:  "float",
 			Metrics: []mp.Metrics{
 				{Name: "SelectLatency", Label: "Select"},
