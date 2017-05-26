@@ -1,546 +1,106 @@
 {
-  "responseHeader": {
-    "status": 0,
-    "QTime": 1
-  },
   "solr-mbeans": [
     "QUERYHANDLER",
     {
-      "/browse": {
-        "class": "org.apache.solr.handler.component.SearchHandler",
-        "version": "6.4.2",
-        "description": "Search using components: ",
-        "src": null,
+      "/get": {
         "stats": {
-          "handlerStart": 1493905304324,
+          "999thPcRequestTime": 0,
+          "99thPcRequestTime": 0,
+          "95thPcRequestTime": 0,
+          "75thPcRequestTime": 0,
+          "medianRequestTime": 0,
+          "avgTimePerRequest": 0,
+          "15minRateRequestsPerSecond": 0,
+          "handlerStart": 1495768928373,
           "requests": 0,
           "errors": 0,
           "serverErrors": 0,
           "clientErrors": 0,
           "timeouts": 0,
           "avgRequestsPerSecond": 0,
-          "5minRateRequestsPerSecond": 0,
-          "15minRateRequestsPerSecond": 0,
-          "avgTimePerRequest": 0,
-          "medianRequestTime": 0,
-          "75thPcRequestTime": 0,
-          "95thPcRequestTime": 0,
-          "99thPcRequestTime": 0,
-          "999thPcRequestTime": 0
-        }
-      },
-      "terms": {
-        "class": "terms",
-        "version": "6.4.2",
-        "description": "A Component for working with Term Enumerators",
+          "5minRateRequestsPerSecond": 0
+        },
         "src": null,
-        "stats": null
-      },
-      "query": {
-        "class": "query",
+        "description": "The realtime get handler",
         "version": "6.4.2",
-        "description": "query",
-        "src": null,
-        "stats": null
-      },
-      "/sql": {
-        "class": "org.apache.solr.handler.SQLHandler",
-        "version": "6.4.2",
-        "description": "SQLHandler",
-        "src": null,
-        "stats": {
-          "handlerStart": 1493905304318,
-          "requests": 0,
-          "errors": 0,
-          "serverErrors": 0,
-          "clientErrors": 0,
-          "timeouts": 0,
-          "avgRequestsPerSecond": 0,
-          "5minRateRequestsPerSecond": 0,
-          "15minRateRequestsPerSecond": 0,
-          "avgTimePerRequest": 0,
-          "medianRequestTime": 0,
-          "75thPcRequestTime": 0,
-          "95thPcRequestTime": 0,
-          "99thPcRequestTime": 0,
-          "999thPcRequestTime": 0
-        }
+        "class": "org.apache.solr.handler.RealTimeGetHandler"
       },
       "/select": {
-        "class": "org.apache.solr.handler.component.SearchHandler",
-        "version": "6.4.2",
-        "description": "Search using components: ",
-        "src": null,
         "stats": {
-          "handlerStart": 1493905304323,
+          "999thPcRequestTime": 100.3,
+          "99thPcRequestTime": 100.2,
+          "95thPcRequestTime": 100.1,
+          "75thPcRequestTime": 999,
+          "medianRequestTime": 888,
+          "avgTimePerRequest": 777,
+          "15minRateRequestsPerSecond": 666,
+          "handlerStart": 1495768928457,
           "requests": 111,
           "errors": 222,
           "serverErrors": 0,
           "clientErrors": 0,
           "timeouts": 333,
           "avgRequestsPerSecond": 444,
-          "5minRateRequestsPerSecond": 555,
-          "15minRateRequestsPerSecond": 666,
-          "avgTimePerRequest": 777,
-          "medianRequestTime": 888,
-          "75thPcRequestTime": 999,
-          "95thPcRequestTime": 100.1,
-          "99thPcRequestTime": 100.2,
-          "999thPcRequestTime": 100.3
-        }
-      },
-      "expand": {
-        "class": "expand",
-        "version": "6.4.2",
-        "description": "Expand Component",
+          "5minRateRequestsPerSecond":555 
+        },
         "src": null,
-        "docs": [
-          "http://wiki.apache.org/solr/ExpandComponent"
-        ],
-        "stats": null
-      },
-      "mlt": {
-        "class": "mlt",
+        "description": "Search using components: query,facet,facet_module,mlt,highlight,stats,expand,terms,debug,",
         "version": "6.4.2",
-        "description": "More Like This",
-        "src": null,
-        "stats": null
-      },
-      "/debug/dump": {
-        "class": "org.apache.solr.handler.DumpRequestHandler",
-        "version": "6.4.2",
-        "description": "Dump handler (debug)",
-        "src": null,
-        "stats": {
-          "handlerStart": 1493905304320,
-          "requests": 0,
-          "errors": 0,
-          "serverErrors": 0,
-          "clientErrors": 0,
-          "timeouts": 0,
-          "avgRequestsPerSecond": 0,
-          "5minRateRequestsPerSecond": 0,
-          "15minRateRequestsPerSecond": 0,
-          "avgTimePerRequest": 0,
-          "medianRequestTime": 0,
-          "75thPcRequestTime": 0,
-          "95thPcRequestTime": 0,
-          "99thPcRequestTime": 0,
-          "999thPcRequestTime": 0
-        }
-      },
-      "/export": {
-        "class": "org.apache.solr.handler.ExportHandler",
-        "version": "6.4.2",
-        "description": "Search using components: ",
-        "src": null,
-        "stats": {
-          "handlerStart": 1493905304277,
-          "requests": 0,
-          "errors": 0,
-          "serverErrors": 0,
-          "clientErrors": 0,
-          "timeouts": 0,
-          "avgRequestsPerSecond": 0,
-          "5minRateRequestsPerSecond": 0,
-          "15minRateRequestsPerSecond": 0,
-          "avgTimePerRequest": 0,
-          "medianRequestTime": 0,
-          "75thPcRequestTime": 0,
-          "95thPcRequestTime": 0,
-          "99thPcRequestTime": 0,
-          "999thPcRequestTime": 0
-        }
-      },
-      "/get": {
-        "class": "org.apache.solr.handler.RealTimeGetHandler",
-        "version": "6.4.2",
-        "description": "The realtime get handler",
-        "src": null,
-        "stats": {
-          "handlerStart": 1493905304222,
-          "requests": 0,
-          "errors": 0,
-          "serverErrors": 0,
-          "clientErrors": 0,
-          "timeouts": 0,
-          "avgRequestsPerSecond": 0,
-          "5minRateRequestsPerSecond": 0,
-          "15minRateRequestsPerSecond": 0,
-          "avgTimePerRequest": 0,
-          "medianRequestTime": 0,
-          "75thPcRequestTime": 0,
-          "95thPcRequestTime": 0,
-          "99thPcRequestTime": 0,
-          "999thPcRequestTime": 0
-        }
-      },
-      "get": {
-        "class": "get",
-        "version": "6.4.2",
-        "description": "query",
-        "src": null,
-        "stats": null
-      },
-      "/query": {
-        "class": "org.apache.solr.handler.component.SearchHandler",
-        "version": "6.4.2",
-        "description": "Search using components: ",
-        "src": null,
-        "stats": {
-          "handlerStart": 1493905304324,
-          "requests": 0,
-          "errors": 0,
-          "serverErrors": 0,
-          "clientErrors": 0,
-          "timeouts": 0,
-          "avgRequestsPerSecond": 0,
-          "5minRateRequestsPerSecond": 0,
-          "15minRateRequestsPerSecond": 0,
-          "avgTimePerRequest": 0,
-          "medianRequestTime": 0,
-          "75thPcRequestTime": 0,
-          "95thPcRequestTime": 0,
-          "99thPcRequestTime": 0,
-          "999thPcRequestTime": 0
-        }
-      },
-      "tvComponent": {
-        "class": "tvComponent",
-        "version": "6.4.2",
-        "description": "A Component for working with Term Vectors",
-        "src": null,
-        "stats": null
-      },
-      "/graph": {
-        "class": "org.apache.solr.handler.GraphHandler",
-        "version": "6.4.2",
-        "description": "StreamHandler",
-        "src": null,
-        "stats": {
-          "handlerStart": 1493905304280,
-          "requests": 0,
-          "errors": 0,
-          "serverErrors": 0,
-          "clientErrors": 0,
-          "timeouts": 0,
-          "avgRequestsPerSecond": 0,
-          "5minRateRequestsPerSecond": 0,
-          "15minRateRequestsPerSecond": 0,
-          "avgTimePerRequest": 0,
-          "medianRequestTime": 0,
-          "75thPcRequestTime": 0,
-          "95thPcRequestTime": 0,
-          "99thPcRequestTime": 0,
-          "999thPcRequestTime": 0
-        }
-      },
-      "facet_module": {
-        "class": "facet_module",
-        "version": "6.4.2",
-        "description": "Facet Module",
-        "src": null,
-        "stats": null
-      },
-      "/stream": {
-        "class": "org.apache.solr.handler.StreamHandler",
-        "version": "6.4.2",
-        "description": "StreamHandler",
-        "src": null,
-        "stats": {
-          "handlerStart": 1493905304285,
-          "requests": 0,
-          "errors": 0,
-          "serverErrors": 0,
-          "clientErrors": 0,
-          "timeouts": 0,
-          "avgRequestsPerSecond": 0,
-          "5minRateRequestsPerSecond": 0,
-          "15minRateRequestsPerSecond": 0,
-          "avgTimePerRequest": 0,
-          "medianRequestTime": 0,
-          "75thPcRequestTime": 0,
-          "95thPcRequestTime": 0,
-          "99thPcRequestTime": 0,
-          "999thPcRequestTime": 0
-        }
-      },
-      "facet": {
-        "class": "facet",
-        "version": "6.4.2",
-        "description": "Handle Faceting",
-        "src": null,
-        "stats": null
+        "class": "org.apache.solr.handler.component.SearchHandler"
       }
     },
     "QUERY",
     {
-      "/browse": {
-        "class": "org.apache.solr.handler.component.SearchHandler",
-        "version": "6.4.2",
-        "description": "Search using components: ",
-        "src": null,
+      "/get": {
         "stats": {
-          "handlerStart": 1493905304324,
+          "999thPcRequestTime": 0,
+          "99thPcRequestTime": 0,
+          "95thPcRequestTime": 0,
+          "75thPcRequestTime": 0,
+          "medianRequestTime": 0,
+          "avgTimePerRequest": 0,
+          "15minRateRequestsPerSecond": 0,
+          "handlerStart": 1495768928373,
           "requests": 0,
           "errors": 0,
           "serverErrors": 0,
           "clientErrors": 0,
           "timeouts": 0,
           "avgRequestsPerSecond": 0,
-          "5minRateRequestsPerSecond": 0,
-          "15minRateRequestsPerSecond": 0,
-          "avgTimePerRequest": 0,
-          "medianRequestTime": 0,
-          "75thPcRequestTime": 0,
-          "95thPcRequestTime": 0,
-          "99thPcRequestTime": 0,
-          "999thPcRequestTime": 0
-        }
-      },
-      "terms": {
-        "class": "terms",
-        "version": "6.4.2",
-        "description": "A Component for working with Term Enumerators",
+          "5minRateRequestsPerSecond": 0
+        },
         "src": null,
-        "stats": null
-      },
-      "query": {
-        "class": "query",
+        "description": "The realtime get handler",
         "version": "6.4.2",
-        "description": "query",
-        "src": null,
-        "stats": null
-      },
-      "/sql": {
-        "class": "org.apache.solr.handler.SQLHandler",
-        "version": "6.4.2",
-        "description": "SQLHandler",
-        "src": null,
-        "stats": {
-          "handlerStart": 1493905304318,
-          "requests": 0,
-          "errors": 0,
-          "serverErrors": 0,
-          "clientErrors": 0,
-          "timeouts": 0,
-          "avgRequestsPerSecond": 0,
-          "5minRateRequestsPerSecond": 0,
-          "15minRateRequestsPerSecond": 0,
-          "avgTimePerRequest": 0,
-          "medianRequestTime": 0,
-          "75thPcRequestTime": 0,
-          "95thPcRequestTime": 0,
-          "99thPcRequestTime": 0,
-          "999thPcRequestTime": 0
-        }
+        "class": "org.apache.solr.handler.RealTimeGetHandler"
       },
       "/select": {
-        "class": "org.apache.solr.handler.component.SearchHandler",
-        "version": "6.4.2",
-        "description": "Search using components: ",
-        "src": null,
         "stats": {
-          "handlerStart": 1493905304323,
-          "requests": 0,
+          "999thPcRequestTime": 20.943664,
+          "99thPcRequestTime": 20.943664,
+          "95thPcRequestTime": 20.943664,
+          "75thPcRequestTime": 20.943664,
+          "medianRequestTime": 0.456904,
+          "avgTimePerRequest": 6.371493482928407,
+          "15minRateRequestsPerSecond": 0.002706653344805156,
+          "handlerStart": 1495768928457,
+          "requests": 3,
           "errors": 0,
           "serverErrors": 0,
           "clientErrors": 0,
           "timeouts": 0,
-          "avgRequestsPerSecond": 0,
-          "5minRateRequestsPerSecond": 0,
-          "15minRateRequestsPerSecond": 0,
-          "avgTimePerRequest": 0,
-          "medianRequestTime": 0,
-          "75thPcRequestTime": 0,
-          "95thPcRequestTime": 0,
-          "99thPcRequestTime": 0,
-          "999thPcRequestTime": 0
-        }
-      },
-      "expand": {
-        "class": "expand",
-        "version": "6.4.2",
-        "description": "Expand Component",
+          "avgRequestsPerSecond": 0.00910047300075413,
+          "5minRateRequestsPerSecond": 0.0053561709112757245
+        },
         "src": null,
-        "docs": [
-          "http://wiki.apache.org/solr/ExpandComponent"
-        ],
-        "stats": null
-      },
-      "mlt": {
-        "class": "mlt",
+        "description": "Search using components: query,facet,facet_module,mlt,highlight,stats,expand,terms,debug,",
         "version": "6.4.2",
-        "description": "More Like This",
-        "src": null,
-        "stats": null
-      },
-      "/debug/dump": {
-        "class": "org.apache.solr.handler.DumpRequestHandler",
-        "version": "6.4.2",
-        "description": "Dump handler (debug)",
-        "src": null,
-        "stats": {
-          "handlerStart": 1493905304320,
-          "requests": 0,
-          "errors": 0,
-          "serverErrors": 0,
-          "clientErrors": 0,
-          "timeouts": 0,
-          "avgRequestsPerSecond": 0,
-          "5minRateRequestsPerSecond": 0,
-          "15minRateRequestsPerSecond": 0,
-          "avgTimePerRequest": 0,
-          "medianRequestTime": 0,
-          "75thPcRequestTime": 0,
-          "95thPcRequestTime": 0,
-          "99thPcRequestTime": 0,
-          "999thPcRequestTime": 0
-        }
-      },
-      "/export": {
-        "class": "org.apache.solr.handler.ExportHandler",
-        "version": "6.4.2",
-        "description": "Search using components: ",
-        "src": null,
-        "stats": {
-          "handlerStart": 1493905304277,
-          "requests": 0,
-          "errors": 0,
-          "serverErrors": 0,
-          "clientErrors": 0,
-          "timeouts": 0,
-          "avgRequestsPerSecond": 0,
-          "5minRateRequestsPerSecond": 0,
-          "15minRateRequestsPerSecond": 0,
-          "avgTimePerRequest": 0,
-          "medianRequestTime": 0,
-          "75thPcRequestTime": 0,
-          "95thPcRequestTime": 0,
-          "99thPcRequestTime": 0,
-          "999thPcRequestTime": 0
-        }
-      },
-      "/get": {
-        "class": "org.apache.solr.handler.RealTimeGetHandler",
-        "version": "6.4.2",
-        "description": "The realtime get handler",
-        "src": null,
-        "stats": {
-          "handlerStart": 1493905304222,
-          "requests": 0,
-          "errors": 0,
-          "serverErrors": 0,
-          "clientErrors": 0,
-          "timeouts": 0,
-          "avgRequestsPerSecond": 0,
-          "5minRateRequestsPerSecond": 0,
-          "15minRateRequestsPerSecond": 0,
-          "avgTimePerRequest": 0,
-          "medianRequestTime": 0,
-          "75thPcRequestTime": 0,
-          "95thPcRequestTime": 0,
-          "99thPcRequestTime": 0,
-          "999thPcRequestTime": 0
-        }
-      },
-      "get": {
-        "class": "get",
-        "version": "6.4.2",
-        "description": "query",
-        "src": null,
-        "stats": null
-      },
-      "/query": {
-        "class": "org.apache.solr.handler.component.SearchHandler",
-        "version": "6.4.2",
-        "description": "Search using components: ",
-        "src": null,
-        "stats": {
-          "handlerStart": 1493905304324,
-          "requests": 0,
-          "errors": 0,
-          "serverErrors": 0,
-          "clientErrors": 0,
-          "timeouts": 0,
-          "avgRequestsPerSecond": 0,
-          "5minRateRequestsPerSecond": 0,
-          "15minRateRequestsPerSecond": 0,
-          "avgTimePerRequest": 0,
-          "medianRequestTime": 0,
-          "75thPcRequestTime": 0,
-          "95thPcRequestTime": 0,
-          "99thPcRequestTime": 0,
-          "999thPcRequestTime": 0
-        }
-      },
-      "tvComponent": {
-        "class": "tvComponent",
-        "version": "6.4.2",
-        "description": "A Component for working with Term Vectors",
-        "src": null,
-        "stats": null
-      },
-      "/graph": {
-        "class": "org.apache.solr.handler.GraphHandler",
-        "version": "6.4.2",
-        "description": "StreamHandler",
-        "src": null,
-        "stats": {
-          "handlerStart": 1493905304280,
-          "requests": 0,
-          "errors": 0,
-          "serverErrors": 0,
-          "clientErrors": 0,
-          "timeouts": 0,
-          "avgRequestsPerSecond": 0,
-          "5minRateRequestsPerSecond": 0,
-          "15minRateRequestsPerSecond": 0,
-          "avgTimePerRequest": 0,
-          "medianRequestTime": 0,
-          "75thPcRequestTime": 0,
-          "95thPcRequestTime": 0,
-          "99thPcRequestTime": 0,
-          "999thPcRequestTime": 0
-        }
-      },
-      "facet_module": {
-        "class": "facet_module",
-        "version": "6.4.2",
-        "description": "Facet Module",
-        "src": null,
-        "stats": null
-      },
-      "/stream": {
-        "class": "org.apache.solr.handler.StreamHandler",
-        "version": "6.4.2",
-        "description": "StreamHandler",
-        "src": null,
-        "stats": {
-          "handlerStart": 1493905304285,
-          "requests": 0,
-          "errors": 0,
-          "serverErrors": 0,
-          "clientErrors": 0,
-          "timeouts": 0,
-          "avgRequestsPerSecond": 0,
-          "5minRateRequestsPerSecond": 0,
-          "15minRateRequestsPerSecond": 0,
-          "avgTimePerRequest": 0,
-          "medianRequestTime": 0,
-          "75thPcRequestTime": 0,
-          "95thPcRequestTime": 0,
-          "99thPcRequestTime": 0,
-          "999thPcRequestTime": 0
-        }
-      },
-      "facet": {
-        "class": "facet",
-        "version": "6.4.2",
-        "description": "Handle Faceting",
-        "src": null,
-        "stats": null
+        "class": "org.apache.solr.handler.component.SearchHandler"
       }
     }
-  ]
+  ],
+  "responseHeader": {
+    "QTime": 0,
+    "status": 0
+  }
 }

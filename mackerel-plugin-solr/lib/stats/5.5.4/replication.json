@@ -1,10 +1,10 @@
 {
-  "responseHeader": {
-    "status": 0,
-    "QTime": 0
-  },
   "solr-mbeans": [
     "REPLICATION",
     {}
-  ]
+  ],
+  "responseHeader": {
+    "QTime": 0,
+    "status": 0
+  }
 }

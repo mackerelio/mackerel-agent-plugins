@@ -1,250 +1,198 @@
 {
-  "responseHeader": {
-    "status": 0,
-    "QTime": 0
-  },
   "solr-mbeans": [
     "UPDATEHANDLER",
     {
-      "/update/json": {
-        "class": "org.apache.solr.handler.UpdateRequestHandler",
-        "version": "6.4.2",
-        "description": "Add documents using XML (with XSLT), CSV, JSON, or javabin",
-        "src": null,
-        "stats": {
-          "handlerStart": 1493905304201,
-          "requests": 0,
-          "errors": 0,
-          "serverErrors": 0,
-          "clientErrors": 0,
-          "timeouts": 0,
-          "avgRequestsPerSecond": 0,
-          "5minRateRequestsPerSecond": 0,
-          "15minRateRequestsPerSecond": 0,
-          "avgTimePerRequest": 0,
-          "medianRequestTime": 0,
-          "75thPcRequestTime": 0,
-          "95thPcRequestTime": 0,
-          "99thPcRequestTime": 0,
-          "999thPcRequestTime": 0
-        }
-      },
-      "/update/json/docs": {
-        "class": "org.apache.solr.handler.UpdateRequestHandler",
-        "version": "6.4.2",
-        "description": "Add documents using XML (with XSLT), CSV, JSON, or javabin",
-        "src": null,
-        "stats": {
-          "handlerStart": 1493905304205,
-          "requests": 0,
-          "errors": 0,
-          "serverErrors": 0,
-          "clientErrors": 0,
-          "timeouts": 0,
-          "avgRequestsPerSecond": 0,
-          "5minRateRequestsPerSecond": 0,
-          "15minRateRequestsPerSecond": 0,
-          "avgTimePerRequest": 0,
-          "medianRequestTime": 0,
-          "75thPcRequestTime": 0,
-          "95thPcRequestTime": 0,
-          "99thPcRequestTime": 0,
-          "999thPcRequestTime": 0
-        }
-      },
-      "updateHandler": {
-        "class": "org.apache.solr.update.DirectUpdateHandler2",
-        "version": "1.0",
-        "description": "Update handler that efficiently directly updates the on-disk main lucene index",
-        "src": null,
-        "stats": {
-          "commits": 0,
-          "autocommit maxTime": "15000ms",
-          "autocommits": 0,
-          "soft autocommits": 0,
-          "optimizes": 0,
-          "rollbacks": 0,
-          "expungeDeletes": 0,
-          "docsPending": 0,
-          "adds": 0,
-          "deletesById": 0,
-          "deletesByQuery": 0,
-          "errors": 0,
-          "cumulative_adds": 0,
-          "cumulative_deletesById": 0,
-          "cumulative_deletesByQuery": 0,
-          "cumulative_errors": 0,
-          "transaction_logs_total_size": 0,
-          "transaction_logs_total_number": 0
-        }
-      },
-      "/update/csv": {
-        "class": "org.apache.solr.handler.UpdateRequestHandler",
-        "version": "6.4.2",
-        "description": "Add documents using XML (with XSLT), CSV, JSON, or javabin",
-        "src": null,
-        "stats": {
-          "handlerStart": 1493905304203,
-          "requests": 0,
-          "errors": 0,
-          "serverErrors": 0,
-          "clientErrors": 0,
-          "timeouts": 0,
-          "avgRequestsPerSecond": 0,
-          "5minRateRequestsPerSecond": 0,
-          "15minRateRequestsPerSecond": 0,
-          "avgTimePerRequest": 0,
-          "medianRequestTime": 0,
-          "75thPcRequestTime": 0,
-          "95thPcRequestTime": 0,
-          "99thPcRequestTime": 0,
-          "999thPcRequestTime": 0
-        }
-      },
       "/update": {
-        "class": "org.apache.solr.handler.UpdateRequestHandler",
-        "version": "6.4.2",
-        "description": "Add documents using XML (with XSLT), CSV, JSON, or javabin",
-        "src": null,
         "stats": {
-          "handlerStart": 1493905304180,
+          "999thPcRequestTime": 1000.3,
+          "99thPcRequestTime": 1000.2,
+          "95thPcRequestTime": 1000.1,
+          "75thPcRequestTime": 9999,
+          "medianRequestTime": 8888,
+          "avgTimePerRequest": 7777,
+          "15minRateRequestsPerSecond": 6666,
+          "handlerStart": 1495768928326,
           "requests": 1111,
           "errors": 2222,
           "serverErrors": 0,
           "clientErrors": 0,
           "timeouts": 3333,
           "avgRequestsPerSecond": 4444,
-          "5minRateRequestsPerSecond": 5555,
-          "15minRateRequestsPerSecond": 6666,
-          "avgTimePerRequest": 7777,
-          "medianRequestTime": 8888,
-          "75thPcRequestTime": 9999,
-          "95thPcRequestTime": 1000.1,
-          "99thPcRequestTime": 1000.2,
-          "999thPcRequestTime": 1000.3
-        }
+          "5minRateRequestsPerSecond": 5555
+        },
+        "src": null,
+        "description": "Add documents using XML (with XSLT), CSV, JSON, or javabin",
+        "version": "6.4.2",
+        "class": "org.apache.solr.handler.UpdateRequestHandler"
+      },
+      "/update/csv": {
+        "stats": {
+          "999thPcRequestTime": 0,
+          "99thPcRequestTime": 0,
+          "95thPcRequestTime": 0,
+          "75thPcRequestTime": 0,
+          "medianRequestTime": 0,
+          "avgTimePerRequest": 0,
+          "15minRateRequestsPerSecond": 0,
+          "handlerStart": 1495768928350,
+          "requests": 0,
+          "errors": 0,
+          "serverErrors": 0,
+          "clientErrors": 0,
+          "timeouts": 0,
+          "avgRequestsPerSecond": 0,
+          "5minRateRequestsPerSecond": 0
+        },
+        "src": null,
+        "description": "Add documents using XML (with XSLT), CSV, JSON, or javabin",
+        "version": "6.4.2",
+        "class": "org.apache.solr.handler.UpdateRequestHandler"
+      },
+      "/update/json/docs": {
+        "stats": {
+          "999thPcRequestTime": 0,
+          "99thPcRequestTime": 0,
+          "95thPcRequestTime": 0,
+          "75thPcRequestTime": 0,
+          "medianRequestTime": 0,
+          "avgTimePerRequest": 0,
+          "15minRateRequestsPerSecond": 0,
+          "handlerStart": 1495768928352,
+          "requests": 0,
+          "errors": 0,
+          "serverErrors": 0,
+          "clientErrors": 0,
+          "timeouts": 0,
+          "avgRequestsPerSecond": 0,
+          "5minRateRequestsPerSecond": 0
+        },
+        "src": null,
+        "description": "Add documents using XML (with XSLT), CSV, JSON, or javabin",
+        "version": "6.4.2",
+        "class": "org.apache.solr.handler.UpdateRequestHandler"
+      },
+      "/update/json": {
+        "stats": {
+          "999thPcRequestTime": 0,
+          "99thPcRequestTime": 0,
+          "95thPcRequestTime": 0,
+          "75thPcRequestTime": 0,
+          "medianRequestTime": 0,
+          "avgTimePerRequest": 0,
+          "15minRateRequestsPerSecond": 0,
+          "handlerStart": 1495768928348,
+          "requests": 0,
+          "errors": 0,
+          "serverErrors": 0,
+          "clientErrors": 0,
+          "timeouts": 0,
+          "avgRequestsPerSecond": 0,
+          "5minRateRequestsPerSecond": 0
+        },
+        "src": null,
+        "description": "Add documents using XML (with XSLT), CSV, JSON, or javabin",
+        "version": "6.4.2",
+        "class": "org.apache.solr.handler.UpdateRequestHandler"
       }
     },
     "UPDATE",
     {
-      "/update/json": {
-        "class": "org.apache.solr.handler.UpdateRequestHandler",
-        "version": "6.4.2",
-        "description": "Add documents using XML (with XSLT), CSV, JSON, or javabin",
-        "src": null,
+      "/update": {
         "stats": {
-          "handlerStart": 1493905304201,
+          "999thPcRequestTime": 0,
+          "99thPcRequestTime": 0,
+          "95thPcRequestTime": 0,
+          "75thPcRequestTime": 0,
+          "medianRequestTime": 0,
+          "avgTimePerRequest": 0,
+          "15minRateRequestsPerSecond": 0,
+          "handlerStart": 1495768928326,
           "requests": 0,
           "errors": 0,
           "serverErrors": 0,
           "clientErrors": 0,
           "timeouts": 0,
           "avgRequestsPerSecond": 0,
-          "5minRateRequestsPerSecond": 0,
-          "15minRateRequestsPerSecond": 0,
-          "avgTimePerRequest": 0,
-          "medianRequestTime": 0,
-          "75thPcRequestTime": 0,
-          "95thPcRequestTime": 0,
-          "99thPcRequestTime": 0,
-          "999thPcRequestTime": 0
-        }
-      },
-      "/update/json/docs": {
-        "class": "org.apache.solr.handler.UpdateRequestHandler",
-        "version": "6.4.2",
+          "5minRateRequestsPerSecond": 0
+        },
+        "src": null,
         "description": "Add documents using XML (with XSLT), CSV, JSON, or javabin",
-        "src": null,
-        "stats": {
-          "handlerStart": 1493905304205,
-          "requests": 0,
-          "errors": 0,
-          "serverErrors": 0,
-          "clientErrors": 0,
-          "timeouts": 0,
-          "avgRequestsPerSecond": 0,
-          "5minRateRequestsPerSecond": 0,
-          "15minRateRequestsPerSecond": 0,
-          "avgTimePerRequest": 0,
-          "medianRequestTime": 0,
-          "75thPcRequestTime": 0,
-          "95thPcRequestTime": 0,
-          "99thPcRequestTime": 0,
-          "999thPcRequestTime": 0
-        }
-      },
-      "updateHandler": {
-        "class": "org.apache.solr.update.DirectUpdateHandler2",
-        "version": "1.0",
-        "description": "Update handler that efficiently directly updates the on-disk main lucene index",
-        "src": null,
-        "stats": {
-          "commits": 0,
-          "autocommit maxTime": "15000ms",
-          "autocommits": 0,
-          "soft autocommits": 0,
-          "optimizes": 0,
-          "rollbacks": 0,
-          "expungeDeletes": 0,
-          "docsPending": 0,
-          "adds": 0,
-          "deletesById": 0,
-          "deletesByQuery": 0,
-          "errors": 0,
-          "cumulative_adds": 0,
-          "cumulative_deletesById": 0,
-          "cumulative_deletesByQuery": 0,
-          "cumulative_errors": 0,
-          "transaction_logs_total_size": 0,
-          "transaction_logs_total_number": 0
-        }
+        "version": "6.4.2",
+        "class": "org.apache.solr.handler.UpdateRequestHandler"
       },
       "/update/csv": {
-        "class": "org.apache.solr.handler.UpdateRequestHandler",
-        "version": "6.4.2",
-        "description": "Add documents using XML (with XSLT), CSV, JSON, or javabin",
-        "src": null,
         "stats": {
-          "handlerStart": 1493905304203,
+          "999thPcRequestTime": 0,
+          "99thPcRequestTime": 0,
+          "95thPcRequestTime": 0,
+          "75thPcRequestTime": 0,
+          "medianRequestTime": 0,
+          "avgTimePerRequest": 0,
+          "15minRateRequestsPerSecond": 0,
+          "handlerStart": 1495768928350,
           "requests": 0,
           "errors": 0,
           "serverErrors": 0,
           "clientErrors": 0,
           "timeouts": 0,
           "avgRequestsPerSecond": 0,
-          "5minRateRequestsPerSecond": 0,
-          "15minRateRequestsPerSecond": 0,
-          "avgTimePerRequest": 0,
-          "medianRequestTime": 0,
-          "75thPcRequestTime": 0,
-          "95thPcRequestTime": 0,
-          "99thPcRequestTime": 0,
-          "999thPcRequestTime": 0
-        }
+          "5minRateRequestsPerSecond": 0
+        },
+        "src": null,
+        "description": "Add documents using XML (with XSLT), CSV, JSON, or javabin",
+        "version": "6.4.2",
+        "class": "org.apache.solr.handler.UpdateRequestHandler"
       },
-      "/update": {
-        "class": "org.apache.solr.handler.UpdateRequestHandler",
-        "version": "6.4.2",
-        "description": "Add documents using XML (with XSLT), CSV, JSON, or javabin",
-        "src": null,
+      "/update/json/docs": {
         "stats": {
-          "handlerStart": 1493905304180,
+          "999thPcRequestTime": 0,
+          "99thPcRequestTime": 0,
+          "95thPcRequestTime": 0,
+          "75thPcRequestTime": 0,
+          "medianRequestTime": 0,
+          "avgTimePerRequest": 0,
+          "15minRateRequestsPerSecond": 0,
+          "handlerStart": 1495768928352,
           "requests": 0,
           "errors": 0,
           "serverErrors": 0,
           "clientErrors": 0,
           "timeouts": 0,
           "avgRequestsPerSecond": 0,
-          "5minRateRequestsPerSecond": 0,
-          "15minRateRequestsPerSecond": 0,
-          "avgTimePerRequest": 0,
-          "medianRequestTime": 0,
-          "75thPcRequestTime": 0,
-          "95thPcRequestTime": 0,
+          "5minRateRequestsPerSecond": 0
+        },
+        "src": null,
+        "description": "Add documents using XML (with XSLT), CSV, JSON, or javabin",
+        "version": "6.4.2",
+        "class": "org.apache.solr.handler.UpdateRequestHandler"
+      },
+      "/update/json": {
+        "stats": {
+          "999thPcRequestTime": 0,
           "99thPcRequestTime": 0,
-          "999thPcRequestTime": 0
-        }
+          "95thPcRequestTime": 0,
+          "75thPcRequestTime": 0,
+          "medianRequestTime": 0,
+          "avgTimePerRequest": 0,
+          "15minRateRequestsPerSecond": 0,
+          "handlerStart": 1495768928348,
+          "requests": 0,
+          "errors": 0,
+          "serverErrors": 0,
+          "clientErrors": 0,
+          "timeouts": 0,
+          "avgRequestsPerSecond": 0,
+          "5minRateRequestsPerSecond": 0
+        },
+        "src": null,
+        "description": "Add documents using XML (with XSLT), CSV, JSON, or javabin",
+        "version": "6.4.2",
+        "class": "org.apache.solr.handler.UpdateRequestHandler"
       }
     }
-  ]
+  ],
+  "responseHeader": {
+    "QTime": 0,
+    "status": 0
+  }
 }

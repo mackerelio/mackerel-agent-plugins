@@ -54,11 +54,11 @@ $ docker pull solr:x.x
 $ docker run --name solr_x -d -p 8983:8983 -t solr:x.x
 $ docker exec -it --user=solr solr_x bin/solr create_core -c testcore
 $ cd mackerel-plugin-solr/lib/
-$ curl -s -S 'http://localhost:8983/solr/admin/cores?wt=json'                                        | jq . > stats/x.x.x/cores.json
-$ curl -s -S 'http://localhost:8983/solr/testcore/admin/mbeans?wt=json&stats=true&cat=QUERYHANDLER'  | jq . > stats/x.x.x/query.json
-$ curl -s -S 'http://localhost:8983/solr/testcore/admin/mbeans?wt=json&stats=true&cat=UPDATEHANDLER' | jq . > stats/x.x.x/update.json
-$ curl -s -S 'http://localhost:8983/solr/testcore/admin/mbeans?wt=json&stats=true&cat=REPLICATION'   | jq . > stats/x.x.x/replication.json
-$ curl -s -S 'http://localhost:8983/solr/testcore/admin/mbeans?wt=json&stats=true&cat=CACHE'         | jq . > stats/x.x.x/cache.json
+$ curl -s -S 'http://localhost:8983/solr/admin/cores?wt=json' | jq . > stats/x.x.x/cores.json
+$ curl -s -S 'http://localhost:8983/solr/testcore/admin/mbeans?wt=json&stats=true&cat=QUERYHANDLER&key=/update/json&key=/select&key=/update/json/docs&key=/get&key=/update/csv&key=/replication&key=/update&key=/dataimport' | jq . > stats/x.x.x/query.json
+$ curl -s -S 'http://localhost:8983/solr/testcore/admin/mbeans?wt=json&stats=true&cat=UPDATEHANDLER&key=/update/json&key=/select&key=/update/json/docs&key=/get&key=/update/csv&key=/replication&key=/update&key=/dataimport' | jq . > stats/x.x.x/update.json
+$ curl -s -S 'http://localhost:8983/solr/testcore/admin/mbeans?wt=json&stats=true&cat=REPLICATION&key=/update/json&key=/select&key=/update/json/docs&key=/get&key=/update/csv&key=/replication&key=/update&key=/dataimport' | jq . > stats/x.x.x/replication.json
+$ curl -s -S 'http://localhost:8983/solr/testcore/admin/mbeans?wt=json&stats=true&cat=CACHE&key=filterCache&key=perSegFilter&key=queryResultCache&key=documentCache&key=fieldValueCache' | jq . > stats/x.x.x/cache.json
 ```
 
 ### Documents

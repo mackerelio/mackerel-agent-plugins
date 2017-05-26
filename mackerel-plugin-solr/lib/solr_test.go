@@ -10,7 +10,10 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-var solrVersion string
+var (
+	SolrVersions = []string{"5.5.4", "6.4.2"}
+	solrVersion  string
+)
 
 var testHandler = http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 	switch r.URL.Path {
@@ -107,7 +110,7 @@ func TestFetchMetrics(t *testing.T) {
 	ts := httptest.NewServer(testHandler)
 	defer ts.Close()
 
-	for _, version := range []string{"5.5.4", "6.4.2"} {
+	for _, version := range SolrVersions {
 		solrVersion = version
 		solr := SolrPlugin{
 			BaseURL: ts.URL + "/solr",

@@ -1,424 +1,47 @@
 {
-  "responseHeader": {
-    "status": 0,
-    "QTime": 3
-  },
   "solr-mbeans": [
     "QUERYHANDLER",
     {
-      "/browse": {
-        "class": "org.apache.solr.handler.component.SearchHandler",
-        "version": "5.5.4",
-        "description": "Search using components: ",
-        "src": null,
+      "/update": {
         "stats": {
-          "handlerStart": 1493904805813,
-          "requests": 0,
-          "errors": 0,
-          "timeouts": 0,
+          "999thPcRequestTime": 1000.3,
+          "99thPcRequestTime": 1000.2,
+          "95thPcRequestTime": 1000.1,
+          "75thPcRequestTime": 9999,
+          "medianRequestTime": 8888,
+          "avgTimePerRequest": 7777,
+          "handlerStart": 1495767715515,
+          "requests": 1111,
+          "errors": 2222,
+          "timeouts": 3333,
           "totalTime": 0,
-          "avgRequestsPerSecond": 0,
-          "5minRateReqsPerSecond": 0,
-          "15minRateReqsPerSecond": 0,
-          "avgTimePerRequest": 0,
-          "medianRequestTime": 0,
-          "75thPcRequestTime": 0,
-          "95thPcRequestTime": 0,
-          "99thPcRequestTime": 0,
-          "999thPcRequestTime": 0
-        }
-      },
-      "/admin/luke": {
-        "class": "org.apache.solr.handler.admin.LukeRequestHandler",
-        "version": "5.5.4",
-        "description": "Lucene Index Browser.  Inspired and modeled after Luke: http://www.getopt.org/luke/",
+          "avgRequestsPerSecond": 4444,
+          "5minRateReqsPerSecond": 5555,
+          "15minRateReqsPerSecond": 6666
+        },
         "src": null,
-        "docs": [
-          "http://wiki.apache.org/solr/LukeRequestHandler"
-        ],
-        "stats": {
-          "handlerStart": 1493904805807,
-          "requests": 0,
-          "errors": 0,
-          "timeouts": 0,
-          "totalTime": 0,
-          "avgRequestsPerSecond": 0,
-          "5minRateReqsPerSecond": 0,
-          "15minRateReqsPerSecond": 0,
-          "avgTimePerRequest": 0,
-          "medianRequestTime": 0,
-          "75thPcRequestTime": 0,
-          "95thPcRequestTime": 0,
-          "99thPcRequestTime": 0,
-          "999thPcRequestTime": 0
-        }
-      },
-      "/update/json": {
-        "class": "org.apache.solr.handler.UpdateRequestHandler",
-        "version": "5.5.4",
         "description": "Add documents using XML (with XSLT), CSV, JSON, or javabin",
-        "src": null,
-        "stats": {
-          "handlerStart": 1493904805796,
-          "requests": 0,
-          "errors": 0,
-          "timeouts": 0,
-          "totalTime": 0,
-          "avgRequestsPerSecond": 0,
-          "5minRateReqsPerSecond": 0,
-          "15minRateReqsPerSecond": 0,
-          "avgTimePerRequest": 0,
-          "medianRequestTime": 0,
-          "75thPcRequestTime": 0,
-          "95thPcRequestTime": 0,
-          "99thPcRequestTime": 0,
-          "999thPcRequestTime": 0
-        }
-      },
-      "/select": {
-        "class": "org.apache.solr.handler.component.SearchHandler",
         "version": "5.5.4",
-        "description": "Search using components: ",
-        "src": null,
-        "stats": {
-          "handlerStart": 1493904805813,
-          "requests": 111,
-          "errors": 222,
-          "timeouts": 333,
-          "totalTime": 0,
-          "avgRequestsPerSecond": 444,
-          "5minRateReqsPerSecond": 555,
-          "15minRateReqsPerSecond": 666,
-          "avgTimePerRequest": 777,
-          "medianRequestTime": 888,
-          "75thPcRequestTime": 999,
-          "95thPcRequestTime": 100.1,
-          "99thPcRequestTime": 100.2,
-          "999thPcRequestTime": 100.3
-        }
-      },
-      "/admin/segments": {
-        "class": "org.apache.solr.handler.admin.SegmentsInfoRequestHandler",
-        "version": "5.5.4",
-        "description": "Lucene segments info.",
-        "src": null,
-        "stats": {
-          "handlerStart": 1493904805810,
-          "requests": 0,
-          "errors": 0,
-          "timeouts": 0,
-          "totalTime": 0,
-          "avgRequestsPerSecond": 0,
-          "5minRateReqsPerSecond": 0,
-          "15minRateReqsPerSecond": 0,
-          "avgTimePerRequest": 0,
-          "medianRequestTime": 0,
-          "75thPcRequestTime": 0,
-          "95thPcRequestTime": 0,
-          "99thPcRequestTime": 0,
-          "999thPcRequestTime": 0
-        }
-      },
-      "/admin/system": {
-        "class": "org.apache.solr.handler.admin.SystemInfoHandler",
-        "version": "5.5.4",
-        "description": "Get System Info",
-        "src": null,
-        "stats": {
-          "handlerStart": 1493904805807,
-          "requests": 0,
-          "errors": 0,
-          "timeouts": 0,
-          "totalTime": 0,
-          "avgRequestsPerSecond": 0,
-          "5minRateReqsPerSecond": 0,
-          "15minRateReqsPerSecond": 0,
-          "avgTimePerRequest": 0,
-          "medianRequestTime": 0,
-          "75thPcRequestTime": 0,
-          "95thPcRequestTime": 0,
-          "99thPcRequestTime": 0,
-          "999thPcRequestTime": 0
-        }
-      },
-      "/schema": {
-        "class": "org.apache.solr.handler.SchemaHandler",
-        "version": "5.5.4",
-        "description": "CRUD operations over the Solr schema",
-        "src": null,
-        "stats": {
-          "handlerStart": 1493904805802,
-          "requests": 0,
-          "errors": 0,
-          "timeouts": 0,
-          "totalTime": 0,
-          "avgRequestsPerSecond": 0,
-          "5minRateReqsPerSecond": 0,
-          "15minRateReqsPerSecond": 0,
-          "avgTimePerRequest": 0,
-          "medianRequestTime": 0,
-          "75thPcRequestTime": 0,
-          "95thPcRequestTime": 0,
-          "99thPcRequestTime": 0,
-          "999thPcRequestTime": 0
-        }
-      },
-      "/admin/plugins": {
-        "class": "org.apache.solr.handler.admin.PluginInfoHandler",
-        "version": "5.5.4",
-        "description": "Registry",
-        "src": null,
-        "stats": {
-          "handlerStart": 1493904805808,
-          "requests": 0,
-          "errors": 0,
-          "timeouts": 0,
-          "totalTime": 0,
-          "avgRequestsPerSecond": 0,
-          "5minRateReqsPerSecond": 0,
-          "15minRateReqsPerSecond": 0,
-          "avgTimePerRequest": 0,
-          "medianRequestTime": 0,
-          "75thPcRequestTime": 0,
-          "95thPcRequestTime": 0,
-          "99thPcRequestTime": 0,
-          "999thPcRequestTime": 0
-        }
-      },
-      "/admin/logging": {
-        "class": "org.apache.solr.handler.admin.LoggingHandler",
-        "version": "5.5.4",
-        "description": "Logging Handler",
-        "src": null,
-        "stats": {
-          "handlerStart": 1493904805808,
-          "requests": 0,
-          "errors": 0,
-          "timeouts": 0,
-          "totalTime": 0,
-          "avgRequestsPerSecond": 0,
-          "5minRateReqsPerSecond": 0,
-          "15minRateReqsPerSecond": 0,
-          "avgTimePerRequest": 0,
-          "medianRequestTime": 0,
-          "75thPcRequestTime": 0,
-          "95thPcRequestTime": 0,
-          "99thPcRequestTime": 0,
-          "999thPcRequestTime": 0
-        }
-      },
-      "/debug/dump": {
-        "class": "org.apache.solr.handler.DumpRequestHandler",
-        "version": "5.5.4",
-        "description": "Dump handler (debug)",
-        "src": null,
-        "stats": {
-          "handlerStart": 1493904805815,
-          "requests": 0,
-          "errors": 0,
-          "timeouts": 0,
-          "totalTime": 0,
-          "avgRequestsPerSecond": 0,
-          "5minRateReqsPerSecond": 0,
-          "15minRateReqsPerSecond": 0,
-          "avgTimePerRequest": 0,
-          "medianRequestTime": 0,
-          "75thPcRequestTime": 0,
-          "95thPcRequestTime": 0,
-          "99thPcRequestTime": 0,
-          "999thPcRequestTime": 0
-        }
-      },
-      "/admin/mbeans": {
-        "class": "org.apache.solr.handler.admin.SolrInfoMBeanHandler",
-        "version": "5.5.4",
-        "description": "Get Info (and statistics) for registered SolrInfoMBeans",
-        "src": null,
-        "stats": {
-          "handlerStart": 1493904805808,
-          "requests": 7,
-          "errors": 0,
-          "timeouts": 0,
-          "totalTime": 66.488902,
-          "avgRequestsPerSecond": 0.014528032113965028,
-          "5minRateReqsPerSecond": 0.010606870224837563,
-          "15minRateReqsPerSecond": 0.0053050468844158954,
-          "avgTimePerRequest": 11.081483666666665,
-          "medianRequestTime": 4.8306235,
-          "75thPcRequestTime": 24.19020975,
-          "95thPcRequestTime": 35.686086,
-          "99thPcRequestTime": 35.686086,
-          "999thPcRequestTime": 35.686086
-        }
-      },
-      "/update/json/docs": {
-        "class": "org.apache.solr.handler.UpdateRequestHandler",
-        "version": "5.5.4",
-        "description": "Add documents using XML (with XSLT), CSV, JSON, or javabin",
-        "src": null,
-        "stats": {
-          "handlerStart": 1493904805799,
-          "requests": 0,
-          "errors": 0,
-          "timeouts": 0,
-          "totalTime": 0,
-          "avgRequestsPerSecond": 0,
-          "5minRateReqsPerSecond": 0,
-          "15minRateReqsPerSecond": 0,
-          "avgTimePerRequest": 0,
-          "medianRequestTime": 0,
-          "75thPcRequestTime": 0,
-          "95thPcRequestTime": 0,
-          "99thPcRequestTime": 0,
-          "999thPcRequestTime": 0
-        }
-      },
-      "/export": {
-        "class": "org.apache.solr.handler.component.SearchHandler",
-        "version": "5.5.4",
-        "description": "Search using components: ",
-        "src": null,
-        "stats": {
-          "handlerStart": 1493904805813,
-          "requests": 0,
-          "errors": 0,
-          "timeouts": 0,
-          "totalTime": 0,
-          "avgRequestsPerSecond": 0,
-          "5minRateReqsPerSecond": 0,
-          "15minRateReqsPerSecond": 0,
-          "avgTimePerRequest": 0,
-          "medianRequestTime": 0,
-          "75thPcRequestTime": 0,
-          "95thPcRequestTime": 0,
-          "99thPcRequestTime": 0,
-          "999thPcRequestTime": 0
-        }
-      },
-      "/get": {
-        "class": "org.apache.solr.handler.RealTimeGetHandler",
-        "version": "5.5.4",
-        "description": "The realtime get handler",
-        "src": null,
-        "stats": {
-          "handlerStart": 1493904805806,
-          "requests": 0,
-          "errors": 0,
-          "timeouts": 0,
-          "totalTime": 0,
-          "avgRequestsPerSecond": 0,
-          "5minRateReqsPerSecond": 0,
-          "15minRateReqsPerSecond": 0,
-          "avgTimePerRequest": 0,
-          "medianRequestTime": 0,
-          "75thPcRequestTime": 0,
-          "95thPcRequestTime": 0,
-          "99thPcRequestTime": 0,
-          "999thPcRequestTime": 0
-        }
-      },
-      "/admin/properties": {
-        "class": "org.apache.solr.handler.admin.PropertiesRequestHandler",
-        "version": "5.5.4",
-        "description": "Get System Properties",
-        "src": null,
-        "stats": {
-          "handlerStart": 1493904805808,
-          "requests": 0,
-          "errors": 0,
-          "timeouts": 0,
-          "totalTime": 0,
-          "avgRequestsPerSecond": 0,
-          "5minRateReqsPerSecond": 0,
-          "15minRateReqsPerSecond": 0,
-          "avgTimePerRequest": 0,
-          "medianRequestTime": 0,
-          "75thPcRequestTime": 0,
-          "95thPcRequestTime": 0,
-          "99thPcRequestTime": 0,
-          "999thPcRequestTime": 0
-        }
-      },
-      "/admin/threads": {
-        "class": "org.apache.solr.handler.admin.ThreadDumpHandler",
-        "version": "5.5.4",
-        "description": "Thread Dump",
-        "src": null,
-        "stats": {
-          "handlerStart": 1493904805808,
-          "requests": 0,
-          "errors": 0,
-          "timeouts": 0,
-          "totalTime": 0,
-          "avgRequestsPerSecond": 0,
-          "5minRateReqsPerSecond": 0,
-          "15minRateReqsPerSecond": 0,
-          "avgTimePerRequest": 0,
-          "medianRequestTime": 0,
-          "75thPcRequestTime": 0,
-          "95thPcRequestTime": 0,
-          "99thPcRequestTime": 0,
-          "999thPcRequestTime": 0
-        }
-      },
-      "/query": {
-        "class": "org.apache.solr.handler.component.SearchHandler",
-        "version": "5.5.4",
-        "description": "Search using components: ",
-        "src": null,
-        "stats": {
-          "handlerStart": 1493904805813,
-          "requests": 0,
-          "errors": 0,
-          "timeouts": 0,
-          "totalTime": 0,
-          "avgRequestsPerSecond": 0,
-          "5minRateReqsPerSecond": 0,
-          "15minRateReqsPerSecond": 0,
-          "avgTimePerRequest": 0,
-          "medianRequestTime": 0,
-          "75thPcRequestTime": 0,
-          "95thPcRequestTime": 0,
-          "99thPcRequestTime": 0,
-          "999thPcRequestTime": 0
-        }
-      },
-      "/update/csv": {
-        "class": "org.apache.solr.handler.UpdateRequestHandler",
-        "version": "5.5.4",
-        "description": "Add documents using XML (with XSLT), CSV, JSON, or javabin",
-        "src": null,
-        "stats": {
-          "handlerStart": 1493904805798,
-          "requests": 0,
-          "errors": 0,
-          "timeouts": 0,
-          "totalTime": 0,
-          "avgRequestsPerSecond": 0,
-          "5minRateReqsPerSecond": 0,
-          "15minRateReqsPerSecond": 0,
-          "avgTimePerRequest": 0,
-          "medianRequestTime": 0,
-          "75thPcRequestTime": 0,
-          "95thPcRequestTime": 0,
-          "99thPcRequestTime": 0,
-          "999thPcRequestTime": 0
-        }
+        "class": "org.apache.solr.handler.UpdateRequestHandler"
       },
       "/replication": {
-        "class": "org.apache.solr.handler.ReplicationHandler",
-        "version": "5.5.4",
-        "description": "ReplicationHandler provides replication of index and configuration files from Master to Slaves",
-        "src": null,
         "stats": {
-          "handlerStart": 1493904805804,
-          "requests": 11111,
-          "errors": 22222,
-          "timeouts": 33333,
-          "totalTime": 0,
-          "avgRequestsPerSecond": 44444,
-          "5minRateReqsPerSecond": 55555,
+          "replicationEnabled": "true",
+          "replicateAfter": [
+            "commit"
+          ],
+          "isSlave": "false",
+          "isMaster": "true",
+          "indexPath": "/opt/solr/server/solr/testcore/data/index/",
+          "generation": 1,
           "15minRateReqsPerSecond": 66666,
+          "5minRateReqsPerSecond": 55555,
+          "avgRequestsPerSecond": 44444,
+          "totalTime": 0,
+          "timeouts": 33333,
+          "errors": 22222,
+          "requests": 11111,
+          "handlerStart": 1495767715535,
           "avgTimePerRequest": 77777,
           "medianRequestTime": 88888,
           "75thPcRequestTime": 99999,
@@ -426,171 +49,127 @@
           "99thPcRequestTime": 10000.2,
           "999thPcRequestTime": 10000.3,
           "indexSize": "71 bytes",
-          "indexVersion": 0,
-          "generation": 1,
-          "indexPath": "/opt/solr/server/solr/gettingstarted/data/index/",
-          "isMaster": "true",
-          "isSlave": "false",
-          "replicateAfter": [
-            "commit"
-          ],
-          "replicationEnabled": "true"
-        }
-      },
-      "/admin/ping": {
-        "class": "org.apache.solr.handler.PingRequestHandler",
-        "version": "5.5.4",
-        "description": "Reports application health to a load-balancer",
+          "indexVersion": 0
+        },
         "src": null,
+        "description": "ReplicationHandler provides replication of index and configuration files from Master to Slaves",
+        "version": "5.5.4",
+        "class": "org.apache.solr.handler.ReplicationHandler"
+      },
+      "/update/csv": {
         "stats": {
-          "handlerStart": 1493904805809,
+          "999thPcRequestTime": 0,
+          "99thPcRequestTime": 0,
+          "95thPcRequestTime": 0,
+          "75thPcRequestTime": 0,
+          "medianRequestTime": 0,
+          "avgTimePerRequest": 0,
+          "handlerStart": 1495767715531,
           "requests": 0,
           "errors": 0,
           "timeouts": 0,
           "totalTime": 0,
           "avgRequestsPerSecond": 0,
           "5minRateReqsPerSecond": 0,
-          "15minRateReqsPerSecond": 0,
-          "avgTimePerRequest": 0,
-          "medianRequestTime": 0,
-          "75thPcRequestTime": 0,
-          "95thPcRequestTime": 0,
-          "99thPcRequestTime": 0,
-          "999thPcRequestTime": 0
-        }
-      },
-      "/update": {
-        "class": "org.apache.solr.handler.UpdateRequestHandler",
-        "version": "5.5.4",
+          "15minRateReqsPerSecond": 0
+        },
+        "src": null,
         "description": "Add documents using XML (with XSLT), CSV, JSON, or javabin",
-        "src": null,
-        "stats": {
-          "handlerStart": 1493904805775,
-          "requests": 1111,
-          "errors": 2222,
-          "timeouts": 3333,
-          "totalTime": 0,
-          "avgRequestsPerSecond": 4444,
-          "5minRateReqsPerSecond": 5555,
-          "15minRateReqsPerSecond": 6666,
-          "avgTimePerRequest": 7777,
-          "medianRequestTime": 8888,
-          "75thPcRequestTime": 9999,
-          "95thPcRequestTime": 1000.1,
-          "99thPcRequestTime": 1000.2,
-          "999thPcRequestTime": 1000.3
-        }
-      },
-      "/admin/file": {
-        "class": "org.apache.solr.handler.admin.ShowFileRequestHandler",
         "version": "5.5.4",
-        "description": "Admin Config File -- view or update config files directly",
-        "src": null,
+        "class": "org.apache.solr.handler.UpdateRequestHandler"
+      },
+      "/get": {
         "stats": {
-          "handlerStart": 1493904805809,
+          "999thPcRequestTime": 0,
+          "99thPcRequestTime": 0,
+          "95thPcRequestTime": 0,
+          "75thPcRequestTime": 0,
+          "medianRequestTime": 0,
+          "avgTimePerRequest": 0,
+          "handlerStart": 1495767715537,
           "requests": 0,
           "errors": 0,
           "timeouts": 0,
           "totalTime": 0,
           "avgRequestsPerSecond": 0,
           "5minRateReqsPerSecond": 0,
-          "15minRateReqsPerSecond": 0,
-          "avgTimePerRequest": 0,
-          "medianRequestTime": 0,
-          "75thPcRequestTime": 0,
-          "95thPcRequestTime": 0,
-          "99thPcRequestTime": 0,
-          "999thPcRequestTime": 0
-        }
-      },
-      "org.apache.solr.handler.admin.CollectionsHandler": {
-        "class": "org.apache.solr.handler.admin.CollectionsHandler",
-        "version": "5.5.4",
-        "description": "Manage SolrCloud Collections",
+          "15minRateReqsPerSecond": 0
+        },
         "src": null,
+        "description": "The realtime get handler",
+        "version": "5.5.4",
+        "class": "org.apache.solr.handler.RealTimeGetHandler"
+      },
+      "/update/json/docs": {
         "stats": {
-          "handlerStart": 1493904753009,
+          "999thPcRequestTime": 0,
+          "99thPcRequestTime": 0,
+          "95thPcRequestTime": 0,
+          "75thPcRequestTime": 0,
+          "medianRequestTime": 0,
+          "avgTimePerRequest": 0,
+          "handlerStart": 1495767715532,
           "requests": 0,
           "errors": 0,
           "timeouts": 0,
           "totalTime": 0,
           "avgRequestsPerSecond": 0,
           "5minRateReqsPerSecond": 0,
-          "15minRateReqsPerSecond": 0,
-          "avgTimePerRequest": 0,
-          "medianRequestTime": 0,
-          "75thPcRequestTime": 0,
-          "95thPcRequestTime": 0,
+          "15minRateReqsPerSecond": 0
+        },
+        "src": null,
+        "description": "Add documents using XML (with XSLT), CSV, JSON, or javabin",
+        "version": "5.5.4",
+        "class": "org.apache.solr.handler.UpdateRequestHandler"
+      },
+      "/select": {
+        "stats": {
+          "999thPcRequestTime": 100.3,
+          "99thPcRequestTime": 100.2,
+          "95thPcRequestTime": 100.1,
+          "75thPcRequestTime": 999,
+          "medianRequestTime": 888,
+          "avgTimePerRequest": 777,
+          "handlerStart": 1495767715544,
+          "requests": 111,
+          "errors": 222,
+          "timeouts": 333,
+          "totalTime": 0,
+          "avgRequestsPerSecond": 444,
+          "5minRateReqsPerSecond": 555,
+          "15minRateReqsPerSecond": 666
+        },
+        "src": null,
+        "description": "Search using components: ",
+        "version": "5.5.4",
+        "class": "org.apache.solr.handler.component.SearchHandler"
+      },
+      "/update/json": {
+        "stats": {
+          "999thPcRequestTime": 0,
           "99thPcRequestTime": 0,
-          "999thPcRequestTime": 0
-        }
-      },
-      "org.apache.solr.handler.admin.InfoHandler": {
-        "class": "org.apache.solr.handler.admin.InfoHandler",
-        "version": "5.5.4",
-        "description": "System Information",
-        "src": null,
-        "stats": {
-          "handlerStart": 1493904753009,
-          "requests": 2,
-          "errors": 0,
-          "timeouts": 0,
-          "totalTime": 55.213393,
-          "avgRequestsPerSecond": 0.004293743061027585,
-          "5minRateReqsPerSecond": 0.001787427364864996,
-          "15minRateReqsPerSecond": 0.0014328347363542246,
-          "avgTimePerRequest": 27.6066965,
-          "medianRequestTime": 27.606696499999998,
-          "75thPcRequestTime": 35.267511,
-          "95thPcRequestTime": 35.267511,
-          "99thPcRequestTime": 35.267511,
-          "999thPcRequestTime": 35.267511
-        }
-      },
-      "org.apache.solr.handler.admin.CoreAdminHandler": {
-        "class": "org.apache.solr.handler.admin.CoreAdminHandler",
-        "version": "5.5.4",
-        "description": "Manage Multiple Solr Cores",
-        "src": null,
-        "stats": {
-          "handlerStart": 1493904753029,
-          "requests": 3,
-          "errors": 0,
-          "timeouts": 0,
-          "totalTime": 1752.35192,
-          "avgRequestsPerSecond": 0.006440880114570196,
-          "5minRateReqsPerSecond": 0.002658802858832047,
-          "15minRateReqsPerSecond": 0.002143282097990485,
-          "avgTimePerRequest": 584.1173066666667,
-          "medianRequestTime": 1.399635,
-          "75thPcRequestTime": 1750.337361,
-          "95thPcRequestTime": 1750.337361,
-          "99thPcRequestTime": 1750.337361,
-          "999thPcRequestTime": 1750.337361
-        }
-      },
-      "org.apache.solr.handler.admin.ConfigSetsHandler": {
-        "class": "org.apache.solr.handler.admin.ConfigSetsHandler",
-        "version": "5.5.4",
-        "description": "Manage SolrCloud ConfigSets",
-        "src": null,
-        "stats": {
-          "handlerStart": 1493904753030,
+          "95thPcRequestTime": 0,
+          "75thPcRequestTime": 0,
+          "medianRequestTime": 0,
+          "avgTimePerRequest": 0,
+          "handlerStart": 1495767715530,
           "requests": 0,
           "errors": 0,
           "timeouts": 0,
           "totalTime": 0,
           "avgRequestsPerSecond": 0,
           "5minRateReqsPerSecond": 0,
-          "15minRateReqsPerSecond": 0,
-          "avgTimePerRequest": 0,
-          "medianRequestTime": 0,
-          "75thPcRequestTime": 0,
-          "95thPcRequestTime": 0,
-          "99thPcRequestTime": 0,
-          "999thPcRequestTime": 0
-        }
+          "15minRateReqsPerSecond": 0
+        },
+        "src": null,
+        "description": "Add documents using XML (with XSLT), CSV, JSON, or javabin",
+        "version": "5.5.4",
+        "class": "org.apache.solr.handler.UpdateRequestHandler"
       }
     }
-  ]
+  ],
+  "responseHeader": {
+    "QTime": 0,
+    "status": 0
+  }
 }
