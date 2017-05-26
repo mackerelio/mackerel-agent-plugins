@@ -25,6 +25,11 @@ command = "/path/to/mackerel-plugin-solr"
 command = "/path/to/mackerel-plugin-solr -host=192.168.33.10 -port=8984"
 ```
 
+## Supported Versions
+
+* `5.*.*`
+* `6.*.*`
+
 ## Dependency Solr URL
 
 - http://{host}:{port}/solr/admin/cores
