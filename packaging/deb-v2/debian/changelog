@@ -1,0 +1,8 @@
+mackerel-agent-plugins (0.27.1-1.v2) stable; urgency=low
+
+  * [php-fpm] Implement PluginWithPrefix interfarce (by astj)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/338>
+  * Use SetTempfileByBasename to support MACKEREL_PLUGIN_WORKDIR (by astj)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/339>
+
+ -- mackerel <mackerel-developers@hatena.ne.jp>  Tue, 09 May 2017 06:17:02 +0000
