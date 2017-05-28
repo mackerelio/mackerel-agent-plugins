@@ -70,7 +70,9 @@ deb: deb-v1 deb-v2
 
 deb-v1:
 	make build GOOS=linux GOARCH=386
-	cp build/mackerel-plugin-* packaging/deb/debian/
+	for i in `cat packaging/deb/debian/source/include-binaries`; do \
+	  cp build/`basename $$i` packaging/deb/debian/; \
+	done
 	cd packaging/deb && debuild --no-tgz-check -rfakeroot -uc -us
 
 deb-v2:

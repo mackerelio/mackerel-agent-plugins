@@ -56,6 +56,8 @@ sub update_packaging_specs {
         $content;
     };
     replace $_, $replace_sub for qw(packaging/rpm/mackerel-agent-plugins.spec packaging/deb/debian/rules);
+
+    path('packaging/deb/debian/source/include-binaries')->spew(join("\n", map { "debian/$plugin_prefix$_" } @plugins) . "\n");
 }
 
 sub load_packaging_confg {
