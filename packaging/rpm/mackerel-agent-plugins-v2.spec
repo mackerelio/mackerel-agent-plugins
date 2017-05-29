@@ -7,7 +7,7 @@ Summary: Monitoring program metric plugins for Mackerel
 Name: mackerel-agent-plugins
 Version: %{_version}
 Release: 1%{?dist}
-License: Apache-2
+License: ASL 2.0
 Group: Applications/System
 URL: https://mackerel.io/
 
