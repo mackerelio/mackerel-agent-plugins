@@ -211,7 +211,7 @@ func fetchConnections(db *sqlx.DB, version version) (map[string]interface{}, err
 
 	stat := make(map[string]interface{})
 
-	normalize_re := regexp.MustCompile("[^a-zA-Z0-9_-]+")
+	normalizeRe := regexp.MustCompile("[^a-zA-Z0-9_-]+")
 
 	for rows.Next() {
 		var count float64
@@ -221,7 +221,7 @@ func fetchConnections(db *sqlx.DB, version version) (map[string]interface{}, err
 			logger.Warningf("Failed to scan %s", err)
 			continue
 		}
-		state = normalize_re.ReplaceAllString(state, "_")
+		state = normalizeRe.ReplaceAllString(state, "_")
 		if waiting {
 			state += "_waiting"
 		}
@@ -253,7 +253,7 @@ func fetchDatabaseSize(db *sqlx.DB) (map[string]interface{}, error) {
 	}, nil
 }
 
-var version_re = regexp.MustCompile("PostgreSQL (\\d+)\\.(\\d+)(\\.(\\d+))? ")
+var versionRe = regexp.MustCompile("PostgreSQL (\\d+)\\.(\\d+)(\\.(\\d+))? ")
 
 type version struct {
 	first  uint
@@ -272,15 +272,15 @@ func fetchVersion(db *sqlx.DB) (version, error) {
 	}
 
 	for rows.Next() {
-		var version_str string
+		var versionStr string
 		var first, second, third uint64
-		if err := rows.Scan(&version_str); err != nil {
+		if err := rows.Scan(&versionStr); err != nil {
 			return res, err
 		}
 
 		// ref. https://www.postgresql.org/support/versioning/
 
-		submatch := version_re.FindStringSubmatch(version_str)
+		submatch := versionRe.FindStringSubmatch(versionStr)
 		if len(submatch) >= 4 {
 			first, err = strconv.ParseUint(submatch[1], 10, 0)
 			if err != nil {
@@ -300,7 +300,7 @@ func fetchVersion(db *sqlx.DB) (version, error) {
 			return res, err
 		}
 	}
-	return res, errors.New("Failed to select version().")
+	return res, errors.New("failed to select version()")
 }
 
 func mergeStat(dst, src map[string]interface{}) {
