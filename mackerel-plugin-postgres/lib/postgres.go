@@ -1,10 +1,12 @@
 package mppostgres
 
 import (
+	"errors"
 	"flag"
 	"fmt"
 	"os"
 	"regexp"
+	"strconv"
 
 	"github.com/jmoiron/sqlx"
 	// PostgreSQL Driver
@@ -193,10 +195,15 @@ func fetchStatDatabase(db *sqlx.DB) (map[string]interface{}, error) {
 	return stat, nil
 }
 
-func fetchConnections(db *sqlx.DB) (map[string]interface{}, error) {
-	rows, err := db.Query(`
-		select count(*), state, waiting from pg_stat_activity group by state, waiting
-	`)
+func fetchConnections(db *sqlx.DB, version version) (map[string]interface{}, error) {
+	var query string
+
+	if version.first > 9 || version.first == 9 && version.second >= 6 {
+		query = `select count(*), state, wait_event is not null from pg_stat_activity group by state, wait_event is not null`
+	} else {
+		query = `select count(*), state, waiting from pg_stat_activity group by state, waiting`
+	}
+	rows, err := db.Query(query)
 	if err != nil {
 		logger.Errorf("Failed to select pg_stat_activity. %s", err)
 		return nil, err
@@ -246,6 +253,56 @@ func fetchDatabaseSize(db *sqlx.DB) (map[string]interface{}, error) {
 	}, nil
 }
 
+var version_re = regexp.MustCompile("PostgreSQL (\\d+)\\.(\\d+)(\\.(\\d+))? ")
+
+type version struct {
+	first  uint
+	second uint
+	thrird uint
+}
+
+func fetchVersion(db *sqlx.DB) (version, error) {
+
+	res := version{}
+
+	rows, err := db.Query("select version()")
+	if err != nil {
+		logger.Errorf("Failed to select version(). %s", err)
+		return res, err
+	}
+
+	for rows.Next() {
+		var version_str string
+		var first, second, third uint64
+		if err := rows.Scan(&version_str); err != nil {
+			return res, err
+		}
+
+		// ref. https://www.postgresql.org/support/versioning/
+
+		submatch := version_re.FindStringSubmatch(version_str)
+		if len(submatch) >= 4 {
+			first, err = strconv.ParseUint(submatch[1], 10, 0)
+			if err != nil {
+				return res, err
+			}
+			second, err = strconv.ParseUint(submatch[2], 10, 0)
+			if err != nil {
+				return res, err
+			}
+			if len(submatch) == 5 {
+				third, err = strconv.ParseUint(submatch[4], 10, 0)
+				if err != nil {
+					return res, err
+				}
+			}
+			res = version{uint(first), uint(second), uint(third)}
+			return res, err
+		}
+	}
+	return res, errors.New("Failed to select version().")
+}
+
 func mergeStat(dst, src map[string]interface{}) {
 	for k, v := range src {
 		dst[k] = v
@@ -262,11 +319,17 @@ func (p PostgresPlugin) FetchMetrics() (map[string]interface{}, error) {
 	}
 	defer db.Close()
 
+	version, err := fetchVersion(db)
+	if err != nil {
+		logger.Warningf("FetchMetrics: %s", err)
+		return nil, err
+	}
+
 	statStatDatabase, err := fetchStatDatabase(db)
 	if err != nil {
 		return nil, err
 	}
-	statConnections, err := fetchConnections(db)
+	statConnections, err := fetchConnections(db, version)
 	if err != nil {
 		return nil, err
 	}
