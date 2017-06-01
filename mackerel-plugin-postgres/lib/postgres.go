@@ -209,7 +209,15 @@ func fetchConnections(db *sqlx.DB, version version) (map[string]interface{}, err
 		return nil, err
 	}
 
-	stat := make(map[string]interface{})
+	stat := map[string]interface{}{
+		"active":                       0.0,
+		"active_waiting":               0.0,
+		"idle":                         0.0,
+		"idle_in_transaction":          0.0,
+		"idle_in_transaction_aborted_": 0.0,
+		"fastpath_function_call":       0.0,
+		"disabled":                     0.0,
+	}
 
 	normalizeRe := regexp.MustCompile("[^a-zA-Z0-9_-]+")
 
