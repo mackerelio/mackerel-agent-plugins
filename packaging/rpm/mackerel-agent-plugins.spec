@@ -30,8 +30,11 @@ This package provides plugins for Mackerel.
 
 %{__mkdir} -p %{buildroot}%{__targetdir}
 
+goarch=386
+if [ %{buildarch} = "x86_64" ]; then goarch=amd64; fi
+
 for i in apache2 aws-ec2-cpucredit aws-elasticache aws-elasticsearch aws-elb aws-kinesis-streams aws-lambda aws-rds aws-ses conntrack elasticsearch gostats graphite haproxy jmx-jolokia jvm linux mailq memcached mongodb multicore munin mysql nginx php-apc php-fpm php-opcache plack postgres proc-fd rabbitmq redis snmp squid td-table-count trafficserver twemproxy uwsgi-vassal varnish xentop aws-cloudfront aws-ec2-ebs fluentd docker unicorn uptime inode; do \
-    %{__install} -m0755 %{_sourcedir}/build/mackerel-plugin-$i %{buildroot}%{__targetdir}/; \
+    %{__install} -m0755 %{_sourcedir}/build/linux/$goarch/mackerel-plugin-$i %{buildroot}%{__targetdir}/; \
 done
 
 %{__install} -d -m755 %{buildroot}%{__oldtargetdir}
