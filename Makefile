@@ -63,11 +63,13 @@ rpm: rpm-v1 rpm-v2
 
 rpm-v1:
 	make build GOOS=linux GOARCH=386
-	rpmbuild --define "_sourcedir `pwd`"  --define "_version ${VERSION}" \
-	  --define "buildarch noarch" -bb packaging/rpm/mackerel-agent-plugins.spec
+	rpmbuild --define "_sourcedir `pwd`" --define "_bindir build/linux/386" \
+	  --define "_version ${VERSION}" --define "buildarch noarch" \
+	  -bb packaging/rpm/mackerel-agent-plugins.spec
 	make build GOOS=linux GOARCH=amd64
-	rpmbuild --define "_sourcedir `pwd`"  --define "_version ${VERSION}" \
-	  --define "buildarch x86_64" -bb packaging/rpm/mackerel-agent-plugins.spec
+	rpmbuild --define "_sourcedir `pwd`" --define "_bindir build/linux/amd64" \
+	  --define "_version ${VERSION}" --define "buildarch x86_64" \
+	  -bb packaging/rpm/mackerel-agent-plugins.spec
 
 rpm-v2:
 	make build/mackerel-plugin GOOS=linux GOARCH=amd64
