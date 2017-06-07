@@ -2,6 +2,10 @@ mackerel-plugin-aws-dynamodb
 =================================
 
 AWS DynamoDB custom metrics plugin for mackerel.io agent.
+Currently this plugin doesn't support following metrics:
+
+- Metrics which take `GlobalSecondaryIndexName` Dimension
+- Metrics related to DynamoDB Streams
 
 ## Synopsis
 
