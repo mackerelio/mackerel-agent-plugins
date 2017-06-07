@@ -36,9 +36,9 @@ var graphdef = map[string]mp.Graphs{
 		Label: "PHP OPCache Cache Size",
 		Unit:  "integer",
 		Metrics: []mp.Metrics{
-			{Name: "num_cached_scripts", Label: "Cached Script", Diff: true, Stacked: false},
-			{Name: "num_cached_keys", Label: "Num Cached Key", Diff: true, Stacked: false},
-			{Name: "max_cached_keys", Label: "Max Cached Key", Diff: true, Stacked: false},
+			{Name: "num_cached_scripts", Label: "Cached Script", Diff: false, Stacked: false},
+			{Name: "num_cached_keys", Label: "Num Cached Key", Diff: false, Stacked: false},
+			{Name: "max_cached_keys", Label: "Max Cached Key", Diff: false, Stacked: false},
 		},
 	},
 	"php-opcache.stats": {
