@@ -49,6 +49,14 @@ done
 %{__oldtargetdir}/*
 
 %changelog
+* Wed Jun 07 2017 <mackerel-developers@hatena.ne.jp> - 0.27.2
+- disable diff on php-opcache.cache_size because they are gauge value (by matsuu)
+- build with Go 1.8 (by Songmu)
+- v2 packages (rpm and deb) (by Songmu)
+- [aws-rds] Fix "Latency" metric label (by astj)
+- Add AWS Kinesis Firehose Plugin (by holidayworking)
+- Fixed mackerel-plugin-nginx/README.md (by kakakakakku)
+
 * Tue May 09 2017 <mackerel-developers@hatena.ne.jp> - 0.27.1-1
 - [php-fpm] Implement PluginWithPrefix interfarce (by astj)
 - Use SetTempfileByBasename to support MACKEREL_PLUGIN_WORKDIR (by astj)

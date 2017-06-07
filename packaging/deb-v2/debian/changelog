@@ -1,3 +1,20 @@
+mackerel-agent-plugins (0.27.2-1.v2) stable; urgency=low
+
+  * disable diff on php-opcache.cache_size because they are gauge value (by matsuu)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/352>
+  * build with Go 1.8 (by Songmu)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/350>
+  * v2 packages (rpm and deb) (by Songmu)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/348>
+  * [aws-rds] Fix "Latency" metric label (by astj)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/347>
+  * Add AWS Kinesis Firehose Plugin (by holidayworking)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/333>
+  * Fixed mackerel-plugin-nginx/README.md (by kakakakakku)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/345>
+
+ -- mackerel <mackerel-developers@hatena.ne.jp>  Wed, 07 Jun 2017 11:37:01 +0900
+
 mackerel-agent-plugins (0.27.1-1.v2) stable; urgency=low
 
   * [php-fpm] Implement PluginWithPrefix interfarce (by astj)

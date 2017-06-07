@@ -28,7 +28,7 @@ This package provides metric plugins for Mackerel.
 
 %{__install} -m0755 %{_sourcedir}/build/mackerel-plugin %{buildroot}%{__targetdir}/
 
-for i in apache2 aws-ec2-cpucredit aws-elasticache aws-elasticsearch aws-elb aws-rds aws-ses conntrack elasticsearch gostats graphite haproxy jmx-jolokia jvm linux mailq memcached mongodb multicore munin mysql nginx php-apc php-fpm php-opcache plack postgres proc-fd rabbitmq redis snmp squid td-table-count trafficserver twemproxy varnish xentop aws-cloudfront aws-ec2-ebs fluentd docker unicorn uptime inode; do \
+for i in apache2 aws-ec2-cpucredit aws-elasticache aws-elasticsearch aws-elb aws-kinesis-streams aws-lambda aws-rds aws-ses conntrack elasticsearch gostats graphite haproxy jmx-jolokia jvm linux mailq memcached mongodb multicore munin mysql nginx php-apc php-fpm php-opcache plack postgres proc-fd rabbitmq redis snmp squid td-table-count trafficserver twemproxy uwsgi-vassal varnish xentop aws-cloudfront aws-ec2-ebs fluentd docker unicorn uptime inode; do \
     ln -s ./mackerel-plugin %{buildroot}%{__targetdir}/mackerel-plugin-$i; \
 done
 
@@ -40,6 +40,14 @@ done
 %{__targetdir}/*
 
 %changelog
+* Wed Jun 07 2017 <mackerel-developers@hatena.ne.jp> - 0.27.2
+- disable diff on php-opcache.cache_size because they are gauge value (by matsuu)
+- build with Go 1.8 (by Songmu)
+- v2 packages (rpm and deb) (by Songmu)
+- [aws-rds] Fix "Latency" metric label (by astj)
+- Add AWS Kinesis Firehose Plugin (by holidayworking)
+- Fixed mackerel-plugin-nginx/README.md (by kakakakakku)
+
 * Tue May 09 2017 <mackerel-developers@hatena.ne.jp> - 0.27.1-1
 - [php-fpm] Implement PluginWithPrefix interfarce (by astj)
 - Use SetTempfileByBasename to support MACKEREL_PLUGIN_WORKDIR (by astj)
