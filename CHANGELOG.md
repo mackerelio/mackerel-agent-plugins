@@ -1,5 +1,15 @@
 # Changelog
 
+## 0.27.2 (2017-06-07)
+
+* disable diff on php-opcache.cache_size because they are gauge value #352 (matsuu)
+* build with Go 1.8 #350 (Songmu)
+* v2 packages (rpm and deb) #348 (Songmu)
+* [aws-rds] Fix "Latency" metric label #347 (astj)
+* Add AWS Kinesis Firehose Plugin #333 (holidayworking)
+* Fixed mackerel-plugin-nginx/README.md #345 (kakakakakku)
+
+
 ## 0.27.1 (2017-05-09)
 
 * [php-fpm] Implement PluginWithPrefix interfarce #338 (astj)
