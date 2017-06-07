@@ -36,8 +36,9 @@ type metric struct {
 
 // DynamoDBPlugin mackerel plugin for aws kinesis
 type DynamoDBPlugin struct {
-	TableName string
-	Prefix    string
+	TableName   string
+	KeyPrefix   string
+	LabelPrefix string
 
 	AccessKeyID     string
 	SecretAccessKey string
@@ -47,10 +48,7 @@ type DynamoDBPlugin struct {
 
 // MetricKeyPrefix interface for PluginWithPrefix
 func (p DynamoDBPlugin) MetricKeyPrefix() string {
-	if p.Prefix == "" {
-		p.Prefix = "dynamodb"
-	}
-	return p.Prefix
+	return p.KeyPrefix
 }
 
 // prepare creates CloudWatch instance
@@ -279,12 +277,9 @@ func transformMetrics(stats map[string]interface{}) map[string]interface{} {
 
 // GraphDefinition of DynamoDBPlugin
 func (p DynamoDBPlugin) GraphDefinition() map[string]mp.Graphs {
-	labelPrefix := strings.Title(p.Prefix)
-	labelPrefix = strings.Replace(labelPrefix, "-", " ", -1)
-
 	var graphdef = map[string]mp.Graphs{
 		"ReadCapacity": {
-			Label: (labelPrefix + " Read Capacity Units"),
+			Label: (p.LabelPrefix + " Read Capacity Units"),
 			Unit:  "float",
 			Metrics: []mp.Metrics{
 				{Name: "ProvisionedReadCapacityUnits", Label: "Provisioned"},
@@ -293,7 +288,7 @@ func (p DynamoDBPlugin) GraphDefinition() map[string]mp.Graphs {
 			},
 		},
 		"WriteCapacity": {
-			Label: (labelPrefix + " Write Capacity Units"),
+			Label: (p.LabelPrefix + " Write Capacity Units"),
 			Unit:  "float",
 			Metrics: []mp.Metrics{
 				{Name: "ProvisionedWriteCapacityUnits", Label: "Provisioned"},
@@ -302,7 +297,7 @@ func (p DynamoDBPlugin) GraphDefinition() map[string]mp.Graphs {
 			},
 		},
 		"ThrottledEvents": {
-			Label: (labelPrefix + " Throttle Events"),
+			Label: (p.LabelPrefix + " Throttle Events"),
 			Unit:  "integer",
 			Metrics: []mp.Metrics{
 				{Name: "ReadThrottleEvents", Label: "Read"},
@@ -310,42 +305,42 @@ func (p DynamoDBPlugin) GraphDefinition() map[string]mp.Graphs {
 			},
 		},
 		"ConditionalCheckFailedRequests": {
-			Label: (labelPrefix + " ConditionalCheckFailedRequests"),
+			Label: (p.LabelPrefix + " ConditionalCheckFailedRequests"),
 			Unit:  "integer",
 			Metrics: []mp.Metrics{
 				{Name: "ConditionalCheckFailedRequests", Label: "Counts"},
 			},
 		},
 		"ThrottledRequests": {
-			Label: (labelPrefix + " ThrottledRequests"),
+			Label: (p.LabelPrefix + " ThrottledRequests"),
 			Unit:  "integer",
 			Metrics: []mp.Metrics{
 				{Name: "*", Label: "%1", Stacked: true},
 			},
 		},
 		"SystemErrors": {
-			Label: (labelPrefix + " SystemErrors"),
+			Label: (p.LabelPrefix + " SystemErrors"),
 			Unit:  "integer",
 			Metrics: []mp.Metrics{
 				{Name: "*", Label: "%1", Stacked: true},
 			},
 		},
 		"UserErrors": {
-			Label: (labelPrefix + " UserErrors"),
+			Label: (p.LabelPrefix + " UserErrors"),
 			Unit:  "integer",
 			Metrics: []mp.Metrics{
 				{Name: "*", Label: "%1", Stacked: true},
 			},
 		},
 		"SuccessfulRequests": {
-			Label: (labelPrefix + " SuccessfulRequests"),
+			Label: (p.LabelPrefix + " SuccessfulRequests"),
 			Unit:  "integer",
 			Metrics: []mp.Metrics{
 				{Name: "*", Label: "%1"},
 			},
 		},
 		"SuccessfulRequestLatency.#": {
-			Label: (labelPrefix + " SuccessfulRequestLatency"),
+			Label: (p.LabelPrefix + " SuccessfulRequestLatency"),
 			Unit:  "integer",
 			Metrics: []mp.Metrics{
 				{Name: "Minimum", Label: "Min"},
@@ -364,7 +359,8 @@ func Do() {
 	optRegion := flag.String("region", "", "AWS Region")
 	optTableName := flag.String("table-name", "", "DynamoDB Table Name")
 	optTempfile := flag.String("tempfile", "", "Temp file name")
-	optPrefix := flag.String("metric-key-prefix", "dynamodb", "Metric key prefix")
+	optKeyPrefix := flag.String("metric-key-prefix", "dynamodb", "Metric key prefix")
+	optLabelPrefix := flag.String("metric-label-prefix", "DynamoDB", "Metric label prefix")
 	flag.Parse()
 
 	var plugin DynamoDBPlugin
@@ -373,7 +369,8 @@ func Do() {
 	plugin.SecretAccessKey = *optSecretAccessKey
 	plugin.Region = *optRegion
 	plugin.TableName = *optTableName
-	plugin.Prefix = *optPrefix
+	plugin.KeyPrefix = *optKeyPrefix
+	plugin.LabelPrefix = *optLabelPrefix
 
 	err := plugin.prepare()
 	if err != nil {
