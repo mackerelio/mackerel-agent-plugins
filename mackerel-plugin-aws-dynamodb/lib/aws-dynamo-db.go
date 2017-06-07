@@ -229,6 +229,9 @@ var operationalMetricsGroup = []metricsGroup{
 	{CloudWatchName: "UserErrors", Metrics: []metric{
 		{MackerelName: "UserErrors.#", Type: metricsTypeSampleCount},
 	}},
+	{CloudWatchName: "ReturnedItemCount", Metrics: []metric{
+		{MackerelName: "ReturnedItemCount.#", Type: metricsTypeAverage},
+	}},
 }
 
 // FetchMetrics fetch the metrics
@@ -330,6 +333,13 @@ func (p DynamoDBPlugin) GraphDefinition() map[string]mp.Graphs {
 			Unit:  "integer",
 			Metrics: []mp.Metrics{
 				{Name: "*", Label: "%1", Stacked: true},
+			},
+		},
+		"ReturnedItemCount": {
+			Label: (p.LabelPrefix + " ReturnedItemCount"),
+			Unit:  "integer",
+			Metrics: []mp.Metrics{
+				{Name: "*", Label: "%1"},
 			},
 		},
 		"SuccessfulRequests": {
