@@ -1,0 +1,10 @@
+{
+  "solr-mbeans": [
+    "UPDATEHANDLER",
+    {}
+  ],
+  "responseHeader": {
+    "QTime": 0,
+    "status": 0
+  }
+}

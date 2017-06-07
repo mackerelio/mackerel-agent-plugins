@@ -14,12 +14,16 @@ import (
 )
 
 var (
-	logger               = logging.GetLogger("metrics.plugin.solr")
-	coreStatKeys         = []string{"numDocs", "deletedDocs", "indexHeapUsageBytes", "version", "segmentCount", "sizeInBytes"}
-	queryHandlerPaths    = []string{"/update/json", "/select", "/update/json/docs", "/get", "/update/csv", "/replication", "/update", "/dataimport"}
-	queryHandlerStatKeys = []string{"requests", "errors", "timeouts", "avgRequestsPerSecond", "5minRateReqsPerSecond", "15minRateReqsPerSecond", "avgTimePerRequest", "medianRequestTime", "75thPcRequestTime", "95thPcRequestTime", "99thPcRequestTime", "999thPcRequestTime"}
-	cacheTypes           = []string{"filterCache", "perSegFilter", "queryResultCache", "documentCache", "fieldValueCache"}
-	cacheStatKeys        = []string{"lookups", "hits", "hitratio", "inserts", "evictions", "size", "warmupTime"}
+	logger       = logging.GetLogger("metrics.plugin.solr")
+	coreStatKeys = []string{"numDocs", "deletedDocs", "indexHeapUsageBytes", "version", "segmentCount", "sizeInBytes"}
+	handlerPaths = []string{"/update/json", "/select", "/update/json/docs", "/get", "/update/csv", "/replication", "/update", "/dataimport"}
+	// Solr5 ... "5minRateReqsPerSecond", "15minRateReqsPerSecond"
+	// Solr6 ... "5minRateRequestsPerSecond", "15minRateRequestsPerSecond"
+	handlerStatKeys = []string{"requests", "errors", "timeouts", "avgRequestsPerSecond", "5minRateReqsPerSecond", "5minRateRequestsPerSecond",
+		"15minRateReqsPerSecond", "15minRateRequestsPerSecond", "avgTimePerRequest", "medianRequestTime",
+		"75thPcRequestTime", "95thPcRequestTime", "99thPcRequestTime", "999thPcRequestTime"}
+	cacheTypes    = []string{"filterCache", "perSegFilter", "queryResultCache", "documentCache", "fieldValueCache"}
+	cacheStatKeys = []string{"lookups", "hits", "hitratio", "inserts", "evictions", "size", "warmupTime"}
 )
 
 // SolrPlugin mackerel plugin for Solr
@@ -75,26 +79,33 @@ func (s *SolrPlugin) setStatsMbean(core string, stats map[string]interface{}, al
 					if k != "stats" {
 						continue
 					}
+					if v == nil {
+						continue
+					}
 					v2 := v.(map[string]interface{})
 					for _, allowKey := range allowKeys {
+						if v2[allowKey] == nil {
+							continue
+						}
 						s.Stats[core][allowKey+"_"+escapeSlash(key)] = v2[allowKey].(float64)
 					}
 				}
 			}
 		}
+		break // if QUERYHANDLER and QUERY or UPDATEHANDLER and UPDATE
 	}
 }
 
-func (s *SolrPlugin) loadStatsMbeanQueryHandler(core string) error {
-	uri := s.BaseURL + "/" + core + "/admin/mbeans?stats=true&wt=json&cat=QUERYHANDLER"
-	for _, path := range queryHandlerPaths {
+func (s *SolrPlugin) loadStatsMbeanHandler(core string, cat string) error {
+	uri := s.BaseURL + "/" + core + "/admin/mbeans?stats=true&wt=json&cat=" + cat
+	for _, path := range handlerPaths {
 		uri += fmt.Sprintf("&key=%s", url.QueryEscape(path))
 	}
 	stats, err := s.getStats(uri)
 	if err != nil {
 		return err
 	}
-	s.setStatsMbean(core, stats, queryHandlerStatKeys)
+	s.setStatsMbean(core, stats, handlerStatKeys)
 	return nil
 }
 
@@ -122,7 +133,15 @@ func (s *SolrPlugin) loadStats() error {
 		if err != nil {
 			return err
 		}
-		err = s.loadStatsMbeanQueryHandler(core)
+		err = s.loadStatsMbeanHandler(core, "QUERYHANDLER")
+		if err != nil {
+			return err
+		}
+		err = s.loadStatsMbeanHandler(core, "UPDATEHANDLER")
+		if err != nil {
+			return err
+		}
+		err = s.loadStatsMbeanHandler(core, "REPLICATION")
 		if err != nil {
 			return err
 		}
@@ -175,9 +194,9 @@ func (s SolrPlugin) GraphDefinition() map[string]mp.Graphs {
 			}
 		}
 
-		for _, key := range queryHandlerStatKeys {
+		for _, key := range handlerStatKeys {
 			var metrics []mp.Metrics
-			for _, path := range queryHandlerPaths {
+			for _, path := range handlerPaths {
 				path = escapeSlash(path)
 				metricLabel := strings.Title(path)
 				metrics = append(metrics,
