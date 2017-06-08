@@ -256,7 +256,7 @@ func (m DockerPlugin) FetchMetrics() (map[string]interface{}, error) {
 		if n == 0 {
 			continue
 		}
-		fields := regexp.MustCompile(" +").Split(line, -1)
+		fields := regexp.MustCompile(" +").Split(line, " ")
 		if len(fields) > 3 {
 			dockerStats[fields[0]] = []string{fields[1], fields[len(fields)-2]}
 		}
