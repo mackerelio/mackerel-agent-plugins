@@ -36,9 +36,8 @@ type metric struct {
 
 // DynamoDBPlugin mackerel plugin for aws kinesis
 type DynamoDBPlugin struct {
-	TableName   string
-	KeyPrefix   string
-	LabelPrefix string
+	TableName string
+	Prefix    string
 
 	AccessKeyID     string
 	SecretAccessKey string
@@ -48,7 +47,10 @@ type DynamoDBPlugin struct {
 
 // MetricKeyPrefix interface for PluginWithPrefix
 func (p DynamoDBPlugin) MetricKeyPrefix() string {
-	return p.KeyPrefix
+	if p.Prefix == "" {
+		p.Prefix = "dynamodb"
+	}
+	return p.Prefix
 }
 
 // prepare creates CloudWatch instance
@@ -280,9 +282,12 @@ func transformMetrics(stats map[string]interface{}) map[string]interface{} {
 
 // GraphDefinition of DynamoDBPlugin
 func (p DynamoDBPlugin) GraphDefinition() map[string]mp.Graphs {
+	labelPrefix := strings.Title(p.Prefix)
+	labelPrefix = strings.Replace(labelPrefix, "-", " ", -1)
+
 	var graphdef = map[string]mp.Graphs{
 		"ReadCapacity": {
-			Label: (p.LabelPrefix + " Read Capacity Units"),
+			Label: (labelPrefix + " Read Capacity Units"),
 			Unit:  "float",
 			Metrics: []mp.Metrics{
 				{Name: "ProvisionedReadCapacityUnits", Label: "Provisioned"},
@@ -291,7 +296,7 @@ func (p DynamoDBPlugin) GraphDefinition() map[string]mp.Graphs {
 			},
 		},
 		"WriteCapacity": {
-			Label: (p.LabelPrefix + " Write Capacity Units"),
+			Label: (labelPrefix + " Write Capacity Units"),
 			Unit:  "float",
 			Metrics: []mp.Metrics{
 				{Name: "ProvisionedWriteCapacityUnits", Label: "Provisioned"},
@@ -300,7 +305,7 @@ func (p DynamoDBPlugin) GraphDefinition() map[string]mp.Graphs {
 			},
 		},
 		"ThrottledEvents": {
-			Label: (p.LabelPrefix + " Throttle Events"),
+			Label: (labelPrefix + " Throttle Events"),
 			Unit:  "integer",
 			Metrics: []mp.Metrics{
 				{Name: "ReadThrottleEvents", Label: "Read"},
@@ -308,28 +313,28 @@ func (p DynamoDBPlugin) GraphDefinition() map[string]mp.Graphs {
 			},
 		},
 		"ConditionalCheckFailedRequests": {
-			Label: (p.LabelPrefix + " ConditionalCheckFailedRequests"),
+			Label: (labelPrefix + " ConditionalCheckFailedRequests"),
 			Unit:  "integer",
 			Metrics: []mp.Metrics{
 				{Name: "ConditionalCheckFailedRequests", Label: "Counts"},
 			},
 		},
 		"ThrottledRequests": {
-			Label: (p.LabelPrefix + " ThrottledRequests"),
+			Label: (labelPrefix + " ThrottledRequests"),
 			Unit:  "integer",
 			Metrics: []mp.Metrics{
 				{Name: "*", Label: "%1", Stacked: true},
 			},
 		},
 		"SystemErrors": {
-			Label: (p.LabelPrefix + " SystemErrors"),
+			Label: (labelPrefix + " SystemErrors"),
 			Unit:  "integer",
 			Metrics: []mp.Metrics{
 				{Name: "*", Label: "%1", Stacked: true},
 			},
 		},
 		"UserErrors": {
-			Label: (p.LabelPrefix + " UserErrors"),
+			Label: (labelPrefix + " UserErrors"),
 			Unit:  "integer",
 			Metrics: []mp.Metrics{
 				{Name: "*", Label: "%1", Stacked: true},
@@ -343,14 +348,14 @@ func (p DynamoDBPlugin) GraphDefinition() map[string]mp.Graphs {
 			},
 		},
 		"SuccessfulRequests": {
-			Label: (p.LabelPrefix + " SuccessfulRequests"),
+			Label: (labelPrefix + " SuccessfulRequests"),
 			Unit:  "integer",
 			Metrics: []mp.Metrics{
 				{Name: "*", Label: "%1"},
 			},
 		},
 		"SuccessfulRequestLatency.#": {
-			Label: (p.LabelPrefix + " SuccessfulRequestLatency"),
+			Label: (labelPrefix + " SuccessfulRequestLatency"),
 			Unit:  "integer",
 			Metrics: []mp.Metrics{
 				{Name: "Minimum", Label: "Min"},
@@ -369,8 +374,7 @@ func Do() {
 	optRegion := flag.String("region", "", "AWS Region")
 	optTableName := flag.String("table-name", "", "DynamoDB Table Name")
 	optTempfile := flag.String("tempfile", "", "Temp file name")
-	optKeyPrefix := flag.String("metric-key-prefix", "dynamodb", "Metric key prefix")
-	optLabelPrefix := flag.String("metric-label-prefix", "DynamoDB", "Metric label prefix")
+	optPrefix := flag.String("metric-key-prefix", "dynamodb", "Metric key prefix")
 	flag.Parse()
 
 	var plugin DynamoDBPlugin
@@ -379,8 +383,7 @@ func Do() {
 	plugin.SecretAccessKey = *optSecretAccessKey
 	plugin.Region = *optRegion
 	plugin.TableName = *optTableName
-	plugin.KeyPrefix = *optKeyPrefix
-	plugin.LabelPrefix = *optLabelPrefix
+	plugin.Prefix = *optPrefix
 
 	err := plugin.prepare()
 	if err != nil {
