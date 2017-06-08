@@ -339,7 +339,7 @@ func (p DynamoDBPlugin) GraphDefinition() map[string]mp.Graphs {
 			},
 		},
 		"ReturnedItemCount": {
-			Label: (p.LabelPrefix + " ReturnedItemCount"),
+			Label: (labelPrefix + " ReturnedItemCount"),
 			Unit:  "integer",
 			Metrics: []mp.Metrics{
 				{Name: "*", Label: "%1"},
