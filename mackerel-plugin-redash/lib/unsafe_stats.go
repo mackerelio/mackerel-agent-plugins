@@ -19,7 +19,7 @@ type UnsafeTaskStats struct {
 	Scheduled bool   `json:"scheduled"`
 }
 
-// UnsafeAllTaskStats represents task states
+// UnsafeAllTaskStates represents task states
 var UnsafeAllTaskStates = []string{
 	"waiting",
 	"finished",
