@@ -42,6 +42,7 @@ import (
 	"github.com/mackerelio/mackerel-agent-plugins/mackerel-plugin-rabbitmq/lib"
 	"github.com/mackerelio/mackerel-agent-plugins/mackerel-plugin-redis/lib"
 	"github.com/mackerelio/mackerel-agent-plugins/mackerel-plugin-snmp/lib"
+	"github.com/mackerelio/mackerel-agent-plugins/mackerel-plugin-solr/lib"
 	"github.com/mackerelio/mackerel-agent-plugins/mackerel-plugin-squid/lib"
 	"github.com/mackerelio/mackerel-agent-plugins/mackerel-plugin-td-table-count/lib"
 	"github.com/mackerelio/mackerel-agent-plugins/mackerel-plugin-trafficserver/lib"
@@ -131,6 +132,8 @@ func runPlugin(plug string) error {
 		mpredis.Do()
 	case "snmp":
 		mpsnmp.Do()
+	case "solr":
+		mpsolr.Do()
 	case "squid":
 		mpsquid.Do()
 	case "td-table-count":
@@ -194,6 +197,7 @@ var plugins = []string{
 	"rabbitmq",
 	"redis",
 	"snmp",
+	"solr",
 	"squid",
 	"td-table-count",
 	"trafficserver",
