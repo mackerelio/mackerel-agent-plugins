@@ -31,6 +31,7 @@
        "plack",
        "postgres",
        "proc-fd",
+       "solr",
        "rabbitmq",
        "redis",
        "snmp",
