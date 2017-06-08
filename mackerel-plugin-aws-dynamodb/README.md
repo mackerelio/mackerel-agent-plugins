@@ -10,7 +10,7 @@ Currently this plugin doesn't support following metrics:
 ## Synopsis
 
 ```shell
-mackerel-plugin-aws-dynamodb -table-name=<table-name> -region=<aws-region> [-access-key-id=<id>] [-secret-access-key=<key>] [-tempfile=<tempfile>]
+mackerel-plugin-aws-dynamodb -table-name=<table-name> -region=<aws-region> [-access-key-id=<id>] [-secret-access-key=<key>] [-tempfile=<tempfile>] [-metric-key-prefix=<key-prefix>]
 ```
 * collect data from specified AWS DynamoDB
 * you can set keys by environment variables: `AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY`

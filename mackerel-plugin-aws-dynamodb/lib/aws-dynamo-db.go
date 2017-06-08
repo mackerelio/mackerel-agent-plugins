@@ -47,9 +47,6 @@ type DynamoDBPlugin struct {
 
 // MetricKeyPrefix interface for PluginWithPrefix
 func (p DynamoDBPlugin) MetricKeyPrefix() string {
-	if p.Prefix == "" {
-		p.Prefix = "dynamodb"
-	}
 	return p.Prefix
 }
 
