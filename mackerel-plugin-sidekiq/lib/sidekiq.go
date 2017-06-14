@@ -11,12 +11,12 @@ import (
 
 // SidekiqPlugin for fetching metrics
 type SidekiqPlugin struct {
-	Tempfile string
-	client   *r.Client
+	Client *r.Client
+	Prefix string
 }
 
 var graphdef = map[string]mp.Graphs{
-	"Sidekiq.ProcessedANDFailed": mp.Graphs{
+	"ProcessedANDFailed": mp.Graphs{
 		Label: "Sidekiq processed and failed count",
 		Unit:  "integer",
 		Metrics: []mp.Metrics{
@@ -24,7 +24,7 @@ var graphdef = map[string]mp.Graphs{
 			{Name: "failed", Label: "Failed", Type: "uint64", Diff: true},
 		},
 	},
-	"Sidekiq.Stats": mp.Graphs{
+	"Stats": mp.Graphs{
 		Label: "Sidekiq stats",
 		Unit:  "integer",
 		Metrics: []mp.Metrics{
@@ -43,7 +43,7 @@ func (sp SidekiqPlugin) GraphDefinition() map[string]mp.Graphs {
 }
 
 func (sp SidekiqPlugin) get(key string) uint64 {
-	val, err := sp.client.Get(key).Result()
+	val, err := sp.Client.Get(key).Result()
 	if err == r.Nil {
 		return 0
 	}
@@ -53,7 +53,7 @@ func (sp SidekiqPlugin) get(key string) uint64 {
 }
 
 func (sp SidekiqPlugin) zCard(key string) uint64 {
-	val, err := sp.client.ZCard(key).Result()
+	val, err := sp.Client.ZCard(key).Result()
 	if err == r.Nil {
 		return 0
 	}
@@ -62,7 +62,7 @@ func (sp SidekiqPlugin) zCard(key string) uint64 {
 }
 
 func (sp SidekiqPlugin) sMembers(key string) []string {
-	val, err := sp.client.SMembers(key).Result()
+	val, err := sp.Client.SMembers(key).Result()
 	if err == r.Nil {
 		return make([]string, 0)
 	}
@@ -71,7 +71,7 @@ func (sp SidekiqPlugin) sMembers(key string) []string {
 }
 
 func (sp SidekiqPlugin) hGet(key string, field string) uint64 {
-	val, err := sp.client.HGet(key, field).Result()
+	val, err := sp.Client.HGet(key, field).Result()
 	if err == r.Nil {
 		return 0
 	}
@@ -81,7 +81,7 @@ func (sp SidekiqPlugin) hGet(key string, field string) uint64 {
 }
 
 func (sp SidekiqPlugin) lLen(key string) uint64 {
-	val, err := sp.client.LLen(key).Result()
+	val, err := sp.Client.LLen(key).Result()
 	if err == r.Nil {
 		return 0
 	}
@@ -185,22 +185,34 @@ func (sp SidekiqPlugin) FetchMetrics() (map[string]interface{}, error) {
 	return m, nil
 }
 
+// MetricKeyPrefix interface for PluginWithPrefix
+func (sp SidekiqPlugin) MetricKeyPrefix() string {
+	if sp.Prefix == "" {
+		sp.Prefix = "sidekiq"
+	}
+	return sp.Prefix
+}
+
 // Do the plugin
 func Do() {
 	optHost := flag.String("host", "localhost", "Hostname")
 	optPort := flag.String("port", "6379", "Port")
 	optPassword := flag.String("password", "", "Password")
 	optDB := flag.Int("db", 0, "DB")
-	optTempfile := flag.String("tempfile", "/tmp/mackerel-plugin-sidekiq", "Temp file name")
+	optPrefix := flag.String("metric-key-prefix", "sidekiq", "Metric key prefix")
+	optTempfile := flag.String("tempfile", "", "Temp file name")
 	flag.Parse()
 
 	client := r.NewClient(&r.Options{
 		Addr:     fmt.Sprintf("%s:%s", *optHost, *optPort),
-		Password: *optPassword, // no password set
-		DB:       *optDB,       // use default DB
+		Password: *optPassword,
+		DB:       *optDB,
 	})
 
-	sp := SidekiqPlugin{client: client}
+	sp := SidekiqPlugin{
+		Client: client,
+		Prefix: *optPrefix,
+	}
 	helper := mp.NewMackerelPlugin(sp)
 	helper.Tempfile = *optTempfile
 
