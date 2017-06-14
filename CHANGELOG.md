@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.28.0 (2017-06-14)
+
+* Add aws-dynamodb plugin #349 (astj)
+* Implemented mackerel-plugin-redash #355 (yoheimuta)
+* Add mackerel-plugin-solr to package #356 (astj)
+* Add test cases and fix issues for apache solr #341 (supercaracal)
+
+
 ## 0.27.2 (2017-06-07)
 
 * disable diff on php-opcache.cache_size because they are gauge value #352 (matsuu)
