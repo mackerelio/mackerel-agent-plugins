@@ -1,3 +1,16 @@
+mackerel-agent-plugins (0.28.0-1) stable; urgency=low
+
+  * Add aws-dynamodb plugin (by astj)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/349>
+  * Implemented mackerel-plugin-redash (by yoheimuta)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/355>
+  * Add mackerel-plugin-solr to package (by astj)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/356>
+  * Add test cases and fix issues for apache solr (by supercaracal)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/341>
+
+ -- mackerel <mackerel-developers@hatena.ne.jp>  Wed, 14 Jun 2017 10:34:06 +0900
+
 mackerel-agent-plugins (0.27.2-1) stable; urgency=low
 
   * disable diff on php-opcache.cache_size because they are gauge value (by matsuu)
