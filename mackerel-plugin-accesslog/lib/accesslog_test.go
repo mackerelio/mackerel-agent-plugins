@@ -55,7 +55,7 @@ func TestFetchMetrics(t *testing.T) {
 		}
 		out, err := p.FetchMetrics()
 		if err != nil {
-			t.Errorf("%s(err): error should be nil but: %+v", err)
+			t.Errorf("%s(err): error should be nil but: %+v", tt.Name, err)
 			continue
 		}
 		if !reflect.DeepEqual(out, tt.Output) {
