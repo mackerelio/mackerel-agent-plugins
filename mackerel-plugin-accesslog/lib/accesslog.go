@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"flag"
 	"fmt"
+	"io"
 	"log"
 	"os"
 	"path/filepath"
@@ -19,9 +20,10 @@ import (
 
 // AccesslogPlugin mackerel plugin
 type AccesslogPlugin struct {
-	prefix  string
-	file    string
-	posFile string
+	prefix    string
+	file      string
+	posFile   string
+	noPosFile bool
 }
 
 // MetricKeyPrefix interface for PluginWithPrefix
@@ -81,17 +83,26 @@ func (p *AccesslogPlugin) getPos() string {
 	return filepath.Join(pluginutil.PluginWorkDir(), "mackerel-plugin-accesslog.d", base)
 }
 
-// FetchMetrics interface for mackerelplugin
-func (p *AccesslogPlugin) FetchMetrics() (map[string]float64, error) {
+func (p *AccesslogPlugin) getReadCloser() (io.ReadCloser, bool, error) {
+	if p.noPosFile {
+		rc, err := os.Open(p.file)
+		return rc, true, err
+	}
 	posfile := p.getPos()
 	fi, err := os.Stat(posfile)
 	// don't output count metrics when the pos file doesn't exist or is too old
 	takeCount := err == nil && fi.ModTime().After(time.Now().Add(-2*time.Minute))
-	pt, err := postailer.Open(p.file, posfile)
+	rc, err := postailer.Open(p.file, posfile)
+	return rc, takeCount, err
+}
+
+// FetchMetrics interface for mackerelplugin
+func (p *AccesslogPlugin) FetchMetrics() (map[string]float64, error) {
+	rc, takeCount, err := p.getReadCloser()
 	if err != nil {
 		return nil, err
 	}
-	defer pt.Close()
+	defer rc.Close()
 
 	countMetrics := []string{"total_count", "2xx_count", "3xx_count", "4xx_count", "5xx_count"}
 	ret := make(map[string]float64)
@@ -100,7 +111,7 @@ func (p *AccesslogPlugin) FetchMetrics() (map[string]float64, error) {
 	}
 	var reqtimes []float64
 	var psr axslogparser.Parser
-	s := bufio.NewScanner(pt)
+	s := bufio.NewScanner(rc)
 	for s.Scan() {
 		var (
 			l   *axslogparser.Log
@@ -150,8 +161,9 @@ func (p *AccesslogPlugin) FetchMetrics() (map[string]float64, error) {
 // Do the plugin
 func Do() {
 	var (
-		optPrefix  = flag.String("metric-key-prefix", "", "Metric key prefix")
-		optPosFile = flag.String("posfile", "", "(not necessary to specify it in the usual use case) posfile")
+		optPrefix    = flag.String("metric-key-prefix", "", "Metric key prefix")
+		optPosFile   = flag.String("posfile", "", "(not necessary to specify it in the usual use case) posfile")
+		optNoPosFile = flag.Bool("no-posfile", false, "no position file")
 	)
 	flag.Usage = func() {
 		fmt.Fprintf(os.Stderr, "Usage: %s [OPTION] /path/to/access.log\n", os.Args[0])
@@ -163,8 +175,9 @@ func Do() {
 		os.Exit(1)
 	}
 	mp.NewMackerelPlugin(&AccesslogPlugin{
-		prefix:  *optPrefix,
-		file:    flag.Args()[0],
-		posFile: *optPosFile,
+		prefix:    *optPrefix,
+		file:      flag.Args()[0],
+		posFile:   *optPosFile,
+		noPosFile: *optNoPosFile,
 	}).Run()
 }
