@@ -235,7 +235,7 @@ func (p ESPlugin) FetchMetrics() (map[string]float64, error) {
 			}
 			stat[*met.MetricName] = v
 		} else {
-			log.Printf("%s: %s", met.MetricName, err)
+			log.Printf("%s: %s", *met.MetricName, err)
 		}
 	}
 
