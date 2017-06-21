@@ -7,6 +7,7 @@ import (
 	"os"
 	"regexp"
 	"strconv"
+	"strings"
 
 	"github.com/jmoiron/sqlx"
 	// PostgreSQL Driver
@@ -26,7 +27,7 @@ var graphdef = map[string]mp.Graphs{
 			{Name: "active_waiting", Label: "Active waiting", Diff: false, Stacked: true},
 			{Name: "idle", Label: "Idle", Diff: false, Stacked: true},
 			{Name: "idle_in_transaction", Label: "Idle in transaction", Diff: false, Stacked: true},
-			{Name: "idle_in_transaction_aborted_", Label: "Idle in transaction (aborted)", Diff: false, Stacked: true},
+			{Name: "idle_in_transaction_aborted", Label: "Idle in transaction (aborted)", Diff: false, Stacked: true},
 			{Name: "fastpath_function_call", Label: "fast-path function call", Diff: false, Stacked: true},
 			{Name: "disabled", Label: "Disabled", Diff: false, Stacked: true},
 		},
@@ -210,11 +211,11 @@ func fetchConnections(db *sqlx.DB, version version) (map[string]interface{}, err
 	}
 
 	stat := map[string]interface{}{
-		"active":                       0.0,
-		"active_waiting":               0.0,
-		"idle":                         0.0,
-		"idle_in_transaction":          0.0,
-		"idle_in_transaction_aborted_": 0.0,
+		"active":                      0.0,
+		"active_waiting":              0.0,
+		"idle":                        0.0,
+		"idle_in_transaction":         0.0,
+		"idle_in_transaction_aborted": 0.0,
 	}
 
 	normalizeRe := regexp.MustCompile("[^a-zA-Z0-9_-]+")
@@ -228,6 +229,7 @@ func fetchConnections(db *sqlx.DB, version version) (map[string]interface{}, err
 			continue
 		}
 		state = normalizeRe.ReplaceAllString(state, "_")
+		state = strings.TrimRight(state, "_")
 		if waiting {
 			state += "_waiting"
 		}
