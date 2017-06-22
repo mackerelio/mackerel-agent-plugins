@@ -240,7 +240,7 @@ func fetchConnections(db *sqlx.DB, version version) (map[string]interface{}, err
 }
 
 func fetchDatabaseSize(db *sqlx.DB) (map[string]interface{}, error) {
-	rows, err := db.Query("select sum(pg_database_size(datname)) as dbsize from pg_database")
+	rows, err := db.Query("select sum(pg_database_size(datname)) as dbsize from pg_database where has_database_privilege(datname, 'connect')")
 	if err != nil {
 		logger.Errorf("Failed to select pg_database_size. %s", err)
 		return nil, err
