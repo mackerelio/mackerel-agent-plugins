@@ -30,7 +30,7 @@ This package provides plugins for Mackerel.
 
 %{__mkdir} -p %{buildroot}%{__targetdir}
 
-for i in apache2 aws-ec2-cpucredit aws-elasticache aws-elasticsearch aws-elb aws-kinesis-streams aws-lambda aws-rds aws-ses conntrack elasticsearch gostats graphite haproxy jmx-jolokia jvm linux mailq memcached mongodb multicore munin mysql nginx php-apc php-fpm php-opcache plack postgres proc-fd rabbitmq redis snmp squid td-table-count trafficserver twemproxy uwsgi-vassal varnish xentop aws-cloudfront aws-ec2-ebs fluentd docker unicorn uptime inode; do \
+for i in apache2 aws-ec2-cpucredit aws-elasticache aws-elasticsearch aws-elb aws-kinesis-streams aws-lambda aws-rds aws-ses conntrack elasticsearch gostats graphite haproxy jmx-jolokia jvm linux mailq memcached mongodb multicore munin mysql nginx php-apc php-fpm php-opcache plack postgres proc-fd solr rabbitmq redis snmp squid td-table-count trafficserver twemproxy uwsgi-vassal varnish xentop aws-cloudfront aws-ec2-ebs fluentd docker unicorn uptime inode; do \
     %{__install} -m0755 %{_sourcedir}/%{_bindir}/mackerel-plugin-$i %{buildroot}%{__targetdir}/; \
 done
 
@@ -49,6 +49,12 @@ done
 %{__oldtargetdir}/*
 
 %changelog
+* Wed Jun 14 2017 <mackerel-developers@hatena.ne.jp> - 0.28.0
+- Add aws-dynamodb plugin (by astj)
+- Implemented mackerel-plugin-redash (by yoheimuta)
+- Add mackerel-plugin-solr to package (by astj)
+- Add test cases and fix issues for apache solr (by supercaracal)
+
 * Wed Jun 07 2017 <mackerel-developers@hatena.ne.jp> - 0.27.2
 - disable diff on php-opcache.cache_size because they are gauge value (by matsuu)
 - build with Go 1.8 (by Songmu)

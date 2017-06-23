@@ -28,6 +28,7 @@ debian/mackerel-plugin-php-opcache
 debian/mackerel-plugin-plack
 debian/mackerel-plugin-postgres
 debian/mackerel-plugin-proc-fd
+debian/mackerel-plugin-solr
 debian/mackerel-plugin-rabbitmq
 debian/mackerel-plugin-redis
 debian/mackerel-plugin-snmp
