@@ -20,7 +20,7 @@ command = "/path/to/mackerel-plugin-accesslog /path/to/access.log"
 
 ## Screenshot
 
-![](/mackerelio/mackerel-agent-plugins/blob/master/mackerel-plugin-accesslog/_sample/graphs-screenshot.png?raw=true)
+![graphs-screenshot](https://user-images.githubusercontent.com/177122/27474076-22f7defc-583c-11e7-84ee-1679e5164358.png)
 
 ## Graphs and Metrics
 
