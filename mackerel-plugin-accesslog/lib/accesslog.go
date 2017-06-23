@@ -72,7 +72,7 @@ func (p *AccesslogPlugin) GraphDefinition() map[string]mp.Graphs {
 	}
 }
 
-func (p *AccesslogPlugin) getPos() string {
+func (p *AccesslogPlugin) getPosPath() string {
 	base := p.file + ".pos.json"
 	if p.posFile != "" {
 		if filepath.IsAbs(p.posFile) {
@@ -88,7 +88,7 @@ func (p *AccesslogPlugin) getReadCloser() (io.ReadCloser, bool, error) {
 		rc, err := os.Open(p.file)
 		return rc, true, err
 	}
-	posfile := p.getPos()
+	posfile := p.getPosPath()
 	fi, err := os.Stat(posfile)
 	// don't output count metrics when the pos file doesn't exist or is too old
 	takeCount := err == nil && fi.ModTime().After(time.Now().Add(-2*time.Minute))
