@@ -56,8 +56,8 @@ func (m WindowsProcessStatsPlugin) FetchMetrics() (map[string]interface{}, error
 		processName := name + "_" + strconv.Itoa(k)
 		metricNameCPU := prefix + "-windows-process-stats.cpu." + processName + ".cpu"
 		metricNameMemory := prefix + "-windows-process-stats.memory." + processName + ".working_set"
-		stat[metricNameCPU] = v.PercentProcessorTime //uint64(int(v.PercentProcessorTime) / int(runtime.NumCPU()))
-		stat[metricNameMemory] = uint64(v.WorkingSet)
+		stat[metricNameCPU] = v.PercentProcessorTime
+		stat[metricNameMemory] = v.WorkingSet
 	}
 
 	return stat, nil
