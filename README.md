@@ -65,6 +65,7 @@ Documentation for each plugin is located in its respective sub directory.
 * [mackerel-plugin-uptime](./mackerel-plugin-uptime/README.md)
 * [mackerel-plugin-uwsgi-vassal](./mackerel-plugin-uwsgi-vassal/README.md)
 * [mackerel-plugin-varnish](./mackerel-plugin-varnish/README.md)
+* [mackerel-plugin-windows-process-stats](./mackerel-plugin-windows-process-stats/README.md)
 * [mackerel-plugin-windows-server-sessions](./mackerel-plugin-windows-server-sessions/README.md)
 * [mackerel-plugin-xentop](./mackerel-plugin-xentop/README.md)
 
