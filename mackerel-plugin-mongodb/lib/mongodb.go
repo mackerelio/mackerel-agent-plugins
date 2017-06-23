@@ -9,7 +9,7 @@ import (
 	"strings"
 
 	mp "github.com/mackerelio/go-mackerel-plugin-helper"
-	"github.com/mackerelio/mackerel-agent/logging"
+	"github.com/mackerelio/golib/logging"
 	"gopkg.in/mgo.v2"
 	"gopkg.in/mgo.v2/bson"
 )
