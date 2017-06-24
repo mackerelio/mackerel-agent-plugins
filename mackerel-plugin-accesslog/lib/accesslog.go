@@ -8,6 +8,7 @@ import (
 	"log"
 	"os"
 	"path/filepath"
+	"regexp"
 	"strings"
 	"time"
 
@@ -72,6 +73,8 @@ func (p *AccesslogPlugin) GraphDefinition() map[string]mp.Graphs {
 	}
 }
 
+var posRe = regexp.MustCompile(`^([a-zA-Z]):[/\\]`)
+
 func (p *AccesslogPlugin) getPosPath() string {
 	base := p.file + ".pos.json"
 	if p.posFile != "" {
@@ -80,7 +83,11 @@ func (p *AccesslogPlugin) getPosPath() string {
 		}
 		base = p.posFile
 	}
-	return filepath.Join(pluginutil.PluginWorkDir(), "mackerel-plugin-accesslog.d", base)
+	return filepath.Join(
+		pluginutil.PluginWorkDir(),
+		"mackerel-plugin-accesslog.d",
+		posRe.ReplaceAllString(base, `$1`+string(filepath.Separator)),
+	)
 }
 
 func (p *AccesslogPlugin) getReadCloser() (io.ReadCloser, bool, error) {
