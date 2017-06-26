@@ -2,6 +2,7 @@
     "description": "configuration for packaging mackerel-agent-plugins",
     "plugins": [
        "apache2",
+       "aws-dynamodb",
        "aws-ec2-cpucredit",
        "aws-elasticache",
        "aws-elasticsearch",
