@@ -6,7 +6,7 @@ PostgreSQL custom metrics plugin for mackerel.io agent.
 ## Synopsis
 
 ```shell
-mackerel-plugin-postgres -user=<username> -password=<password> -database=<databasename>
+mackerel-plugin-postgres -user=<username> -password=<password> [-database=<databasename>] [-sslmode=<sslmode>] [-metric-key-prefix=<prefix>] [-connect_timeout=<timeout>]
 ```
 `-database` is optional.
 
