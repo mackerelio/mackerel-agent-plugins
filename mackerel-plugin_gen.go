@@ -4,6 +4,7 @@ package main
 import (
 	"fmt"
 
+	"github.com/mackerelio/mackerel-agent-plugins/mackerel-plugin-accesslog/lib"
 	"github.com/mackerelio/mackerel-agent-plugins/mackerel-plugin-apache2/lib"
 	"github.com/mackerelio/mackerel-agent-plugins/mackerel-plugin-aws-cloudfront/lib"
 	"github.com/mackerelio/mackerel-agent-plugins/mackerel-plugin-aws-dynamodb/lib"
@@ -57,6 +58,8 @@ import (
 
 func runPlugin(plug string) error {
 	switch plug {
+	case "accesslog":
+		mpaccesslog.Do()
 	case "apache2":
 		mpapache2.Do()
 	case "aws-cloudfront":
@@ -162,6 +165,7 @@ func runPlugin(plug string) error {
 }
 
 var plugins = []string{
+	"accesslog",
 	"apache2",
 	"aws-cloudfront",
 	"aws-dynamodb",

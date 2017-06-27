@@ -1,0 +1,107 @@
+#!/usr/bin/env perl
+use 5.016;
+use warnings;
+use autodie;
+
+use File::Path qw/mkpath/;
+
+my $plug = shift or die 'plugin name required';
+my $pkg_base = lc($plug =~ s/[^a-zA-Z0-9]//gr);
+my $struct = ucfirst $pkg_base;
+
+my $main_go = qq{package main
+
+import "github.com/mackerelio/mackerel-agent-plugins/mackerel-plugin-$plug/lib"
+
+func main() {
+	mp$pkg_base.Do()
+}
+};
+
+my $readme = qq{mackerel-plugin-$plug
+=====================
+
+$plug custom metrics plugin for mackerel.io agent.
+
+## Synopsis
+
+```shell
+mackerel-plugin-$plug
+```
+
+## Example of mackerel-agent.conf
+
+```
+[plugin.metrics.$plug]
+command = "/path/to/mackerel-plugin-$plug"
+```
+};
+
+my $src = qq|package mp$pkg_base
+
+import (
+	"flag"
+
+	mp "github.com/mackerelio/go-mackerel-plugin"
+)
+
+// ${struct}Plugin mackerel plugin
+type ${struct}Plugin struct {
+	prefix string
+}
+
+// MetricKeyPrefix interface for PluginWithPrefix
+func (p ${struct}Plugin) MetricKeyPrefix() string {
+	if p.prefix == "" {
+		p.prefix = "$pkg_base"
+	}
+	return p.prefix
+}
+
+// GraphDefinition interface for mackerelplugin
+func (p ${struct}Plugin) GraphDefinition() map[string]mp.Graphs {
+    return nil
+	// labelPrefix := strings.Title(p.prefix)
+	// return map[string]mp.Graphs{
+	// 	"sample": {
+	// 		Label: labelPrefix,
+	// 		Unit:  "float",
+	// 		Metrics: []mp.Metrics{
+	// 			{Name: "seconds", Label: "Seconds"},
+	// 		},
+	// 	},
+	// }
+}
+
+// FetchMetrics interface for mackerelplugin
+func (p ${struct}Plugin) FetchMetrics() (map[string]float64, error) {
+    return nil, nil
+	// return map[string]float64{"sample.seconds": 3}, nil
+}
+
+// Do the plugin
+func Do() {
+	optPrefix := flag.String("metric-key-prefix", "", "Metric key prefix")
+	optTempfile := flag.String("tempfile", "", "Temp file name")
+	flag.Parse()
+
+	p := ${struct}Plugin{
+        prefix: *optPrefix,
+	}
+	helper := mp.NewMackerelPlugin(p)
+	helper.Tempfile = *optTempfile
+	helper.Run()
+}
+|;
+
+mkpath("mackerel-plugin-$plug/lib");
+
+sub spew {
+    my ($file, $content) = @_;
+    open my $fh, '>', $file;
+    print $fh $content;
+}
+
+spew("mackerel-plugin-$plug/main.go", $main_go);
+spew("mackerel-plugin-$plug/README.md", $readme);
+spew("mackerel-plugin-$plug/lib/$plug.go", $src);
