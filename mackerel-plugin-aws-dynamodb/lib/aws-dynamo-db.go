@@ -251,7 +251,6 @@ func (p DynamoDBPlugin) FetchMetrics() (map[string]interface{}, error) {
 		eg.Go(func() error {
 			dp, err := getLastPointFromCloudWatch(p.CloudWatch, met, tableDimensions)
 			if err != nil {
-				log.Printf("%s: %s", met, err)
 				return err
 			}
 			for _, m := range met.Metrics {
@@ -268,7 +267,6 @@ func (p DynamoDBPlugin) FetchMetrics() (map[string]interface{}, error) {
 		eg.Go(func() error {
 			operationalStats, err := fetchOperationWildcardMetrics(p.CloudWatch, met, tableDimensions)
 			if err != nil {
-				log.Printf("%s: %s", met, err)
 				return err
 			}
 
