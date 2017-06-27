@@ -89,7 +89,7 @@ func (m WindowsProcessStatsPlugin) GraphDefinition() map[string](mp.Graphs) {
 // Do the plugin
 func Do() {
 	optProcess := flag.String("process", "", "Process name")
-	optMetricLabel := flag.String("label", "", "Metric Label Prefix")
+	optMetricKeyPrefix := flag.String("metric-key-prefix", "", "Metric Key Prefix")
 	optTempfile := flag.String("tempfile", "", "Temp file name")
 	flag.Parse()
 
@@ -101,7 +101,7 @@ func Do() {
 
 	var plugin WindowsProcessStatsPlugin
 	plugin.Process = *optProcess
-	metricLabel := *optMetricLabel
+	metricLabel := *optMetricKeyPrefix
 	if metricLabel == "" {
 		metricLabel = plugin.Process
 	}
