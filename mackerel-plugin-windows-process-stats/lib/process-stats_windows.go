@@ -56,7 +56,7 @@ func (m WindowsProcessStatsPlugin) FetchMetrics() (map[string]interface{}, error
 	for k, v := range procs {
 		name := re.ReplaceAllString(v.Name, "")
 		processName := name + "_" + strconv.Itoa(k)
-		metricNameCPU := prefix + "-windows-process-stats.cpu." + processName + ".cpu"
+		metricNameCPU := prefix + "-windows-process-stats.cpu." + processName + ".percent_processor_time"
 		metricNameMemory := prefix + "-windows-process-stats.memory." + processName + ".working_set"
 		stat[metricNameCPU] = v.PercentProcessorTime
 		stat[metricNameMemory] = v.WorkingSet
@@ -73,7 +73,7 @@ func (m WindowsProcessStatsPlugin) GraphDefinition() map[string](mp.Graphs) {
 			Label: fmt.Sprintf("%s Windows Process Stats CPU", prefix),
 			Unit:  "percentage",
 			Metrics: []mp.Metrics{
-				{Name: "cpu", Label: "cpu", Diff: false, Stacked: false},
+				{Name: "percent_processor_time", Label: "cpu", Diff: false, Stacked: false},
 			},
 		},
 		fmt.Sprintf("%s-windows-process-stats.memory.#", prefix): mp.Graphs{
