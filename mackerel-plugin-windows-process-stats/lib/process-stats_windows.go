@@ -33,7 +33,7 @@ type WindowsProcessStatsPlugin struct {
 func getProcesses(processName string) ([]Win32_PerfFormattedData_PerfProc_Process, error) {
 	var procs []Win32_PerfFormattedData_PerfProc_Process
 
-	q := wmi.CreateQuery(&procs, "WHERE Name like '"+processName+"%'")
+	q := wmi.CreateQuery(&procs, "WHERE (Name like '"+processName+"' OR Name like '"+processName+"#%')")
 	if err := wmi.Query(q, &procs); err != nil {
 		return procs, err
 	}
