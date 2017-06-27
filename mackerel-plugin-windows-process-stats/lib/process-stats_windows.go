@@ -26,8 +26,8 @@ type Win32_PerfFormattedData_PerfProc_Process struct {
 }
 
 type WindowsProcessStatsPlugin struct {
-	Process     string
-	MetricLabel string
+	Process string
+	Prefix  string
 }
 
 func getProcesses(processName string) ([]Win32_PerfFormattedData_PerfProc_Process, error) {
@@ -51,7 +51,7 @@ func (m WindowsProcessStatsPlugin) FetchMetrics() (map[string]interface{}, error
 		return nil, err
 	}
 	stat := make(map[string]interface{})
-	prefix := m.MetricLabel
+	prefix := m.MetricKeyPrefix()
 	var re = regexp.MustCompile(`#[0-9]+$`)
 	for k, v := range procs {
 		name := re.ReplaceAllString(v.Name, "")
@@ -67,7 +67,7 @@ func (m WindowsProcessStatsPlugin) FetchMetrics() (map[string]interface{}, error
 
 // GraphDefinition interface for mackerelplugin
 func (m WindowsProcessStatsPlugin) GraphDefinition() map[string](mp.Graphs) {
-	prefix := m.MetricLabel
+	prefix := m.MetricKeyPrefix()
 	return map[string](mp.Graphs){
 		fmt.Sprintf("%s-windows-process-stats.cpu.#", prefix): mp.Graphs{
 			Label: fmt.Sprintf("%s Windows Process Stats CPU", prefix),
@@ -86,6 +86,14 @@ func (m WindowsProcessStatsPlugin) GraphDefinition() map[string](mp.Graphs) {
 	}
 }
 
+// MetricKeyPrefix interface for mackerelplugin
+func (m WindowsProcessStatsPlugin) MetricKeyPrefix() string {
+	if m.Prefix == "" {
+		return m.Process
+	}
+	return m.Prefix
+}
+
 // Do the plugin
 func Do() {
 	optProcess := flag.String("process", "", "Process name")
@@ -101,11 +109,7 @@ func Do() {
 
 	var plugin WindowsProcessStatsPlugin
 	plugin.Process = *optProcess
-	metricLabel := *optMetricKeyPrefix
-	if metricLabel == "" {
-		metricLabel = plugin.Process
-	}
-	plugin.MetricLabel = metricLabel
+	plugin.Prefix = *optMetricKeyPrefix
 
 	helper := mp.NewMackerelPlugin(plugin)
 	helper.Tempfile = *optTempfile
