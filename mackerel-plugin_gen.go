@@ -4,8 +4,10 @@ package main
 import (
 	"fmt"
 
+	"github.com/mackerelio/mackerel-agent-plugins/mackerel-plugin-accesslog/lib"
 	"github.com/mackerelio/mackerel-agent-plugins/mackerel-plugin-apache2/lib"
 	"github.com/mackerelio/mackerel-agent-plugins/mackerel-plugin-aws-cloudfront/lib"
+	"github.com/mackerelio/mackerel-agent-plugins/mackerel-plugin-aws-dynamodb/lib"
 	"github.com/mackerelio/mackerel-agent-plugins/mackerel-plugin-aws-ec2-cpucredit/lib"
 	"github.com/mackerelio/mackerel-agent-plugins/mackerel-plugin-aws-ec2-ebs/lib"
 	"github.com/mackerelio/mackerel-agent-plugins/mackerel-plugin-aws-elasticache/lib"
@@ -56,10 +58,14 @@ import (
 
 func runPlugin(plug string) error {
 	switch plug {
+	case "accesslog":
+		mpaccesslog.Do()
 	case "apache2":
 		mpapache2.Do()
 	case "aws-cloudfront":
 		mpawscloudfront.Do()
+	case "aws-dynamodb":
+		mpawsdynamodb.Do()
 	case "aws-ec2-cpucredit":
 		mpawsec2cpucredit.Do()
 	case "aws-ec2-ebs":
@@ -159,8 +165,10 @@ func runPlugin(plug string) error {
 }
 
 var plugins = []string{
+	"accesslog",
 	"apache2",
 	"aws-cloudfront",
+	"aws-dynamodb",
 	"aws-ec2-cpucredit",
 	"aws-ec2-ebs",
 	"aws-elasticache",

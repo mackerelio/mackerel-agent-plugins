@@ -9,7 +9,7 @@ import (
 	"strings"
 
 	mp "github.com/mackerelio/go-mackerel-plugin"
-	"github.com/mackerelio/mackerel-agent/logging"
+	"github.com/mackerelio/golib/logging"
 )
 
 var logger = logging.GetLogger("metrics.plugin.elasticsearch")
