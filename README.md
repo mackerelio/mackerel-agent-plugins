@@ -7,6 +7,7 @@ Detailed specs of plugins can be viewed here: ENG [mackerel-agent specifications
 
 Documentation for each plugin is located in its respective sub directory.
 
+* [mackerel-plugin-accesslog](./mackerel-plugin-accesslog/README.md)
 * [mackerel-plugin-apache2](./mackerel-plugin-apache2/README.md)
 * [mackerel-plugin-aws-cloudfront](./mackerel-plugin-aws-cloudfront/README.md)
 * [mackerel-plugin-aws-dynamodb](./mackerel-plugin-aws-dynamodb/README.md)
@@ -55,6 +56,7 @@ Documentation for each plugin is located in its respective sub directory.
 * [mackerel-plugin-rack-stats](./mackerel-plugin-rack-stats/README.md)
 * [mackerel-plugin-redash](./mackerel-plugin-redash/README.md)
 * [mackerel-plugin-redis](./mackerel-plugin-redis/README.md)
+* [mackerel-plugin-sidekiq](./mackerel-plugin-sidekiq/README.md)
 * [mackerel-plugin-snmp](./mackerel-plugin-snmp/README.md)
 * [mackerel-plugin-solr](./mackerel-plugin-solr/README.md)
 * [mackerel-plugin-squid](./mackerel-plugin-squid/README.md)
