@@ -1,4 +1,6 @@
+debian/mackerel-plugin-accesslog
 debian/mackerel-plugin-apache2
+debian/mackerel-plugin-aws-dynamodb
 debian/mackerel-plugin-aws-ec2-cpucredit
 debian/mackerel-plugin-aws-elasticache
 debian/mackerel-plugin-aws-elasticsearch

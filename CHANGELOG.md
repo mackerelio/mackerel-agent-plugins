@@ -1,5 +1,16 @@
 # Changelog
 
+## 0.28.1 (2017-06-28)
+
+* postgres: add metric-key-prefix #363 (edangelion)
+* [accesslog] add mackerel-plugin-accesslog #359 (Songmu)
+* add mackerel-plugin-aws-dynamodb to package #366 (astj)
+* Use mackerelio/golib/logging as logger, not mackerelio/mackerel-agent/logging #365 (astj)
+* postgres: collect dbsize only if connectable #361 (mechairoi)
+* Support PostgreSQL 9.6 #360 (mechairoi)
+* Add sidekiq plugin #354 (littlekbt)
+
+
 ## 0.28.0 (2017-06-14)
 
 * Add aws-dynamodb plugin #349 (astj)

@@ -1,3 +1,22 @@
+mackerel-agent-plugins (0.28.1-1) stable; urgency=low
+
+  * postgres: add metric-key-prefix (by edangelion)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/363>
+  * [accesslog] add mackerel-plugin-accesslog (by Songmu)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/359>
+  * add mackerel-plugin-aws-dynamodb to package (by astj)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/366>
+  * Use mackerelio/golib/logging as logger, not mackerelio/mackerel-agent/logging (by astj)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/365>
+  * postgres: collect dbsize only if connectable (by mechairoi)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/361>
+  * Support PostgreSQL 9.6 (by mechairoi)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/360>
+  * Add sidekiq plugin (by littlekbt)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/354>
+
+ -- mackerel <mackerel-developers@hatena.ne.jp>  Wed, 28 Jun 2017 14:04:25 +0900
+
 mackerel-agent-plugins (0.28.0-1) stable; urgency=low
 
   * Add aws-dynamodb plugin (by astj)
