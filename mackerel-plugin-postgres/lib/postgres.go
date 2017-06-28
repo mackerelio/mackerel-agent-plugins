@@ -18,78 +18,6 @@ import (
 
 var logger = logging.GetLogger("metrics.plugin.postgres")
 
-var graphdef = map[string]mp.Graphs{
-	"postgres.connections": {
-		Label: "Postgres Connections",
-		Unit:  "integer",
-		Metrics: []mp.Metrics{
-			{Name: "active", Label: "Active", Diff: false, Stacked: true},
-			{Name: "active_waiting", Label: "Active waiting", Diff: false, Stacked: true},
-			{Name: "idle", Label: "Idle", Diff: false, Stacked: true},
-			{Name: "idle_in_transaction", Label: "Idle in transaction", Diff: false, Stacked: true},
-			{Name: "idle_in_transaction_aborted", Label: "Idle in transaction (aborted)", Diff: false, Stacked: true},
-			{Name: "fastpath_function_call", Label: "fast-path function call", Diff: false, Stacked: true},
-			{Name: "disabled", Label: "Disabled", Diff: false, Stacked: true},
-		},
-	},
-	"postgres.commits": {
-		Label: "Postgres Commits",
-		Unit:  "integer",
-		Metrics: []mp.Metrics{
-			{Name: "xact_commit", Label: "Xact Commit", Diff: true, Stacked: false},
-			{Name: "xact_rollback", Label: "Xact Rollback", Diff: true, Stacked: false},
-		},
-	},
-	"postgres.blocks": {
-		Label: "Postgres Blocks",
-		Unit:  "integer",
-		Metrics: []mp.Metrics{
-			{Name: "blks_read", Label: "Blocks Read", Diff: true, Stacked: false},
-			{Name: "blks_hit", Label: "Blocks Hit", Diff: true, Stacked: false},
-		},
-	},
-	"postgres.rows": {
-		Label: "Postgres Rows",
-		Unit:  "integer",
-		Metrics: []mp.Metrics{
-			{Name: "tup_returned", Label: "Returned Rows", Diff: true, Stacked: false},
-			{Name: "tup_fetched", Label: "Fetched Rows", Diff: true, Stacked: true},
-			{Name: "tup_inserted", Label: "Inserted Rows", Diff: true, Stacked: true},
-			{Name: "tup_updated", Label: "Updated Rows", Diff: true, Stacked: true},
-			{Name: "tup_deleted", Label: "Deleted Rows", Diff: true, Stacked: true},
-		},
-	},
-	"postgres.size": {
-		Label: "Postgres Data Size",
-		Unit:  "integer",
-		Metrics: []mp.Metrics{
-			{Name: "total_size", Label: "Total Size", Diff: false, Stacked: false},
-		},
-	},
-	"postgres.deadlocks": {
-		Label: "Postgres Dead Locks",
-		Unit:  "integer",
-		Metrics: []mp.Metrics{
-			{Name: "deadlocks", Label: "Deadlocks", Diff: true, Stacked: false},
-		},
-	},
-	"postgres.iotime": {
-		Label: "Postgres Block I/O time",
-		Unit:  "float",
-		Metrics: []mp.Metrics{
-			{Name: "blk_read_time", Label: "Block Read Time (ms)", Diff: true, Stacked: false},
-			{Name: "blk_write_time", Label: "Block Write Time (ms)", Diff: true, Stacked: false},
-		},
-	},
-	"postgres.tempfile": {
-		Label: "Postgres Temporary file",
-		Unit:  "integer",
-		Metrics: []mp.Metrics{
-			{Name: "temp_bytes", Label: "Temporary file size (byte)", Diff: true, Stacked: false},
-		},
-	},
-}
-
 // PostgresPlugin mackerel plugin for PostgreSQL
 type PostgresPlugin struct {
 	Host     string
@@ -97,6 +25,7 @@ type PostgresPlugin struct {
 	Username string
 	Password string
 	SSLmode  string
+	Prefix   string
 	Timeout  int
 	Tempfile string
 	Option   string
@@ -317,6 +246,14 @@ func mergeStat(dst, src map[string]interface{}) {
 	}
 }
 
+// MetricKeyPrefix retruns the metrics key prefix
+func (p PostgresPlugin) MetricKeyPrefix() string {
+	if p.Prefix == "" {
+		p.Prefix = "postgres"
+	}
+	return p.Prefix
+}
+
 // FetchMetrics interface for mackerelplugin
 func (p PostgresPlugin) FetchMetrics() (map[string]interface{}, error) {
 
@@ -356,6 +293,80 @@ func (p PostgresPlugin) FetchMetrics() (map[string]interface{}, error) {
 
 // GraphDefinition interface for mackerelplugin
 func (p PostgresPlugin) GraphDefinition() map[string]mp.Graphs {
+	labelPrefix := strings.Title(p.MetricKeyPrefix())
+
+	var graphdef = map[string]mp.Graphs{
+		"connections": {
+			Label: (labelPrefix + " Connections"),
+			Unit:  "integer",
+			Metrics: []mp.Metrics{
+				{Name: "active", Label: "Active", Diff: false, Stacked: true},
+				{Name: "active_waiting", Label: "Active waiting", Diff: false, Stacked: true},
+				{Name: "idle", Label: "Idle", Diff: false, Stacked: true},
+				{Name: "idle_in_transaction", Label: "Idle in transaction", Diff: false, Stacked: true},
+				{Name: "idle_in_transaction_aborted_", Label: "Idle in transaction (aborted)", Diff: false, Stacked: true},
+				{Name: "fastpath_function_call", Label: "fast-path function call", Diff: false, Stacked: true},
+				{Name: "disabled", Label: "Disabled", Diff: false, Stacked: true},
+			},
+		},
+		"commits": {
+			Label: (labelPrefix + " Commits"),
+			Unit:  "integer",
+			Metrics: []mp.Metrics{
+				{Name: "xact_commit", Label: "Xact Commit", Diff: true, Stacked: false},
+				{Name: "xact_rollback", Label: "Xact Rollback", Diff: true, Stacked: false},
+			},
+		},
+		"blocks": {
+			Label: (labelPrefix + " Blocks"),
+			Unit:  "integer",
+			Metrics: []mp.Metrics{
+				{Name: "blks_read", Label: "Blocks Read", Diff: true, Stacked: false},
+				{Name: "blks_hit", Label: "Blocks Hit", Diff: true, Stacked: false},
+			},
+		},
+		"rows": {
+			Label: (labelPrefix + " Rows"),
+			Unit:  "integer",
+			Metrics: []mp.Metrics{
+				{Name: "tup_returned", Label: "Returned Rows", Diff: true, Stacked: false},
+				{Name: "tup_fetched", Label: "Fetched Rows", Diff: true, Stacked: true},
+				{Name: "tup_inserted", Label: "Inserted Rows", Diff: true, Stacked: true},
+				{Name: "tup_updated", Label: "Updated Rows", Diff: true, Stacked: true},
+				{Name: "tup_deleted", Label: "Deleted Rows", Diff: true, Stacked: true},
+			},
+		},
+		"size": {
+			Label: (labelPrefix + " Data Size"),
+			Unit:  "integer",
+			Metrics: []mp.Metrics{
+				{Name: "total_size", Label: "Total Size", Diff: false, Stacked: false},
+			},
+		},
+		"deadlocks": {
+			Label: (labelPrefix + " Dead Locks"),
+			Unit:  "integer",
+			Metrics: []mp.Metrics{
+				{Name: "deadlocks", Label: "Deadlocks", Diff: true, Stacked: false},
+			},
+		},
+		"iotime": {
+			Label: (labelPrefix + " Block I/O time"),
+			Unit:  "float",
+			Metrics: []mp.Metrics{
+				{Name: "blk_read_time", Label: "Block Read Time (ms)", Diff: true, Stacked: false},
+				{Name: "blk_write_time", Label: "Block Write Time (ms)", Diff: true, Stacked: false},
+			},
+		},
+		"tempfile": {
+			Label: (labelPrefix + " Temporary file"),
+			Unit:  "integer",
+			Metrics: []mp.Metrics{
+				{Name: "temp_bytes", Label: "Temporary file size (byte)", Diff: true, Stacked: false},
+			},
+		},
+	}
+
 	return graphdef
 }
 
@@ -366,6 +377,7 @@ func Do() {
 	optUser := flag.String("user", "", "Postgres User")
 	optDatabase := flag.String("database", "", "Database name")
 	optPass := flag.String("password", "", "Postgres Password")
+	optPrefix := flag.String("metric-key-prefix", "postgres", "Metric key prefix")
 	optSSLmode := flag.String("sslmode", "disable", "Whether or not to use SSL")
 	optConnectTimeout := flag.Int("connect_timeout", 5, "Maximum wait for connection, in seconds.")
 	optTempfile := flag.String("tempfile", "", "Temp file name")
@@ -391,6 +403,7 @@ func Do() {
 	postgres.Port = *optPort
 	postgres.Username = *optUser
 	postgres.Password = *optPass
+	postgres.Prefix = *optPrefix
 	postgres.SSLmode = *optSSLmode
 	postgres.Timeout = *optConnectTimeout
 	postgres.Option = option
