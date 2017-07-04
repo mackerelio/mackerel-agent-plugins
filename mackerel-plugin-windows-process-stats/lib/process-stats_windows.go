@@ -51,13 +51,11 @@ func (m WindowsProcessStatsPlugin) FetchMetrics() (map[string]interface{}, error
 		return nil, err
 	}
 	stat := make(map[string]interface{})
-	prefix := m.MetricKeyPrefix()
 	var re = regexp.MustCompile(`#[0-9]+$`)
 	for k, v := range procs {
-		name := re.ReplaceAllString(v.Name, "")
-		processName := name + "_" + strconv.Itoa(k)
-		metricNameCPU := prefix + "-windows-process-stats.cpu." + processName + ".percent_processor_time"
-		metricNameMemory := prefix + "-windows-process-stats.memory." + processName + ".working_set"
+		processName := re.ReplaceAllString(v.Name, "") + "_" + strconv.Itoa(k)
+		metricNameCPU := "cpu." + processName + ".percent_processor_time"
+		metricNameMemory := "memory." + processName + ".working_set"
 		stat[metricNameCPU] = v.PercentProcessorTime
 		stat[metricNameMemory] = v.WorkingSet
 	}
@@ -67,16 +65,16 @@ func (m WindowsProcessStatsPlugin) FetchMetrics() (map[string]interface{}, error
 
 // GraphDefinition interface for mackerelplugin
 func (m WindowsProcessStatsPlugin) GraphDefinition() map[string](mp.Graphs) {
-	prefix := m.MetricKeyPrefix()
+	prefix := m.Prefix
 	return map[string](mp.Graphs){
-		fmt.Sprintf("%s-windows-process-stats.cpu.#", prefix): mp.Graphs{
+		"cpu.#": mp.Graphs{
 			Label: fmt.Sprintf("%s Windows Process Stats CPU", prefix),
 			Unit:  "percentage",
 			Metrics: []mp.Metrics{
 				{Name: "percent_processor_time", Label: "cpu", Diff: false, Stacked: false},
 			},
 		},
-		fmt.Sprintf("%s-windows-process-stats.memory.#", prefix): mp.Graphs{
+		"memory.#": mp.Graphs{
 			Label: fmt.Sprintf("%s Windows Process Stats Memory", prefix),
 			Unit:  "bytes",
 			Metrics: []mp.Metrics{
@@ -89,9 +87,9 @@ func (m WindowsProcessStatsPlugin) GraphDefinition() map[string](mp.Graphs) {
 // MetricKeyPrefix interface for mackerelplugin
 func (m WindowsProcessStatsPlugin) MetricKeyPrefix() string {
 	if m.Prefix == "" {
-		return m.Process
+		return "windows-process-stats-" + m.Process
 	}
-	return m.Prefix
+	return "windows-process-stats-" + m.Prefix
 }
 
 // Do the plugin
