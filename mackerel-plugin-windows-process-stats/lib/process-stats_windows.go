@@ -89,7 +89,7 @@ func (m WindowsProcessStatsPlugin) MetricKeyPrefix() string {
 	if m.Prefix == "" {
 		return "windows-process-stats-" + m.Process
 	}
-	return "windows-process-stats-" + m.Prefix
+	return m.Prefix
 }
 
 // Do the plugin
