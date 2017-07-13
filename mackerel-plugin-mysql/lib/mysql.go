@@ -317,9 +317,9 @@ func (m MySQLPlugin) GraphDefinition() map[string]mp.Graphs {
 }
 
 func (m MySQLPlugin) addGraphdefWithInnoDBMetrics(graphdef map[string]mp.Graphs) map[string]mp.Graphs {
-	prefix := m.MetricKeyPrefix()
+	labelPrefix := strings.Title(strings.Replace(m.MetricKeyPrefix(), "mysql", "MySQL", -1))
 	graphdef["innodb_rows"] = mp.Graphs{
-		Label: prefix + ".innodb Rows",
+		Label: labelPrefix + " innodb Rows",
 		Unit:  "float",
 		Metrics: []mp.Metrics{
 			{Name: "Innodb_rows_read", Label: "Read", Diff: true, Stacked: false},
@@ -329,21 +329,21 @@ func (m MySQLPlugin) addGraphdefWithInnoDBMetrics(graphdef map[string]mp.Graphs)
 		},
 	}
 	graphdef["innodb_row_lock_time"] = mp.Graphs{
-		Label: prefix + ".innodb Row Lock Time",
+		Label: labelPrefix + " innodb Row Lock Time",
 		Unit:  "float",
 		Metrics: []mp.Metrics{
 			{Name: "Innodb_row_lock_time", Label: "Lock Time", Diff: true, Stacked: false},
 		},
 	}
 	graphdef["innodb_row_lock_waits"] = mp.Graphs{
-		Label: prefix + ".innodb Row Lock Waits",
+		Label: labelPrefix + " innodb Row Lock Waits",
 		Unit:  "float",
 		Metrics: []mp.Metrics{
 			{Name: "Innodb_row_lock_waits", Label: "Lock Waits", Diff: true, Stacked: false},
 		},
 	}
 	graphdef["innodb_adaptive_hash_index"] = mp.Graphs{
-		Label: prefix + ".innodb Adaptive Hash Index",
+		Label: labelPrefix + " innodb Adaptive Hash Index",
 		Unit:  "integer",
 		Metrics: []mp.Metrics{
 			{Name: "hash_index_cells_total", Label: "Hash Index Cells Total", Diff: false, Stacked: false},
@@ -351,7 +351,7 @@ func (m MySQLPlugin) addGraphdefWithInnoDBMetrics(graphdef map[string]mp.Graphs)
 		},
 	}
 	graphdef["innodb_buffer_pool_read"] = mp.Graphs{
-		Label: prefix + ".innodb Buffer Pool Read (/sec)",
+		Label: labelPrefix + " innodb Buffer Pool Read (/sec)",
 		Unit:  "float",
 		Metrics: []mp.Metrics{
 			{Name: "read_ahead", Label: "Pages Read Ahead", Diff: false, Stacked: false},
@@ -360,7 +360,7 @@ func (m MySQLPlugin) addGraphdefWithInnoDBMetrics(graphdef map[string]mp.Graphs)
 		},
 	}
 	graphdef["innodb_buffer_pool_activity"] = mp.Graphs{
-		Label: prefix + ".innodb Buffer Pool Activity (Pages)",
+		Label: labelPrefix + " innodb Buffer Pool Activity (Pages)",
 		Unit:  "integer",
 		Metrics: []mp.Metrics{
 			{Name: "pages_created", Label: "Created", Diff: true, Stacked: false},
@@ -369,7 +369,7 @@ func (m MySQLPlugin) addGraphdefWithInnoDBMetrics(graphdef map[string]mp.Graphs)
 		},
 	}
 	graphdef["innodb_buffer_pool_efficiency"] = mp.Graphs{
-		Label: prefix + ".innodb Buffer Pool Efficiency",
+		Label: labelPrefix + " innodb Buffer Pool Efficiency",
 		Unit:  "integer",
 		Metrics: []mp.Metrics{
 			{Name: "Innodb_buffer_pool_reads", Label: "Reads", Diff: true, Stacked: false},
@@ -377,7 +377,7 @@ func (m MySQLPlugin) addGraphdefWithInnoDBMetrics(graphdef map[string]mp.Graphs)
 		},
 	}
 	graphdef["innodb_buffer_pool"] = mp.Graphs{
-		Label: prefix + ".innodb Buffer Pool (Pages)",
+		Label: labelPrefix + " innodb Buffer Pool (Pages)",
 		Unit:  "integer",
 		Metrics: []mp.Metrics{
 			{Name: "pool_size", Label: "Pool Size", Diff: false, Stacked: false},
@@ -387,21 +387,21 @@ func (m MySQLPlugin) addGraphdefWithInnoDBMetrics(graphdef map[string]mp.Graphs)
 		},
 	}
 	graphdef["innodb_checkpoint_age"] = mp.Graphs{
-		Label: prefix + ".innodb Checkpoint Age",
+		Label: labelPrefix + " innodb Checkpoint Age",
 		Unit:  "bytes",
 		Metrics: []mp.Metrics{
 			{Name: "uncheckpointed_bytes", Label: "Uncheckpointed", Diff: false, Stacked: false},
 		},
 	}
 	graphdef["innodb_current_lock_waits"] = mp.Graphs{
-		Label: prefix + ".innodb Current Lock Waits (secs)",
+		Label: labelPrefix + " innodb Current Lock Waits (secs)",
 		Unit:  "integer",
 		Metrics: []mp.Metrics{
 			{Name: "innodb_lock_wait_secs", Label: "Innodb Lock Wait", Diff: false, Stacked: false},
 		},
 	}
 	graphdef["innodb_io"] = mp.Graphs{
-		Label: prefix + ".innodb I/O",
+		Label: labelPrefix + " innodb I/O",
 		Unit:  "integer",
 		Metrics: []mp.Metrics{
 			{Name: "file_reads", Label: "File Reads", Diff: true, Stacked: false},
@@ -411,7 +411,7 @@ func (m MySQLPlugin) addGraphdefWithInnoDBMetrics(graphdef map[string]mp.Graphs)
 		},
 	}
 	graphdef["innodb_io_pending"] = mp.Graphs{
-		Label: prefix + ".innodb I/O Pending",
+		Label: labelPrefix + " innodb I/O Pending",
 		Unit:  "integer",
 		Metrics: []mp.Metrics{
 			{Name: "pending_normal_aio_reads", Label: "Normal AIO Reads", Diff: false, Stacked: false},
@@ -426,7 +426,7 @@ func (m MySQLPlugin) addGraphdefWithInnoDBMetrics(graphdef map[string]mp.Graphs)
 		},
 	}
 	graphdef["innodb_insert_buffer"] = mp.Graphs{
-		Label: prefix + ".innodb Insert Buffer",
+		Label: labelPrefix + " innodb Insert Buffer",
 		Unit:  "integer",
 		Metrics: []mp.Metrics{
 			{Name: "ibuf_inserts", Label: "Inserts", Diff: true, Stacked: false},
@@ -435,7 +435,7 @@ func (m MySQLPlugin) addGraphdefWithInnoDBMetrics(graphdef map[string]mp.Graphs)
 		},
 	}
 	graphdef["innodb_insert_buffer_usage"] = mp.Graphs{
-		Label: prefix + ".innodb Insert Buffer Usage (Cells)",
+		Label: labelPrefix + " innodb Insert Buffer Usage (Cells)",
 		Unit:  "integer",
 		Metrics: []mp.Metrics{
 			{Name: "ibuf_cell_count", Label: "Cell Count", Diff: false, Stacked: false},
@@ -444,14 +444,14 @@ func (m MySQLPlugin) addGraphdefWithInnoDBMetrics(graphdef map[string]mp.Graphs)
 		},
 	}
 	graphdef["innodb_lock_structures"] = mp.Graphs{
-		Label: prefix + ".innodb Lock Structures",
+		Label: labelPrefix + " innodb Lock Structures",
 		Unit:  "integer",
 		Metrics: []mp.Metrics{
 			{Name: "innodb_lock_structs", Label: "Structures", Diff: false, Stacked: false},
 		},
 	}
 	graphdef["innodb_log"] = mp.Graphs{
-		Label: prefix + ".innodb Log",
+		Label: labelPrefix + " innodb Log",
 		Unit:  "bytes",
 		Metrics: []mp.Metrics{
 			{Name: "log_bytes_written", Label: "Written", Diff: true, Stacked: false},
@@ -461,7 +461,7 @@ func (m MySQLPlugin) addGraphdefWithInnoDBMetrics(graphdef map[string]mp.Graphs)
 		},
 	}
 	graphdef["innodb_memory_allocation"] = mp.Graphs{
-		Label: prefix + ".innodb Memory Allocation",
+		Label: labelPrefix + " innodb Memory Allocation",
 		Unit:  "integer",
 		Metrics: []mp.Metrics{
 			{Name: "additional_pool_alloc", Label: "Additional Pool Allocated", Diff: false, Stacked: false},
@@ -469,7 +469,7 @@ func (m MySQLPlugin) addGraphdefWithInnoDBMetrics(graphdef map[string]mp.Graphs)
 		},
 	}
 	graphdef["innodb_semaphores"] = mp.Graphs{
-		Label: prefix + ".innodb Semaphores",
+		Label: labelPrefix + " innodb Semaphores",
 		Unit:  "integer",
 		Metrics: []mp.Metrics{
 			{Name: "spin_waits", Label: "Spin Waits", Diff: true, Stacked: false},
@@ -478,7 +478,7 @@ func (m MySQLPlugin) addGraphdefWithInnoDBMetrics(graphdef map[string]mp.Graphs)
 		},
 	}
 	graphdef["innodb_tables_in_use"] = mp.Graphs{
-		Label: prefix + ".innodb Tables In Use",
+		Label: labelPrefix + " innodb Tables In Use",
 		Unit:  "integer",
 		Metrics: []mp.Metrics{
 			{Name: "innodb_locked_tables", Label: "Table in Use", Diff: false, Stacked: false},
@@ -486,7 +486,7 @@ func (m MySQLPlugin) addGraphdefWithInnoDBMetrics(graphdef map[string]mp.Graphs)
 		},
 	}
 	graphdef["innodb_transactions_active_locked"] = mp.Graphs{
-		Label: prefix + ".innodb Transactions Active/Locked",
+		Label: labelPrefix + " innodb Transactions Active/Locked",
 		Unit:  "integer",
 		Metrics: []mp.Metrics{
 			{Name: "current_transactions", Label: "Current", Diff: false, Stacked: false},
@@ -496,7 +496,7 @@ func (m MySQLPlugin) addGraphdefWithInnoDBMetrics(graphdef map[string]mp.Graphs)
 		},
 	}
 	graphdef["innodb_transactions"] = mp.Graphs{
-		Label: prefix + ".innodb Transactions",
+		Label: labelPrefix + " innodb Transactions",
 		Unit:  "integer",
 		Metrics: []mp.Metrics{
 			{Name: "history_list", Label: "History List", Diff: false, Stacked: false},
@@ -508,9 +508,9 @@ func (m MySQLPlugin) addGraphdefWithInnoDBMetrics(graphdef map[string]mp.Graphs)
 
 func (m MySQLPlugin) addExtendedGraphdef(graphdef map[string]mp.Graphs) map[string]mp.Graphs {
 	//TODO
-	prefix := m.MetricKeyPrefix()
+	labelPrefix := strings.Title(strings.Replace(m.MetricKeyPrefix(), "mysql", "MySQL", -1))
 	graphdef["query_cache"] = mp.Graphs{
-		Label: prefix + ".query Cache",
+		Label: labelPrefix + " query Cache",
 		Unit:  "float",
 		Metrics: []mp.Metrics{
 			{Name: "Qcache_queries_in_cache", Label: "Qcache Queries In Cache", Diff: false, Stacked: false, Type: "uint64"},
@@ -521,7 +521,7 @@ func (m MySQLPlugin) addExtendedGraphdef(graphdef map[string]mp.Graphs) map[stri
 		},
 	}
 	graphdef["query_cache_memory"] = mp.Graphs{
-		Label: prefix + ".query Cache Memory",
+		Label: labelPrefix + " query Cache Memory",
 		Unit:  "float",
 		Metrics: []mp.Metrics{
 			{Name: "query_cache_size", Label: "Query Cache Size", Diff: false, Stacked: false, Type: "uint64"},
@@ -531,7 +531,7 @@ func (m MySQLPlugin) addExtendedGraphdef(graphdef map[string]mp.Graphs) map[stri
 		},
 	}
 	graphdef["temporary_objects"] = mp.Graphs{
-		Label: prefix + ".temporary Objects",
+		Label: labelPrefix + " temporary Objects",
 		Unit:  "float",
 		Metrics: []mp.Metrics{
 			{Name: "Created_tmp_tables", Label: "Created Tmp Tables", Diff: true, Stacked: false, Type: "uint64"},
@@ -540,7 +540,7 @@ func (m MySQLPlugin) addExtendedGraphdef(graphdef map[string]mp.Graphs) map[stri
 		},
 	}
 	graphdef["files_and_tables"] = mp.Graphs{
-		Label: prefix + ".files and Tables",
+		Label: labelPrefix + " files and Tables",
 		Unit:  "float",
 		Metrics: []mp.Metrics{
 			{Name: "table_cache", Label: "Table Cache", Diff: false, Stacked: false, Type: "uint64"},
@@ -550,7 +550,7 @@ func (m MySQLPlugin) addExtendedGraphdef(graphdef map[string]mp.Graphs) map[stri
 		},
 	}
 	graphdef["processlist"] = mp.Graphs{
-		Label: prefix + ".processlist",
+		Label: labelPrefix + " processlist",
 		Unit:  "float",
 		Metrics: []mp.Metrics{
 			{Name: "State_closing_tables", Label: "State Closing Tables", Diff: false, Stacked: false, Type: "uint64"},
@@ -572,7 +572,7 @@ func (m MySQLPlugin) addExtendedGraphdef(graphdef map[string]mp.Graphs) map[stri
 		},
 	}
 	graphdef["sorts"] = mp.Graphs{
-		Label: prefix + ".sorts",
+		Label: labelPrefix + " sorts",
 		Unit:  "float",
 		Metrics: []mp.Metrics{
 			{Name: "Sort_rows", Label: "Sort Rows", Diff: true, Stacked: false, Type: "uint64"},
