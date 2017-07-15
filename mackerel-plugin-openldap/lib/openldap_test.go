@@ -43,7 +43,7 @@ func TestGetStats(t *testing.T) {
 	}
 	want := float64(0)
 	if v != want {
-		t.Errorf("stats[%s] = %q, want %q", key, v, want)
+		t.Errorf("stats[%s] = %f, want %f", key, v, want)
 	}
 	key = "prefix_extended_monitorOpInitiated"
 	v, ok = stats[key]
@@ -52,7 +52,7 @@ func TestGetStats(t *testing.T) {
 	}
 	want = float64(0)
 	if v != want {
-		t.Errorf("stats[%s] = %q, want %q", key, v, want)
+		t.Errorf("stats[%s] = %f, want %f", key, v, want)
 	}
 }
 
