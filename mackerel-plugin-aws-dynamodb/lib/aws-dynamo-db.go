@@ -321,35 +321,70 @@ func (p DynamoDBPlugin) GraphDefinition() map[string]mp.Graphs {
 			Label: (labelPrefix + " ThrottledRequests"),
 			Unit:  "integer",
 			Metrics: []mp.Metrics{
-				{Name: "*", Label: "%1", Stacked: true},
+				{Name: "ThrottledRequests.PutItem", Label: "PutItem", Stacked: true},
+				{Name: "ThrottledRequests.DeleteItem", Label: "DeleteItem", Stacked: true},
+				{Name: "ThrottledRequests.UpdateItem", Label: "UpdateItem", Stacked: true},
+				{Name: "ThrottledRequests.GetItem", Label: "GetItem", Stacked: true},
+				{Name: "ThrottledRequests.BatchGetItem", Label: "BatchGetItem", Stacked: true},
+				{Name: "ThrottledRequests.Scan", Label: "Scan", Stacked: true},
+				{Name: "ThrottledRequests.Query", Label: "Query", Stacked: true},
+				{Name: "ThrottledRequests.BatchWriteItem", Label: "BatchWriteItem", Stacked: true},
 			},
 		},
 		"SystemErrors": {
 			Label: (labelPrefix + " SystemErrors"),
 			Unit:  "integer",
 			Metrics: []mp.Metrics{
-				{Name: "*", Label: "%1", Stacked: true},
+				{Name: "SystemErrors.PutItem", Label: "PutItem", Stacked: true},
+				{Name: "SystemErrors.DeleteItem", Label: "DeleteItem", Stacked: true},
+				{Name: "SystemErrors.UpdateItem", Label: "UpdateItem", Stacked: true},
+				{Name: "SystemErrors.GetItem", Label: "GetItem", Stacked: true},
+				{Name: "SystemErrors.BatchGetItem", Label: "BatchGetItem", Stacked: true},
+				{Name: "SystemErrors.Scan", Label: "Scan", Stacked: true},
+				{Name: "SystemErrors.Query", Label: "Query", Stacked: true},
+				{Name: "SystemErrors.BatchWriteItem", Label: "BatchWriteItem", Stacked: true},
 			},
 		},
 		"UserErrors": {
 			Label: (labelPrefix + " UserErrors"),
 			Unit:  "integer",
 			Metrics: []mp.Metrics{
-				{Name: "*", Label: "%1", Stacked: true},
+				{Name: "UserErrors.PutItem", Label: "PutItem", Stacked: true},
+				{Name: "UserErrors.DeleteItem", Label: "DeleteItem", Stacked: true},
+				{Name: "UserErrors.UpdateItem", Label: "UpdateItem", Stacked: true},
+				{Name: "UserErrors.GetItem", Label: "GetItem", Stacked: true},
+				{Name: "UserErrors.BatchGetItem", Label: "BatchGetItem", Stacked: true},
+				{Name: "UserErrors.Scan", Label: "Scan", Stacked: true},
+				{Name: "UserErrors.Query", Label: "Query", Stacked: true},
+				{Name: "UserErrors.BatchWriteItem", Label: "BatchWriteItem", Stacked: true},
 			},
 		},
 		"ReturnedItemCount": {
 			Label: (labelPrefix + " ReturnedItemCount"),
 			Unit:  "integer",
 			Metrics: []mp.Metrics{
-				{Name: "*", Label: "%1"},
+				{Name: "ReturnedItemCount.PutItem", Label: "PutItem"},
+				{Name: "ReturnedItemCount.DeleteItem", Label: "DeleteItem"},
+				{Name: "ReturnedItemCount.UpdateItem", Label: "UpdateItem"},
+				{Name: "ReturnedItemCount.GetItem", Label: "GetItem"},
+				{Name: "ReturnedItemCount.BatchGetItem", Label: "BatchGetItem"},
+				{Name: "ReturnedItemCount.Scan", Label: "Scan"},
+				{Name: "ReturnedItemCount.Query", Label: "Query"},
+				{Name: "ReturnedItemCount.BatchWriteItem", Label: "BatchWriteItem"},
 			},
 		},
 		"SuccessfulRequests": {
 			Label: (labelPrefix + " SuccessfulRequests"),
 			Unit:  "integer",
 			Metrics: []mp.Metrics{
-				{Name: "*", Label: "%1"},
+				{Name: "SuccessfulRequests.PutItem", Label: "PutItem"},
+				{Name: "SuccessfulRequests.DeleteItem", Label: "DeleteItem"},
+				{Name: "SuccessfulRequests.UpdateItem", Label: "UpdateItem"},
+				{Name: "SuccessfulRequests.GetItem", Label: "GetItem"},
+				{Name: "SuccessfulRequests.BatchGetItem", Label: "BatchGetItem"},
+				{Name: "SuccessfulRequests.Scan", Label: "Scan"},
+				{Name: "SuccessfulRequests.Query", Label: "Query"},
+				{Name: "SuccessfulRequests.BatchWriteItem", Label: "BatchWriteItem"},
 			},
 		},
 		"SuccessfulRequestLatency.#": {
@@ -371,7 +406,6 @@ func Do() {
 	optSecretAccessKey := flag.String("secret-access-key", "", "AWS Secret Access Key")
 	optRegion := flag.String("region", "", "AWS Region")
 	optTableName := flag.String("table-name", "", "DynamoDB Table Name")
-	optTempfile := flag.String("tempfile", "", "Temp file name")
 	optPrefix := flag.String("metric-key-prefix", "dynamodb", "Metric key prefix")
 	flag.Parse()
 
@@ -389,7 +423,6 @@ func Do() {
 	}
 
 	helper := mp.NewMackerelPlugin(plugin)
-	helper.Tempfile = *optTempfile
 
 	helper.Run()
 }
