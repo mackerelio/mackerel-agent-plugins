@@ -210,6 +210,9 @@ var defaultMetricsGroup = []metricsGroup{
 	{CloudWatchName: "WriteThrottleEvents", Metrics: []metric{
 		{MackerelName: "WriteThrottleEvents", Type: metricsTypeSum},
 	}},
+	{CloudWatchName: "TimeToLiveDeletedItemCount", Metrics: []metric{
+		{MackerelName: "TimeToLiveDeletedItemCount", Type: metricsTypeSum},
+	}},
 }
 
 var operationalMetricsGroup = []metricsGroup{
@@ -300,6 +303,13 @@ func (p DynamoDBPlugin) GraphDefinition() map[string]mp.Graphs {
 				{Name: "ProvisionedWriteCapacityUnits", Label: "Provisioned"},
 				{Name: "ConsumedWriteCapacityUnitsNormalized", Label: "Consumed"},
 				{Name: "ConsumedWriteCapacityUnitsAverage", Label: "Consumed (Average per request)"},
+			},
+		},
+		"TimeToLiveDeletedItemCount": {
+			Label: (labelPrefix + " TimeToLiveDeletedItemCount"),
+			Unit:  "integer",
+			Metrics: []mp.Metrics{
+				{Name: "TimeToLiveDeletedItemCount", Label: "Count"},
 			},
 		},
 		"ThrottledEvents": {
