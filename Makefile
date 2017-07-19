@@ -96,9 +96,6 @@ release: check-release-deps
 	perl tool/create-release-pullrequest
 
 clean:
-	if [ -d build ]; then \
-	  rm -f build/mackerel-plugin-*; \
-	  rmdir build; \
-	fi
+	@if [ -d build ]; then rm -rfv build; fi
 
 .PHONY: all build test testgo deps testdeps rpm rpm-v1 rpm-v2 deb deb-v1 deb-v2 clean release lint cover testconvention
