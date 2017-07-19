@@ -371,7 +371,6 @@ func Do() {
 	optSecretAccessKey := flag.String("secret-access-key", "", "AWS Secret Access Key")
 	optRegion := flag.String("region", "", "AWS Region")
 	optTableName := flag.String("table-name", "", "DynamoDB Table Name")
-	optTempfile := flag.String("tempfile", "", "Temp file name")
 	optPrefix := flag.String("metric-key-prefix", "dynamodb", "Metric key prefix")
 	flag.Parse()
 
@@ -389,7 +388,6 @@ func Do() {
 	}
 
 	helper := mp.NewMackerelPlugin(plugin)
-	helper.Tempfile = *optTempfile
 
 	helper.Run()
 }
