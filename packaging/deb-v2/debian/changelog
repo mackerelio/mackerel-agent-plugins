@@ -1,3 +1,14 @@
+mackerel-agent-plugins (0.29.0-1.v2) stable; urgency=low
+
+  * [aws-dynamodb] Add TimeToLiveDeletedItemCount metrics (by astj)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/376>
+  * [aws-dynamodb] Adjust options and graph definitions (by astj)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/375>
+  * [mysql] Fix graph label prefixes (by koooge)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/372>
+
+ -- mackerel <mackerel-developers@hatena.ne.jp>  Wed, 26 Jul 2017 12:50:12 +0900
+
 mackerel-agent-plugins (0.28.1-1.v2) stable; urgency=low
 
   * postgres: add metric-key-prefix (by edangelion)

@@ -40,6 +40,11 @@ done
 %{__targetdir}/*
 
 %changelog
+* Wed Jul 26 2017 <mackerel-developers@hatena.ne.jp> - 0.29.0
+- [aws-dynamodb] Add TimeToLiveDeletedItemCount metrics (by astj)
+- [aws-dynamodb] Adjust options and graph definitions (by astj)
+- [mysql] Fix graph label prefixes (by koooge)
+
 * Wed Jun 28 2017 <mackerel-developers@hatena.ne.jp> - 0.28.1
 - postgres: add metric-key-prefix (by edangelion)
 - [accesslog] add mackerel-plugin-accesslog (by Songmu)
