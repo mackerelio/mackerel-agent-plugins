@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.29.0 (2017-07-26)
+
+* [aws-dynamodb] Add TimeToLiveDeletedItemCount metrics #376 (astj)
+* [aws-dynamodb] Adjust options and graph definitions #375 (astj)
+* [mysql] Fix graph label prefixes #372 (koooge)
+
+
 ## 0.28.1 (2017-06-28)
 
 * postgres: add metric-key-prefix #363 (edangelion)
