@@ -24,4 +24,4 @@ _testmain.go
 
 *.exe
 *.test
-*/mackerel-plugin-*
+mackerel-plugin-*/mackerel-plugin-*
