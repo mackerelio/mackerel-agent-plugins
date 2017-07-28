@@ -6,7 +6,7 @@ GOOS   ?= $(shell go env GOOS)
 GOARCH ?= $(shell go env GOARCH)
 BINDIR  = build/$(GOOS)/$(GOARCH)
 
-all: reject-exec lint cover testconvention rpm deb
+all: lint cover testconvention rpm deb
 
 $(BINDIR)/mackerel-plugin-%: mackerel-plugin-%/lib/*.go
 	@if [ ! -d $(BINDIR) ]; then mkdir -p $(BINDIR); fi
@@ -51,9 +51,6 @@ check-release-deps:
 	  fi; \
 	done; \
 	test $$have_error = 0
-
-reject-exec:
-	git ls-files | xargs -I% sh -c 'test `du -k % | cut -f1` -gt 500 && echo % && exit 1 || :'
 
 lint: testdeps
 	go vet ./...
@@ -101,4 +98,4 @@ release: check-release-deps
 clean:
 	@if [ -d build ]; then rm -rfv build; fi
 
-.PHONY: all build test testgo deps testdeps rpm rpm-v1 rpm-v2 deb deb-v1 deb-v2 clean release lint reject-exec cover testconvention
+.PHONY: all build test testgo deps testdeps rpm rpm-v1 rpm-v2 deb deb-v1 deb-v2 clean release lint cover testconvention
