@@ -53,7 +53,7 @@ check-release-deps:
 	test $$have_error = 0
 
 reject-exec:
-	git ls-files | xargs -I% sh -c 'test `du -k % | cut -f1` -gt 1000 && echo % && exit 1 || :'
+	git ls-files | xargs -I% sh -c 'test `du -k % | cut -f1` -gt 500 && echo % && exit 1 || :'
 
 lint: testdeps
 	go vet ./...
