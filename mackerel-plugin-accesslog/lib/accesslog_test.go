@@ -39,9 +39,9 @@ var fetchMetricsTests = []struct {
 			"4xx_percentage": 10,
 			"5xx_percentage": 10,
 			"average":        0.7603999999999999,
-			"90_percentile":  3.018,
-			"95_percentile":  4.018,
-			"99_percentile":  4.018,
+			"90_percentile":  2.018,
+			"95_percentile":  3.018,
+			"99_percentile":  3.018,
 		},
 	},
 }
