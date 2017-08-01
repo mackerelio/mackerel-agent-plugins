@@ -199,8 +199,12 @@ func (s SolrPlugin) GraphDefinition() map[string]mp.Graphs {
 			for _, path := range handlerPaths {
 				path = escapeSlash(path)
 				metricLabel := strings.Title(path)
+				diff := false
+				if key == "requests" {
+					diff = true
+				}
 				metrics = append(metrics,
-					mp.Metrics{Name: fmt.Sprintf("%s_%s_%s", core, key, path), Label: metricLabel},
+					mp.Metrics{Name: fmt.Sprintf("%s_%s_%s", core, key, path), Label: metricLabel, Diff: diff},
 				)
 			}
 			unit := "float"
