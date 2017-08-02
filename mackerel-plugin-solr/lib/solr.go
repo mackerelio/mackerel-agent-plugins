@@ -242,6 +242,14 @@ func (s SolrPlugin) GraphDefinition() map[string]mp.Graphs {
 	return graphdef
 }
 
+// MetricKeyPrefix interface for mackerelplugin
+func (s SolrPlugin) MetricKeyPrefix() string {
+	if s.Prefix == "" {
+		s.Prefix = "solr"
+	}
+	return s.Prefix
+}
+
 // Do the plugin
 func Do() {
 	optHost := flag.String("host", "localhost", "Hostname")
