@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.29.1 (2017-08-02)
+
+* Fix a graph definition for Apache Solr's cumulative metric #381 (supercaracal)
+* fix testcase (Percentile logic is Fixed up) #380 (Songmu)
+
+
 ## 0.29.0 (2017-07-26)
 
 * [aws-dynamodb] Add TimeToLiveDeletedItemCount metrics #376 (astj)
