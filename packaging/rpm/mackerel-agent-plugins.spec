@@ -50,8 +50,9 @@ done
 
 %changelog
 * Wed Aug 02 2017 <mackerel-developers@hatena.ne.jp> - 0.29.1
-- Fix a graph definition for Apache Solr's cumulative metric (by supercaracal)
-- fix testcase (Percentile logic is Fixed up) (by Songmu)
+- [solr] Fix a graph definition for Apache Solr's cumulative metric (by supercaracal)
+- [accesslog] Refine LTSV format detection logic (by Songmu)
+- [accesslog] Fix testcase (Percentile logic is Fixed up) (by Songmu)
 
 * Wed Jul 26 2017 <mackerel-developers@hatena.ne.jp> - 0.29.0
 - [aws-dynamodb] Add TimeToLiveDeletedItemCount metrics (by astj)
