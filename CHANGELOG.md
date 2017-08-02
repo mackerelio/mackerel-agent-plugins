@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.29.1 (2017-08-02)
+
+* [solr] Fix a graph definition for Apache Solr's cumulative metric #381 (supercaracal)
+* [accesslog] Refine LTSV format detection logic https://github.com/Songmu/axslogparser/pull/8 (Songmu)
+* [accesslog] Fix testcase (Percentile logic is Fixed up) #380 (Songmu)
+
+
 ## 0.29.0 (2017-07-26)
 
 * [aws-dynamodb] Add TimeToLiveDeletedItemCount metrics #376 (astj)
