@@ -31,9 +31,13 @@ var defaultGraphs = []string{
 	"ec2.ebs.idle_time.#",
 }
 
-var allGraphs = append([]string{
+var io1Graphs = append([]string{
 	"ec2.ebs.throughput_delivered.#",
 	"ec2.ebs.consumed_ops.#",
+}, defaultGraphs...)
+
+var gp2Graphs = append([]string{
+	"ec2.ebs.burst_balance.#",
 }, defaultGraphs...)
 
 type cloudWatchSetting struct {
@@ -90,6 +94,10 @@ var cloudwatchdefs = map[string](cloudWatchSetting){
 	},
 	"ec2.ebs.consumed_ops.#.consumed_ops": cloudWatchSetting{
 		MetricName: "VolumeConsumedReadWriteOps", Statistics: "Sum",
+		CalcFunc: func(val float64, period float64) float64 { return val },
+	},
+	"ec2.ebs.burst_balance.#.burst_balance": cloudWatchSetting{
+		MetricName: "BurstBalance", Statistics: "Average",
 		CalcFunc: func(val float64, period float64) float64 { return val },
 	},
 }
@@ -153,6 +161,13 @@ var graphdef = map[string]mp.Graphs{
 		Unit:  "float",
 		Metrics: []mp.Metrics{
 			{Name: "consumed_ops", Label: "Consumed Ops", Diff: false},
+		},
+	},
+	"ec2.ebs.burst_balance.#": {
+		Label: "EBS Burst Balance",
+		Unit:  "percentage",
+		Metrics: []mp.Metrics{
+			{Name: "burst_balance", Label: "Burst Balance", Diff: false},
 		},
 	},
 }
@@ -261,7 +276,9 @@ func (p EBSPlugin) FetchMetrics() (map[string]interface{}, error) {
 		volumeID := normalizeVolumeID(*vol.VolumeId)
 		graphs := defaultGraphs
 		if *vol.VolumeType == "io1" {
-			graphs = allGraphs
+			graphs = io1Graphs
+		} else if *vol.VolumeType == "gp2" {
+			graphs = gp2Graphs
 		}
 		for _, graphName := range graphs {
 			for _, metric := range graphdef[graphName].Metrics {
