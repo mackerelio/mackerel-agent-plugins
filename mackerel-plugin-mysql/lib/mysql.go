@@ -161,20 +161,6 @@ func (m MySQLPlugin) fetchShowStatus(db mysql.Conn, stat map[string]float64) err
 			log.Fatalln("FetchMetrics (Status): row length is too small: ", len(row))
 		}
 	}
-	if m.EnableExtended {
-		err = fetchShowStatusBackwardCompatibile(stat)
-		if err != nil {
-			log.Fatalln("FetchExtendedMetrics (Status Fetch): ", err)
-		}
-	}
-	return nil
-}
-
-func fetchShowStatusBackwardCompatibile(stat map[string]float64) error {
-	// https://github.com/percona/percona-monitoring-plugins/blob/v1.1.6/cacti/scripts/ss_get_mysql_stats.php#L585
-	if val, found := stat["table_open_cache"]; found {
-		stat["table_cache"] = val
-	}
 	return nil
 }
 
@@ -209,6 +195,20 @@ func (m MySQLPlugin) fetchShowVariables(db mysql.Conn, stat map[string]float64) 
 		} else {
 			log.Fatalln("FetchMetrics (Variables): row length is too small: ", len(row))
 		}
+	}
+	if m.EnableExtended {
+		err = fetchShowVariablesBackwardCompatibile(stat)
+		if err != nil {
+			log.Fatalln("FetchExtendedMetrics (Fetch Variables): ", err)
+		}
+	}
+	return nil
+}
+
+func fetchShowVariablesBackwardCompatibile(stat map[string]float64) error {
+	// https://github.com/percona/percona-monitoring-plugins/blob/v1.1.6/cacti/scripts/ss_get_mysql_stats.php#L585
+	if val, found := stat["table_open_cache"]; found {
+		stat["table_cache"] = val
 	}
 	return nil
 }
