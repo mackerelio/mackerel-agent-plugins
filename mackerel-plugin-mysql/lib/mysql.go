@@ -161,20 +161,6 @@ func (m MySQLPlugin) fetchShowStatus(db mysql.Conn, stat map[string]float64) err
 			log.Fatalln("FetchMetrics (Status): row length is too small: ", len(row))
 		}
 	}
-	if m.EnableExtended {
-		err = fetchShowStatusBackwardCompatibile(stat)
-		if err != nil {
-			log.Fatalln("FetchExtendedMetrics (Status Fetch): ", err)
-		}
-	}
-	return nil
-}
-
-func fetchShowStatusBackwardCompatibile(stat map[string]float64) error {
-	// https://github.com/percona/percona-monitoring-plugins/blob/v1.1.6/cacti/scripts/ss_get_mysql_stats.php#L585
-	if val, found := stat["table_open_cache"]; found {
-		stat["table_cache"] = val
-	}
 	return nil
 }
 
@@ -209,6 +195,20 @@ func (m MySQLPlugin) fetchShowVariables(db mysql.Conn, stat map[string]float64) 
 		} else {
 			log.Fatalln("FetchMetrics (Variables): row length is too small: ", len(row))
 		}
+	}
+	if m.EnableExtended {
+		err = fetchShowVariablesBackwardCompatibile(stat)
+		if err != nil {
+			log.Fatalln("FetchExtendedMetrics (Fetch Variables): ", err)
+		}
+	}
+	return nil
+}
+
+func fetchShowVariablesBackwardCompatibile(stat map[string]float64) error {
+	// https://github.com/percona/percona-monitoring-plugins/blob/v1.1.6/cacti/scripts/ss_get_mysql_stats.php#L585
+	if val, found := stat["table_open_cache"]; found {
+		stat["table_cache"] = val
 	}
 	return nil
 }
@@ -546,7 +546,7 @@ func (m MySQLPlugin) addExtendedGraphdef(graphdef map[string]mp.Graphs) map[stri
 			{Name: "table_cache", Label: "Table Cache", Diff: false, Stacked: false, Type: "uint64"},
 			{Name: "Open_tables", Label: "Open Tables", Diff: false, Stacked: false, Type: "uint64"},
 			{Name: "Open_files", Label: "Open Files", Diff: false, Stacked: false, Type: "uint64"},
-			{Name: "Opened_tables", Label: "Opened Tables", Diff: false, Stacked: false, Type: "uint64"},
+			{Name: "Opened_tables", Label: "Opened Tables", Diff: true, Stacked: false, Type: "uint64"},
 		},
 	}
 	graphdef["processlist"] = mp.Graphs{
