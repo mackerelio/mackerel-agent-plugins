@@ -546,7 +546,7 @@ func (m MySQLPlugin) addExtendedGraphdef(graphdef map[string]mp.Graphs) map[stri
 			{Name: "table_cache", Label: "Table Cache", Diff: false, Stacked: false, Type: "uint64"},
 			{Name: "Open_tables", Label: "Open Tables", Diff: false, Stacked: false, Type: "uint64"},
 			{Name: "Open_files", Label: "Open Files", Diff: false, Stacked: false, Type: "uint64"},
-			{Name: "Opened_tables", Label: "Opened Tables", Diff: false, Stacked: false, Type: "uint64"},
+			{Name: "Opened_tables", Label: "Opened Tables", Diff: true, Stacked: false, Type: "uint64"},
 		},
 	}
 	graphdef["processlist"] = mp.Graphs{
