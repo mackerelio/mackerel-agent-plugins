@@ -73,9 +73,10 @@ func (m MySQLPlugin) defaultGraphdef() map[string]mp.Graphs {
 			Label: labelPrefix + " Threads",
 			Unit:  "integer",
 			Metrics: []mp.Metrics{
-				{Name: "Max_used_connections", Label: "Max used connections", Diff: false, Stacked: false},
+				{Name: "thread_cache_size", Label: "Cache Size", Diff: false, Stacked: false},
 				{Name: "Threads_connected", Label: "Connected", Diff: false, Stacked: false},
 				{Name: "Threads_running", Label: "Running", Diff: false, Stacked: false},
+				{Name: "Threads_created", Label: "Created", Diff: true, Stacked: false},
 				{Name: "Threads_cached", Label: "Cached", Diff: false, Stacked: false},
 			},
 		},
