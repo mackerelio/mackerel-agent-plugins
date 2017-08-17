@@ -64,8 +64,9 @@ func (m MySQLPlugin) defaultGraphdef() map[string]mp.Graphs {
 			Metrics: []mp.Metrics{
 				{Name: "Select_full_join", Label: "Select Full JOIN", Diff: true, Stacked: false},
 				{Name: "Select_full_range_join", Label: "Select Full Range JOIN", Diff: true, Stacked: false},
+				{Name: "Select_range", Label: "Select Range", Diff: true, Stacked: false},
+				{Name: "Select_range_check", Label: "Select Range Check", Diff: true, Stacked: false},
 				{Name: "Select_scan", Label: "Select SCAN", Diff: true, Stacked: false},
-				{Name: "Sort_scan", Label: "Sort SCAN", Diff: true, Stacked: false},
 			},
 		},
 		"threads": {
