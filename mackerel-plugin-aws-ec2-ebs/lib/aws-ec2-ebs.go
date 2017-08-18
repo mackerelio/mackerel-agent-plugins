@@ -29,15 +29,12 @@ var defaultGraphs = []string{
 	"ec2.ebs.latency.#",
 	"ec2.ebs.queue_length.#",
 	"ec2.ebs.idle_time.#",
+	"ec2.ebs.burst_balance.#",
 }
 
 var io1Graphs = append([]string{
 	"ec2.ebs.throughput_delivered.#",
 	"ec2.ebs.consumed_ops.#",
-}, defaultGraphs...)
-
-var gp2Graphs = append([]string{
-	"ec2.ebs.burst_balance.#",
 }, defaultGraphs...)
 
 type cloudWatchSetting struct {
@@ -277,8 +274,8 @@ func (p EBSPlugin) FetchMetrics() (map[string]interface{}, error) {
 		graphs := defaultGraphs
 		if *vol.VolumeType == "io1" {
 			graphs = io1Graphs
-		} else if *vol.VolumeType == "gp2" {
-			graphs = gp2Graphs
+		} else {
+			graphs = defaultGraphs
 		}
 		for _, graphName := range graphs {
 			for _, metric := range graphdef[graphName].Metrics {
