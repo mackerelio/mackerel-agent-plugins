@@ -22,20 +22,23 @@ var metricPeriodByVolumeType = map[string]int{
 	"io1": 60,
 }
 
-var defaultGraphs = []string{
+var baseGraphs = []string{
 	"ec2.ebs.bandwidth.#",
 	"ec2.ebs.throughput.#",
 	"ec2.ebs.size_per_op.#",
 	"ec2.ebs.latency.#",
 	"ec2.ebs.queue_length.#",
 	"ec2.ebs.idle_time.#",
-	"ec2.ebs.burst_balance.#",
 }
+
+var defaultGraphs = append([]string{
+	"ec2.ebs.burst_balance.#",
+}, baseGraphs...)
 
 var io1Graphs = append([]string{
 	"ec2.ebs.throughput_delivered.#",
 	"ec2.ebs.consumed_ops.#",
-}, defaultGraphs...)
+}, baseGraphs...)
 
 type cloudWatchSetting struct {
 	MetricName string
@@ -47,55 +50,55 @@ type cloudWatchSetting struct {
 var cloudwatchdefs = map[string](cloudWatchSetting){
 	"ec2.ebs.bandwidth.#.read": cloudWatchSetting{
 		MetricName: "VolumeReadBytes", Statistics: "Sum",
-		CalcFunc: func(val float64, period float64) float64 { return val / period },
+		CalcFunc:   func(val float64, period float64) float64 { return val / period },
 	},
 	"ec2.ebs.bandwidth.#.write": cloudWatchSetting{
 		MetricName: "VolumeWriteBytes", Statistics: "Sum",
-		CalcFunc: func(val float64, period float64) float64 { return val / period },
+		CalcFunc:   func(val float64, period float64) float64 { return val / period },
 	},
 	"ec2.ebs.throughput.#.read": cloudWatchSetting{
 		MetricName: "VolumeReadOps", Statistics: "Sum",
-		CalcFunc: func(val float64, period float64) float64 { return val / period },
+		CalcFunc:   func(val float64, period float64) float64 { return val / period },
 	},
 	"ec2.ebs.throughput.#.write": cloudWatchSetting{
 		MetricName: "VolumeWriteOps", Statistics: "Sum",
-		CalcFunc: func(val float64, period float64) float64 { return val / period },
+		CalcFunc:   func(val float64, period float64) float64 { return val / period },
 	},
 	"ec2.ebs.size_per_op.#.read": cloudWatchSetting{
 		MetricName: "VolumeReadBytes", Statistics: "Average",
-		CalcFunc: func(val float64, period float64) float64 { return val },
+		CalcFunc:   func(val float64, period float64) float64 { return val },
 	},
 	"ec2.ebs.size_per_op.#.write": cloudWatchSetting{
 		MetricName: "VolumeWriteBytes", Statistics: "Average",
-		CalcFunc: func(val float64, period float64) float64 { return val },
+		CalcFunc:   func(val float64, period float64) float64 { return val },
 	},
 	"ec2.ebs.latency.#.read": cloudWatchSetting{
 		MetricName: "VolumeTotalReadTime", Statistics: "Average",
-		CalcFunc: func(val float64, period float64) float64 { return val * 1000 },
+		CalcFunc:   func(val float64, period float64) float64 { return val * 1000 },
 	},
 	"ec2.ebs.latency.#.write": cloudWatchSetting{
 		MetricName: "VolumeTotalWriteTime", Statistics: "Average",
-		CalcFunc: func(val float64, period float64) float64 { return val * 1000 },
+		CalcFunc:   func(val float64, period float64) float64 { return val * 1000 },
 	},
 	"ec2.ebs.queue_length.#.queue_length": cloudWatchSetting{
 		MetricName: "VolumeQueueLength", Statistics: "Average",
-		CalcFunc: func(val float64, period float64) float64 { return val },
+		CalcFunc:   func(val float64, period float64) float64 { return val },
 	},
 	"ec2.ebs.idle_time.#.idle_time": cloudWatchSetting{
 		MetricName: "VolumeIdleTime", Statistics: "Sum",
-		CalcFunc: func(val float64, period float64) float64 { return val / period * 100 },
+		CalcFunc:   func(val float64, period float64) float64 { return val / period * 100 },
 	},
 	"ec2.ebs.throughput_delivered.#.throughput_delivered": cloudWatchSetting{
 		MetricName: "VolumeThroughputPercentage", Statistics: "Average",
-		CalcFunc: func(val float64, period float64) float64 { return val },
+		CalcFunc:   func(val float64, period float64) float64 { return val },
 	},
 	"ec2.ebs.consumed_ops.#.consumed_ops": cloudWatchSetting{
 		MetricName: "VolumeConsumedReadWriteOps", Statistics: "Sum",
-		CalcFunc: func(val float64, period float64) float64 { return val },
+		CalcFunc:   func(val float64, period float64) float64 { return val },
 	},
 	"ec2.ebs.burst_balance.#.burst_balance": cloudWatchSetting{
 		MetricName: "BurstBalance", Statistics: "Average",
-		CalcFunc: func(val float64, period float64) float64 { return val },
+		CalcFunc:   func(val float64, period float64) float64 { return val },
 	},
 }
 
