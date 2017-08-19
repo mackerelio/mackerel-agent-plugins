@@ -5,6 +5,7 @@ import (
 	"flag"
 	"fmt"
 	"io"
+	"log"
 	"net"
 	"strconv"
 	"strings"
@@ -41,7 +42,48 @@ func (m MemcachedPlugin) FetchMetrics() (map[string]float64, error) {
 		return nil, err
 	}
 	fmt.Fprintln(conn, "stats")
-	return m.parseStats(conn)
+
+	ret, err := m.parseStats(conn)
+	if err != nil {
+		return nil, err
+	}
+	ret2, err := m.parseStatsItems(conn)
+	if err != nil {
+		log.Printf("failed to get stats items: %s", err.Error())
+	} else {
+		for k, v := range ret2 {
+			ret[k] = v
+		}
+	}
+	return ret, nil
+}
+
+func (m MemcachedPlugin) parseStatsItems(conn io.ReadWriter) (map[string]float64, error) {
+	ret := make(map[string]float64)
+	fmt.Fprint(conn, "stats items\r\n")
+	scr := bufio.NewScanner(bufio.NewReader(conn))
+	for scr.Scan() {
+		// ex. STAT items:1:number 1
+		line := scr.Text()
+		if line == "END" {
+			break
+		}
+		fields := strings.Fields(line)
+		if len(fields) != 3 {
+			return nil, fmt.Errorf("result of `stats items` is strange: %s", line)
+		}
+		fields2 := strings.Split(fields[1], ":")
+		if len(fields2) != 3 {
+			return nil, fmt.Errorf("result of `stats items` is strange: %s", line)
+		}
+		if fields2[2] == "evicted_nonzero" {
+			value, err := strconv.ParseFloat(fields[2], 64)
+			if err == nil {
+				ret["nonzero_evictions"] += value
+			}
+		}
+	}
+	return ret, scr.Err()
 }
 
 func (m MemcachedPlugin) parseStats(conn io.Reader) (map[string]float64, error) {
@@ -114,6 +156,8 @@ func (m MemcachedPlugin) GraphDefinition() map[string]mp.Graphs {
 			Unit:  mp.UnitInteger,
 			Metrics: []mp.Metrics{
 				{Name: "evictions", Label: "Evictions", Diff: true},
+				{Name: "nonzero_evictions", Label: "Nonzero Evictions", Diff: true},
+				{Name: "reclaimed", Label: "Reclaimed", Diff: true},
 			},
 		},
 		"unfetched": {
