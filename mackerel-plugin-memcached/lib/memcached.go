@@ -14,10 +14,11 @@ import (
 
 // MemcachedPlugin mackerel plugin for memchached
 type MemcachedPlugin struct {
-	Target   string
-	Socket   string
-	Tempfile string
-	Prefix   string
+	Target    string
+	Socket    string
+	SlabStats bool
+	Tempfile  string
+	Prefix    string
 }
 
 // MetricKeyPrefix interface for PluginWithPrefix
@@ -167,6 +168,7 @@ func Do() {
 	optHost := flag.String("host", "localhost", "Hostname")
 	optPort := flag.String("port", "11211", "Port")
 	optSocket := flag.String("socket", "", "Server socket (overrides hosts and port)")
+	optSlabStat := flag.Bool("enable-slab-stats", "", "enable slab stat or not")
 	optPrefix := flag.String("metric-key-prefix", "memcached", "Metric key prefix")
 	optTempfile := flag.String("tempfile", "", "Temp file name")
 	flag.Parse()
@@ -174,6 +176,7 @@ func Do() {
 	var memcached MemcachedPlugin
 
 	memcached.Prefix = *optPrefix
+	memcached.SlabStats = *optSlabStat
 
 	if *optSocket != "" {
 		memcached.Socket = *optSocket
