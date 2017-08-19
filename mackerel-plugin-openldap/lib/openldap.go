@@ -288,7 +288,7 @@ func (m OpenLDAPPlugin) GraphDefinition() map[string]mp.Graphs {
 			Unit:  "integer",
 			Metrics: []mp.Metrics{
 				{Name: "connections_total_monitorCounter", Label: "total connection", Diff: true},
-				{Name: "connections_current_monitorCounter", Label: "current connection", Diff: true},
+				{Name: "connections_current_monitorCounter", Label: "current connection", Diff: false},
 			},
 		},
 	}
