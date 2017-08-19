@@ -41,6 +41,8 @@ func (m MemcachedPlugin) FetchMetrics() (map[string]float64, error) {
 	if err != nil {
 		return nil, err
 	}
+	defer conn.Close()
+
 	fmt.Fprintln(conn, "stats")
 
 	ret, err := m.parseStats(conn)
