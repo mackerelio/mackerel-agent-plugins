@@ -74,6 +74,13 @@ var graphdef = map[string]mp.Graphs{
 			{Name: "ClusterUsedSpace", Label: "ClusterUsedSpace"},
 		},
 	},
+	"es.ClusterIndexWritesBlocked": {
+		Label: "AWS ES ClusterIndexWritesBlocked",
+		Unit:  "integer",
+		Metrics: []mp.Metrics{
+			{Name: "ClusterIndexWritesBlocked", Label: "ClusterIndexWritesBlocked"},
+		},
+	},
 	"es.JVMMemoryPressure": {
 		Label: "AWS ES JVMMemoryPressure",
 		Unit:  "percentage",
@@ -244,6 +251,7 @@ func (p ESPlugin) FetchMetrics() (map[string]float64, error) {
 		{Name: "CPUUtilization", Type: metricsTypeMaximum},
 		{Name: "FreeStorageSpace", Type: metricsTypeMinimum},
 		{Name: "ClusterUsedSpace", Type: metricsTypeMinimum},
+		{Name: "ClusterIndexWritesBlocked", Type: metricsTypeMaximum},
 		{Name: "JVMMemoryPressure", Type: metricsTypeMaximum},
 		{Name: "AutomatedSnapshotFailure", Type: metricsTypeMaximum},
 		{Name: "MasterCPUUtilization", Type: metricsTypeMaximum},
