@@ -57,6 +57,9 @@ func (m MemcachedPlugin) FetchMetrics() (map[string]float64, error) {
 		for _, ss := range slabStats {
 			ret["nonzero_evictions"] += float64(ss.EvictedNonzero)
 			ret[fmt.Sprintf("slab.items.%d", ss.ID)] = float64(ss.Number)
+			ret[fmt.Sprintf("slab.evictions.%d.evicted", ss.ID)] = float64(ss.Evicted)
+			ret[fmt.Sprintf("slab.evictions.%d.evicted_nonzero", ss.ID)] = float64(ss.EvictedNonzero)
+			ret[fmt.Sprintf("slab.evictions.%d.reclaimed", ss.ID)] = float64(ss.Reclaimed)
 		}
 	}
 	return ret, nil
@@ -132,7 +135,7 @@ func (m MemcachedPlugin) GraphDefinition() map[string]mp.Graphs {
 			Unit:  "integer",
 			Metrics: []mp.Metrics{
 				{Name: "evictions", Label: "Evictions", Diff: true},
-				{Name: "nonzero_evictions", Label: "Non Zero Evictions", Diff: true},
+				{Name: "nonzero_evictions", Label: "Nonzero Evictions", Diff: true},
 				{Name: "reclaimed", Label: "Reclaimed", Diff: true},
 			},
 		},
@@ -177,10 +180,19 @@ func (m MemcachedPlugin) GraphDefinition() map[string]mp.Graphs {
 			},
 		},
 		"slab.items": {
-			Label: (labelPrefix + " Items"),
+			Label: (labelPrefix + "Slab Items"),
 			Unit:  "integer",
 			Metrics: []mp.Metrics{
 				{Name: "*", Label: "%1", Diff: false, Stacked: true},
+			},
+		},
+		"slab.evictions.#": {
+			Label: (labelPrefix + "Slab Evictions"),
+			Unit:  "integer",
+			Metrics: []mp.Metrics{
+				{Name: "evicted", Label: "Evicted Items", Diff: true},
+				{Name: "evicted_nonzero", Label: "Nonzero Evicted Items", Diff: true},
+				{Name: "reclaimed", Label: "Reclaimed Items", Diff: true},
 			},
 		},
 	}
