@@ -14,33 +14,29 @@ import (
 	mp "github.com/mackerelio/go-mackerel-plugin"
 )
 
+const (
+	nameSpace          = "AWS/ES"
+	metricsTypeAverage = "Average"
+	metricsTypeSum     = "Sum"
+	metricsTypeMaximum = "Maximum"
+	metricsTypeMinimum = "Minimum"
+)
+
 var graphdef = map[string]mp.Graphs{
+	"es.ClusterStatus": {
+		Label: "AWS ES ClusterStatus",
+		Unit:  "integer",
+		Metrics: []mp.Metrics{
+			{Name: "ClusterStatus.green", Label: "green"},
+			{Name: "ClusterStatus.yellow", Label: "yellow"},
+			{Name: "ClusterStatus.red", Label: "red"},
+		},
+	},
 	"es.Nodes": {
 		Label: "AWS ES Nodes",
 		Unit:  "integer",
 		Metrics: []mp.Metrics{
 			{Name: "Nodes", Label: "Nodes"},
-		},
-	},
-	"es.CPUUtilization": {
-		Label: "AWS ES CPU Utilization",
-		Unit:  "percentage",
-		Metrics: []mp.Metrics{
-			{Name: "CPUUtilization", Label: "CPUUtilization"},
-		},
-	},
-	"es.JVMMemoryPressure": {
-		Label: "AWS ES JVMMemoryPressure",
-		Unit:  "percentage",
-		Metrics: []mp.Metrics{
-			{Name: "JVMMemoryPressure", Label: "JVMMemoryPressure"},
-		},
-	},
-	"es.FreeStorageSpace": {
-		Label: "AWS ES Free Storage Space",
-		Unit:  "bytes",
-		Metrics: []mp.Metrics{
-			{Name: "FreeStorageSpace", Label: "FreeStorageSpace"},
 		},
 	},
 	"es.SearchableDocuments": {
@@ -57,12 +53,61 @@ var graphdef = map[string]mp.Graphs{
 			{Name: "DeletedDocuments", Label: "DeletedDocuments"},
 		},
 	},
-	"es.IOPS": {
-		Label: "AWS ES IOPS",
-		Unit:  "iops",
+	"es.CPUUtilization": {
+		Label: "AWS ES CPU Utilization",
+		Unit:  "percentage",
 		Metrics: []mp.Metrics{
-			{Name: "ReadIOPS", Label: "ReadIOPS"},
-			{Name: "WriteIOPS", Label: "WriteIOPS"},
+			{Name: "CPUUtilization", Label: "CPUUtilization"},
+		},
+	},
+	"es.FreeStorageSpace": {
+		Label: "AWS ES Free Storage Space",
+		Unit:  "bytes",
+		Metrics: []mp.Metrics{
+			{Name: "FreeStorageSpace", Label: "FreeStorageSpace"},
+		},
+	},
+	"es.JVMMemoryPressure": {
+		Label: "AWS ES JVMMemoryPressure",
+		Unit:  "percentage",
+		Metrics: []mp.Metrics{
+			{Name: "JVMMemoryPressure", Label: "JVMMemoryPressure"},
+		},
+	},
+	"es.AutomatedSnapshotFailure": {
+		Label: "AWS ES AutomatedSnapshotFailure",
+		Unit:  "integer",
+		Metrics: []mp.Metrics{
+			{Name: "AutomatedSnapshotFailure", Label: "AutomatedSnapshotFailure"},
+		},
+	},
+	"es.MasterCPUUtilization": {
+		Label: "AWS ES MasterCPUUtilization",
+		Unit:  "percentage",
+		Metrics: []mp.Metrics{
+			{Name: "MasterCPUUtilization", Label: "MasterCPUUtilization"},
+		},
+	},
+	"es.MasterFreeStorageSpace": {
+		Label: "AWS ES MasterFreeStorageSpace",
+		Unit:  "bytes",
+		Metrics: []mp.Metrics{
+			{Name: "MasterFreeStorageSpace", Label: "MasterFreeStorageSpace"},
+		},
+	},
+	"es.MasterJVMMemoryPressure": {
+		Label: "AWS ES MasterJVMMemoryPressure",
+		Unit:  "percentage",
+		Metrics: []mp.Metrics{
+			{Name: "MasterJVMMemoryPressure", Label: "MasterJVMMemoryPressure"},
+		},
+	},
+	"es.Latency": {
+		Label: "AWS ES Latency",
+		Unit:  "float",
+		Metrics: []mp.Metrics{
+			{Name: "ReadLatency", Label: "ReadLatency"},
+			{Name: "WriteLatency", Label: "WriteLatency"},
 		},
 	},
 	"es.Throughput": {
@@ -80,51 +125,19 @@ var graphdef = map[string]mp.Graphs{
 			{Name: "DiskQueueDepth", Label: "DiskQueueDepth"},
 		},
 	},
-	"es.AutomatedSnapshotFailure": {
-		Label: "AWS ES AutomatedSnapshotFailure",
-		Unit:  "integer",
+	"es.IOPS": {
+		Label: "AWS ES IOPS",
+		Unit:  "iops",
 		Metrics: []mp.Metrics{
-			{Name: "AutomatedSnapshotFailure", Label: "AutomatedSnapshotFailure"},
+			{Name: "ReadIOPS", Label: "ReadIOPS"},
+			{Name: "WriteIOPS", Label: "WriteIOPS"},
 		},
 	},
-	"es.MasterCPUUtilization": {
-		Label: "AWS ES MasterCPUUtilization",
-		Unit:  "percentage",
-		Metrics: []mp.Metrics{
-			{Name: "MasterCPUUtilization", Label: "MasterCPUUtilization"},
-		},
-	},
-	"es.Latency": {
-		Label: "AWS ES Latency",
-		Unit:  "float",
-		Metrics: []mp.Metrics{
-			{Name: "ReadLatency", Label: "ReadLatency"},
-			{Name: "WriteLatency", Label: "WriteLatency"},
-		},
-	},
-	"es.MasterJVMMemoryPressure": {
-		Label: "AWS ES MasterJVMMemoryPressure",
-		Unit:  "percentage",
-		Metrics: []mp.Metrics{
-			{Name: "MasterJVMMemoryPressure", Label: "MasterJVMMemoryPressure"},
-		},
-	},
-	"es.MasterFreeStorageSpace": {
-		Label: "AWS ES MasterFreeStorageSpace",
-		Unit:  "bytes",
-		Metrics: []mp.Metrics{
-			{Name: "MasterFreeStorageSpace", Label: "MasterFreeStorageSpace"},
-		},
-	},
-	"es.ClusterStatus": {
-		Label: "AWS ES ClusterStatus",
-		Unit:  "integer",
-		Metrics: []mp.Metrics{
-			{Name: "ClusterStatus.green", Label: "green"},
-			{Name: "ClusterStatus.yellow", Label: "yellow"},
-			{Name: "ClusterStatus.red", Label: "red"},
-		},
-	},
+}
+
+type metrics struct {
+	Name string
+	Type string
 }
 
 // ESPlugin mackerel plugin for aws elasticsearch
@@ -136,8 +149,6 @@ type ESPlugin struct {
 	ClientID        string
 	CloudWatch      *cloudwatch.CloudWatch
 }
-
-const esNameSpace = "AWS/ES"
 
 func (p *ESPlugin) prepare() error {
 	sess, err := session.NewSession()
@@ -157,64 +168,8 @@ func (p *ESPlugin) prepare() error {
 	return nil
 }
 
-func (p ESPlugin) getLastPoint(dimensions []*cloudwatch.Dimension, metricName *string) (float64, error) {
+func (p ESPlugin) getLastPoint(metric metrics) (float64, error) {
 	now := time.Now()
-
-	response, err := p.CloudWatch.GetMetricStatistics(&cloudwatch.GetMetricStatisticsInput{
-		Dimensions: dimensions,
-		StartTime:  aws.Time(now.Add(time.Duration(180) * time.Second * -1)),
-		EndTime:    aws.Time(now),
-		MetricName: metricName,
-		Period:     aws.Int64(60),
-		Statistics: []*string{aws.String("Average")},
-		Namespace:  aws.String(esNameSpace),
-	})
-
-	if err != nil {
-		return 0, err
-	}
-
-	datapoints := response.Datapoints
-	if len(datapoints) == 0 {
-		return 0, errors.New("fetched no datapoints")
-	}
-
-	latest := new(time.Time)
-	var latestVal float64
-	for _, dp := range datapoints {
-		if dp.Timestamp.Before(*latest) {
-			continue
-		}
-
-		latest = dp.Timestamp
-		latestVal = *dp.Average
-	}
-
-	return latestVal, nil
-}
-
-// FetchMetrics interface for mackerelplugin
-func (p ESPlugin) FetchMetrics() (map[string]float64, error) {
-	dimensionFilters := []*cloudwatch.DimensionFilter{
-		{
-			Name:  aws.String("DomainName"),
-			Value: aws.String(p.Domain),
-		},
-		{
-			Name:  aws.String("ClientId"),
-			Value: aws.String(p.ClientID),
-		},
-	}
-
-	ret, err := p.CloudWatch.ListMetrics(&cloudwatch.ListMetricsInput{
-		Namespace:  aws.String(esNameSpace),
-		Dimensions: dimensionFilters,
-	})
-	if err != nil {
-		log.Printf("%s", err)
-	}
-
-	stat := make(map[string]float64)
 
 	dimensions := []*cloudwatch.Dimension{
 		{
@@ -226,16 +181,83 @@ func (p ESPlugin) FetchMetrics() (map[string]float64, error) {
 			Value: aws.String(p.ClientID),
 		},
 	}
-	for _, met := range ret.Metrics {
-		v, err := p.getLastPoint(dimensions, met.MetricName)
+
+	response, err := p.CloudWatch.GetMetricStatistics(&cloudwatch.GetMetricStatisticsInput{
+		Dimensions: dimensions,
+		StartTime:  aws.Time(now.Add(time.Duration(180) * time.Second * -1)),
+		EndTime:    aws.Time(now),
+		MetricName: aws.String(metric.Name),
+		Period:     aws.Int64(60),
+		Statistics: []*string{aws.String(metric.Type)},
+		Namespace:  aws.String(nameSpace),
+	})
+
+	if err != nil {
+		return 0, err
+	}
+
+	datapoints := response.Datapoints
+	if len(datapoints) == 0 {
+		return 0, errors.New("fetched no datapoints")
+	}
+
+	// get a least recently datapoint
+	// because a most recently datapoint is not stable.
+	least := time.Now()
+	var latestVal float64
+	for _, dp := range datapoints {
+		if dp.Timestamp.Before(least) {
+			least = *dp.Timestamp
+			if metric.Type == metricsTypeAverage {
+				latestVal = *dp.Average
+			} else if metric.Type == metricsTypeSum {
+				latestVal = *dp.Sum
+			} else if metric.Type == metricsTypeMaximum {
+				latestVal = *dp.Maximum
+			} else if metric.Type == metricsTypeMinimum {
+				latestVal = *dp.Minimum
+			}
+		}
+	}
+
+	return latestVal, nil
+}
+
+// FetchMetrics interface for mackerelplugin
+func (p ESPlugin) FetchMetrics() (map[string]float64, error) {
+	stat := make(map[string]float64)
+
+	for _, met := range [...]metrics{
+		{Name: "ClusterStatus.green", Type: metricsTypeMinimum},
+		{Name: "ClusterStatus.yellow", Type: metricsTypeMaximum},
+		{Name: "ClusterStatus.red", Type: metricsTypeMaximum},
+		{Name: "Nodes", Type: metricsTypeAverage},
+		{Name: "SearchableDocuments", Type: metricsTypeAverage},
+		{Name: "DeletedDocuments", Type: metricsTypeAverage},
+		{Name: "CPUUtilization", Type: metricsTypeMaximum},
+		{Name: "FreeStorageSpace", Type: metricsTypeMinimum},
+		{Name: "JVMMemoryPressure", Type: metricsTypeMaximum},
+		{Name: "AutomatedSnapshotFailure", Type: metricsTypeMaximum},
+		{Name: "MasterCPUUtilization", Type: metricsTypeMaximum},
+		{Name: "MasterFreeStorageSpace", Type: metricsTypeSum},
+		{Name: "MasterJVMMemoryPressure", Type: metricsTypeMaximum},
+		{Name: "ReadLatency", Type: metricsTypeAverage},
+		{Name: "WriteLatency", Type: metricsTypeAverage},
+		{Name: "ReadThroughput", Type: metricsTypeSum},
+		{Name: "WriteThroughput", Type: metricsTypeSum},
+		{Name: "DiskQueueDepth", Type: metricsTypeAverage},
+		{Name: "ReadIOPS", Type: metricsTypeSum},
+		{Name: "WriteIOPS", Type: metricsTypeSum},
+	} {
+		v, err := p.getLastPoint(met)
 		if err == nil {
-			if *met.MetricName == "MasterFreeStorageSpace" || *met.MetricName == "FreeStorageSpace" {
+			if met.Name == "MasterFreeStorageSpace" || met.Name == "FreeStorageSpace" {
 				// MBytes -> Bytes
 				v = v * 1024 * 1024
 			}
-			stat[*met.MetricName] = v
+			stat[met.Name] = v
 		} else {
-			log.Printf("%s: %s", *met.MetricName, err)
+			log.Printf("%s: %s", met, err)
 		}
 	}
 
