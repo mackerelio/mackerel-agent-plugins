@@ -3,7 +3,6 @@ package mpmemcached
 import (
 	"bytes"
 	"fmt"
-	"reflect"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -14,7 +13,7 @@ func TestGraphDefinition(t *testing.T) {
 
 	graphdef := memcached.GraphDefinition()
 	if len(graphdef) != 9 {
-		t.Errorf("GetTempfilename: %d should be 8", len(graphdef))
+		t.Errorf("GetTempfilename: %d should be 9", len(graphdef))
 	}
 }
 
@@ -64,6 +63,5 @@ END
 	fmt.Println(stat)
 	assert.Nil(t, err)
 	// Memcached Stats
-	assert.EqualValues(t, reflect.TypeOf(stat["get_hits"]).String(), "string")
-	assert.EqualValues(t, stat["get_hits"].(string), "2769383483")
+	assert.EqualValues(t, stat["get_hits"], 2769383483)
 }
