@@ -123,6 +123,13 @@ var graphdef = map[string]mp.Graphs{
 			{Name: "MasterJVMMemoryPressure", Label: "MasterJVMMemoryPressure"},
 		},
 	},
+	"es.MasterReachableFromNode": {
+		Label: "AWS ES MasterReachableFromNode",
+		Unit:  "percentage",
+		Metrics: []mp.Metrics{
+			{Name: "MasterReachableFromNode", Label: "MasterReachableFromNode"},
+		},
+	},
 	"es.Latency": {
 		Label: "AWS ES Latency",
 		Unit:  "float",
@@ -265,6 +272,7 @@ func (p ESPlugin) FetchMetrics() (map[string]float64, error) {
 		{Name: "MasterCPUUtilization", Type: metricsTypeMaximum},
 		{Name: "MasterFreeStorageSpace", Type: metricsTypeSum},
 		{Name: "MasterJVMMemoryPressure", Type: metricsTypeMaximum},
+		{Name: "MasterReachableFromNode", Type: metricsTypeMinimum},
 		{Name: "ReadLatency", Type: metricsTypeAverage},
 		{Name: "WriteLatency", Type: metricsTypeAverage},
 		{Name: "ReadThroughput", Type: metricsTypeSum},
