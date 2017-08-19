@@ -3,6 +3,15 @@ mackerel-plugin-openldap
 
 OpenLDAP custom metrics plugin for mackerel.io agent.
 
+## Usege
+
+
+### Set up your OpenLDAP server
+
+To use this plugin, you need to enable the monitoring interface of slapd.
+
+Details of setting are on this page. -> https://www.openldap.org/doc/admin24/monitoringslapd.html
+
 ## Synopsis
 
 ```shell

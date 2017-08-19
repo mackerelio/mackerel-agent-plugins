@@ -255,13 +255,31 @@ func (m OpenLDAPPlugin) GraphDefinition() map[string]mp.Graphs {
 				{Name: "threads_active_monitoredInfo", Label: "active", Diff: false},
 			},
 		},
-		"statistics": {
-			Label: (labelPrefix + " statistics"),
+		"statistics_bytes": {
+			Label: (labelPrefix + " statistics bytes"),
 			Unit:  "integer",
 			Metrics: []mp.Metrics{
 				{Name: "statistics_bytes_monitorCounter", Label: "bytes", Diff: true},
+			},
+		},
+		"statistics_pdu": {
+			Label: (labelPrefix + " statistics pdu"),
+			Unit:  "integer",
+			Metrics: []mp.Metrics{
 				{Name: "statistics_pdu_monitorCounter", Label: "pdu", Diff: true},
+			},
+		},
+		"statistics_entries": {
+			Label: (labelPrefix + " statistics entries"),
+			Unit:  "integer",
+			Metrics: []mp.Metrics{
 				{Name: "statistics_entries_monitorCounter", Label: "entries", Diff: true},
+			},
+		},
+		"statistics_referrals": {
+			Label: (labelPrefix + " statistics referrals"),
+			Unit:  "integer",
+			Metrics: []mp.Metrics{
 				{Name: "statistics_referrals_monitorCounter", Label: "referrals", Diff: true},
 			},
 		},
