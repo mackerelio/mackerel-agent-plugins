@@ -110,6 +110,7 @@ func (m MemcachedPlugin) GraphDefinition() map[string]mp.Graphs {
 			Unit:  "integer",
 			Metrics: []mp.Metrics{
 				{Name: "evictions", Label: "Evictions", Diff: true, Type: "uint64"},
+				{Name: "nonzero_evictions", Label: "Non Zero Evictions", Diff: true, Type: "uint64"},
 				{Name: "reclaimed", Label: "Reclaimed", Diff: true, Type: "uint64"},
 			},
 		},
