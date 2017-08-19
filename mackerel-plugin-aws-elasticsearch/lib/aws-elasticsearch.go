@@ -95,6 +95,13 @@ var graphdef = map[string]mp.Graphs{
 			{Name: "AutomatedSnapshotFailure", Label: "AutomatedSnapshotFailure"},
 		},
 	},
+	"es.KibanaHealthyNodes": {
+		Label: "AWS ES KibanaHealthyNodes",
+		Unit:  "integer",
+		Metrics: []mp.Metrics{
+			{Name: "KibanaHealthyNodes", Label: "KibanaHealthyNodes"},
+		},
+	},
 	"es.MasterCPUUtilization": {
 		Label: "AWS ES MasterCPUUtilization",
 		Unit:  "percentage",
@@ -254,6 +261,7 @@ func (p ESPlugin) FetchMetrics() (map[string]float64, error) {
 		{Name: "ClusterIndexWritesBlocked", Type: metricsTypeMaximum},
 		{Name: "JVMMemoryPressure", Type: metricsTypeMaximum},
 		{Name: "AutomatedSnapshotFailure", Type: metricsTypeMaximum},
+		{Name: "KibanaHealthyNodes", Type: metricsTypeMinimum},
 		{Name: "MasterCPUUtilization", Type: metricsTypeMaximum},
 		{Name: "MasterFreeStorageSpace", Type: metricsTypeSum},
 		{Name: "MasterJVMMemoryPressure", Type: metricsTypeMaximum},
