@@ -5,10 +5,12 @@ import (
 	"flag"
 	"fmt"
 	"io"
+	"log"
 	"net"
 	"strconv"
 	"strings"
 
+	"github.com/Songmu/go-memcached-tool"
 	mp "github.com/mackerelio/go-mackerel-plugin"
 )
 
@@ -42,7 +44,21 @@ func (m MemcachedPlugin) FetchMetrics() (map[string]float64, error) {
 		return nil, err
 	}
 	fmt.Fprintln(conn, "stats")
-	return m.parseStats(conn)
+
+	ret, err := m.parseStats(conn)
+	if err != nil {
+		return nil, err
+	}
+	if m.SlabStats {
+		slabStats, err := memdtool.GetSlabStats(conn)
+		if err != nil {
+			log.Println("failed to get slab stats: %s", err.Error())
+		}
+		for _, ss := range slabStats {
+			ret["nonzero_evictions"] += float64(ss.EvictedNonzero)
+		}
+	}
+	return ret, nil
 }
 
 func (m MemcachedPlugin) parseStats(conn io.Reader) (map[string]float64, error) {
@@ -168,7 +184,7 @@ func Do() {
 	optHost := flag.String("host", "localhost", "Hostname")
 	optPort := flag.String("port", "11211", "Port")
 	optSocket := flag.String("socket", "", "Server socket (overrides hosts and port)")
-	optSlabStat := flag.Bool("enable-slab-stats", "", "enable slab stat or not")
+	optSlabStat := flag.Bool("enable-slab-stats", false, "enable slab stat or not")
 	optPrefix := flag.String("metric-key-prefix", "memcached", "Metric key prefix")
 	optTempfile := flag.String("tempfile", "", "Temp file name")
 	flag.Parse()
