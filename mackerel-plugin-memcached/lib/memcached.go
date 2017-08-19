@@ -99,14 +99,14 @@ func (m MemcachedPlugin) GraphDefinition() map[string]mp.Graphs {
 	var graphdef = map[string]mp.Graphs{
 		"connections": {
 			Label: (labelPrefix + " Connections"),
-			Unit:  "integer",
+			Unit:  mp.UnitInteger,
 			Metrics: []mp.Metrics{
 				{Name: "curr_connections", Label: "Connections"},
 			},
 		},
 		"cmd": {
 			Label: (labelPrefix + " Command"),
-			Unit:  "integer",
+			Unit:  mp.UnitInteger,
 			Metrics: []mp.Metrics{
 				{Name: "cmd_get", Label: "Get", Diff: true},
 				{Name: "cmd_set", Label: "Set", Diff: true},
@@ -116,7 +116,7 @@ func (m MemcachedPlugin) GraphDefinition() map[string]mp.Graphs {
 		},
 		"hitmiss": {
 			Label: (labelPrefix + " Hits/Misses"),
-			Unit:  "integer",
+			Unit:  mp.UnitInteger,
 			Metrics: []mp.Metrics{
 				{Name: "get_hits", Label: "Get Hits", Diff: true},
 				{Name: "get_misses", Label: "Get Misses", Diff: true},
@@ -132,7 +132,7 @@ func (m MemcachedPlugin) GraphDefinition() map[string]mp.Graphs {
 		},
 		"evictions": {
 			Label: (labelPrefix + " Evictions"),
-			Unit:  "integer",
+			Unit:  mp.UnitInteger,
 			Metrics: []mp.Metrics{
 				{Name: "evictions", Label: "Evictions", Diff: true},
 				{Name: "nonzero_evictions", Label: "Nonzero Evictions", Diff: true},
@@ -141,7 +141,7 @@ func (m MemcachedPlugin) GraphDefinition() map[string]mp.Graphs {
 		},
 		"unfetched": {
 			Label: (labelPrefix + " Unfetched"),
-			Unit:  "integer",
+			Unit:  mp.UnitInteger,
 			Metrics: []mp.Metrics{
 				{Name: "expired_unfetched", Label: "Expired unfetched", Diff: true},
 				{Name: "evicted_unfetched", Label: "Evicted unfetched", Diff: true},
@@ -149,7 +149,7 @@ func (m MemcachedPlugin) GraphDefinition() map[string]mp.Graphs {
 		},
 		"rusage": {
 			Label: (labelPrefix + " Resouce Usage"),
-			Unit:  "float",
+			Unit:  mp.UnitFloat,
 			Metrics: []mp.Metrics{
 				{Name: "rusage_user", Label: "User", Diff: true},
 				{Name: "rusage_system", Label: "System", Diff: true},
@@ -157,7 +157,7 @@ func (m MemcachedPlugin) GraphDefinition() map[string]mp.Graphs {
 		},
 		"bytes": {
 			Label: (labelPrefix + " Traffics"),
-			Unit:  "bytes",
+			Unit:  mp.UnitBytes,
 			Metrics: []mp.Metrics{
 				{Name: "bytes_read", Label: "Read", Diff: true},
 				{Name: "bytes_written", Label: "Write", Diff: true},
@@ -165,7 +165,7 @@ func (m MemcachedPlugin) GraphDefinition() map[string]mp.Graphs {
 		},
 		"cachesize": {
 			Label: (labelPrefix + " Cache Size"),
-			Unit:  "bytes",
+			Unit:  mp.UnitBytes,
 			Metrics: []mp.Metrics{
 				{Name: "limit_maxbytes", Label: "Total"},
 				{Name: "bytes", Label: "Used"},
@@ -173,7 +173,7 @@ func (m MemcachedPlugin) GraphDefinition() map[string]mp.Graphs {
 		},
 		"items": {
 			Label: (labelPrefix + " Items"),
-			Unit:  "integer",
+			Unit:  mp.UnitInteger,
 			Metrics: []mp.Metrics{
 				{Name: "curr_items", Label: "Current Items"},
 				{Name: "new_items", Label: "New Items", Diff: true},
@@ -181,14 +181,14 @@ func (m MemcachedPlugin) GraphDefinition() map[string]mp.Graphs {
 		},
 		"slab.items": {
 			Label: (labelPrefix + "Slab Items"),
-			Unit:  "integer",
+			Unit:  mp.UnitInteger,
 			Metrics: []mp.Metrics{
 				{Name: "*", Label: "%1", Stacked: true},
 			},
 		},
 		"slab.evictions.#": {
 			Label: (labelPrefix + "Slab Evictions"),
-			Unit:  "integer",
+			Unit:  mp.UnitInteger,
 			Metrics: []mp.Metrics{
 				{Name: "evicted", Label: "Evicted Items", Diff: true},
 				{Name: "evicted_nonzero", Label: "Nonzero Evicted Items", Diff: true},
