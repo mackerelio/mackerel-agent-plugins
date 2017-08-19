@@ -101,7 +101,7 @@ func (m MemcachedPlugin) GraphDefinition() map[string]mp.Graphs {
 			Label: (labelPrefix + " Connections"),
 			Unit:  "integer",
 			Metrics: []mp.Metrics{
-				{Name: "curr_connections", Label: "Connections", Diff: false},
+				{Name: "curr_connections", Label: "Connections"},
 			},
 		},
 		"cmd": {
@@ -167,15 +167,15 @@ func (m MemcachedPlugin) GraphDefinition() map[string]mp.Graphs {
 			Label: (labelPrefix + " Cache Size"),
 			Unit:  "bytes",
 			Metrics: []mp.Metrics{
-				{Name: "limit_maxbytes", Label: "Total", Diff: false},
-				{Name: "bytes", Label: "Used", Diff: false},
+				{Name: "limit_maxbytes", Label: "Total"},
+				{Name: "bytes", Label: "Used"},
 			},
 		},
 		"items": {
 			Label: (labelPrefix + " Items"),
 			Unit:  "integer",
 			Metrics: []mp.Metrics{
-				{Name: "curr_items", Label: "Current Items", Diff: false},
+				{Name: "curr_items", Label: "Current Items"},
 				{Name: "new_items", Label: "New Items", Diff: true},
 			},
 		},
@@ -183,7 +183,7 @@ func (m MemcachedPlugin) GraphDefinition() map[string]mp.Graphs {
 			Label: (labelPrefix + "Slab Items"),
 			Unit:  "integer",
 			Metrics: []mp.Metrics{
-				{Name: "*", Label: "%1", Diff: false, Stacked: true},
+				{Name: "*", Label: "%1", Stacked: true},
 			},
 		},
 		"slab.evictions.#": {
