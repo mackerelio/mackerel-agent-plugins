@@ -52,7 +52,7 @@ func (m MemcachedPlugin) FetchMetrics() (map[string]float64, error) {
 	if m.SlabStats {
 		slabStats, err := memdtool.GetSlabStats(conn)
 		if err != nil {
-			log.Println("failed to get slab stats: %s", err.Error())
+			log.Printf("failed to get slab stats: %s", err.Error())
 		}
 		for _, ss := range slabStats {
 			ret["nonzero_evictions"] += float64(ss.EvictedNonzero)
