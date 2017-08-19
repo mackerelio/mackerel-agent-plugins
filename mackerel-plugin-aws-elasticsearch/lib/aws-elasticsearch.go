@@ -67,6 +67,13 @@ var graphdef = map[string]mp.Graphs{
 			{Name: "FreeStorageSpace", Label: "FreeStorageSpace"},
 		},
 	},
+	"es.ClusterUsedSpace": {
+		Label: "AWS ES Cluster Used Space",
+		Unit:  "bytes",
+		Metrics: []mp.Metrics{
+			{Name: "ClusterUsedSpace", Label: "ClusterUsedSpace"},
+		},
+	},
 	"es.JVMMemoryPressure": {
 		Label: "AWS ES JVMMemoryPressure",
 		Unit:  "percentage",
@@ -236,6 +243,7 @@ func (p ESPlugin) FetchMetrics() (map[string]float64, error) {
 		{Name: "DeletedDocuments", Type: metricsTypeAverage},
 		{Name: "CPUUtilization", Type: metricsTypeMaximum},
 		{Name: "FreeStorageSpace", Type: metricsTypeMinimum},
+		{Name: "ClusterUsedSpace", Type: metricsTypeMinimum},
 		{Name: "JVMMemoryPressure", Type: metricsTypeMaximum},
 		{Name: "AutomatedSnapshotFailure", Type: metricsTypeMaximum},
 		{Name: "MasterCPUUtilization", Type: metricsTypeMaximum},
@@ -251,7 +259,7 @@ func (p ESPlugin) FetchMetrics() (map[string]float64, error) {
 	} {
 		v, err := p.getLastPoint(met)
 		if err == nil {
-			if met.Name == "MasterFreeStorageSpace" || met.Name == "FreeStorageSpace" {
+			if met.Name == "ClusterUsedSpace" || met.Name == "MasterFreeStorageSpace" || met.Name == "FreeStorageSpace" {
 				// MBytes -> Bytes
 				v = v * 1024 * 1024
 			}
