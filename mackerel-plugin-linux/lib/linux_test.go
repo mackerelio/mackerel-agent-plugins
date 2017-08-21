@@ -189,5 +189,4 @@ func TestGetProc(t *testing.T) {
 	ret, err := getProc(stub)
 	assert.Nil(t, err)
 	assert.NotNil(t, ret)
-	assert.Contains(t, ret, "ram0")
 }
