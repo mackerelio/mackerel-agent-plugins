@@ -904,7 +904,7 @@ func parseInnodbStatus(str string, p *map[string]float64) {
 	}
 
 	// finalize
-	(*p)["queries_queued"] = (*p)["log_bytes_written"] - (*p)["log_bytes_flushed"]
+	(*p)["unflushed_log"] = (*p)["log_bytes_written"] - (*p)["log_bytes_flushed"]
 	(*p)["uncheckpointed_bytes"] = (*p)["log_bytes_written"] - (*p)["last_checkpoint"]
 }
 
