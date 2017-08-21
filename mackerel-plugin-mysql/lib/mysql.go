@@ -684,8 +684,8 @@ func parseInnodbStatus(str string, p *map[string]float64) {
 			increaseMap(p, "innodb_locked_tables", record[6])
 			continue
 		}
-		if isTransaction && strings.Index(line, "lock struct(s)") == 0 {
-			if strings.Index(line, "LOCK WAIT") > 0 {
+		if isTransaction && strings.Index(line, "lock struct(s)") > 0 {
+			if strings.Index(line, "LOCK WAIT") == 0 {
 				increaseMap(p, "innodb_lock_structs", record[2])
 				increaseMap(p, "locked_transactions", "1")
 			} else {
