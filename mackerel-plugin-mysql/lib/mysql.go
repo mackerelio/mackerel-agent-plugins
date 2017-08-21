@@ -679,7 +679,7 @@ func parseInnodbStatus(str string, p *map[string]float64) {
 			(*p)["read_views"], _ = atof(record[0])
 			continue
 		}
-		if strings.Index(line, "------- TRX HAS BEEN") == 0 {
+		if strings.Index(line, "mysql tables in use") == 0 {
 			increaseMap(p, "innodb_tables_in_use", record[4])
 			increaseMap(p, "innodb_locked_tables", record[6])
 			continue
