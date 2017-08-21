@@ -602,6 +602,7 @@ func parseInnodbStatus(str string, p *map[string]float64) {
 	prevLine := ""
 
 	for _, line := range strings.Split(str, "\n") {
+		line = strings.TrimLeft(line, " ")
 		record := strings.Fields(line)
 
 		// Innodb Semaphores
@@ -705,7 +706,7 @@ func parseInnodbStatus(str string, p *map[string]float64) {
 			(*p)["pending_normal_aio_writes"], _ = atof(record[7])
 			continue
 		}
-		if strings.Index(line, "ibuf aio reads") == 0 {
+		if strings.Index(line, "ibuf aio reads") == 0 && len(record) >= 10 {
 			(*p)["pending_ibuf_aio_reads"], _ = atof(record[3])
 			(*p)["pending_aio_log_ios"], _ = atof(record[6])
 			(*p)["pending_aio_sync_ios"], _ = atof(record[9])
