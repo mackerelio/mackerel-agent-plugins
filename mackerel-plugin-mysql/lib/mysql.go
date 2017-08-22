@@ -290,8 +290,9 @@ func (m MySQLPlugin) FetchMetrics() (map[string]interface{}, error) {
 
 	if m.DisableInnoDB != true {
 		m.fetchShowInnodbStatus(db, stat)
-		m.fetchShowVariables(db, stat)
 	}
+
+	m.fetchShowVariables(db, stat)
 
 	m.fetchShowSlaveStatus(db, stat)
 
