@@ -40,6 +40,15 @@ func init() {
 func (m MySQLPlugin) defaultGraphdef() map[string]mp.Graphs {
 	labelPrefix := strings.Title(strings.Replace(m.MetricKeyPrefix(), "mysql", "MySQL", -1))
 
+	capacityMetrics := []mp.Metrics{
+		{Name: "PercentageOfConnections", Label: "Percentage Of Connections", Diff: false, Stacked: false},
+	}
+	if m.DisableInnoDB != true {
+		capacityMetrics = append(capacityMetrics, mp.Metrics{
+			Name: "PercentageOfBufferPool", Label: "Percentage Of Buffer Pool", Diff: false, Stacked: false,
+		})
+	}
+
 	return map[string]mp.Graphs{
 		"cmd": {
 			Label: labelPrefix + " Command",
@@ -117,12 +126,9 @@ func (m MySQLPlugin) defaultGraphdef() map[string]mp.Graphs {
 			},
 		},
 		"capacity": {
-			Label: labelPrefix + " Capacity",
-			Unit:  "percentage",
-			Metrics: []mp.Metrics{
-				{Name: "PercentageOfConnections", Label: "Percentage Of Connections", Diff: false, Stacked: false},
-				{Name: "PercentageOfBufferPool", Label: "Percentage Of Buffer Pool", Diff: false, Stacked: false},
-			},
+			Label:   labelPrefix + " Capacity",
+			Unit:    "percentage",
+			Metrics: capacityMetrics,
 		},
 	}
 }
@@ -268,7 +274,9 @@ func (m MySQLPlugin) fetchProcesslist(db mysql.Conn, stat map[string]float64) er
 
 func (m MySQLPlugin) calculateCapacity(stat map[string]float64) {
 	stat["PercentageOfConnections"] = 100.0 * stat["Threads_connected"] / stat["max_connections"]
-	stat["PercentageOfBufferPool"] = 100.0 * stat["database_pages"] / stat["pool_size"]
+	if m.DisableInnoDB != true {
+		stat["PercentageOfBufferPool"] = 100.0 * stat["database_pages"] / stat["pool_size"]
+	}
 }
 
 // FetchMetrics interface for mackerelplugin
