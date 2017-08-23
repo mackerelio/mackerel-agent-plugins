@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.30.0 (2017-08-23)
+
+* add mackerel-plugin-openldap to package #391 (astj)
+* Add Burst Balance metric for AWS EC2 EBS plugin #384 (ariarijp)
+* Add openldap plugin  #374 (masahide)
+
+
 ## 0.29.1 (2017-08-02)
 
 * [solr] Fix a graph definition for Apache Solr's cumulative metric #381 (supercaracal)

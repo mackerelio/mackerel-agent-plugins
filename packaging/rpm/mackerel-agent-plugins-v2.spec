@@ -28,7 +28,7 @@ This package provides metric plugins for Mackerel.
 
 %{__install} -m0755 %{_sourcedir}/build/mackerel-plugin %{buildroot}%{__targetdir}/
 
-for i in accesslog apache2 aws-dynamodb aws-ec2-cpucredit aws-elasticache aws-elasticsearch aws-elb aws-kinesis-streams aws-lambda aws-rds aws-ses conntrack elasticsearch gostats graphite haproxy jmx-jolokia jvm linux mailq memcached mongodb multicore munin mysql nginx php-apc php-fpm php-opcache plack postgres proc-fd solr rabbitmq redis snmp squid td-table-count trafficserver twemproxy uwsgi-vassal varnish xentop aws-cloudfront aws-ec2-ebs fluentd docker unicorn uptime inode; do \
+for i in accesslog apache2 aws-dynamodb aws-ec2-cpucredit aws-elasticache aws-elasticsearch aws-elb aws-kinesis-streams aws-lambda aws-rds aws-ses conntrack elasticsearch gostats graphite haproxy jmx-jolokia jvm linux mailq memcached mongodb multicore munin mysql nginx openldap php-apc php-fpm php-opcache plack postgres proc-fd solr rabbitmq redis snmp squid td-table-count trafficserver twemproxy uwsgi-vassal varnish xentop aws-cloudfront aws-ec2-ebs fluentd docker unicorn uptime inode; do \
     ln -s ./mackerel-plugin %{buildroot}%{__targetdir}/mackerel-plugin-$i; \
 done
 
@@ -40,6 +40,11 @@ done
 %{__targetdir}/*
 
 %changelog
+* Wed Aug 23 2017 <mackerel-developers@hatena.ne.jp> - 0.30.0
+- add mackerel-plugin-openldap to package (by astj)
+- Add Burst Balance metric for AWS EC2 EBS plugin (by ariarijp)
+- Add openldap plugin  (by masahide)
+
 * Wed Aug 02 2017 <mackerel-developers@hatena.ne.jp> - 0.29.1
 - [solr] Fix a graph definition for Apache Solr's cumulative metric (by supercaracal)
 - [accesslog] Refine LTSV format detection logic (by Songmu)
