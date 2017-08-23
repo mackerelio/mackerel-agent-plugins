@@ -1,3 +1,14 @@
+mackerel-agent-plugins (0.30.0-1.v2) stable; urgency=low
+
+  * add mackerel-plugin-openldap to package (by astj)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/391>
+  * Add Burst Balance metric for AWS EC2 EBS plugin (by ariarijp)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/384>
+  * Add openldap plugin  (by masahide)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/374>
+
+ -- mackerel <mackerel-developers@hatena.ne.jp>  Wed, 23 Aug 2017 12:26:26 +0900
+
 mackerel-agent-plugins (0.29.1-1.v2) stable; urgency=low
 
   * [solr] Fix a graph definition for Apache Solr's cumulative metric (by supercaracal)
