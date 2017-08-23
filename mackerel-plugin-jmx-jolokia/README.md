@@ -19,7 +19,7 @@ command = "/path/to/mackerel-plugin-jmx-jolokia"
 ## Example of jolokia response
 
 ```
-curl -s http://127.0.0.1:8778/jolokia/read/java.lang:type=Memory/HeapMemoryUsage | jq .
+curl -s http://127.0.0.1:8778/jolokia/read/java.lang:type=Memory | jq .
 {
   "request": {
     "mbean": "java.lang:type=Memory",
