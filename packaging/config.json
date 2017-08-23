@@ -27,6 +27,7 @@
        "munin",
        "mysql",
        "nginx",
+       "openldap",
        "php-apc",
        "php-fpm",
        "php-opcache",
