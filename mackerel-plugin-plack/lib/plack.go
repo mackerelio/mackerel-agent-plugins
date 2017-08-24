@@ -100,7 +100,7 @@ func (p PlackPlugin) parseStats(body io.Reader) (map[string]interface{}, error) 
 	}
 
 	if s, err := strconv.ParseFloat(s.IdleWorkers, 64); err == nil {
-		stat["idle"] = s
+		stat["idle_workers"] = s
 	}
 
 	if s, err := strconv.ParseUint(s.TotalAccesses, 10, 64); err == nil {
