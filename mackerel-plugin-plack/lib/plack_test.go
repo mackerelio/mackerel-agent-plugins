@@ -85,11 +85,14 @@ func TestParse(t *testing.T) {
 func TestParseWithInsufficientResponse(t *testing.T) {
 	var plack PlackPlugin
 	stub := `
-{"TotalKbytes":"36","IdleWorkers":"","BusyWorkers":"0","TotalAccesses":"670","stats":[],"Uptime":1474047568}
+{"TotalKbytes":"36","IdleWorkers":"","BusyWorkers":"3","TotalAccesses":"670","stats":[],"Uptime":1474047568}
 `
 	plackStats := bytes.NewBufferString(stub)
 
 	stat, err := plack.parseStats(plackStats)
 	fmt.Println(stat)
 	assert.Nil(t, err)
+	assert.EqualValues(t, stat["bytes_sent"], 36)
+	assert.EqualValues(t, stat["busy_workers"], 3)
+	assert.EqualValues(t, stat["requests"], uint(670))
 }
