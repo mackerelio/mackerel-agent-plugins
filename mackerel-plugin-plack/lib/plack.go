@@ -95,11 +95,21 @@ func (p PlackPlugin) parseStats(body io.Reader) (map[string]interface{}, error) 
 		return nil, err
 	}
 
-	// If some values are not parsable, just skip and ignore them.
-	stat["busy_workers"], _ = strconv.ParseFloat(s.BusyWorkers, 64)
-	stat["idle_workers"], _ = strconv.ParseFloat(s.IdleWorkers, 64)
-	stat["requests"], _ = strconv.ParseUint(s.TotalAccesses, 10, 64)
-	stat["bytes_sent"], _ = strconv.ParseUint(s.TotalKbytes, 10, 64)
+	if s, err := strconv.ParseFloat(s.BusyWorkers, 64); err == nil {
+		stat["busy_workers"] = s
+	}
+
+	if s, err := strconv.ParseFloat(s.IdleWorkers, 64); err == nil {
+		stat["idle"] = s
+	}
+
+	if s, err := strconv.ParseUint(s.TotalAccesses, 10, 64); err == nil {
+		stat["requests"] = s
+	}
+
+	if s, err := strconv.ParseUint(s.TotalKbytes, 10, 64); err == nil {
+		stat["bytes_sent"] = s
+	}
 
 	return stat, nil
 }

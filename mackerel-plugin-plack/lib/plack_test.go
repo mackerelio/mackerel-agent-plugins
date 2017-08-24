@@ -95,4 +95,5 @@ func TestParseWithInsufficientResponse(t *testing.T) {
 	assert.EqualValues(t, stat["bytes_sent"], 36)
 	assert.EqualValues(t, stat["busy_workers"], 3)
 	assert.EqualValues(t, stat["requests"], uint(670))
+	assert.Nil(t, stat["idle_workers"])
 }
