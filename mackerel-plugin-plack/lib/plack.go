@@ -2,7 +2,6 @@ package mpplack
 
 import (
 	"encoding/json"
-	"errors"
 	"flag"
 	"fmt"
 	"io"
@@ -96,25 +95,12 @@ func (p PlackPlugin) parseStats(body io.Reader) (map[string]interface{}, error) 
 		return nil, err
 	}
 
-	stat["busy_workers"], err = strconv.ParseFloat(s.BusyWorkers, 64)
-	if err != nil {
-		return nil, errors.New("cannot get values")
-	}
+	// If some values are not parsable, just skip and ignore them.
+	stat["busy_workers"], _ = strconv.ParseFloat(s.BusyWorkers, 64)
+	stat["idle_workers"], _ = strconv.ParseFloat(s.IdleWorkers, 64)
+	stat["requests"], _ = strconv.ParseUint(s.TotalAccesses, 10, 64)
+	stat["bytes_sent"], _ = strconv.ParseUint(s.TotalKbytes, 10, 64)
 
-	stat["idle_workers"], err = strconv.ParseFloat(s.IdleWorkers, 64)
-	if err != nil {
-		return nil, errors.New("cannot get values")
-	}
-
-	stat["requests"], err = strconv.ParseUint(s.TotalAccesses, 10, 64)
-	if err != nil {
-		return nil, errors.New("cannot get values")
-	}
-
-	stat["bytes_sent"], err = strconv.ParseUint(s.TotalKbytes, 10, 64)
-	if err != nil {
-		return nil, errors.New("cannot get values")
-	}
 	return stat, nil
 }
 
