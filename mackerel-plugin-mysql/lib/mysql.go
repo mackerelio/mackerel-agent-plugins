@@ -179,13 +179,12 @@ func (m MySQLPlugin) fetchShowInnodbStatus(db mysql.Conn, stat map[string]float6
 	row, _, err := db.QueryFirst("SHOW /*!50000 ENGINE*/ INNODB STATUS")
 	if err != nil {
 		log.Fatalln("FetchMetrics (InnoDB Status): ", err)
-		return err
 	}
 
 	if len(row) > 0 {
 		parseInnodbStatus(string(row[len(row)-1].([]byte)), &stat)
 	} else {
-		log.Fatalln("FetchMetrics (InnoDB Status): row length is too small: ", len(row))
+		return fmt.Errorf("row length is too small: %d", len(row))
 	}
 	return nil
 }
@@ -297,7 +296,11 @@ func (m MySQLPlugin) FetchMetrics() (map[string]interface{}, error) {
 	m.fetchShowStatus(db, stat)
 
 	if m.DisableInnoDB != true {
-		m.fetchShowInnodbStatus(db, stat)
+		err := m.fetchShowInnodbStatus(db, stat)
+		if err != nil {
+			log.Println("FetchMetrics (InnoDB Status): ", err)
+			m.DisableInnoDB = true
+		}
 	}
 
 	m.fetchShowVariables(db, stat)
