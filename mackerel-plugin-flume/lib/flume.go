@@ -12,8 +12,11 @@ import (
 )
 
 const (
+	// Channel is Flume Channel Type
 	Channel = "CHANNEL"
+	// Sink is Flume Sink Type
 	Sink    = "SINK"
+	// Source is Flume Source Type
 	Source  = "SOURCE"
 )
 
