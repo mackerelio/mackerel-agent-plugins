@@ -64,6 +64,7 @@ func (m MySQLPlugin) defaultGraphdef() map[string]mp.Graphs {
 				{Name: "Com_replace", Label: "Replace", Diff: true, Stacked: true, Type: "uint64"},
 				{Name: "Com_replace_select", Label: "Replace Select", Diff: true, Stacked: true, Type: "uint64"},
 				{Name: "Com_load", Label: "Load", Diff: true, Stacked: true, Type: "uint64"},
+				{Name: "Com_set_option", Label: "Set Option", Diff: true, Stacked: true, Type: "uint64"},
 				{Name: "Questions", Label: "Questions", Diff: true, Stacked: false, Type: "uint64"},
 			},
 		},
