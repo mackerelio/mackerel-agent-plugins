@@ -208,7 +208,7 @@ func (m RedisPlugin) GraphDefinition() map[string]mp.Graphs {
 			Label: (labelPrefix + " Queries"),
 			Unit:  "integer",
 			Metrics: []mp.Metrics{
-				{Name: "instantaneous_ops_per_sec", Label: "Queries", Diff: false},
+				{Name: "total_commands_processed", Label: "Queries", Diff: true},
 			},
 		},
 		"connections": {
