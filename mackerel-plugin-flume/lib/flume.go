@@ -26,8 +26,6 @@ type FlumePlugin struct {
 	Prefix string
 }
 
-var graphdef = map[string]mp.Graphs{}
-
 // MetricKeyPrefix interface for PluginWithPrefix
 func (p *FlumePlugin) MetricKeyPrefix() string {
 	if p.Prefix == "" {
@@ -38,7 +36,97 @@ func (p *FlumePlugin) MetricKeyPrefix() string {
 
 // GraphDefinition interface for mackerelplugin
 func (p *FlumePlugin) GraphDefinition() map[string]mp.Graphs {
-	return graphdef
+	labelPrefix := strings.Title(p.Prefix)
+	return map[string]mp.Graphs{
+		"channel.capacity.#": {
+			Label: labelPrefix + " Channel Capacity",
+			Unit:  "integer",
+			Metrics: []mp.Metrics{
+				{Name: "ChannelCapacity", Label: "Channel Capacity"},
+				{Name: "ChannelSize", Label: "Channel Size"},
+			},
+		},
+		"channel.use_rate.#": {
+			Label: labelPrefix + " Channel Use Rate",
+			Unit:  "percentage",
+			Metrics: []mp.Metrics{
+				{Name: "ChannelFillPercentage", Label: "Channel Fill Percentage"},
+			},
+		},
+		"channel.event_put_num.#": {
+			Label: labelPrefix + " Channel Event Put Num",
+			Unit:  "integer",
+			Metrics: []mp.Metrics{
+				{Name: "EventPutAttemptCount", Label: "Attempt Count", Diff: true},
+				{Name: "EventPutSuccessCount", Label: "Success Count", Diff: true},
+			},
+		},
+		"channel.event_take_num.#": {
+			Label: labelPrefix + " Channel Event Take Num",
+			Unit:  "integer",
+			Metrics: []mp.Metrics{
+				{Name: "EventTakeAttemptCount", Label: "Attempt Count", Diff: true},
+				{Name: "EventTakeSuccessCount", Label: "Success Count", Diff: true},
+			},
+		},
+		"sink.batch_num.#": {
+			Label: labelPrefix + " Sink Batch Num",
+			Unit:  "integer",
+			Metrics: []mp.Metrics{
+				{Name: "BatchCompleteCount", Label: "Complete Count", Diff: true},
+				{Name: "BatchEmptyCount", Label: "Empty Count", Diff: true},
+				{Name: "BatchUnderflowCount", Label: "Underflow Count", Diff: true},
+			},
+		},
+		"sink.connection.#": {
+			Label: labelPrefix + " Sink Connection",
+			Unit:  "integer",
+			Metrics: []mp.Metrics{
+				{Name: "ConnectionCreatedCount", Label: "Created Count", Diff: true},
+				{Name: "ConnectionClosedCount", Label: "Closed Count", Diff: true},
+				{Name: "ConnectionFailedCount", Label: "Failed Count", Diff: true},
+			},
+		},
+		"sink.event_drain_num.#": {
+			Label: labelPrefix + " Sink Event Drain Num",
+			Unit:  "integer",
+			Metrics: []mp.Metrics{
+				{Name: "EventDrainAttemptCount", Label: "Attempt Count", Diff: true},
+				{Name: "EventDrainSuccessCount", Label: "Success Count", Diff: true},
+			},
+		},
+		"source.append_num.#": {
+			Label: labelPrefix + " Source Append Num",
+			Unit:  "integer",
+			Metrics: []mp.Metrics{
+				{Name: "AppendAcceptedCount", Label: "Accepted Count", Diff: true},
+				{Name: "AppendReceivedCount", Label: "Received Count", Diff: true},
+			},
+		},
+		"source.append_batch_num.#": {
+			Label: labelPrefix + " Source Append Batch Num",
+			Unit:  "integer",
+			Metrics: []mp.Metrics{
+				{Name: "AppendBatchAcceptedCount", Label: "Accepted Count", Diff: true},
+				{Name: "AppendBatchReceivedCount", Label: "Received Count", Diff: true},
+			},
+		},
+		"source.event_num.#": {
+			Label: labelPrefix + " Source Event Num",
+			Unit:  "integer",
+			Metrics: []mp.Metrics{
+				{Name: "EventAcceptedCount", Label: "Accepted Count", Diff: true},
+				{Name: "EventReceivedCount", Label: "Received Count", Diff: true},
+			},
+		},
+		"source.connection.#": {
+			Label: labelPrefix + " Source Connection",
+			Unit:  "integer",
+			Metrics: []mp.Metrics{
+				{Name: "OpenConnectionCount", Label: "Open Count"},
+			},
+		},
+	}
 }
 
 // FetchMetrics interface for mackerelplugin
@@ -73,13 +161,10 @@ func (p *FlumePlugin) parseMetrics(metrics map[string]interface{}) map[string]fl
 		switch typeName {
 		case Channel:
 			p.parseChannel(ret, componentName, v.(map[string]interface{}))
-			p.addGraphdefChannel(componentName)
 		case Sink:
 			p.parseSink(ret, componentName, v.(map[string]interface{}))
-			p.addGraphdefSink(componentName)
 		case Source:
 			p.parseSource(ret, componentName, v.(map[string]interface{}))
-			p.addGraphdefSource(componentName)
 		}
 	}
 
@@ -92,140 +177,34 @@ func (p *FlumePlugin) convertFloat64(value string) float64 {
 }
 
 func (p *FlumePlugin) parseChannel(ret map[string]float64, componentName string, value map[string]interface{}) {
-	ret[componentName + ".ChannelCapacity"]       = p.convertFloat64(value["ChannelCapacity"].(string))
-	ret[componentName + ".ChannelSize"]           = p.convertFloat64(value["ChannelSize"].(string))
-	ret[componentName + ".ChannelFillPercentage"] = p.convertFloat64(value["ChannelFillPercentage"].(string))
-	ret[componentName + ".EventPutAttemptCount"]  = p.convertFloat64(value["EventPutAttemptCount"].(string))
-	ret[componentName + ".EventPutSuccessCount"]  = p.convertFloat64(value["EventPutSuccessCount"].(string))
-	ret[componentName + ".EventTakeAttemptCount"] = p.convertFloat64(value["EventTakeAttemptCount"].(string))
-	ret[componentName + ".EventTakeSuccessCount"] = p.convertFloat64(value["EventTakeSuccessCount"].(string))
-}
-
-func (p *FlumePlugin) addGraphdefChannel(componentName string) {
-	labelPrefix := strings.Title(p.Prefix + " " + componentName)
-	graphdefPrefix := "channel."
-
-	graphdef[graphdefPrefix + "capacity"] = mp.Graphs{
-		Label: labelPrefix + " Channel Capacity",
-		Unit:  "integer",
-		Metrics: []mp.Metrics{
-			{Name: componentName + ".ChannelCapacity", Label: "Channel Capacity"},
-			{Name: componentName + ".ChannelSize", Label: "Channel Size"},
-		},
-	}
-	graphdef[graphdefPrefix + "use_rate"] = mp.Graphs{
-		Label: labelPrefix + " Channel Use Rate",
-		Unit:  "percentage",
-		Metrics: []mp.Metrics{
-			{Name: componentName + ".ChannelFillPercentage", Label: "Channel Fill Percentage"},
-		},
-	}
-	graphdef[graphdefPrefix + "event_put_num"] = mp.Graphs{
-		Label: labelPrefix + " Event Put Num",
-		Unit:  "integer",
-		Metrics: []mp.Metrics{
-			{Name: componentName + ".EventPutAttemptCount", Label: "Attempt Count", Diff: true},
-			{Name: componentName + ".EventPutSuccessCount", Label: "Success Count", Diff: true},
-		},
-	}
-	graphdef[graphdefPrefix + "event_take_num"] = mp.Graphs{
-		Label: labelPrefix + " Event Take Num",
-		Unit:  "integer",
-		Metrics: []mp.Metrics{
-			{Name: componentName + ".EventTakeAttemptCount", Label: "Attempt Count", Diff: true},
-			{Name: componentName + ".EventTakeSuccessCount", Label: "Success Count", Diff: true},
-		},
-	}
+	ret["channel.capacity." + componentName + ".ChannelCapacity"]             = p.convertFloat64(value["ChannelCapacity"].(string))
+	ret["channel.capacity." + componentName + ".ChannelSize"]                 = p.convertFloat64(value["ChannelSize"].(string))
+	ret["channel.use_rate." + componentName + ".ChannelFillPercentage"]       = p.convertFloat64(value["ChannelFillPercentage"].(string))
+	ret["channel.event_put_num." + componentName + ".EventPutAttemptCount"]   = p.convertFloat64(value["EventPutAttemptCount"].(string))
+	ret["channel.event_put_num." + componentName + ".EventPutSuccessCount"]   = p.convertFloat64(value["EventPutSuccessCount"].(string))
+	ret["channel.event_take_num." + componentName + ".EventTakeAttemptCount"] = p.convertFloat64(value["EventTakeAttemptCount"].(string))
+	ret["channel.event_take_num." + componentName + ".EventTakeSuccessCount"] = p.convertFloat64(value["EventTakeSuccessCount"].(string))
 }
 
 func (p *FlumePlugin) parseSink(ret map[string]float64, componentName string, value map[string]interface{}) {
-	ret[componentName + ".BatchCompleteCount"]     = p.convertFloat64(value["BatchCompleteCount"].(string))
-	ret[componentName + ".BatchEmptyCount"]        = p.convertFloat64(value["BatchEmptyCount"].(string))
-	ret[componentName + ".BatchUnderflowCount"]    = p.convertFloat64(value["BatchUnderflowCount"].(string))
-	ret[componentName + ".ConnectionCreatedCount"] = p.convertFloat64(value["ConnectionCreatedCount"].(string))
-	ret[componentName + ".ConnectionClosedCount"]  = p.convertFloat64(value["ConnectionClosedCount"].(string))
-	ret[componentName + ".ConnectionFailedCount"]  = p.convertFloat64(value["ConnectionFailedCount"].(string))
-	ret[componentName + ".EventDrainAttemptCount"] = p.convertFloat64(value["EventDrainAttemptCount"].(string))
-	ret[componentName + ".EventDrainSuccessCount"] = p.convertFloat64(value["EventDrainSuccessCount"].(string))
-}
-
-func (p *FlumePlugin) addGraphdefSink(componentName string) {
-	labelPrefix := strings.Title(p.Prefix + " " + componentName)
-	graphdefPrefix := "sink."
-
-	graphdef[graphdefPrefix + "batch_num"] = mp.Graphs{
-		Label: labelPrefix + " Batch Num",
-		Unit:  "integer",
-		Metrics: []mp.Metrics{
-			{Name: componentName + ".BatchCompleteCount", Label: "Complete Count", Diff: true},
-			{Name: componentName + ".BatchEmptyCount", Label: "Empty Count", Diff: true},
-			{Name: componentName + ".BatchUnderflowCount", Label: "Underflow Count", Diff: true},
-		},
-	}
-	graphdef[graphdefPrefix + "connection"] = mp.Graphs{
-		Label: labelPrefix + " Connection",
-		Unit:  "integer",
-		Metrics: []mp.Metrics{
-			{Name: componentName + ".ConnectionCreatedCount", Label: "Created Count", Diff: true},
-			{Name: componentName + ".ConnectionClosedCount", Label: "Closed Count", Diff: true},
-			{Name: componentName + ".ConnectionFailedCount", Label: "Failed Count", Diff: true},
-		},
-	}
-	graphdef[graphdefPrefix + "event_drain_num"] = mp.Graphs{
-		Label: labelPrefix + " Event Drain Num",
-		Unit:  "integer",
-		Metrics: []mp.Metrics{
-			{Name: componentName + ".EventDrainAttemptCount", Label: "Attempt Count", Diff: true},
-			{Name: componentName + ".EventDrainSuccessCount", Label: "Success Count", Diff: true},
-		},
-	}
+	ret["sink.batch_num." + componentName + ".BatchCompleteCount"]           = p.convertFloat64(value["BatchCompleteCount"].(string))
+	ret["sink.batch_num." + componentName + ".BatchEmptyCount"]              = p.convertFloat64(value["BatchEmptyCount"].(string))
+	ret["sink.batch_num." + componentName + ".BatchUnderflowCount"]          = p.convertFloat64(value["BatchUnderflowCount"].(string))
+	ret["sink.connection." + componentName + ".ConnectionCreatedCount"]      = p.convertFloat64(value["ConnectionCreatedCount"].(string))
+	ret["sink.connection." + componentName + ".ConnectionClosedCount"]       = p.convertFloat64(value["ConnectionClosedCount"].(string))
+	ret["sink.connection." + componentName + ".ConnectionFailedCount"]       = p.convertFloat64(value["ConnectionFailedCount"].(string))
+	ret["sink.event_drain_num." + componentName + ".EventDrainAttemptCount"] = p.convertFloat64(value["EventDrainAttemptCount"].(string))
+	ret["sink.event_drain_num." + componentName + ".EventDrainSuccessCount"] = p.convertFloat64(value["EventDrainSuccessCount"].(string))
 }
 
 func (p *FlumePlugin) parseSource(ret map[string]float64, componentName string, value map[string]interface{}) {
-	ret[componentName + ".AppendAcceptedCount"]      = p.convertFloat64(value["AppendAcceptedCount"].(string))
-	ret[componentName + ".AppendReceivedCount"]      = p.convertFloat64(value["AppendReceivedCount"].(string))
-	ret[componentName + ".AppendBatchAcceptedCount"] = p.convertFloat64(value["AppendBatchAcceptedCount"].(string))
-	ret[componentName + ".AppendBatchReceivedCount"] = p.convertFloat64(value["AppendBatchReceivedCount"].(string))
-	ret[componentName + ".EventAcceptedCount"]       = p.convertFloat64(value["EventAcceptedCount"].(string))
-	ret[componentName + ".EventReceivedCount"]       = p.convertFloat64(value["EventReceivedCount"].(string))
-	ret[componentName + ".OpenConnectionCount"]      = p.convertFloat64(value["OpenConnectionCount"].(string))
-}
-
-func (p *FlumePlugin) addGraphdefSource(componentName string) {
-	labelPrefix := strings.Title(p.Prefix + " " + componentName)
-	graphdefPrefix := "source."
-
-	graphdef[graphdefPrefix + "append_num"] = mp.Graphs{
-		Label: labelPrefix + " Append Num",
-		Unit:  "integer",
-		Metrics: []mp.Metrics{
-			{Name: componentName + ".AppendAcceptedCount", Label: "Accepted Count", Diff: true},
-			{Name: componentName + ".AppendReceivedCount", Label: "Received Count", Diff: true},
-		},
-	}
-	graphdef[graphdefPrefix + "append_batch_num"] = mp.Graphs{
-		Label: labelPrefix + " Append Batch Num",
-		Unit:  "integer",
-		Metrics: []mp.Metrics{
-			{Name: componentName + ".AppendBatchAcceptedCount", Label: "Accepted Count", Diff: true},
-			{Name: componentName + ".AppendBatchReceivedCount", Label: "Received Count", Diff: true},
-		},
-	}
-	graphdef[graphdefPrefix + "event_num"] = mp.Graphs{
-		Label: labelPrefix + " Event Num",
-		Unit:  "integer",
-		Metrics: []mp.Metrics{
-			{Name: componentName + ".EventAcceptedCount", Label: "Accepted Count", Diff: true},
-			{Name: componentName + ".EventReceivedCount", Label: "Received Count", Diff: true},
-		},
-	}
-	graphdef[graphdefPrefix + "connection"] = mp.Graphs{
-		Label: labelPrefix + " Connection",
-		Unit:  "integer",
-		Metrics: []mp.Metrics{
-			{Name: componentName + ".OpenConnectionCount", Label: "Open Count"},
-		},
-	}
+	ret["source.append_num." + componentName + ".AppendAcceptedCount"]            = p.convertFloat64(value["AppendAcceptedCount"].(string))
+	ret["source.append_num." + componentName + ".AppendReceivedCount"]            = p.convertFloat64(value["AppendReceivedCount"].(string))
+	ret["source.append_batch_num." + componentName + ".AppendBatchAcceptedCount"] = p.convertFloat64(value["AppendBatchAcceptedCount"].(string))
+	ret["source.append_batch_num." + componentName + ".AppendBatchReceivedCount"] = p.convertFloat64(value["AppendBatchReceivedCount"].(string))
+	ret["source.event_num." + componentName + ".EventAcceptedCount"]              = p.convertFloat64(value["EventAcceptedCount"].(string))
+	ret["source.event_num." + componentName + ".EventReceivedCount"]              = p.convertFloat64(value["EventReceivedCount"].(string))
+	ret["source.connection." + componentName + ".OpenConnectionCount"]            = p.convertFloat64(value["OpenConnectionCount"].(string))
 }
 
 // Do the plugin
