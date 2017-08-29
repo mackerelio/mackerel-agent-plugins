@@ -42,88 +42,88 @@ func (p *FlumePlugin) GraphDefinition() map[string]mp.Graphs {
 			Label: labelPrefix + " Channel Capacity",
 			Unit:  "integer",
 			Metrics: []mp.Metrics{
-				{Name: "ChannelCapacity", Label: "Channel Capacity"},
-				{Name: "ChannelSize", Label: "Channel Size"},
+				{Name: "ChannelCapacity", Label: "capacity"},
+				{Name: "ChannelSize", Label: "size"},
 			},
 		},
 		"channel.use_rate.#": {
 			Label: labelPrefix + " Channel Use Rate",
 			Unit:  "percentage",
 			Metrics: []mp.Metrics{
-				{Name: "ChannelFillPercentage", Label: "Channel Fill Percentage"},
+				{Name: "ChannelFillPercentage", Label: "fill percentage"},
 			},
 		},
 		"channel.event_put_num.#": {
 			Label: labelPrefix + " Channel Event Put Num",
 			Unit:  "integer",
 			Metrics: []mp.Metrics{
-				{Name: "EventPutAttemptCount", Label: "Attempt Count", Diff: true},
-				{Name: "EventPutSuccessCount", Label: "Success Count", Diff: true},
+				{Name: "EventPutAttemptCount", Label: "attempt", Diff: true},
+				{Name: "EventPutSuccessCount", Label: "success", Diff: true},
 			},
 		},
 		"channel.event_take_num.#": {
 			Label: labelPrefix + " Channel Event Take Num",
 			Unit:  "integer",
 			Metrics: []mp.Metrics{
-				{Name: "EventTakeAttemptCount", Label: "Attempt Count", Diff: true},
-				{Name: "EventTakeSuccessCount", Label: "Success Count", Diff: true},
+				{Name: "EventTakeAttemptCount", Label: "attempt", Diff: true},
+				{Name: "EventTakeSuccessCount", Label: "success", Diff: true},
 			},
 		},
 		"sink.batch_num.#": {
 			Label: labelPrefix + " Sink Batch Num",
 			Unit:  "integer",
 			Metrics: []mp.Metrics{
-				{Name: "BatchCompleteCount", Label: "Complete Count", Diff: true},
-				{Name: "BatchEmptyCount", Label: "Empty Count", Diff: true},
-				{Name: "BatchUnderflowCount", Label: "Underflow Count", Diff: true},
+				{Name: "BatchCompleteCount", Label: "complete", Diff: true},
+				{Name: "BatchEmptyCount", Label: "empty", Diff: true},
+				{Name: "BatchUnderflowCount", Label: "underflow", Diff: true},
 			},
 		},
 		"sink.connection.#": {
 			Label: labelPrefix + " Sink Connection",
 			Unit:  "integer",
 			Metrics: []mp.Metrics{
-				{Name: "ConnectionCreatedCount", Label: "Created Count", Diff: true},
-				{Name: "ConnectionClosedCount", Label: "Closed Count", Diff: true},
-				{Name: "ConnectionFailedCount", Label: "Failed Count", Diff: true},
+				{Name: "ConnectionCreatedCount", Label: "created", Diff: true},
+				{Name: "ConnectionClosedCount", Label: "closed", Diff: true},
+				{Name: "ConnectionFailedCount", Label: "failed", Diff: true},
 			},
 		},
 		"sink.event_drain_num.#": {
 			Label: labelPrefix + " Sink Event Drain Num",
 			Unit:  "integer",
 			Metrics: []mp.Metrics{
-				{Name: "EventDrainAttemptCount", Label: "Attempt Count", Diff: true},
-				{Name: "EventDrainSuccessCount", Label: "Success Count", Diff: true},
+				{Name: "EventDrainAttemptCount", Label: "attempt", Diff: true},
+				{Name: "EventDrainSuccessCount", Label: "success", Diff: true},
 			},
 		},
 		"source.append_num.#": {
 			Label: labelPrefix + " Source Append Num",
 			Unit:  "integer",
 			Metrics: []mp.Metrics{
-				{Name: "AppendAcceptedCount", Label: "Accepted Count", Diff: true},
-				{Name: "AppendReceivedCount", Label: "Received Count", Diff: true},
+				{Name: "AppendAcceptedCount", Label: "accepted", Diff: true},
+				{Name: "AppendReceivedCount", Label: "received", Diff: true},
 			},
 		},
 		"source.append_batch_num.#": {
 			Label: labelPrefix + " Source Append Batch Num",
 			Unit:  "integer",
 			Metrics: []mp.Metrics{
-				{Name: "AppendBatchAcceptedCount", Label: "Accepted Count", Diff: true},
-				{Name: "AppendBatchReceivedCount", Label: "Received Count", Diff: true},
+				{Name: "AppendBatchAcceptedCount", Label: "accepted", Diff: true},
+				{Name: "AppendBatchReceivedCount", Label: "received", Diff: true},
 			},
 		},
 		"source.event_num.#": {
 			Label: labelPrefix + " Source Event Num",
 			Unit:  "integer",
 			Metrics: []mp.Metrics{
-				{Name: "EventAcceptedCount", Label: "Accepted Count", Diff: true},
-				{Name: "EventReceivedCount", Label: "Received Count", Diff: true},
+				{Name: "EventAcceptedCount", Label: "accepted", Diff: true},
+				{Name: "EventReceivedCount", Label: "received", Diff: true},
 			},
 		},
 		"source.connection.#": {
 			Label: labelPrefix + " Source Connection",
 			Unit:  "integer",
 			Metrics: []mp.Metrics{
-				{Name: "OpenConnectionCount", Label: "Open Count"},
+				{Name: "OpenConnectionCount", Label: "open"},
 			},
 		},
 	}
