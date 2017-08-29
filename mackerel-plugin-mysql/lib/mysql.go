@@ -685,7 +685,7 @@ func parseInnodbStatus(str string, p *map[string]float64) {
 			continue
 		}
 		if isTransaction && strings.Index(line, "------- TRX HAS BEEN") == 0 {
-			increaseMap(p, "innodb_lock_wait_secs", "1")
+			increaseMap(p, "innodb_lock_wait_secs", record[5])
 			continue
 		}
 		if strings.Index(line, "read views open inside InnoDB") > 0 {

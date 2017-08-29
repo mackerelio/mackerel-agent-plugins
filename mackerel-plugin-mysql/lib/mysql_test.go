@@ -1167,7 +1167,7 @@ END OF INNODB MONITOR OUTPUT
 	assert.EqualValues(t, stat["history_list"], 1)
 	assert.EqualValues(t, stat["current_transactions"], 3)
 	assert.EqualValues(t, stat["active_transactions"], 2)
-	assert.EqualValues(t, stat["innodb_lock_wait_secs"], 1)
+	assert.EqualValues(t, stat["innodb_lock_wait_secs"], 22)
 	assert.EqualValues(t, stat["read_views"], 1)
 	assert.EqualValues(t, stat["innodb_tables_in_use"], 1)
 	assert.EqualValues(t, stat["innodb_locked_tables"], 1)
