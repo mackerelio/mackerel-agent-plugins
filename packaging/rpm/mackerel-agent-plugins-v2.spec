@@ -40,6 +40,12 @@ done
 %{__targetdir}/*
 
 %changelog
+* Wed Aug 30 2017 <mackerel-developers@hatena.ne.jp> - 0.31.0
+- [redis] Change queries metric to diff of "total_commands_processed" (by edangelion)
+- [aws-dynamodb] Refactor and parallelize CloudWatch request with errgroup (by astj)
+- [plack] Don't raise errors when parsing JSON fields failed (by astj)
+- [jmx-jolokia] add value to thread graph (by y-kuno)
+
 * Wed Aug 23 2017 <mackerel-developers@hatena.ne.jp> - 0.30.0
 - add mackerel-plugin-openldap to package (by astj)
 - Add Burst Balance metric for AWS EC2 EBS plugin (by ariarijp)
