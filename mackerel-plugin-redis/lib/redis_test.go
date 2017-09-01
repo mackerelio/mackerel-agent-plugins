@@ -2,6 +2,7 @@ package mpredis
 
 import (
 	"testing"
+	"time"
 
 	"github.com/garyburd/redigo/redis"
 	"github.com/soh335/go-test-redisserver"
@@ -27,16 +28,22 @@ func TestFetchMetricsUnixSocket(t *testing.T) {
 		t.Errorf("Failed to create a testclient. %s", err)
 		return
 	}
-	_, err = conn.Do("SET", "TEST_KEY", 1)
+	_, err = conn.Do("SET", "TEST_KEY1", 1)
 	if err != nil {
 		t.Errorf("Failed to send a SET command. %s", err)
 		return
 	}
-	_, err = conn.Do("SETEX", "TEST_EXPIRES", 1, 2)
+	_, err = conn.Do("SET", "TEST_KEY2", 1, "EX", 1)
 	if err != nil {
-		t.Errorf("Failed to send a SETEX command. %s", err)
+		t.Errorf("Failed to send a SET command. %s", err)
 		return
 	}
+	_, err = conn.Do("SET", "TEST_KEY3", 1, "EX", 10)
+	if err != nil {
+		t.Errorf("Failed to send a SET command. %s", err)
+		return
+	}
+	time.Sleep(2 * time.Second)
 
 	redis := RedisPlugin{
 		Timeout: 5,
@@ -60,8 +67,8 @@ func TestFetchMetricsUnixSocket(t *testing.T) {
 		if v == "expires" && value != 1.0 {
 			t.Errorf("metric of expires should be 1, but %v", value)
 		}
-		if v == "expired" && value != 0.0 {
-			t.Errorf("metric of expired should be 0, but %v", value)
+		if v == "expired" && value != 1.0 {
+			t.Errorf("metric of expired should be 1, but %v", value)
 		}
 	}
 }
