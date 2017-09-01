@@ -118,13 +118,19 @@ func (p *AccesslogPlugin) FetchMetrics() (map[string]float64, error) {
 	}
 	var reqtimes []float64
 	var psr axslogparser.Parser
-	s := bufio.NewScanner(rc)
-	for s.Scan() {
+	r := bufio.NewReader(rc)
+	for {
 		var (
 			l   *axslogparser.Log
 			err error
 		)
-		line := s.Text()
+		line, err := r.ReadString('\n')
+		if err != nil {
+			if err != io.EOF {
+				log.Println(err)
+			}
+			break
+		}
 		if psr == nil {
 			psr, l, err = axslogparser.GuessParser(line)
 		} else {
@@ -142,9 +148,6 @@ func (p *AccesslogPlugin) FetchMetrics() (map[string]float64, error) {
 		} else if l.TakenSec != nil {
 			reqtimes = append(reqtimes, *l.TakenSec)
 		}
-	}
-	if s.Err() != nil {
-		log.Println(s.Err())
 	}
 	if ret["total_count"] > 0 {
 		for _, v := range []string{"2xx", "3xx", "4xx", "5xx"} {
