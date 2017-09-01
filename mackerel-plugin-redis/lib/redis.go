@@ -233,7 +233,7 @@ func (m RedisPlugin) GraphDefinition() map[string]mp.Graphs {
 			Unit:  "integer",
 			Metrics: []mp.Metrics{
 				{Name: "keys", Label: "Keys", Diff: false},
-				{Name: "expires", Label: "Expire Time Set Keys", Diff: false},
+				{Name: "expires", Label: "Keys with expiration", Diff: false},
 				{Name: "expired_keys", Label: "Expired Keys", Diff: false},
 			},
 		},
