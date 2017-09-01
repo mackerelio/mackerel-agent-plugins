@@ -9,7 +9,7 @@ import (
 
 var metrics = []string{
 	"instantaneous_ops_per_sec", "total_connections_received", "rejected_connections", "connected_clients",
-	"blocked_clients", "connected_slaves", "keys", "expires", "expired_keys", "keyspace_hits", "keyspace_misses", "used_memory",
+	"blocked_clients", "connected_slaves", "keys", "expires", "expired", "keyspace_hits", "keyspace_misses", "used_memory",
 	"used_memory_rss", "used_memory_peak", "used_memory_lua",
 }
 
@@ -60,8 +60,8 @@ func TestFetchMetricsUnixSocket(t *testing.T) {
 		if v == "expires" && value != 1.0 {
 			t.Errorf("metric of expires should be 1, but %v", value)
 		}
-		if v == "expired_keys" && value != 0.0 {
-			t.Errorf("metric of expired_keys should be 0, but %v", value)
+		if v == "expired" && value != 0.0 {
+			t.Errorf("metric of expired should be 0, but %v", value)
 		}
 	}
 }
