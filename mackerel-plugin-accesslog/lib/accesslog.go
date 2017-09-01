@@ -2,6 +2,7 @@ package mpaccesslog
 
 import (
 	"bufio"
+	"bytes"
 	"flag"
 	"fmt"
 	"io"
@@ -123,14 +124,24 @@ func (p *AccesslogPlugin) FetchMetrics() (map[string]float64, error) {
 		var (
 			l   *axslogparser.Log
 			err error
+			bb  bytes.Buffer
 		)
-		line, err := r.ReadString('\n')
+		buf, isPrefix, err := r.ReadLine()
+		bb.Write(buf)
+		for isPrefix {
+			buf, isPrefix, err = r.ReadLine()
+			if err != nil {
+				break
+			}
+			bb.Write(buf)
+		}
 		if err != nil {
 			if err != io.EOF {
 				log.Println(err)
 			}
 			break
 		}
+		line := bb.String()
 		if psr == nil {
 			psr, l, err = axslogparser.GuessParser(line)
 		} else {
