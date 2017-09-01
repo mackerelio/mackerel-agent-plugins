@@ -192,6 +192,12 @@ func (m RedisPlugin) FetchMetrics() (map[string]interface{}, error) {
 		stat["expires"] = 0
 	}
 
+	if _, ok := stat["expired_keys"]; ok {
+		stat["expired"] = stat["expired_keys"]
+	} else {
+		stat["expired"] = 0.0
+	}
+
 	if err := calculateCapacity(c, stat); err != nil {
 		logger.Infof("Failed to calculate capacity. (The cause may be that AWS Elasticache Redis has no `CONFIG` command.) Skip these metrics. %s", err)
 	}
