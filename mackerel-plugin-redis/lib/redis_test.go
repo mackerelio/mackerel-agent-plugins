@@ -28,22 +28,17 @@ func TestFetchMetricsUnixSocket(t *testing.T) {
 		t.Errorf("Failed to create a testclient. %s", err)
 		return
 	}
-	_, err = conn.Do("SET", "TEST_KEY1", 1)
+	_, err = conn.Do("SET", "TEST_KEY0", 1)
 	if err != nil {
 		t.Errorf("Failed to send a SET command. %s", err)
 		return
 	}
-	_, err = conn.Do("SET", "TEST_KEY2", 1, "EX", 1)
-	if err != nil {
-		t.Errorf("Failed to send a SET command. %s", err)
-		return
-	}
-	_, err = conn.Do("SET", "TEST_KEY3", 1, "EX", 10)
-	if err != nil {
-		t.Errorf("Failed to send a SET command. %s", err)
-		return
-	}
-	time.Sleep(2 * time.Second)
+	conn.Do("SET", "TEST_KEY1", 1, "EX", 1)
+	conn.Do("SET", "TEST_KEY2", 1, "EX", 2)
+	conn.Do("SET", "TEST_KEY3", 1, "EX", 10)
+	conn.Do("SET", "TEST_KEY4", 1, "EX", 20)
+	conn.Do("SET", "TEST_KEY5", 1, "EX", 30)
+	time.Sleep(3 * time.Second)
 
 	redis := RedisPlugin{
 		Timeout: 5,
@@ -61,14 +56,14 @@ func TestFetchMetricsUnixSocket(t *testing.T) {
 		if !ok {
 			t.Errorf("metric of %s cannot be fetched", v)
 		}
-		if v == "keys" && value != 2.0 {
-			t.Errorf("metric of key should be 2, but %v", value)
+		if v == "keys" && value != 4.0 {
+			t.Errorf("metric of key should be 4, but %v", value)
 		}
-		if v == "expires" && value != 1.0 {
-			t.Errorf("metric of expires should be 1, but %v", value)
+		if v == "expires" && value != 3.0 {
+			t.Errorf("metric of expires should be 3, but %v", value)
 		}
-		if v == "expired" && value != 1.0 {
-			t.Errorf("metric of expired should be 1, but %v", value)
+		if v == "expired" && value != 2.0 {
+			t.Errorf("metric of expired should be 2, but %v", value)
 		}
 	}
 }
