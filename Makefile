@@ -59,35 +59,35 @@ lint: testdeps
 cover: testdeps
 	gotestcover -v -covermode=count -coverprofile=.profile.cov -parallelpackages=4 ./...
 
+crossbuild-package:
+	make build GOOS=linux GOARCH=386
+	make build GOOS=linux GOARCH=amd64
+	make build/mackerel-plugin GOOS=linux GOARCH=amd64
+
 rpm: rpm-v1 rpm-v2
 
-rpm-v1:
-	make build GOOS=linux GOARCH=386
+rpm-v1: crossbuild-package
 	rpmbuild --define "_sourcedir `pwd`" --define "_bindir build/linux/386" \
 	  --define "_version ${VERSION}" --define "buildarch noarch" \
 	  -bb packaging/rpm/mackerel-agent-plugins.spec
-	make build GOOS=linux GOARCH=amd64
 	rpmbuild --define "_sourcedir `pwd`" --define "_bindir build/linux/amd64" \
 	  --define "_version ${VERSION}" --define "buildarch x86_64" \
 	  -bb packaging/rpm/mackerel-agent-plugins.spec
 
-rpm-v2:
-	make build/mackerel-plugin GOOS=linux GOARCH=amd64
+rpm-v2: crossbuild-package
 	rpmbuild --define "_sourcedir `pwd`"  --define "_version ${VERSION}" \
 	  --define "buildarch x86_64" --define "dist .el7.centos" \
 	  -bb packaging/rpm/mackerel-agent-plugins-v2.spec
 
 deb: deb-v1 deb-v2
 
-deb-v1:
-	make build GOOS=linux GOARCH=386
+deb-v1: crossbuild-package
 	for i in `cat packaging/deb/debian/source/include-binaries`; do \
 	  cp build/linux/386/`basename $$i` packaging/deb/debian/; \
 	done
 	cd packaging/deb && debuild --no-tgz-check -rfakeroot -uc -us
 
-deb-v2:
-	make build/mackerel-plugin GOOS=linux GOARCH=amd64
+deb-v2: crossbuild-package
 	cp build/mackerel-plugin packaging/deb-v2/debian/
 	cd packaging/deb-v2 && debuild --no-tgz-check -rfakeroot -uc -us
 
@@ -98,4 +98,4 @@ release: check-release-deps
 clean:
 	@if [ -d build ]; then rm -rfv build; fi
 
-.PHONY: all build test testgo deps testdeps rpm rpm-v1 rpm-v2 deb deb-v1 deb-v2 clean release lint cover testconvention
+.PHONY: all build test testgo deps testdeps rpm rpm-v1 rpm-v2 deb deb-v1 deb-v2 clean release lint cover testconvention crossbuild-package
