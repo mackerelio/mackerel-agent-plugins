@@ -139,7 +139,7 @@ func (m RedisPlugin) FetchMetrics() (map[string]interface{}, error) {
 	stat := make(map[string]interface{})
 
 	keysStat := 0.0
-	expiredStat := 0.0
+	expiresStat := 0.0
 
 	for _, line := range strings.Split(str, "\r\n") {
 		if line == "" {
@@ -157,7 +157,7 @@ func (m RedisPlugin) FetchMetrics() (map[string]interface{}, error) {
 
 		if re, _ := regexp.MatchString("^db", key); re {
 			kv := strings.SplitN(value, ",", 3)
-			keys, expired := kv[0], kv[1]
+			keys, expires := kv[0], kv[1]
 
 			keysKv := strings.SplitN(keys, "=", 2)
 			keysFv, err := strconv.ParseFloat(keysKv[1], 64)
@@ -166,12 +166,12 @@ func (m RedisPlugin) FetchMetrics() (map[string]interface{}, error) {
 			}
 			keysStat += keysFv
 
-			expiredKv := strings.SplitN(expired, "=", 2)
-			expiredFv, err := strconv.ParseFloat(expiredKv[1], 64)
+			expiresKv := strings.SplitN(expires, "=", 2)
+			expiresFv, err := strconv.ParseFloat(expiresKv[1], 64)
 			if err != nil {
-				logger.Warningf("Failed to parse db expired. %s", err)
+				logger.Warningf("Failed to parse db expires. %s", err)
 			}
-			expiredStat += expiredFv
+			expiresStat += expiresFv
 
 			continue
 		}
@@ -183,13 +183,19 @@ func (m RedisPlugin) FetchMetrics() (map[string]interface{}, error) {
 	}
 
 	stat["keys"] = keysStat
-	stat["expired"] = expiredStat
+	stat["expires"] = expiresStat
 
 	if _, ok := stat["keys"]; !ok {
 		stat["keys"] = 0
 	}
-	if _, ok := stat["expired"]; !ok {
-		stat["expired"] = 0
+	if _, ok := stat["expires"]; !ok {
+		stat["expires"] = 0
+	}
+
+	if _, ok := stat["expired_keys"]; ok {
+		stat["expired"] = stat["expired_keys"]
+	} else {
+		stat["expired"] = 0.0
 	}
 
 	if err := calculateCapacity(c, stat); err != nil {
@@ -208,7 +214,7 @@ func (m RedisPlugin) GraphDefinition() map[string]mp.Graphs {
 			Label: (labelPrefix + " Queries"),
 			Unit:  "integer",
 			Metrics: []mp.Metrics{
-				{Name: "instantaneous_ops_per_sec", Label: "Queries", Diff: false},
+				{Name: "total_commands_processed", Label: "Queries", Diff: true},
 			},
 		},
 		"connections": {
@@ -233,6 +239,7 @@ func (m RedisPlugin) GraphDefinition() map[string]mp.Graphs {
 			Unit:  "integer",
 			Metrics: []mp.Metrics{
 				{Name: "keys", Label: "Keys", Diff: false},
+				{Name: "expires", Label: "Keys with expiration", Diff: false},
 				{Name: "expired", Label: "Expired Keys", Diff: false},
 			},
 		},

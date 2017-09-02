@@ -1,3 +1,27 @@
+mackerel-agent-plugins (0.31.0-1.v2) stable; urgency=low
+
+  * [redis] Change queries metric to diff of "total_commands_processed" (by edangelion)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/397>
+  * [aws-dynamodb] Refactor and parallelize CloudWatch request with errgroup (by astj)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/367>
+  * [plack] Don't raise errors when parsing JSON fields failed (by astj)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/394>
+  * [jmx-jolokia] add value to thread graph (by y-kuno)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/393>
+
+ -- mackerel <mackerel-developers@hatena.ne.jp>  Wed, 30 Aug 2017 15:39:20 +0900
+
+mackerel-agent-plugins (0.30.0-1.v2) stable; urgency=low
+
+  * add mackerel-plugin-openldap to package (by astj)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/391>
+  * Add Burst Balance metric for AWS EC2 EBS plugin (by ariarijp)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/384>
+  * Add openldap plugin  (by masahide)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/374>
+
+ -- mackerel <mackerel-developers@hatena.ne.jp>  Wed, 23 Aug 2017 12:26:26 +0900
+
 mackerel-agent-plugins (0.29.1-1.v2) stable; urgency=low
 
   * [solr] Fix a graph definition for Apache Solr's cumulative metric (by supercaracal)

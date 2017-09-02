@@ -24,6 +24,7 @@ debian/mackerel-plugin-multicore
 debian/mackerel-plugin-munin
 debian/mackerel-plugin-mysql
 debian/mackerel-plugin-nginx
+debian/mackerel-plugin-openldap
 debian/mackerel-plugin-php-apc
 debian/mackerel-plugin-php-fpm
 debian/mackerel-plugin-php-opcache

@@ -4,7 +4,10 @@ import (
 	"flag"
 	"log"
 	"strings"
+	"sync"
 	"time"
+
+	"golang.org/x/sync/errgroup"
 
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/credentials"
@@ -244,26 +247,45 @@ func (p DynamoDBPlugin) FetchMetrics() (map[string]interface{}, error) {
 		Name:  aws.String("TableName"),
 		Value: aws.String(p.TableName),
 	}}
+	var mu sync.Mutex
+	var eg errgroup.Group
 	for _, met := range defaultMetricsGroup {
-		dp, err := getLastPointFromCloudWatch(p.CloudWatch, met, tableDimensions)
-		if err == nil {
-			for _, m := range met.Metrics {
-				stats = transformAndAppendDatapoint(dp, m.Type, m.MackerelName, stats)
+		met := met
+		eg.Go(func() error {
+			dp, err := getLastPointFromCloudWatch(p.CloudWatch, met, tableDimensions)
+			if err != nil {
+				return err
 			}
-		} else {
-			log.Printf("%s: %s", met, err)
-		}
+			for _, m := range met.Metrics {
+				mu.Lock()
+				stats = transformAndAppendDatapoint(dp, m.Type, m.MackerelName, stats)
+				mu.Unlock()
+			}
+			return nil
+		})
 	}
 
 	for _, met := range operationalMetricsGroup {
-		operationalStats, err := fetchOperationWildcardMetrics(p.CloudWatch, met, tableDimensions)
-		if err == nil {
-			for name, s := range operationalStats {
-				stats[name] = s
+		met := met
+		eg.Go(func() error {
+			operationalStats, err := fetchOperationWildcardMetrics(p.CloudWatch, met, tableDimensions)
+			if err != nil {
+				return err
 			}
-		} else {
-			log.Printf("%s: %s", met, err)
-		}
+
+			if operationalStats != nil {
+				for name, s := range operationalStats {
+					mu.Lock()
+					stats[name] = s
+					mu.Unlock()
+				}
+			}
+			return nil
+		})
+	}
+
+	if err := eg.Wait(); err != nil {
+		return nil, err
 	}
 	return transformMetrics(stats), nil
 }

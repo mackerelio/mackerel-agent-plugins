@@ -46,6 +46,7 @@ Documentation for each plugin is located in its respective sub directory.
 * [mackerel-plugin-mysql](./mackerel-plugin-mysql/README.md)
 * [mackerel-plugin-nginx](./mackerel-plugin-nginx/README.md)
 * [mackerel-plugin-nvidia-smi](./mackerel-plugin-nvidia-smi/README.md)
+* [mackerel-plugin-openldap](./mackerel-plugin-openldap/README.md)
 * [mackerel-plugin-php-apc](./mackerel-plugin-php-apc/README.md)
 * [mackerel-plugin-php-fpm](./mackerel-plugin-php-fpm/README.md)
 * [mackerel-plugin-php-opcache](./mackerel-plugin-php-opcache/README.md)

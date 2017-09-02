@@ -62,6 +62,8 @@ var graphdef = map[string]mp.Graphs{
 		Unit:  "integer",
 		Metrics: []mp.Metrics{
 			{Name: "ThreadCount", Label: "thread", Diff: false, Type: "uint64"},
+			{Name: "DaemonThreadCount", Label: "daemon", Diff: false, Type: "uint64"},
+			{Name: "PeakThreadCount", Label: "peak", Diff: false, Type: "uint64"},
 		},
 	},
 	"jmx.jolokia.ops.cpu_load": {
@@ -134,6 +136,8 @@ func (j JmxJolokiaPlugin) fetchThread(stat map[string]interface{}) error {
 		return err
 	}
 	stat["ThreadCount"] = resp.Value["ThreadCount"]
+	stat["DaemonThreadCount"] = resp.Value["DaemonThreadCount"]
+	stat["PeakThreadCount"] = resp.Value["PeakThreadCount"]
 
 	return nil
 }
