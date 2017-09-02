@@ -20,7 +20,7 @@ build: deps
 build/mackerel-plugin: deps
 	mkdir -p build
 	go build -ldflags="-s -w -X main.gitcommit=$(CURRENT_REVISION)" \
-	  -o build/mackerel-plugin
+	  -o $(BINDIR)/mackerel-plugin
 
 test: testgo lint testconvention
 
@@ -76,7 +76,7 @@ rpm-v1: crossbuild-package
 
 rpm-v2: crossbuild-package
 	rpmbuild --define "_sourcedir `pwd`"  --define "_version ${VERSION}" \
-	  --define "buildarch x86_64" --define "dist .el7.centos" \
+	  --define "buildarch x86_64" --define "dist .el7.centos" --define "_bindir build/linux/amd64" \
 	  -bb packaging/rpm/mackerel-agent-plugins-v2.spec
 
 deb: deb-v1 deb-v2
@@ -88,7 +88,7 @@ deb-v1: crossbuild-package
 	cd packaging/deb && debuild --no-tgz-check -rfakeroot -uc -us
 
 deb-v2: crossbuild-package
-	cp build/mackerel-plugin packaging/deb-v2/debian/
+	cp build/linux/amd64/mackerel-plugin packaging/deb-v2/debian/
 	cd packaging/deb-v2 && debuild --no-tgz-check -rfakeroot -uc -us
 
 release: check-release-deps
