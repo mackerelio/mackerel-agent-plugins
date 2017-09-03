@@ -359,10 +359,10 @@ END OF INNODB MONITOR OUTPUT
 	assert.EqualValues(t, stat["active_transactions"], 0)
 	assert.EqualValues(t, stat["innodb_lock_wait_secs"], 0) // empty
 	assert.EqualValues(t, stat["read_views"], 12)
-	assert.EqualValues(t, stat["innodb_tables_in_use"], 1)
-	assert.EqualValues(t, stat["innodb_locked_tables"], 1)
-	assert.EqualValues(t, stat["locked_transactions"], 0) // empty
-	assert.EqualValues(t, stat["innodb_lock_structs"], 0) // empty
+	assert.EqualValues(t, stat["innodb_tables_in_use"], 0) // empty
+	assert.EqualValues(t, stat["innodb_locked_tables"], 0) // empty
+	assert.EqualValues(t, stat["locked_transactions"], 0)  // empty
+	assert.EqualValues(t, stat["innodb_lock_structs"], 0)  // empty
 	// File I/O
 	assert.EqualValues(t, stat["file_reads"], 80654072)
 	assert.EqualValues(t, stat["file_writes"], 816873637)
