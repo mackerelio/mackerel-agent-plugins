@@ -5,10 +5,12 @@ import (
 	"flag"
 	"fmt"
 	"io"
+	"log"
 	"net"
+	"strconv"
 	"strings"
 
-	mp "github.com/mackerelio/go-mackerel-plugin-helper"
+	mp "github.com/mackerelio/go-mackerel-plugin"
 )
 
 // MemcachedPlugin mackerel plugin for memchached
@@ -28,7 +30,7 @@ func (m MemcachedPlugin) MetricKeyPrefix() string {
 }
 
 // FetchMetrics interface for mackerelplugin
-func (m MemcachedPlugin) FetchMetrics() (map[string]interface{}, error) {
+func (m MemcachedPlugin) FetchMetrics() (map[string]float64, error) {
 	network := "tcp"
 	target := m.Target
 	if m.Socket != "" {
@@ -39,13 +41,56 @@ func (m MemcachedPlugin) FetchMetrics() (map[string]interface{}, error) {
 	if err != nil {
 		return nil, err
 	}
+	defer conn.Close()
+
 	fmt.Fprintln(conn, "stats")
-	return m.parseStats(conn)
+
+	ret, err := m.parseStats(conn)
+	if err != nil {
+		return nil, err
+	}
+	ret2, err := m.parseStatsItems(conn)
+	if err != nil {
+		log.Printf("failed to get stats items: %s", err.Error())
+	} else {
+		for k, v := range ret2 {
+			ret[k] = v
+		}
+	}
+	return ret, nil
 }
 
-func (m MemcachedPlugin) parseStats(conn io.Reader) (map[string]interface{}, error) {
+func (m MemcachedPlugin) parseStatsItems(conn io.ReadWriter) (map[string]float64, error) {
+	ret := make(map[string]float64)
+	fmt.Fprint(conn, "stats items\r\n")
+	scr := bufio.NewScanner(bufio.NewReader(conn))
+	for scr.Scan() {
+		// ex. STAT items:1:number 1
+		line := scr.Text()
+		if line == "END" {
+			break
+		}
+		fields := strings.Fields(line)
+		if len(fields) != 3 {
+			return nil, fmt.Errorf("result of `stats items` is strange: %s", line)
+		}
+		fields2 := strings.Split(fields[1], ":")
+		if len(fields2) != 3 {
+			return nil, fmt.Errorf("result of `stats items` is strange: %s", line)
+		}
+		if fields2[2] == "evicted_nonzero" {
+			value, err := strconv.ParseFloat(fields[2], 64)
+			if err == nil {
+				ret["nonzero_evictions"] += value
+			}
+		}
+	}
+	return ret, scr.Err()
+}
+
+func (m MemcachedPlugin) parseStats(conn io.Reader) (map[string]float64, error) {
 	scanner := bufio.NewScanner(conn)
-	stat := make(map[string]interface{})
+	stat := make(map[string]float64)
 
 	for scanner.Scan() {
 		line := scanner.Text()
@@ -57,7 +102,10 @@ func (m MemcachedPlugin) parseStats(conn io.Reader) (map[string]interface{}, err
 
 		res := strings.Split(s, " ")
 		if res[0] == "STAT" {
-			stat[res[1]] = res[2]
+			f, err := strconv.ParseFloat(res[2], 64)
+			if err == nil {
+				stat[res[1]] = f
+			}
 		}
 	}
 	if err := scanner.Err(); err != nil {
@@ -74,55 +122,57 @@ func (m MemcachedPlugin) GraphDefinition() map[string]mp.Graphs {
 	var graphdef = map[string]mp.Graphs{
 		"connections": {
 			Label: (labelPrefix + " Connections"),
-			Unit:  "integer",
+			Unit:  mp.UnitInteger,
 			Metrics: []mp.Metrics{
-				{Name: "curr_connections", Label: "Connections", Diff: false},
+				{Name: "curr_connections", Label: "Connections"},
 			},
 		},
 		"cmd": {
 			Label: (labelPrefix + " Command"),
-			Unit:  "integer",
+			Unit:  mp.UnitInteger,
 			Metrics: []mp.Metrics{
-				{Name: "cmd_get", Label: "Get", Diff: true, Type: "uint64"},
-				{Name: "cmd_set", Label: "Set", Diff: true, Type: "uint64"},
-				{Name: "cmd_flush", Label: "Flush", Diff: true, Type: "uint64"},
-				{Name: "cmd_touch", Label: "Touch", Diff: true, Type: "uint64"},
+				{Name: "cmd_get", Label: "Get", Diff: true},
+				{Name: "cmd_set", Label: "Set", Diff: true},
+				{Name: "cmd_flush", Label: "Flush", Diff: true},
+				{Name: "cmd_touch", Label: "Touch", Diff: true},
 			},
 		},
 		"hitmiss": {
 			Label: (labelPrefix + " Hits/Misses"),
-			Unit:  "integer",
+			Unit:  mp.UnitInteger,
 			Metrics: []mp.Metrics{
-				{Name: "get_hits", Label: "Get Hits", Diff: true, Type: "uint64"},
-				{Name: "get_misses", Label: "Get Misses", Diff: true, Type: "uint64"},
-				{Name: "delete_hits", Label: "Delete Hits", Diff: true, Type: "uint64"},
-				{Name: "delete_misses", Label: "Delete Misses", Diff: true, Type: "uint64"},
-				{Name: "incr_hits", Label: "Incr Hits", Diff: true, Type: "uint64"},
-				{Name: "incr_misses", Label: "Incr Misses", Diff: true, Type: "uint64"},
-				{Name: "cas_hits", Label: "Cas Hits", Diff: true, Type: "uint64"},
-				{Name: "cas_misses", Label: "Cas Misses", Diff: true, Type: "uint64"},
-				{Name: "touch_hits", Label: "Touch Hits", Diff: true, Type: "uint64"},
-				{Name: "touch_misses", Label: "Touch Misses", Diff: true, Type: "uint64"},
+				{Name: "get_hits", Label: "Get Hits", Diff: true},
+				{Name: "get_misses", Label: "Get Misses", Diff: true},
+				{Name: "delete_hits", Label: "Delete Hits", Diff: true},
+				{Name: "delete_misses", Label: "Delete Misses", Diff: true},
+				{Name: "incr_hits", Label: "Incr Hits", Diff: true},
+				{Name: "incr_misses", Label: "Incr Misses", Diff: true},
+				{Name: "cas_hits", Label: "Cas Hits", Diff: true},
+				{Name: "cas_misses", Label: "Cas Misses", Diff: true},
+				{Name: "touch_hits", Label: "Touch Hits", Diff: true},
+				{Name: "touch_misses", Label: "Touch Misses", Diff: true},
 			},
 		},
 		"evictions": {
 			Label: (labelPrefix + " Evictions"),
-			Unit:  "integer",
+			Unit:  mp.UnitInteger,
 			Metrics: []mp.Metrics{
-				{Name: "evictions", Label: "Evictions", Diff: true, Type: "uint64"},
+				{Name: "evictions", Label: "Evictions", Diff: true},
+				{Name: "nonzero_evictions", Label: "Nonzero Evictions", Diff: true},
+				{Name: "reclaimed", Label: "Reclaimed", Diff: true},
 			},
 		},
 		"unfetched": {
 			Label: (labelPrefix + " Unfetched"),
-			Unit:  "integer",
+			Unit:  mp.UnitInteger,
 			Metrics: []mp.Metrics{
-				{Name: "expired_unfetched", Label: "Expired unfetched", Diff: true, Type: "uint64"},
-				{Name: "evicted_unfetched", Label: "Evicted unfetched", Diff: true, Type: "uint64"},
+				{Name: "expired_unfetched", Label: "Expired unfetched", Diff: true},
+				{Name: "evicted_unfetched", Label: "Evicted unfetched", Diff: true},
 			},
 		},
 		"rusage": {
 			Label: (labelPrefix + " Resouce Usage"),
-			Unit:  "float",
+			Unit:  mp.UnitFloat,
 			Metrics: []mp.Metrics{
 				{Name: "rusage_user", Label: "User", Diff: true},
 				{Name: "rusage_system", Label: "System", Diff: true},
@@ -130,26 +180,26 @@ func (m MemcachedPlugin) GraphDefinition() map[string]mp.Graphs {
 		},
 		"bytes": {
 			Label: (labelPrefix + " Traffics"),
-			Unit:  "bytes",
+			Unit:  mp.UnitBytes,
 			Metrics: []mp.Metrics{
-				{Name: "bytes_read", Label: "Read", Diff: true, Type: "uint64"},
-				{Name: "bytes_written", Label: "Write", Diff: true, Type: "uint64"},
+				{Name: "bytes_read", Label: "Read", Diff: true},
+				{Name: "bytes_written", Label: "Write", Diff: true},
 			},
 		},
 		"cachesize": {
 			Label: (labelPrefix + " Cache Size"),
-			Unit:  "bytes",
+			Unit:  mp.UnitBytes,
 			Metrics: []mp.Metrics{
-				{Name: "limit_maxbytes", Label: "Total", Diff: false},
-				{Name: "bytes", Label: "Used", Diff: false, Type: "uint64"},
+				{Name: "limit_maxbytes", Label: "Total"},
+				{Name: "bytes", Label: "Used"},
 			},
 		},
 		"items": {
 			Label: (labelPrefix + " Items"),
-			Unit:  "integer",
+			Unit:  mp.UnitInteger,
 			Metrics: []mp.Metrics{
-				{Name: "curr_items", Label: "Current Items", Diff: false, Type: "uint64"},
-				{Name: "new_items", Label: "New Items", Diff: true, Type: "uint64"},
+				{Name: "curr_items", Label: "Current Items"},
+				{Name: "new_items", Label: "New Items", Diff: true},
 			},
 		},
 	}
