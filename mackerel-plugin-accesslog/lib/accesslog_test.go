@@ -44,6 +44,25 @@ var fetchMetricsTests = []struct {
 			"99_percentile":  3.018,
 		},
 	},
+	{
+		Name:   "LTSV long line log",
+		InFile: "testdata/sample-ltsv-long.tsv",
+		Output: map[string]float64{
+			"2xx_count":      2,
+			"3xx_count":      0,
+			"4xx_count":      0,
+			"5xx_count":      0,
+			"total_count":    2,
+			"2xx_percentage": 100,
+			"3xx_percentage": 0,
+			"4xx_percentage": 0,
+			"5xx_percentage": 0,
+			"average":        0.015,
+			"90_percentile":  0.015,
+			"95_percentile":  0.015,
+			"99_percentile":  0.015,
+		},
+	},
 }
 
 func TestFetchMetrics(t *testing.T) {

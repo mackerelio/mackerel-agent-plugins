@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.31.0 (2017-08-30)
+
+* [redis] Change queries metric to diff of "total_commands_processed" #397 (edangelion)
+* [aws-dynamodb] Refactor and parallelize CloudWatch request with errgroup #367 (astj)
+* [plack] Don't raise errors when parsing JSON fields failed #394 (astj)
+* [jmx-jolokia] add value to thread graph #393 (y-kuno)
+
+
 ## 0.30.0 (2017-08-23)
 
 * add mackerel-plugin-openldap to package #391 (astj)

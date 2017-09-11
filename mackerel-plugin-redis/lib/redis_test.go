@@ -2,6 +2,7 @@ package mpredis
 
 import (
 	"testing"
+	"time"
 
 	"github.com/garyburd/redigo/redis"
 	"github.com/soh335/go-test-redisserver"
@@ -9,7 +10,7 @@ import (
 
 var metrics = []string{
 	"instantaneous_ops_per_sec", "total_connections_received", "rejected_connections", "connected_clients",
-	"blocked_clients", "connected_slaves", "keys", "expired", "keyspace_hits", "keyspace_misses", "used_memory",
+	"blocked_clients", "connected_slaves", "keys", "expires", "expired", "keyspace_hits", "keyspace_misses", "used_memory",
 	"used_memory_rss", "used_memory_peak", "used_memory_lua",
 }
 
@@ -27,16 +28,17 @@ func TestFetchMetricsUnixSocket(t *testing.T) {
 		t.Errorf("Failed to create a testclient. %s", err)
 		return
 	}
-	_, err = conn.Do("SET", "TEST_KEY", 1)
+	_, err = conn.Do("SET", "TEST_KEY0", 1)
 	if err != nil {
 		t.Errorf("Failed to send a SET command. %s", err)
 		return
 	}
-	_, err = conn.Do("SETEX", "TEST_EXPIRED_KEY", 1, 2)
-	if err != nil {
-		t.Errorf("Failed to send a SETEX command. %s", err)
-		return
-	}
+	conn.Do("SET", "TEST_KEY1", 1, "EX", 1)
+	conn.Do("SET", "TEST_KEY2", 1, "EX", 2)
+	conn.Do("SET", "TEST_KEY3", 1, "EX", 10)
+	conn.Do("SET", "TEST_KEY4", 1, "EX", 20)
+	conn.Do("SET", "TEST_KEY5", 1, "EX", 30)
+	time.Sleep(3 * time.Second)
 
 	redis := RedisPlugin{
 		Timeout: 5,
@@ -54,11 +56,14 @@ func TestFetchMetricsUnixSocket(t *testing.T) {
 		if !ok {
 			t.Errorf("metric of %s cannot be fetched", v)
 		}
-		if v == "keys" && value != 2.0 {
-			t.Errorf("metric of key should be 2, but %v", value)
+		if v == "keys" && value != 4.0 {
+			t.Errorf("metric of key should be 4, but %v", value)
 		}
-		if v == "expired" && value != 1.0 {
-			t.Errorf("metric of expired should be 1, but %v", value)
+		if v == "expires" && value != 3.0 {
+			t.Errorf("metric of expires should be 3, but %v", value)
+		}
+		if v == "expired" && value != 2.0 {
+			t.Errorf("metric of expired should be 2, but %v", value)
 		}
 	}
 }

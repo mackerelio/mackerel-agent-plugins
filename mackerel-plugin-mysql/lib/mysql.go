@@ -40,18 +40,30 @@ func init() {
 func (m MySQLPlugin) defaultGraphdef() map[string]mp.Graphs {
 	labelPrefix := strings.Title(strings.Replace(m.MetricKeyPrefix(), "mysql", "MySQL", -1))
 
+	capacityMetrics := []mp.Metrics{
+		{Name: "PercentageOfConnections", Label: "Percentage Of Connections", Diff: false, Stacked: false},
+	}
+	if m.DisableInnoDB != true {
+		capacityMetrics = append(capacityMetrics, mp.Metrics{
+			Name: "PercentageOfBufferPool", Label: "Percentage Of Buffer Pool", Diff: false, Stacked: false,
+		})
+	}
+
 	return map[string]mp.Graphs{
 		"cmd": {
 			Label: labelPrefix + " Command",
 			Unit:  "float",
 			Metrics: []mp.Metrics{
 				{Name: "Com_insert", Label: "Insert", Diff: true, Stacked: true, Type: "uint64"},
+				{Name: "Com_insert_select", Label: "Insert Select", Diff: true, Stacked: true, Type: "uint64"},
 				{Name: "Com_select", Label: "Select", Diff: true, Stacked: true, Type: "uint64"},
 				{Name: "Com_update", Label: "Update", Diff: true, Stacked: true, Type: "uint64"},
 				{Name: "Com_update_multi", Label: "Update Multi", Diff: true, Stacked: true, Type: "uint64"},
 				{Name: "Com_delete", Label: "Delete", Diff: true, Stacked: true, Type: "uint64"},
 				{Name: "Com_delete_multi", Label: "Delete Multi", Diff: true, Stacked: true, Type: "uint64"},
 				{Name: "Com_replace", Label: "Replace", Diff: true, Stacked: true, Type: "uint64"},
+				{Name: "Com_replace_select", Label: "Replace Select", Diff: true, Stacked: true, Type: "uint64"},
+				{Name: "Com_load", Label: "Load", Diff: true, Stacked: true, Type: "uint64"},
 				{Name: "Com_set_option", Label: "Set Option", Diff: true, Stacked: true, Type: "uint64"},
 				{Name: "Qcache_hits", Label: "Query Cache Hits", Diff: true, Stacked: false, Type: "uint64"},
 				{Name: "Questions", Label: "Questions", Diff: true, Stacked: false, Type: "uint64"},
@@ -63,17 +75,19 @@ func (m MySQLPlugin) defaultGraphdef() map[string]mp.Graphs {
 			Metrics: []mp.Metrics{
 				{Name: "Select_full_join", Label: "Select Full JOIN", Diff: true, Stacked: false},
 				{Name: "Select_full_range_join", Label: "Select Full Range JOIN", Diff: true, Stacked: false},
+				{Name: "Select_range", Label: "Select Range", Diff: true, Stacked: false},
+				{Name: "Select_range_check", Label: "Select Range Check", Diff: true, Stacked: false},
 				{Name: "Select_scan", Label: "Select SCAN", Diff: true, Stacked: false},
-				{Name: "Sort_scan", Label: "Sort SCAN", Diff: true, Stacked: false},
 			},
 		},
 		"threads": {
 			Label: labelPrefix + " Threads",
 			Unit:  "integer",
 			Metrics: []mp.Metrics{
-				{Name: "Max_used_connections", Label: "Max used connections", Diff: false, Stacked: false},
+				{Name: "thread_cache_size", Label: "Cache Size", Diff: false, Stacked: false},
 				{Name: "Threads_connected", Label: "Connected", Diff: false, Stacked: false},
 				{Name: "Threads_running", Label: "Running", Diff: false, Stacked: false},
+				{Name: "Threads_created", Label: "Created", Diff: true, Stacked: false},
 				{Name: "Threads_cached", Label: "Cached", Diff: false, Stacked: false},
 			},
 		},
@@ -81,8 +95,10 @@ func (m MySQLPlugin) defaultGraphdef() map[string]mp.Graphs {
 			Label: labelPrefix + " Connections",
 			Unit:  "float",
 			Metrics: []mp.Metrics{
+				{Name: "max_connections", Label: "Max Connections", Diff: false, Stacked: false},
+				{Name: "Max_used_connections", Label: "Max Used Connections", Diff: false, Stacked: false},
 				{Name: "Connections", Label: "Connections", Diff: true, Stacked: false},
-				{Name: "Threads_created", Label: "Created Threads", Diff: true, Stacked: false},
+				{Name: "Threads_connected", Label: "Threads Connected", Diff: false, Stacked: false},
 				{Name: "Aborted_clients", Label: "Aborted Clients", Diff: true, Stacked: false},
 				{Name: "Aborted_connects", Label: "Aborted Connects", Diff: true, Stacked: false},
 			},
@@ -112,12 +128,9 @@ func (m MySQLPlugin) defaultGraphdef() map[string]mp.Graphs {
 			},
 		},
 		"capacity": {
-			Label: labelPrefix + " Capacity",
-			Unit:  "percentage",
-			Metrics: []mp.Metrics{
-				{Name: "PercentageOfConnections", Label: "Percentage Of Connections", Diff: false, Stacked: false},
-				{Name: "PercentageOfBufferPool", Label: "Percentage Of Buffer Pool", Diff: false, Stacked: false},
-			},
+			Label:   labelPrefix + " Capacity",
+			Unit:    "percentage",
+			Metrics: capacityMetrics,
 		},
 	}
 }
@@ -161,20 +174,6 @@ func (m MySQLPlugin) fetchShowStatus(db mysql.Conn, stat map[string]float64) err
 			log.Fatalln("FetchMetrics (Status): row length is too small: ", len(row))
 		}
 	}
-	if m.EnableExtended {
-		err = fetchShowStatusBackwardCompatibile(stat)
-		if err != nil {
-			log.Fatalln("FetchExtendedMetrics (Status Fetch): ", err)
-		}
-	}
-	return nil
-}
-
-func fetchShowStatusBackwardCompatibile(stat map[string]float64) error {
-	// https://github.com/percona/percona-monitoring-plugins/blob/v1.1.6/cacti/scripts/ss_get_mysql_stats.php#L585
-	if val, found := stat["table_open_cache"]; found {
-		stat["table_cache"] = val
-	}
 	return nil
 }
 
@@ -182,13 +181,12 @@ func (m MySQLPlugin) fetchShowInnodbStatus(db mysql.Conn, stat map[string]float6
 	row, _, err := db.QueryFirst("SHOW /*!50000 ENGINE*/ INNODB STATUS")
 	if err != nil {
 		log.Fatalln("FetchMetrics (InnoDB Status): ", err)
-		return err
 	}
 
 	if len(row) > 0 {
 		parseInnodbStatus(string(row[len(row)-1].([]byte)), &stat)
 	} else {
-		log.Fatalln("FetchMetrics (InnoDB Status): row length is too small: ", len(row))
+		return fmt.Errorf("row length is too small: %d", len(row))
 	}
 	return nil
 }
@@ -209,6 +207,20 @@ func (m MySQLPlugin) fetchShowVariables(db mysql.Conn, stat map[string]float64) 
 		} else {
 			log.Fatalln("FetchMetrics (Variables): row length is too small: ", len(row))
 		}
+	}
+	if m.EnableExtended {
+		err = fetchShowVariablesBackwardCompatibile(stat)
+		if err != nil {
+			log.Fatalln("FetchExtendedMetrics (Fetch Variables): ", err)
+		}
+	}
+	return nil
+}
+
+func fetchShowVariablesBackwardCompatibile(stat map[string]float64) error {
+	// https://github.com/percona/percona-monitoring-plugins/blob/v1.1.6/cacti/scripts/ss_get_mysql_stats.php#L585
+	if val, found := stat["table_open_cache"]; found {
+		stat["table_cache"] = val
 	}
 	return nil
 }
@@ -263,7 +275,9 @@ func (m MySQLPlugin) fetchProcesslist(db mysql.Conn, stat map[string]float64) er
 
 func (m MySQLPlugin) calculateCapacity(stat map[string]float64) {
 	stat["PercentageOfConnections"] = 100.0 * stat["Threads_connected"] / stat["max_connections"]
-	stat["PercentageOfBufferPool"] = 100.0 * stat["database_pages"] / stat["pool_size"]
+	if m.DisableInnoDB != true {
+		stat["PercentageOfBufferPool"] = 100.0 * stat["database_pages"] / stat["pool_size"]
+	}
 }
 
 // FetchMetrics interface for mackerelplugin
@@ -284,9 +298,14 @@ func (m MySQLPlugin) FetchMetrics() (map[string]interface{}, error) {
 	m.fetchShowStatus(db, stat)
 
 	if m.DisableInnoDB != true {
-		m.fetchShowInnodbStatus(db, stat)
-		m.fetchShowVariables(db, stat)
+		err := m.fetchShowInnodbStatus(db, stat)
+		if err != nil {
+			log.Println("FetchMetrics (InnoDB Status): ", err)
+			m.DisableInnoDB = true
+		}
 	}
+
+	m.fetchShowVariables(db, stat)
 
 	m.fetchShowSlaveStatus(db, stat)
 
@@ -546,29 +565,29 @@ func (m MySQLPlugin) addExtendedGraphdef(graphdef map[string]mp.Graphs) map[stri
 			{Name: "table_cache", Label: "Table Cache", Diff: false, Stacked: false, Type: "uint64"},
 			{Name: "Open_tables", Label: "Open Tables", Diff: false, Stacked: false, Type: "uint64"},
 			{Name: "Open_files", Label: "Open Files", Diff: false, Stacked: false, Type: "uint64"},
-			{Name: "Opened_tables", Label: "Opened Tables", Diff: false, Stacked: false, Type: "uint64"},
+			{Name: "Opened_tables", Label: "Opened Tables", Diff: true, Stacked: false, Type: "uint64"},
 		},
 	}
 	graphdef["processlist"] = mp.Graphs{
 		Label: labelPrefix + " processlist",
 		Unit:  "float",
 		Metrics: []mp.Metrics{
-			{Name: "State_closing_tables", Label: "State Closing Tables", Diff: false, Stacked: false, Type: "uint64"},
-			{Name: "State_copying_to_tmp_table", Label: "State Copying To Tmp Table", Diff: false, Stacked: false, Type: "uint64"},
-			{Name: "State_end", Label: "State End", Diff: false, Stacked: false, Type: "uint64"},
-			{Name: "State_freeing_items", Label: "State Freeing Items", Diff: false, Stacked: false, Type: "uint64"},
-			{Name: "State_init", Label: "State Init", Diff: false, Stacked: false, Type: "uint64"},
-			{Name: "State_locked", Label: "State Locked", Diff: false, Stacked: false, Type: "uint64"},
-			{Name: "State_login", Label: "State Login", Diff: false, Stacked: false, Type: "uint64"},
-			{Name: "State_preparing", Label: "State Preparing", Diff: false, Stacked: false, Type: "uint64"},
-			{Name: "State_reading_from_net", Label: "State Reading From Net", Diff: false, Stacked: false, Type: "uint64"},
-			{Name: "State_sending_data", Label: "State Sending Data", Diff: false, Stacked: false, Type: "uint64"},
-			{Name: "State_sorting_result", Label: "State Sorting Result", Diff: false, Stacked: false, Type: "uint64"},
-			{Name: "State_statistics", Label: "State Statistics", Diff: false, Stacked: false, Type: "uint64"},
-			{Name: "State_updating", Label: "State Updating", Diff: false, Stacked: false, Type: "uint64"},
-			{Name: "State_writing_to_net", Label: "State Writing To Net", Diff: false, Stacked: false, Type: "uint64"},
-			{Name: "State_none", Label: "State None", Diff: false, Stacked: false, Type: "uint64"},
-			{Name: "State_other", Label: "State Other", Diff: false, Stacked: false, Type: "uint64"},
+			{Name: "State_closing_tables", Label: "State Closing Tables", Diff: false, Stacked: true, Type: "uint64"},
+			{Name: "State_copying_to_tmp_table", Label: "State Copying To Tmp Table", Diff: false, Stacked: true, Type: "uint64"},
+			{Name: "State_end", Label: "State End", Diff: false, Stacked: true, Type: "uint64"},
+			{Name: "State_freeing_items", Label: "State Freeing Items", Diff: false, Stacked: true, Type: "uint64"},
+			{Name: "State_init", Label: "State Init", Diff: false, Stacked: true, Type: "uint64"},
+			{Name: "State_locked", Label: "State Locked", Diff: false, Stacked: true, Type: "uint64"},
+			{Name: "State_login", Label: "State Login", Diff: false, Stacked: true, Type: "uint64"},
+			{Name: "State_preparing", Label: "State Preparing", Diff: false, Stacked: true, Type: "uint64"},
+			{Name: "State_reading_from_net", Label: "State Reading From Net", Diff: false, Stacked: true, Type: "uint64"},
+			{Name: "State_sending_data", Label: "State Sending Data", Diff: false, Stacked: true, Type: "uint64"},
+			{Name: "State_sorting_result", Label: "State Sorting Result", Diff: false, Stacked: true, Type: "uint64"},
+			{Name: "State_statistics", Label: "State Statistics", Diff: false, Stacked: true, Type: "uint64"},
+			{Name: "State_updating", Label: "State Updating", Diff: false, Stacked: true, Type: "uint64"},
+			{Name: "State_writing_to_net", Label: "State Writing To Net", Diff: false, Stacked: true, Type: "uint64"},
+			{Name: "State_none", Label: "State None", Diff: false, Stacked: true, Type: "uint64"},
+			{Name: "State_other", Label: "State Other", Diff: false, Stacked: true, Type: "uint64"},
 		},
 	}
 	graphdef["sorts"] = mp.Graphs{
@@ -597,6 +616,7 @@ func parseInnodbStatus(str string, p *map[string]float64) {
 	prevLine := ""
 
 	for _, line := range strings.Split(str, "\n") {
+		line = strings.TrimLeft(line, " ")
 		record := strings.Fields(line)
 
 		// Innodb Semaphores
@@ -666,20 +686,20 @@ func parseInnodbStatus(str string, p *map[string]float64) {
 			continue
 		}
 		if isTransaction && strings.Index(line, "------- TRX HAS BEEN") == 0 {
-			increaseMap(p, "innodb_lock_wait_secs", "1")
+			increaseMap(p, "innodb_lock_wait_secs", record[5])
 			continue
 		}
 		if strings.Index(line, "read views open inside InnoDB") > 0 {
 			(*p)["read_views"], _ = atof(record[0])
 			continue
 		}
-		if strings.Index(line, "------- TRX HAS BEEN") == 0 {
+		if isTransaction && strings.Index(line, "mysql tables in use") == 0 {
 			increaseMap(p, "innodb_tables_in_use", record[4])
 			increaseMap(p, "innodb_locked_tables", record[6])
 			continue
 		}
-		if isTransaction && strings.Index(line, "lock struct(s)") == 0 {
-			if strings.Index(line, "LOCK WAIT") > 0 {
+		if isTransaction && strings.Index(line, "lock struct(s)") > 0 {
+			if strings.Index(line, "LOCK WAIT") == 0 {
 				increaseMap(p, "innodb_lock_structs", record[2])
 				increaseMap(p, "locked_transactions", "1")
 			} else {
@@ -700,7 +720,7 @@ func parseInnodbStatus(str string, p *map[string]float64) {
 			(*p)["pending_normal_aio_writes"], _ = atof(record[7])
 			continue
 		}
-		if strings.Index(line, "ibuf aio reads") == 0 {
+		if strings.Index(line, "ibuf aio reads") == 0 && len(record) >= 10 {
 			(*p)["pending_ibuf_aio_reads"], _ = atof(record[3])
 			(*p)["pending_aio_log_ios"], _ = atof(record[6])
 			(*p)["pending_aio_sync_ios"], _ = atof(record[9])
@@ -898,7 +918,7 @@ func parseInnodbStatus(str string, p *map[string]float64) {
 	}
 
 	// finalize
-	(*p)["queries_queued"] = (*p)["log_bytes_written"] - (*p)["log_bytes_flushed"]
+	(*p)["unflushed_log"] = (*p)["log_bytes_written"] - (*p)["log_bytes_flushed"]
 	(*p)["uncheckpointed_bytes"] = (*p)["log_bytes_written"] - (*p)["last_checkpoint"]
 }
 
