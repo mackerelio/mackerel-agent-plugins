@@ -209,12 +209,15 @@ func (p *FlumePlugin) parseSource(ret map[string]float64, componentName string, 
 
 // Do the plugin
 func Do() {
-	optHost   := flag.String("host", "localhost", "Host Name")
-	optPort   := flag.String("port", "41414", "Port")
-	optPrefix := flag.String("metric-key-prefix", "", "Metric key prefix")
+	optHost     := flag.String("host", "localhost", "Host Name")
+	optPort     := flag.String("port", "41414", "Port")
+	optPrefix   := flag.String("metric-key-prefix", "", "Metric key prefix")
+	optTempfile := flag.String("tempfile", "" , "Temp file name")
 	flag.Parse()
-	mp.NewMackerelPlugin(&FlumePlugin{
+	plugin := mp.NewMackerelPlugin(&FlumePlugin{
 		URI:    fmt.Sprintf("http://%s:%s/metrics", *optHost, *optPort),
 		Prefix: *optPrefix,
-	}).Run()
+	})
+	plugin.Tempfile = *optTempfile
+	plugin.Run()
 }
