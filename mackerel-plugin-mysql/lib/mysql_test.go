@@ -31,8 +31,8 @@ func TestGraphDefinition_DisableInnoDB_EnableExtended(t *testing.T) {
 	mysql.DisableInnoDB = true
 	mysql.EnableExtended = true
 	graphdef := mysql.GraphDefinition()
-	if len(graphdef) != 14 {
-		t.Errorf("GetTempfilename: %d should be 14", len(graphdef))
+	if len(graphdef) != 16 {
+		t.Errorf("GetTempfilename: %d should be 16", len(graphdef))
 	}
 }
 
@@ -41,8 +41,8 @@ func TestGraphDefinition_EnableExtended(t *testing.T) {
 
 	mysql.EnableExtended = true
 	graphdef := mysql.GraphDefinition()
-	if len(graphdef) != 35 {
-		t.Errorf("GetTempfilename: %d should be 35", len(graphdef))
+	if len(graphdef) != 37 {
+		t.Errorf("GetTempfilename: %d should be 37", len(graphdef))
 	}
 }
 

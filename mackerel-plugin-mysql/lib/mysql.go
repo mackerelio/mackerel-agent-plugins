@@ -600,6 +600,32 @@ func (m MySQLPlugin) addExtendedGraphdef(graphdef map[string]mp.Graphs) map[stri
 			{Name: "Sort_scan", Label: "Sort Scan", Diff: true, Stacked: false, Type: "uint64"},
 		},
 	}
+	graphdef["handlers"] = mp.Graphs{
+		Label: labelPrefix + " handlers",
+		Unit:  "float",
+		Metrics: []mp.Metrics{
+			{Name: "Handler_write", Label: "Handler Write", Diff: true, Stacked: true, Type: "uint64"},
+			{Name: "Handler_update", Label: "Handler Update", Diff: true, Stacked: true, Type: "uint64"},
+			{Name: "Handler_delete", Label: "Handler Delete", Diff: true, Stacked: true, Type: "uint64"},
+			{Name: "Handler_read_first", Label: "Handler Read First", Diff: true, Stacked: true, Type: "uint64"},
+			{Name: "Handler_read_key", Label: "Handler Read Key", Diff: true, Stacked: true, Type: "uint64"},
+			{Name: "Handler_read_last", Label: "Handler Read Last", Diff: true, Stacked: true, Type: "uint64"},
+			{Name: "Handler_read_next", Label: "Handler Read Next", Diff: true, Stacked: true, Type: "uint64"},
+			{Name: "Handler_read_prev", Label: "Handler Read Prev", Diff: true, Stacked: true, Type: "uint64"},
+			{Name: "Handler_read_rnd", Label: "Handler Read Rnd", Diff: true, Stacked: true, Type: "uint64"},
+			{Name: "Handler_read_rnd_next", Label: "Handler Read Rnd Next", Diff: true, Stacked: true, Type: "uint64"},
+		},
+	}
+	graphdef["transaction_handler"] = mp.Graphs{
+		Label: labelPrefix + " transaction handler",
+		Unit:  "float",
+		Metrics: []mp.Metrics{
+			{Name: "Handler_commit", Label: "Handler Commit", Diff: true, Stacked: false, Type: "uint64"},
+			{Name: "Handler_rollback", Label: "Handler Rollback", Diff: true, Stacked: false, Type: "uint64"},
+			{Name: "Handler_savepoint", Label: "Handler Savepoint", Diff: true, Stacked: false, Type: "uint64"},
+			{Name: "Handler_savepoint_rollback", Label: "Handler Savepoint Rollback", Diff: true, Stacked: false, Type: "uint64"},
+		},
+	}
 
 	return graphdef
 }
