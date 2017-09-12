@@ -1,3 +1,16 @@
+mackerel-agent-plugins (0.32.0-1) stable; urgency=low
+
+  * [memcached] add evicted.reclaimed and evicted.nonzero_evictions (by Songmu)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/388>
+  * [mysql]add missed metrics and fix graph definition (by matsuu)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/390>
+  * [Redis] fix expired keys (by edangelion)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/398>
+  * [accesslog] Fix for scanning long lines (by itchyny)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/400>
+
+ -- mackerel <mackerel-developers@hatena.ne.jp>  Tue, 12 Sep 2017 12:34:56 +0900
+
 mackerel-agent-plugins (0.31.0-1) stable; urgency=low
 
   * [redis] Change queries metric to diff of "total_commands_processed" (by edangelion)
