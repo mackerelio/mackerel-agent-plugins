@@ -49,6 +49,12 @@ done
 %{__oldtargetdir}/*
 
 %changelog
+* Tue Sep 12 2017 <mackerel-developers@hatena.ne.jp> - 0.32.0
+- [memcached] add evicted.reclaimed and evicted.nonzero_evictions (by Songmu)
+- [mysql]add missed metrics and fix graph definition (by matsuu)
+- [Redis] fix expired keys (by edangelion)
+- [accesslog] Fix for scanning long lines (by itchyny)
+
 * Wed Aug 30 2017 <mackerel-developers@hatena.ne.jp> - 0.31.0
 - [redis] Change queries metric to diff of "total_commands_processed" (by edangelion)
 - [aws-dynamodb] Refactor and parallelize CloudWatch request with errgroup (by astj)

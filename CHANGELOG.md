@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.32.0 (2017-09-12)
+
+* [memcached] add evicted.reclaimed and evicted.nonzero_evictions #388 (Songmu)
+* [mysql]add missed metrics and fix graph definition #390 (matsuu)
+* [Redis] fix expired keys #398 (edangelion)
+* [accesslog] Fix for scanning long lines #400 (itchyny)
+
+
 ## 0.31.0 (2017-08-30)
 
 * [redis] Change queries metric to diff of "total_commands_processed" #397 (edangelion)
