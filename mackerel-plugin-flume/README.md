@@ -6,7 +6,7 @@ Flume custom metrics plugin for mackerel.io agent.
 ## Synopsis
 
 ```shell
-mackerel-plugin-flume [-host=<host>] [-port=<port>]
+mackerel-plugin-flume [-host=<host>] [-port=<port>] [-metric-key-prefix=<prefix>]
 ```
 
 ## Example of mackerel-agent.conf
