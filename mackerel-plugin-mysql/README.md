@@ -6,7 +6,7 @@ MySQL custom metrics plugin for mackerel.io agent.
 ## Synopsis
 
 ```shell
-mackerel-plugin-mysql [-host=<host>] [-port=<port>] [-username=<username>] [-password=<password>] [-tempfile=<tempfile>] [-disable_innodb=true] [-metric-key-prefix=<prefix>] [-enable_extended=true]
+mackerel-plugin-mysql [-host=<host>] [-port=<port>] [-username=<username>] [-password=<password>] [-tempfile=<tempfile>] [-disable_innodb=true] [-metric-key-prefix=<prefix>] [-enable_extended=true] [-metric-key-prefix=<prefix>]
 ```
 
 ## Example of mackerel-agent.conf
@@ -15,4 +15,3 @@ mackerel-plugin-mysql [-host=<host>] [-port=<port>] [-username=<username>] [-pas
 [plugin.metrics.mysql]
 command = "/path/to/mackerel-plugin-mysql"
 ```
-
