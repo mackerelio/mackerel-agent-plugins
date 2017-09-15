@@ -213,6 +213,8 @@ func (m MySQLPlugin) fetchShowVariables(db mysql.Conn, stat map[string]float64) 
 		if err != nil {
 			log.Fatalln("FetchExtendedMetrics (Fetch Variables): ", err)
 		}
+		stat["key_buf_bytes_used"] = stat["key_buffer_size"] - stat["Key_blocks_unused"]*stat["key_cache_block_size"]
+		stat["key_buf_bytes_unflushed"] = stat["Key_blocks_not_flushed"] * stat["key_cache_block_size"]
 	}
 	return nil
 }
@@ -624,6 +626,25 @@ func (m MySQLPlugin) addExtendedGraphdef(graphdef map[string]mp.Graphs) map[stri
 			{Name: "Handler_rollback", Label: "Handler Rollback", Diff: true, Stacked: false, Type: "uint64"},
 			{Name: "Handler_savepoint", Label: "Handler Savepoint", Diff: true, Stacked: false, Type: "uint64"},
 			{Name: "Handler_savepoint_rollback", Label: "Handler Savepoint Rollback", Diff: true, Stacked: false, Type: "uint64"},
+		},
+	}
+	graphdef["myisam_indexes"] = mp.Graphs{
+		Label: labelPrefix + " myisam Indexes",
+		Unit:  "float",
+		Metrics: []mp.Metrics{
+			{Name: "Key_read_requests", Label: "Key Read Requests", Diff: true, Stacked: false, Type: "uint64"},
+			{Name: "Key_reads", Label: "Key Reads", Diff: true, Stacked: false, Type: "uint64"},
+			{Name: "Key_write_requests", Label: "Key Write Requests", Diff: true, Stacked: false, Type: "uint64"},
+			{Name: "Key_writes", Label: "Key Writes", Diff: true, Stacked: false, Type: "uint64"},
+		},
+	}
+	graphdef["myisam_key_cache"] = mp.Graphs{
+		Label: labelPrefix + " myisam Key Cache",
+		Unit:  "bytes",
+		Metrics: []mp.Metrics{
+			{Name: "key_buffer_size", Label: "Key Buffer Size", Diff: false, Stacked: false, Type: "uint64"},
+			{Name: "key_buf_bytes_used", Label: "Key Buf Bytes Used", Diff: false, Stacked: false, Type: "uint64"},
+			{Name: "key_buf_bytes_unflushed", Label: "Key Buf Bytes Unflushed", Diff: false, Stacked: false, Type: "uint64"},
 		},
 	}
 
