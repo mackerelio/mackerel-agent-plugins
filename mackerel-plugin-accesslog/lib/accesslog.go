@@ -25,6 +25,7 @@ type AccesslogPlugin struct {
 	prefix    string
 	file      string
 	posFile   string
+	parser    axslogparser.Parser
 	noPosFile bool
 }
 
@@ -118,7 +119,6 @@ func (p *AccesslogPlugin) FetchMetrics() (map[string]float64, error) {
 		ret[k] = 0
 	}
 	var reqtimes []float64
-	var psr axslogparser.Parser
 	r := bufio.NewReader(rc)
 	for {
 		var (
@@ -142,10 +142,10 @@ func (p *AccesslogPlugin) FetchMetrics() (map[string]float64, error) {
 			break
 		}
 		line := bb.String()
-		if psr == nil {
-			psr, l, err = axslogparser.GuessParser(line)
+		if p.parser == nil {
+			p.parser, l, err = axslogparser.GuessParser(line)
 		} else {
-			l, err = psr.Parse(line)
+			l, err = p.parser.Parse(line)
 		}
 		if err != nil {
 			log.Println(err)
@@ -183,6 +183,7 @@ func (p *AccesslogPlugin) FetchMetrics() (map[string]float64, error) {
 func Do() {
 	var (
 		optPrefix    = flag.String("metric-key-prefix", "", "Metric key prefix")
+		optFormat    = flag.String("format", "", "Access Log format ('ltsv' or 'apache')")
 		optPosFile   = flag.String("posfile", "", "(not necessary to specify it in the usual use case) posfile")
 		optNoPosFile = flag.Bool("no-posfile", false, "no position file")
 	)
@@ -195,10 +196,26 @@ func Do() {
 		flag.Usage()
 		os.Exit(1)
 	}
+
+	var parser axslogparser.Parser
+	switch *optFormat {
+	case "":
+		parser = nil // guess format by log
+	case "ltsv":
+		parser = &axslogparser.LTSV{}
+	case "apache":
+		parser = &axslogparser.Apache{}
+	default:
+		fmt.Fprintf(os.Stderr, "Error: '%s' is invalid format name\n", *optFormat)
+		flag.Usage()
+		os.Exit(1)
+	}
+
 	mp.NewMackerelPlugin(&AccesslogPlugin{
 		prefix:    *optPrefix,
 		file:      flag.Args()[0],
 		posFile:   *optPosFile,
 		noPosFile: *optNoPosFile,
+		parser:    parser,
 	}).Run()
 }
