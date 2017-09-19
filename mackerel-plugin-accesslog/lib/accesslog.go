@@ -200,7 +200,7 @@ func Do() {
 	var parser axslogparser.Parser
 	switch *optFormat {
 	case "":
-		parser = nil // guess format by log
+		parser = nil // guess format by log (default)
 	case "ltsv":
 		parser = &axslogparser.LTSV{}
 	case "apache":
