@@ -74,7 +74,7 @@ func (p *DynamoDBPlugin) prepare() error {
 	return nil
 }
 
-func transformAndAppendDatapoint(dp *cloudwatch.Datapoint, dataType string, label string, stats map[string]interface{}) map[string]interface{} {
+func transformAndAppendDatapoint(stats map[string]interface{}, dp *cloudwatch.Datapoint, dataType string, label string) map[string]interface{} {
 	if dp != nil {
 		switch dataType {
 		case metricsTypeAverage:
@@ -138,7 +138,7 @@ func fetchOperationWildcardMetrics(cw cloudwatchiface.CloudWatchAPI, mg metricsG
 		if dp != nil {
 			for _, met := range mg.Metrics {
 				label := strings.Replace(met.MackerelName, "#", *operation, 1)
-				stats = transformAndAppendDatapoint(dp, met.Type, label, stats)
+				stats = transformAndAppendDatapoint(stats, dp, met.Type, label)
 			}
 		}
 	}
@@ -259,7 +259,7 @@ func (p DynamoDBPlugin) FetchMetrics() (map[string]interface{}, error) {
 			}
 			for _, m := range met.Metrics {
 				mu.Lock()
-				stats = transformAndAppendDatapoint(dp, m.Type, m.MackerelName, stats)
+				stats = transformAndAppendDatapoint(stats, dp, m.Type, m.MackerelName)
 				mu.Unlock()
 			}
 			return nil
