@@ -213,6 +213,9 @@ var defaultMetricsGroup = []metricsGroup{
 	{CloudWatchName: "UserErrors", Metrics: []metric{
 		{MackerelName: "UserErrors", Type: metricsTypeSum},
 	}},
+	{CloudWatchName: "ReadThrottleEvents", Metrics: []metric{
+		{MackerelName: "ReadThrottleEvents", Type: metricsTypeSum, FillZero: true},
+	}},
 	{CloudWatchName: "WriteThrottleEvents", Metrics: []metric{
 		{MackerelName: "WriteThrottleEvents", Type: metricsTypeSum, FillZero: true},
 	}},
