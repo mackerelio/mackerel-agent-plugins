@@ -90,10 +90,7 @@ func calculateCapacity(c *redis.Client, stat map[string]interface{}) error {
 	if err := fetchPercentageOfMemory(c, stat); err != nil {
 		return err
 	}
-	if err := fetchPercentageOfClients(c, stat); err != nil {
-		return err
-	}
-	return nil
+	return fetchPercentageOfClients(c, stat)
 }
 
 // MetricKeyPrefix interface for PluginWithPrefix
