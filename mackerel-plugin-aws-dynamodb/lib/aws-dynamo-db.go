@@ -35,6 +35,7 @@ type metricsGroup struct {
 type metric struct {
 	MackerelName string
 	Type         string
+	FillZero     bool
 }
 
 // DynamoDBPlugin mackerel plugin for aws kinesis
@@ -211,7 +212,7 @@ var defaultMetricsGroup = []metricsGroup{
 		{MackerelName: "UserErrors", Type: metricsTypeSum},
 	}},
 	{CloudWatchName: "WriteThrottleEvents", Metrics: []metric{
-		{MackerelName: "WriteThrottleEvents", Type: metricsTypeSum},
+		{MackerelName: "WriteThrottleEvents", Type: metricsTypeSum, FillZero: true},
 	}},
 	{CloudWatchName: "TimeToLiveDeletedItemCount", Metrics: []metric{
 		{MackerelName: "TimeToLiveDeletedItemCount", Type: metricsTypeSum},
