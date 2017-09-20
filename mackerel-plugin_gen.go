@@ -35,6 +35,7 @@ import (
 	"github.com/mackerelio/mackerel-agent-plugins/mackerel-plugin-munin/lib"
 	"github.com/mackerelio/mackerel-agent-plugins/mackerel-plugin-mysql/lib"
 	"github.com/mackerelio/mackerel-agent-plugins/mackerel-plugin-nginx/lib"
+	"github.com/mackerelio/mackerel-agent-plugins/mackerel-plugin-nvidia-smi/lib"
 	"github.com/mackerelio/mackerel-agent-plugins/mackerel-plugin-openldap/lib"
 	"github.com/mackerelio/mackerel-agent-plugins/mackerel-plugin-php-apc/lib"
 	"github.com/mackerelio/mackerel-agent-plugins/mackerel-plugin-php-fpm/lib"
@@ -121,6 +122,8 @@ func runPlugin(plug string) error {
 		mpmysql.Do()
 	case "nginx":
 		mpnginx.Do()
+	case "nvidia-smi":
+		mpnvidiasmi.Do()
 	case "openldap":
 		mpopenldap.Do()
 	case "php-apc":
@@ -199,6 +202,7 @@ var plugins = []string{
 	"munin",
 	"mysql",
 	"nginx",
+	"nvidia-smi",
 	"openldap",
 	"php-apc",
 	"php-fpm",

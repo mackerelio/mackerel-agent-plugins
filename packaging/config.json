@@ -27,6 +27,7 @@
        "munin",
        "mysql",
        "nginx",
+       "nvidia-smi",
        "openldap",
        "php-apc",
        "php-fpm",
