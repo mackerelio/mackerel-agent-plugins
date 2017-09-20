@@ -35,6 +35,7 @@ type metricsGroup struct {
 type metric struct {
 	MackerelName string
 	Type         string
+	FillZero     bool
 }
 
 // DynamoDBPlugin mackerel plugin for aws kinesis
@@ -73,7 +74,7 @@ func (p *DynamoDBPlugin) prepare() error {
 	return nil
 }
 
-func transformAndAppendDatapoint(dp *cloudwatch.Datapoint, dataType string, label string, stats map[string]interface{}) map[string]interface{} {
+func transformAndAppendDatapoint(stats map[string]interface{}, dp *cloudwatch.Datapoint, dataType string, label string, fillZero bool) map[string]interface{} {
 	if dp != nil {
 		switch dataType {
 		case metricsTypeAverage:
@@ -87,6 +88,8 @@ func transformAndAppendDatapoint(dp *cloudwatch.Datapoint, dataType string, labe
 		case metricsTypeSampleCount:
 			stats[label] = *dp.SampleCount
 		}
+	} else if fillZero {
+		stats[label] = 0.0
 	}
 	return stats
 }
@@ -137,7 +140,7 @@ func fetchOperationWildcardMetrics(cw cloudwatchiface.CloudWatchAPI, mg metricsG
 		if dp != nil {
 			for _, met := range mg.Metrics {
 				label := strings.Replace(met.MackerelName, "#", *operation, 1)
-				stats = transformAndAppendDatapoint(dp, met.Type, label, stats)
+				stats = transformAndAppendDatapoint(stats, dp, met.Type, label, met.FillZero)
 			}
 		}
 	}
@@ -210,8 +213,11 @@ var defaultMetricsGroup = []metricsGroup{
 	{CloudWatchName: "UserErrors", Metrics: []metric{
 		{MackerelName: "UserErrors", Type: metricsTypeSum},
 	}},
+	{CloudWatchName: "ReadThrottleEvents", Metrics: []metric{
+		{MackerelName: "ReadThrottleEvents", Type: metricsTypeSum, FillZero: true},
+	}},
 	{CloudWatchName: "WriteThrottleEvents", Metrics: []metric{
-		{MackerelName: "WriteThrottleEvents", Type: metricsTypeSum},
+		{MackerelName: "WriteThrottleEvents", Type: metricsTypeSum, FillZero: true},
 	}},
 	{CloudWatchName: "TimeToLiveDeletedItemCount", Metrics: []metric{
 		{MackerelName: "TimeToLiveDeletedItemCount", Type: metricsTypeSum},
@@ -258,7 +264,7 @@ func (p DynamoDBPlugin) FetchMetrics() (map[string]interface{}, error) {
 			}
 			for _, m := range met.Metrics {
 				mu.Lock()
-				stats = transformAndAppendDatapoint(dp, m.Type, m.MackerelName, stats)
+				stats = transformAndAppendDatapoint(stats, dp, m.Type, m.MackerelName, m.FillZero)
 				mu.Unlock()
 			}
 			return nil
