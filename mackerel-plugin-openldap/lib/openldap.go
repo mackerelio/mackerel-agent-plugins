@@ -83,23 +83,28 @@ func mergeStat(dst, src map[string]float64) {
 
 func latestCSN(sr *ldap.SearchResult) (time.Time, error) {
 	var res time.Time
-	for _, entry := range sr.Entries {
-		csns := make([]time.Time, len(entry.Attributes))
-		for i, attr := range entry.Attributes {
-			v := entry.GetAttributeValue(attr.Name)
-			t, err := time.Parse("20060102150405.999999Z", v[0:strings.Index(v, "#")])
-			if err != nil {
-				return res, err
-			}
-			csns[i] = t
-		}
-		sort.Slice(csns, func(i, j int) bool {
-			return csns[i].UnixNano() > csns[j].UnixNano()
-		})
-		res = csns[0]
-		return res, nil
+	if len(sr.Entries) == 0 {
+		return res, errors.New("not found CSN")
 	}
-	return res, errors.New("not found CSN")
+	entry := sr.Entries[0]
+	if len(entry.Attributes) == 0 {
+		return res, errors.New("not found CSN")
+	}
+	attr := entry.Attributes[0]
+	vs := entry.GetAttributeValues(attr.Name)
+	csns := make([]time.Time, len(vs))
+	for i, v := range vs {
+		t, err := time.Parse("20060102150405.999999Z", v[0:strings.Index(v, "#")])
+		if err != nil {
+			return res, err
+		}
+		csns[i] = t
+	}
+	sort.Slice(csns, func(i, j int) bool {
+		return csns[i].UnixNano() > csns[j].UnixNano()
+	})
+	res = csns[0]
+	return res, nil
 }
 
 func getLatestCSN(host, base, bind, passwd string, useTLS, insecureSkipVerify bool) (time.Time, error) {
@@ -139,7 +144,7 @@ func (m OpenLDAPPlugin) FetchMetrics() (map[string]interface{}, error) {
 		if err != nil {
 			return nil, err
 		}
-		stat["replication_delay"] = float64(masterTime.UnixNano() - localTime.UnixNano())
+		stat["replication_delay"] = float64(masterTime.UnixNano()-localTime.UnixNano()) / float64(time.Second)
 	}
 
 	ldapOpes, err := fetchOpenldapMetrics(m.l, "cn=Operations,cn=Monitor", "", []string{"monitorOpInitiated", "monitorOpCompleted"})
