@@ -1,3 +1,18 @@
+mackerel-agent-plugins (0.33.0-1.v2) stable; urgency=low
+
+  * add mackerel-plugin-nvidia-smi to package (by syou6162)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/411>
+  * [accesslog] Feature/accesslog/customize parser (by karupanerura)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/410>
+  * Fix redundant error by golint in redis.go (by shibayu36)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/408>
+  * add flume plugin (by y-kuno)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/396>
+  * [mysql]add handler graphs (by matsuu)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/402>
+
+ -- mackerel <mackerel-developers@hatena.ne.jp>  Wed, 20 Sep 2017 12:25:57 +0900
+
 mackerel-agent-plugins (0.32.0-1.v2) stable; urgency=low
 
   * [memcached] add evicted.reclaimed and evicted.nonzero_evictions (by Songmu)
