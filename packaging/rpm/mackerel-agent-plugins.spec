@@ -30,7 +30,7 @@ This package provides plugins for Mackerel.
 
 %{__mkdir} -p %{buildroot}%{__targetdir}
 
-for i in accesslog apache2 aws-dynamodb aws-ec2-cpucredit aws-elasticache aws-elasticsearch aws-elb aws-kinesis-streams aws-lambda aws-rds aws-ses conntrack elasticsearch gostats graphite haproxy jmx-jolokia jvm linux mailq memcached mongodb multicore munin mysql nginx openldap php-apc php-fpm php-opcache plack postgres proc-fd solr rabbitmq redis snmp squid td-table-count trafficserver twemproxy uwsgi-vassal varnish xentop aws-cloudfront aws-ec2-ebs fluentd docker unicorn uptime inode; do \
+for i in accesslog apache2 aws-dynamodb aws-ec2-cpucredit aws-elasticache aws-elasticsearch aws-elb aws-kinesis-streams aws-lambda aws-rds aws-ses conntrack elasticsearch gostats graphite haproxy jmx-jolokia jvm linux mailq memcached mongodb multicore munin mysql nginx nvidia-smi openldap php-apc php-fpm php-opcache plack postgres proc-fd solr rabbitmq redis snmp squid td-table-count trafficserver twemproxy uwsgi-vassal varnish xentop aws-cloudfront aws-ec2-ebs fluentd docker unicorn uptime inode; do \
     %{__install} -m0755 %{_sourcedir}/%{_bindir}/mackerel-plugin-$i %{buildroot}%{__targetdir}/; \
 done
 
@@ -49,6 +49,13 @@ done
 %{__oldtargetdir}/*
 
 %changelog
+* Wed Sep 20 2017 <mackerel-developers@hatena.ne.jp> - 0.33.0
+- add mackerel-plugin-nvidia-smi to package (by syou6162)
+- [accesslog] Feature/accesslog/customize parser (by karupanerura)
+- Fix redundant error by golint in redis.go (by shibayu36)
+- add flume plugin (by y-kuno)
+- [mysql]add handler graphs (by matsuu)
+
 * Tue Sep 12 2017 <mackerel-developers@hatena.ne.jp> - 0.32.0
 - [memcached] add evicted.reclaimed and evicted.nonzero_evictions (by Songmu)
 - [mysql]add missed metrics and fix graph definition (by matsuu)

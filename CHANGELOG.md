@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.33.0 (2017-09-20)
+
+* add mackerel-plugin-nvidia-smi to package #411 (syou6162)
+* [accesslog] Feature/accesslog/customize parser #410 (karupanerura)
+* Fix redundant error by golint in redis.go #408 (shibayu36)
+* add flume plugin #396 (y-kuno)
+* [mysql]add handler graphs #402 (matsuu)
+
+
 ## 0.32.0 (2017-09-12)
 
 * [memcached] add evicted.reclaimed and evicted.nonzero_evictions #388 (Songmu)
