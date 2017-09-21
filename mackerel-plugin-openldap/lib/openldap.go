@@ -101,7 +101,7 @@ func latestCSN(sr *ldap.SearchResult) (time.Time, error) {
 		csns[i] = t
 	}
 	sort.Slice(csns, func(i, j int) bool {
-		return csns[i].UnixNano() > csns[j].UnixNano()
+		return csns[i].After(csns[j])
 	})
 	res = csns[0]
 	return res, nil
@@ -144,7 +144,7 @@ func (m OpenLDAPPlugin) FetchMetrics() (map[string]interface{}, error) {
 		if err != nil {
 			return nil, err
 		}
-		stat["replication_delay"] = float64(masterTime.UnixNano()-localTime.UnixNano()) / float64(time.Second)
+		stat["replication_delay"] = masterTime.Sub(localTime).Seconds()
 	}
 
 	ldapOpes, err := fetchOpenldapMetrics(m.l, "cn=Operations,cn=Monitor", "", []string{"monitorOpInitiated", "monitorOpCompleted"})
