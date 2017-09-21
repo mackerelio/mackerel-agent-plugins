@@ -92,7 +92,7 @@ func TestLatestCSN(t *testing.T) {
 		},
 	}
 	tm, _ := latestCSN(sr)
-	want, _ := time.Parse("2006-01-02T15:04:05.999999Z07:00", "2016-12-05T03:35:38.343893Z")
+	want, _ := time.Parse("2006-01-02T15:04:05.999999Z07:00", "2017-07-13T09:47:01.963361Z")
 	if !tm.Equal(want) {
 		t.Errorf("latestCSN = %q, want %q", tm, want)
 	}
