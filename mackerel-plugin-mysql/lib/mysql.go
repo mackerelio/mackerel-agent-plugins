@@ -629,7 +629,7 @@ func (m MySQLPlugin) addExtendedGraphdef(graphdef map[string]mp.Graphs) map[stri
 		},
 	}
 	graphdef["myisam_indexes"] = mp.Graphs{
-		Label: labelPrefix + " myisam Indexes",
+		Label: labelPrefix + " MyISAM Indexes",
 		Unit:  "float",
 		Metrics: []mp.Metrics{
 			{Name: "Key_read_requests", Label: "Key Read Requests", Diff: true, Stacked: false, Type: "uint64"},
@@ -639,7 +639,7 @@ func (m MySQLPlugin) addExtendedGraphdef(graphdef map[string]mp.Graphs) map[stri
 		},
 	}
 	graphdef["myisam_key_cache"] = mp.Graphs{
-		Label: labelPrefix + " myisam Key Cache",
+		Label: labelPrefix + " MyISAM Key Cache",
 		Unit:  "bytes",
 		Metrics: []mp.Metrics{
 			{Name: "key_buffer_size", Label: "Key Buffer Size", Diff: false, Stacked: false, Type: "uint64"},
