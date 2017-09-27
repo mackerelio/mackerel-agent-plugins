@@ -21,6 +21,7 @@ import (
 	"github.com/mackerelio/mackerel-agent-plugins/mackerel-plugin-docker/lib"
 	"github.com/mackerelio/mackerel-agent-plugins/mackerel-plugin-elasticsearch/lib"
 	"github.com/mackerelio/mackerel-agent-plugins/mackerel-plugin-fluentd/lib"
+	"github.com/mackerelio/mackerel-agent-plugins/mackerel-plugin-flume/lib"
 	"github.com/mackerelio/mackerel-agent-plugins/mackerel-plugin-gostats/lib"
 	"github.com/mackerelio/mackerel-agent-plugins/mackerel-plugin-graphite/lib"
 	"github.com/mackerelio/mackerel-agent-plugins/mackerel-plugin-haproxy/lib"
@@ -95,6 +96,8 @@ func runPlugin(plug string) error {
 		mpelasticsearch.Do()
 	case "fluentd":
 		mpfluentd.Do()
+	case "flume":
+		mpflume.Do()
 	case "gostats":
 		mpgostats.Do()
 	case "graphite":
@@ -191,6 +194,7 @@ var plugins = []string{
 	"docker",
 	"elasticsearch",
 	"fluentd",
+	"flume",
 	"gostats",
 	"graphite",
 	"haproxy",
