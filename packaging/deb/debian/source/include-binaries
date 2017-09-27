@@ -11,6 +11,7 @@ debian/mackerel-plugin-aws-rds
 debian/mackerel-plugin-aws-ses
 debian/mackerel-plugin-conntrack
 debian/mackerel-plugin-elasticsearch
+debian/mackerel-plugin-flume
 debian/mackerel-plugin-gostats
 debian/mackerel-plugin-graphite
 debian/mackerel-plugin-haproxy
@@ -35,6 +36,7 @@ debian/mackerel-plugin-proc-fd
 debian/mackerel-plugin-solr
 debian/mackerel-plugin-rabbitmq
 debian/mackerel-plugin-redis
+debian/mackerel-plugin-sidekiq
 debian/mackerel-plugin-snmp
 debian/mackerel-plugin-squid
 debian/mackerel-plugin-td-table-count

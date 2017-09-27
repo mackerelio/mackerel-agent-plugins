@@ -1,3 +1,20 @@
+mackerel-agent-plugins (0.34.0-1) stable; urgency=low
+
+  * add mackerel-plugin-flume to package (by y-kuno)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/415>
+  * [mysql]add MyISAM related graphs (by matsuu)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/406>
+  * add mackerel-plugin-sidekiq to package (by syou6162)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/417>
+  * build with Go 1.9 (by astj)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/414>
+  * [OpenLDAP] fix get latestCSN (by masahide)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/413>
+  * [aws-dynamodb] Add ReadThrottleEvents metric and fill 0 when *ThrottleEvents metrics are not present (by astj)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/409>
+
+ -- mackerel <mackerel-developers@hatena.ne.jp>  Wed, 27 Sep 2017 11:58:38 +0900
+
 mackerel-agent-plugins (0.33.0-1) stable; urgency=low
 
   * add mackerel-plugin-nvidia-smi to package (by syou6162)
