@@ -38,6 +38,7 @@
        "solr",
        "rabbitmq",
        "redis",
+       "sidekiq",
        "snmp",
        "squid",
        "td-table-count",
