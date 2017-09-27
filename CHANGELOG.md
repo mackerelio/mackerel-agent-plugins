@@ -1,5 +1,15 @@
 # Changelog
 
+## 0.34.0 (2017-09-27)
+
+* add mackerel-plugin-flume to package #415 (y-kuno)
+* [mysql]add MyISAM related graphs #406 (matsuu)
+* add mackerel-plugin-sidekiq to package #417 (syou6162)
+* build with Go 1.9 #414 (astj)
+* [OpenLDAP] fix get latestCSN #413 (masahide)
+* [aws-dynamodb] Add ReadThrottleEvents metric and fill 0 when *ThrottleEvents metrics are not present #409 (astj)
+
+
 ## 0.33.0 (2017-09-20)
 
 * add mackerel-plugin-nvidia-smi to package #411 (syou6162)

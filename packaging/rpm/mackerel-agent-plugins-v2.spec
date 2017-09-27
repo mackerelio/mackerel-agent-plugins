@@ -28,7 +28,7 @@ This package provides metric plugins for Mackerel.
 
 %{__install} -m0755 %{_sourcedir}/build/mackerel-plugin %{buildroot}%{__targetdir}/
 
-for i in accesslog apache2 aws-dynamodb aws-ec2-cpucredit aws-elasticache aws-elasticsearch aws-elb aws-kinesis-streams aws-lambda aws-rds aws-ses conntrack elasticsearch gostats graphite haproxy jmx-jolokia jvm linux mailq memcached mongodb multicore munin mysql nginx nvidia-smi openldap php-apc php-fpm php-opcache plack postgres proc-fd solr rabbitmq redis snmp squid td-table-count trafficserver twemproxy uwsgi-vassal varnish xentop aws-cloudfront aws-ec2-ebs fluentd docker unicorn uptime inode; do \
+for i in accesslog apache2 aws-dynamodb aws-ec2-cpucredit aws-elasticache aws-elasticsearch aws-elb aws-kinesis-streams aws-lambda aws-rds aws-ses conntrack elasticsearch flume gostats graphite haproxy jmx-jolokia jvm linux mailq memcached mongodb multicore munin mysql nginx nvidia-smi openldap php-apc php-fpm php-opcache plack postgres proc-fd solr rabbitmq redis sidekiq snmp squid td-table-count trafficserver twemproxy uwsgi-vassal varnish xentop aws-cloudfront aws-ec2-ebs fluentd docker unicorn uptime inode; do \
     ln -s ./mackerel-plugin %{buildroot}%{__targetdir}/mackerel-plugin-$i; \
 done
 
@@ -40,6 +40,14 @@ done
 %{__targetdir}/*
 
 %changelog
+* Wed Sep 27 2017 <mackerel-developers@hatena.ne.jp> - 0.34.0
+- add mackerel-plugin-flume to package (by y-kuno)
+- [mysql]add MyISAM related graphs (by matsuu)
+- add mackerel-plugin-sidekiq to package (by syou6162)
+- build with Go 1.9 (by astj)
+- [OpenLDAP] fix get latestCSN (by masahide)
+- [aws-dynamodb] Add ReadThrottleEvents metric and fill 0 when *ThrottleEvents metrics are not present (by astj)
+
 * Wed Sep 20 2017 <mackerel-developers@hatena.ne.jp> - 0.33.0
 - add mackerel-plugin-nvidia-smi to package (by syou6162)
 - [accesslog] Feature/accesslog/customize parser (by karupanerura)
