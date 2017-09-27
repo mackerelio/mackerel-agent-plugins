@@ -45,6 +45,7 @@ import (
 	"github.com/mackerelio/mackerel-agent-plugins/mackerel-plugin-proc-fd/lib"
 	"github.com/mackerelio/mackerel-agent-plugins/mackerel-plugin-rabbitmq/lib"
 	"github.com/mackerelio/mackerel-agent-plugins/mackerel-plugin-redis/lib"
+	"github.com/mackerelio/mackerel-agent-plugins/mackerel-plugin-sidekiq/lib"
 	"github.com/mackerelio/mackerel-agent-plugins/mackerel-plugin-snmp/lib"
 	"github.com/mackerelio/mackerel-agent-plugins/mackerel-plugin-solr/lib"
 	"github.com/mackerelio/mackerel-agent-plugins/mackerel-plugin-squid/lib"
@@ -142,6 +143,8 @@ func runPlugin(plug string) error {
 		mprabbitmq.Do()
 	case "redis":
 		mpredis.Do()
+	case "sidekiq":
+		mpsidekiq.Do()
 	case "snmp":
 		mpsnmp.Do()
 	case "solr":
@@ -212,6 +215,7 @@ var plugins = []string{
 	"proc-fd",
 	"rabbitmq",
 	"redis",
+	"sidekiq",
 	"snmp",
 	"solr",
 	"squid",
