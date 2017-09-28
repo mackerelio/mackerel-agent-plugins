@@ -11,9 +11,10 @@ import (
 
 // TwemproxyPlugin mackerel plugin
 type TwemproxyPlugin struct {
-	Address string
-	Prefix  string
-	Timeout uint
+	Address         string
+	Prefix          string
+	Timeout         uint
+	EachPoolMetrics bool
 }
 
 // MetricKeyPrefix interface for PluginWithPrefix
@@ -138,40 +139,46 @@ func (p TwemproxyPlugin) FetchMetrics() (map[string]interface{}, error) {
 	totalPoolForwardErr := uint64(0)
 	totalServerTimeout := uint64(0)
 	totalServerErr := uint64(0)
+
 	// NOTE: Each custom metric name contains a wildcard.
-	for pName, p := range stats.Pools {
+	for pName, po := range stats.Pools {
 		// A normalized pool name corresponds a wildcard
 		np := normalizeMetricName(pName)
-		wp := "." + np + "."
-		metrics["pool_error"+wp+"client_err"] = *p.ClientErr
-		metrics["pool_error"+wp+"server_ejects"] = *p.ServerEjects
-		metrics["pool_error"+wp+"forward_error"] = *p.ForwardError
-		metrics["pool_client_connections"+wp+"client_eof"] = *p.ClientEOF
-		metrics["pool_client_connections"+wp+"client_connections"] = *p.ClientConnections
-		totalPoolClientErr += *p.ClientErr
-		totalPoolServerEjects += *p.ServerEjects
-		totalPoolForwardErr += *p.ForwardError
+		if p.EachPoolMetrics {
+			wp := "." + np + "."
+			metrics["pool_error"+wp+"client_err"] = *po.ClientErr
+			metrics["pool_error"+wp+"server_ejects"] = *po.ServerEjects
+			metrics["pool_error"+wp+"forward_error"] = *po.ForwardError
+			metrics["pool_client_connections"+wp+"client_eof"] = *po.ClientEOF
+			metrics["pool_client_connections"+wp+"client_connections"] = *po.ClientConnections
+		}
+		totalPoolClientErr += *po.ClientErr
+		totalPoolServerEjects += *po.ServerEjects
+		totalPoolForwardErr += *po.ForwardError
 
-		for sName, s := range p.Servers {
-			// A concat of normalized pool and server names corresponds a wildcard
-			ns := normalizeMetricName(sName)
-			ws := "." + np + "_" + ns + "."
-			metrics["server_error"+ws+"server_err"] = *s.ServerErr
-			metrics["server_error"+ws+"server_timedout"] = *s.ServerTimedout
-			metrics["server_connections"+ws+"server_eof"] = *s.ServerEOF
-			metrics["server_connections"+ws+"server_connections"] = *s.ServerConnections
-			metrics["server_queue"+ws+"out_queue"] = *s.OutQueue
-			metrics["server_queue"+ws+"in_queue"] = *s.InQueue
-			metrics["server_queue_bytes"+ws+"out_queue_bytes"] = *s.OutQueueBytes
-			metrics["server_queue_bytes"+ws+"in_queue_bytes"] = *s.InQueueBytes
-			metrics["server_communications"+ws+"requests"] = *s.Requests
-			metrics["server_communications"+ws+"responses"] = *s.Responses
-			metrics["server_communication_bytes"+ws+"request_bytes"] = *s.RequestBytes
-			metrics["server_communication_bytes"+ws+"response_bytes"] = *s.ResponseBytes
+		for sName, s := range po.Servers {
+			if p.EachPoolMetrics {
+				// A concat of normalized pool and server names corresponds a wildcard
+				ns := normalizeMetricName(sName)
+				ws := "." + np + "_" + ns + "."
+				metrics["server_error"+ws+"server_err"] = *s.ServerErr
+				metrics["server_error"+ws+"server_timedout"] = *s.ServerTimedout
+				metrics["server_connections"+ws+"server_eof"] = *s.ServerEOF
+				metrics["server_connections"+ws+"server_connections"] = *s.ServerConnections
+				metrics["server_queue"+ws+"out_queue"] = *s.OutQueue
+				metrics["server_queue"+ws+"in_queue"] = *s.InQueue
+				metrics["server_queue_bytes"+ws+"out_queue_bytes"] = *s.OutQueueBytes
+				metrics["server_queue_bytes"+ws+"in_queue_bytes"] = *s.InQueueBytes
+				metrics["server_communications"+ws+"requests"] = *s.Requests
+				metrics["server_communications"+ws+"responses"] = *s.Responses
+				metrics["server_communication_bytes"+ws+"request_bytes"] = *s.RequestBytes
+				metrics["server_communication_bytes"+ws+"response_bytes"] = *s.ResponseBytes
+			}
 			totalServerTimeout += *s.ServerTimedout
 			totalServerErr += *s.ServerErr
 		}
 	}
+
 	metrics["total_pool_client_error"] = totalPoolClientErr
 	metrics["total_pool_server_ejects"] = totalPoolServerEjects
 	metrics["total_pool_forward_error"] = totalPoolForwardErr
@@ -191,13 +198,15 @@ func Do() {
 	optAddress := flag.String("address", "localhost:22222", "twemproxy stats Address")
 	optPrefix := flag.String("metric-key-prefix", "twemproxy", "Metric key prefix")
 	optTimeout := flag.Uint("timeout", 5, "Timeout")
+	optEachPoolMetrics := flag.Bool("enable-each-pool-metrics", false, "Enable metric collection for each pool")
 	optTempfile := flag.String("tempfile", "", "Temp file name")
 	flag.Parse()
 
 	p := TwemproxyPlugin{
-		Address: *optAddress,
-		Prefix:  *optPrefix,
-		Timeout: *optTimeout,
+		Address:         *optAddress,
+		Prefix:          *optPrefix,
+		Timeout:         *optTimeout,
+		EachPoolMetrics: *optEachPoolMetrics,
 	}
 
 	helper := mp.NewMackerelPlugin(p)
