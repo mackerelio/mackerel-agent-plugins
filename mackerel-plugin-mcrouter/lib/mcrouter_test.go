@@ -47,14 +47,14 @@ func TestFetchMetrics(t *testing.T) {
 		return
 	}
 
-	for key, expected_value := range expected {
-		got_value, ok := metrics[key]
+	for key, expectedValue := range expected {
+		gotValue, ok := metrics[key]
 		if !ok {
 			t.Errorf("metric of %s cannot be fetched", key)
 			continue
 		}
-		if got_value != expected_value {
-			t.Errorf("metric of %s should be %v, but %v", key, got_value, expected_value)
+		if gotValue != expectedValue {
+			t.Errorf("metric of %s should be %v, but %v", key, gotValue, expectedValue)
 		}
 	}
 }
