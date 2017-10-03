@@ -11,10 +11,10 @@ import (
 
 // TwemproxyPlugin mackerel plugin
 type TwemproxyPlugin struct {
-	Address         string
-	Prefix          string
-	Timeout         uint
-	EachPoolMetrics bool
+	Address           string
+	Prefix            string
+	Timeout           uint
+	EachServerMetrics bool
 }
 
 // MetricKeyPrefix interface for PluginWithPrefix
@@ -144,20 +144,18 @@ func (p TwemproxyPlugin) FetchMetrics() (map[string]interface{}, error) {
 	for pName, po := range stats.Pools {
 		// A normalized pool name corresponds a wildcard
 		np := normalizeMetricName(pName)
-		if p.EachPoolMetrics {
-			wp := "." + np + "."
-			metrics["pool_error"+wp+"client_err"] = *po.ClientErr
-			metrics["pool_error"+wp+"server_ejects"] = *po.ServerEjects
-			metrics["pool_error"+wp+"forward_error"] = *po.ForwardError
-			metrics["pool_client_connections"+wp+"client_eof"] = *po.ClientEOF
-			metrics["pool_client_connections"+wp+"client_connections"] = *po.ClientConnections
-		}
+		wp := "." + np + "."
+		metrics["pool_error"+wp+"client_err"] = *po.ClientErr
+		metrics["pool_error"+wp+"server_ejects"] = *po.ServerEjects
+		metrics["pool_error"+wp+"forward_error"] = *po.ForwardError
+		metrics["pool_client_connections"+wp+"client_eof"] = *po.ClientEOF
+		metrics["pool_client_connections"+wp+"client_connections"] = *po.ClientConnections
 		totalPoolClientErr += *po.ClientErr
 		totalPoolServerEjects += *po.ServerEjects
 		totalPoolForwardErr += *po.ForwardError
 
 		for sName, s := range po.Servers {
-			if p.EachPoolMetrics {
+			if p.EachServerMetrics {
 				// A concat of normalized pool and server names corresponds a wildcard
 				ns := normalizeMetricName(sName)
 				ws := "." + np + "_" + ns + "."
@@ -198,15 +196,15 @@ func Do() {
 	optAddress := flag.String("address", "localhost:22222", "twemproxy stats Address")
 	optPrefix := flag.String("metric-key-prefix", "twemproxy", "Metric key prefix")
 	optTimeout := flag.Uint("timeout", 5, "Timeout")
-	optEachPoolMetrics := flag.Bool("enable-each-pool-metrics", false, "Enable metric collection for each pool")
+	optEachServerMetrics := flag.Bool("enable-each-server-metrics", false, "Enable metric collection for each server")
 	optTempfile := flag.String("tempfile", "", "Temp file name")
 	flag.Parse()
 
 	p := TwemproxyPlugin{
-		Address:         *optAddress,
-		Prefix:          *optPrefix,
-		Timeout:         *optTimeout,
-		EachPoolMetrics: *optEachPoolMetrics,
+		Address:           *optAddress,
+		Prefix:            *optPrefix,
+		Timeout:           *optTimeout,
+		EachServerMetrics: *optEachServerMetrics,
 	}
 
 	helper := mp.NewMackerelPlugin(p)
