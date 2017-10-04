@@ -1,3 +1,12 @@
+mackerel-agent-plugins (0.35.0-1) stable; urgency=low
+
+  * Add `-enable-each-server-metrics` option and remove `-enable-each-pool-metrics` (by Songmu)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/421>
+  * [twemproxy] [incompatible] add `-enable-each-pool-metrics` option (by Songmu)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/419>
+
+ -- mackerel <mackerel-developers@hatena.ne.jp>  Wed, 04 Oct 2017 11:33:26 +0900
+
 mackerel-agent-plugins (0.34.0-1) stable; urgency=low
 
   * add mackerel-plugin-flume to package (by y-kuno)
