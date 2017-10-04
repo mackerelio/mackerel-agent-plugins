@@ -149,10 +149,10 @@ func TestFetchMetrics(t *testing.T) {
 
 	// get metrics
 	p := TwemproxyPlugin{
-		Address:         "localhost:" + strconv.Itoa(statsServer.Port()),
-		Prefix:          "twemproxy",
-		Timeout:         5,
-		EachPoolMetrics: true,
+		Address:           "localhost:" + strconv.Itoa(statsServer.Port()),
+		Prefix:            "twemproxy",
+		Timeout:           5,
+		EachServerMetrics: true,
 	}
 	metrics, err := p.FetchMetrics()
 	if err != nil {
@@ -240,8 +240,9 @@ func TestFetchMetrics_disableEachMetrics(t *testing.T) {
 		return
 	}
 
-	if len(metrics) != 7 {
-		t.Errorf("7 metrics are expected to be collected, but it was %d", len(metrics))
+	expectedNum := 17
+	if len(metrics) != expectedNum {
+		t.Errorf("%d metrics are expected to be collected, but it was %d", expectedNum, len(metrics))
 	}
 
 	// check the metrics
@@ -273,10 +274,10 @@ func TestFetchMetricsFail(t *testing.T) {
 	}
 
 	p := TwemproxyPlugin{
-		Address:         "localhost:" + strconv.Itoa(statsServer.Port()),
-		Prefix:          "twemproxy",
-		Timeout:         5,
-		EachPoolMetrics: true,
+		Address:           "localhost:" + strconv.Itoa(statsServer.Port()),
+		Prefix:            "twemproxy",
+		Timeout:           5,
+		EachServerMetrics: true,
 	}
 
 	noClientErrJSONStr := strings.Replace(
