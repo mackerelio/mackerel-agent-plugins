@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.35.0 (2017-10-04)
+
+* [twemproxy] [incompatible] add `-enable-each-server-metrics` option #419 #421 (Songmu)
+
+
 ## 0.34.0 (2017-09-27)
 
 * add mackerel-plugin-flume to package #415 (y-kuno)

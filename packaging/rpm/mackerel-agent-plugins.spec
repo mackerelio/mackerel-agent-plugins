@@ -49,6 +49,9 @@ done
 %{__oldtargetdir}/*
 
 %changelog
+* Wed Oct 04 2017 <mackerel-developers@hatena.ne.jp> - 0.35.0
+- [twemproxy] [incompatible] add `-enable-each-server-metrics` option (by Songmu)
+
 * Wed Sep 27 2017 <mackerel-developers@hatena.ne.jp> - 0.34.0
 - add mackerel-plugin-flume to package (by y-kuno)
 - [mysql]add MyISAM related graphs (by matsuu)
