@@ -2,8 +2,7 @@
 
 ## 0.35.0 (2017-10-04)
 
-* Add `-enable-each-server-metrics` option and remove `-enable-each-pool-metrics` #421 (Songmu)
-* [twemproxy] [incompatible] add `-enable-each-pool-metrics` option #419 (Songmu)
+* [twemproxy] [incompatible] add `-enable-each-server-metrics` option #419 #421 (Songmu)
 
 
 ## 0.34.0 (2017-09-27)
