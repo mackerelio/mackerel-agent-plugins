@@ -275,11 +275,11 @@ func (p ESPlugin) FetchMetrics() (map[string]float64, error) {
 		{Name: "MasterReachableFromNode", Type: metricsTypeMinimum},
 		{Name: "ReadLatency", Type: metricsTypeAverage},
 		{Name: "WriteLatency", Type: metricsTypeAverage},
-		{Name: "ReadThroughput", Type: metricsTypeSum},
-		{Name: "WriteThroughput", Type: metricsTypeSum},
+		{Name: "ReadThroughput", Type: metricsTypeAverage},
+		{Name: "WriteThroughput", Type: metricsTypeAverage},
 		{Name: "DiskQueueDepth", Type: metricsTypeAverage},
-		{Name: "ReadIOPS", Type: metricsTypeSum},
-		{Name: "WriteIOPS", Type: metricsTypeSum},
+		{Name: "ReadIOPS", Type: metricsTypeAverage},
+		{Name: "WriteIOPS", Type: metricsTypeAverage},
 	} {
 		v, err := p.getLastPoint(met)
 		if err == nil {
