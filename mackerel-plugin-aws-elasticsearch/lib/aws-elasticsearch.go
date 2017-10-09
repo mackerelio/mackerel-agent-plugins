@@ -1,7 +1,6 @@
 package mpawselasticsearch
 
 import (
-	"errors"
 	"flag"
 	"log"
 	"time"
@@ -196,7 +195,7 @@ func (p *ESPlugin) prepare() error {
 	return nil
 }
 
-func (p ESPlugin) getLastPoint(metric metrics) (float64, error) {
+func (p ESPlugin) getLastPointFromCloudWatch(metric metrics) (*cloudwatch.Datapoint, error) {
 	now := time.Now()
 
 	dimensions := []*cloudwatch.Dimension{
@@ -221,34 +220,47 @@ func (p ESPlugin) getLastPoint(metric metrics) (float64, error) {
 	})
 
 	if err != nil {
-		return 0, err
+		return nil, err
 	}
 
 	datapoints := response.Datapoints
 	if len(datapoints) == 0 {
-		return 0, errors.New("fetched no datapoints")
+		return nil, nil
 	}
 
-	// get a least recently datapoint
-	// because a most recently datapoint is not stable.
-	least := time.Now()
-	var latestVal float64
+	latest := new(time.Time)
+	var latestDp *cloudwatch.Datapoint
 	for _, dp := range datapoints {
-		if dp.Timestamp.Before(least) {
-			least = *dp.Timestamp
-			if metric.Type == metricsTypeAverage {
-				latestVal = *dp.Average
-			} else if metric.Type == metricsTypeSum {
-				latestVal = *dp.Sum
-			} else if metric.Type == metricsTypeMaximum {
-				latestVal = *dp.Maximum
-			} else if metric.Type == metricsTypeMinimum {
-				latestVal = *dp.Minimum
-			}
+		if dp.Timestamp.Before(*latest) {
+			continue
 		}
+
+		latest = dp.Timestamp
+		latestDp = dp
 	}
 
-	return latestVal, nil
+	return latestDp, nil
+}
+
+func mergeStatFromDatapoint(stat map[string]float64, dp *cloudwatch.Datapoint, metric metrics) map[string]float64 {
+	if dp != nil {
+		var value float64
+		if metric.Type == metricsTypeAverage {
+			value = *dp.Average
+		} else if metric.Type == metricsTypeSum {
+			value = *dp.Sum
+		} else if metric.Type == metricsTypeMaximum {
+			value = *dp.Maximum
+		} else if metric.Type == metricsTypeMinimum {
+			value = *dp.Minimum
+		}
+		if metric.Name == "ClusterUsedSpace" || metric.Name == "MasterFreeStorageSpace" || metric.Name == "FreeStorageSpace" {
+			// MBytes -> Bytes
+			value = value * 1024 * 1024
+		}
+		stat[metric.Name] = value
+	}
+	return stat
 }
 
 // FetchMetrics interface for mackerelplugin
@@ -281,13 +293,9 @@ func (p ESPlugin) FetchMetrics() (map[string]float64, error) {
 		{Name: "ReadIOPS", Type: metricsTypeAverage},
 		{Name: "WriteIOPS", Type: metricsTypeAverage},
 	} {
-		v, err := p.getLastPoint(met)
+		v, err := p.getLastPointFromCloudWatch(met)
 		if err == nil {
-			if met.Name == "ClusterUsedSpace" || met.Name == "MasterFreeStorageSpace" || met.Name == "FreeStorageSpace" {
-				// MBytes -> Bytes
-				v = v * 1024 * 1024
-			}
-			stat[met.Name] = v
+			stat = mergeStatFromDatapoint(stat, v, met)
 		} else {
 			log.Printf("%s: %s", met, err)
 		}
