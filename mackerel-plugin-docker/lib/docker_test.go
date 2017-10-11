@@ -86,16 +86,17 @@ func TestGenerateName(t *testing.T) {
 
 func TestAddCPUPercentageStats(t *testing.T) {
 	stats := map[string]interface{}{
-		"docker.cpuacct.containerA._host":  uint64(100000),
-		"docker.cpuacct.containerA.user":   uint64(3000),
-		"docker.cpuacct.containerA.system": uint64(2000),
-		"docker.cpuacct.containerB._host":  uint64(100000),
-		"docker.cpuacct.containerB.user":   uint64(3500),
-		"docker.cpuacct.containerC.user":   uint64(3300),
-		"docker.cpuacct.containerC.system": uint64(2300),
-		"docker.cpuacct.containerD._host":  uint64(100000),
-		"docker.cpuacct.containerD.user":   uint64(3000),
-		"docker.cpuacct.containerD.system": uint64(2000),
+		"docker.cpuacct.containerA._host":       uint64(100000),
+		"docker.cpuacct.containerA.user":        uint64(3000),
+		"docker.cpuacct.containerA.system":      uint64(2000),
+		"docker.cpuacct.containerA._onlineCPUs": int(2),
+		"docker.cpuacct.containerB._host":       uint64(100000),
+		"docker.cpuacct.containerB.user":        uint64(3500),
+		"docker.cpuacct.containerC.user":        uint64(3300),
+		"docker.cpuacct.containerC.system":      uint64(2300),
+		"docker.cpuacct.containerD._host":       uint64(100000),
+		"docker.cpuacct.containerD.user":        uint64(3000),
+		"docker.cpuacct.containerD.system":      uint64(2000),
 	}
 	oldStats := map[string]interface{}{
 		"docker.cpuacct.containerA._host":  float64(90000),
@@ -113,12 +114,16 @@ func TestAddCPUPercentageStats(t *testing.T) {
 
 	if stat, ok := stats["docker.cpuacct_percentage.containerA.user"]; !ok {
 		t.Errorf("docker.cpuacct_percentage.containerA.user should be calculated")
-	} else if stat != float64(20.0) {
-		t.Errorf("docker.cpuacct_percentage.containerA.user should be %s, but %s", stat, float64(20.0))
+	} else if stat != float64(40.0) {
+		t.Errorf("docker.cpuacct_percentage.containerA.user should be %s, but %s", stat, float64(40.0))
 	}
 
 	if _, ok := stats["docker.cpuacct_percentage.containerC.user"]; ok {
 		t.Errorf("docker.cpuacct_percentage.containerC.user should not be calculated")
+	}
+
+	if _, ok := stats["docker.cpuacct_percentage.containerB.user"]; ok {
+		t.Errorf("docker.cpuacct_percentage.containerB.user should not be calculated")
 	}
 
 	if _, ok := stats["docker.cpuacct_percentage.containerD.user"]; ok {
