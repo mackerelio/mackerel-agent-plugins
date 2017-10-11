@@ -83,3 +83,49 @@ func TestGenerateName(t *testing.T) {
 	}
 
 }
+
+func TestAddCPUPercentageStats(t *testing.T) {
+	stats := map[string]interface{}{
+		"docker.cpuacct.containerA._host":  uint64(100000),
+		"docker.cpuacct.containerA.user":   uint64(3000),
+		"docker.cpuacct.containerA.system": uint64(2000),
+		"docker.cpuacct.containerB._host":  uint64(100000),
+		"docker.cpuacct.containerB.user":   uint64(3500),
+		"docker.cpuacct.containerC.user":   uint64(3300),
+		"docker.cpuacct.containerC.system": uint64(2300),
+		"docker.cpuacct.containerD._host":  uint64(100000),
+		"docker.cpuacct.containerD.user":   uint64(3000),
+		"docker.cpuacct.containerD.system": uint64(2000),
+	}
+	oldStats := map[string]interface{}{
+		"docker.cpuacct.containerA._host":  float64(90000),
+		"docker.cpuacct.containerA.user":   float64(1000),
+		"docker.cpuacct.containerA.system": float64(1500),
+		"docker.cpuacct.containerB._host":  float64(90000),
+		"docker.cpuacct.containerB.user":   float64(3000),
+		"docker.cpuacct.containerC.user":   float64(3000),
+		"docker.cpuacct.containerC.system": float64(2000),
+		"docker.cpuacct.containerE._host":  float64(100000),
+		"docker.cpuacct.containerE.user":   float64(3000),
+		"docker.cpuacct.containerE.system": float64(2000),
+	}
+	addCPUPercentageStats(&stats, oldStats)
+
+	if stat, ok := stats["docker.cpuacct_percentage.containerA.user"]; !ok {
+		t.Errorf("docker.cpuacct_percentage.containerA.user should be calculated")
+	} else if stat != float64(20.0) {
+		t.Errorf("docker.cpuacct_percentage.containerA.user should be %s, but %s", stat, float64(20.0))
+	}
+
+	if _, ok := stats["docker.cpuacct_percentage.containerC.user"]; ok {
+		t.Errorf("docker.cpuacct_percentage.containerC.user should not be calculated")
+	}
+
+	if _, ok := stats["docker.cpuacct_percentage.containerD.user"]; ok {
+		t.Errorf("docker.cpuacct_percentage.containerD.user should not be calculated")
+	}
+
+	if _, ok := stats["docker.cpuacct_percentage.containerE.user"]; ok {
+		t.Errorf("docker.cpuacct_percentage.containerE.user should not be calculated")
+	}
+}
