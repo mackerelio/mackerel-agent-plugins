@@ -25,7 +25,7 @@ var graphdef = map[string]mp.Graphs{
 		Metrics: []mp.Metrics{
 			{Name: "user", Label: "User", Diff: true, Stacked: true, Type: "uint64"},
 			{Name: "system", Label: "System", Diff: true, Stacked: true, Type: "uint64"},
-			// _host field also exists in metrics, but it is internal intermediate data
+			// some other fields also exist in metrics, but ther're internal intermediate data
 		},
 	},
 	"docker.cpuacct_percentage.#": {
@@ -357,6 +357,7 @@ func (m DockerPlugin) parseStats(stats *map[string]interface{}, name string, res
 	(*stats)["docker.cpuacct."+name+".user"] = (*result).CPUStats.CPUUsage.UsageInUsermode
 	(*stats)["docker.cpuacct."+name+".system"] = (*result).CPUStats.CPUUsage.UsageInKernelmode
 	(*stats)["docker.cpuacct."+name+"._host"] = (*result).CPUStats.SystemCPUUsage
+	(*stats)["docker.cpuacct."+name+"._onlineCPUs"] = len((*result).CPUStats.CPUUsage.PercpuUsage)
 	(*stats)["docker.memory."+name+".cache"] = (*result).MemoryStats.Stats.TotalCache
 	(*stats)["docker.memory."+name+".rss"] = (*result).MemoryStats.Stats.TotalRss
 	fields := []string{"read", "write", "sync", "async"}
@@ -386,11 +387,13 @@ func addCPUPercentageStats(stats *map[string]interface{}, lastStat map[string]in
 			continue
 		}
 		name := strings.TrimSuffix(strings.TrimPrefix(k, "docker.cpuacct."), "._host")
-		currentHostUsage, ok := (*stats)["docker.cpuacct."+name+"._host"]
-		if !ok {
+		currentHostUsage, ok1 := (*stats)["docker.cpuacct."+name+"._host"]
+		cpuNums, ok2 := (*stats)["docker.cpuacct."+name+"._onlineCPUs"]
+		if !ok1 || !ok2 {
 			continue
 		}
 		hostUsage := float64(currentHostUsage.(uint64) - uint64(v.(float64)))
+		cpuNumsInt := cpuNums.(int)
 		if hostUsage < 0 {
 			continue // counter seems reset
 		}
@@ -400,7 +403,7 @@ func addCPUPercentageStats(stats *map[string]interface{}, lastStat map[string]in
 		if ok1 && ok2 {
 			userUsage := float64(currentUserUsage.(uint64) - uint64(prevUserUsage.(float64)))
 			if userUsage >= 0 {
-				(*stats)["docker.cpuacct_percentage."+name+".user"] = userUsage / hostUsage * 100.0
+				(*stats)["docker.cpuacct_percentage."+name+".user"] = userUsage / hostUsage * 100.0 * float64(cpuNumsInt)
 			}
 		}
 
@@ -409,7 +412,7 @@ func addCPUPercentageStats(stats *map[string]interface{}, lastStat map[string]in
 		if ok1 && ok2 {
 			systemUsage := float64(currentSystemUsage.(uint64) - uint64(prevSystemUsage.(float64)))
 			if systemUsage >= 0 {
-				(*stats)["docker.cpuacct_percentage."+name+".system"] = systemUsage / hostUsage * 100.0
+				(*stats)["docker.cpuacct_percentage."+name+".system"] = systemUsage / hostUsage * 100.0 * float64(cpuNumsInt)
 			}
 		}
 	}
