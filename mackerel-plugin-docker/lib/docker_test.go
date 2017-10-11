@@ -23,8 +23,8 @@ func TestGraphDefinition(t *testing.T) {
 	var docker DockerPlugin
 
 	graphdef := docker.GraphDefinition()
-	if len(graphdef) != 5 {
-		t.Errorf("GetTempfilename: %d should be 5", len(graphdef))
+	if len(graphdef) != 6 {
+		t.Errorf("GraphDefinition: %d should be 6", len(graphdef))
 	}
 }
 
