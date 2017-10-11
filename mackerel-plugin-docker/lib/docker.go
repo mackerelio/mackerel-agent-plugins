@@ -400,7 +400,6 @@ func addCPUPercentageStats(stats *map[string]interface{}, lastStat map[string]in
 		if ok1 && ok2 {
 			userUsage := float64(currentUserUsage.(uint64) - uint64(prevUserUsage.(float64)))
 			if userUsage >= 0 {
-				fmt.Println(name, userUsage, hostUsage)
 				(*stats)["docker.cpuacct_percentage."+name+".user"] = userUsage / hostUsage * 100.0
 			}
 		}
