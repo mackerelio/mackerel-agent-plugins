@@ -480,7 +480,7 @@ func (m DockerPlugin) GraphDefinition() map[string]mp.Graphs {
 func outputValues(h mp.MackerelPlugin, m DockerPlugin) {
 	err := m.PrefetchMetrics(func(met *map[string]interface{}) error {
 		if err := h.LoadLastValues(); err != nil {
-			return err // silently ignore
+			return nil // silently ignore
 		}
 		if h.LastTime == nil || time.Now().Sub(*(h.LastTime)) > 5*time.Minute {
 			// Skip CPU stats if diff does not exist or diff is too long
