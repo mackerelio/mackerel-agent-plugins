@@ -380,16 +380,8 @@ func (m DockerPlugin) parseStats(stats *map[string]interface{}, name string, res
 	return nil
 }
 
-func addCPUPercentageStats(stats *map[string]interface{}, h mp.MackerelPlugin) {
-	err := h.LoadLastValues()
-	if err != nil {
-		return // ignore error
-	}
-	if h.LastTime == nil || time.Now().Sub(*(h.LastTime)) > 5*time.Minute {
-		// Skip CPU stats if diff does not exist or diff is too long
-		return
-	}
-	for k, v := range h.LastStat {
+func addCPUPercentageStats(stats *map[string]interface{}, lastStat map[string]interface{}) {
+	for k, v := range lastStat {
 		if !strings.HasPrefix(k, "docker.cpuacct.") || !strings.HasSuffix(k, "._host") {
 			continue
 		}
@@ -404,7 +396,7 @@ func addCPUPercentageStats(stats *map[string]interface{}, h mp.MackerelPlugin) {
 		}
 
 		currentUserUsage, ok1 := (*stats)["docker.cpuacct."+name+".user"]
-		prevUserUsage, ok2 := h.LastStat["docker.cpuacct."+name+".user"]
+		prevUserUsage, ok2 := lastStat["docker.cpuacct."+name+".user"]
 		if ok1 && ok2 {
 			userUsage := float64(currentUserUsage.(uint64) - uint64(prevUserUsage.(float64)))
 			if userUsage >= 0 {
@@ -414,7 +406,7 @@ func addCPUPercentageStats(stats *map[string]interface{}, h mp.MackerelPlugin) {
 		}
 
 		currentSystemUsage, ok1 := (*stats)["docker.cpuacct."+name+".system"]
-		prevSystemUsage, ok2 := h.LastStat["docker.cpuacct."+name+".system"]
+		prevSystemUsage, ok2 := lastStat["docker.cpuacct."+name+".system"]
 		if ok1 && ok2 {
 			systemUsage := float64(currentSystemUsage.(uint64) - uint64(prevSystemUsage.(float64)))
 			if systemUsage >= 0 {
@@ -487,7 +479,15 @@ func (m DockerPlugin) GraphDefinition() map[string]mp.Graphs {
 
 func outputValues(h mp.MackerelPlugin, m DockerPlugin) {
 	err := m.PrefetchMetrics(func(met *map[string]interface{}) error {
-		addCPUPercentageStats(met, h)
+		if err := h.LoadLastValues(); err != nil {
+			return err // silently ignore
+		}
+		if h.LastTime == nil || time.Now().Sub(*(h.LastTime)) > 5*time.Minute {
+			// Skip CPU stats if diff does not exist or diff is too long
+			return nil
+		}
+
+		addCPUPercentageStats(met, h.LastStat)
 		return nil
 	})
 	if err != nil {
