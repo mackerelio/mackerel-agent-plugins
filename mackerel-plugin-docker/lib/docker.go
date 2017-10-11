@@ -25,6 +25,15 @@ var graphdef = map[string]mp.Graphs{
 		Metrics: []mp.Metrics{
 			{Name: "user", Label: "User", Diff: true, Stacked: true, Type: "uint64"},
 			{Name: "system", Label: "System", Diff: true, Stacked: true, Type: "uint64"},
+			// _host field also exists in metrics, but it is internal intermediate data
+		},
+	},
+	"docker.cpuacct_percentage.#": {
+		Label: "Docker CPU Percentage",
+		Unit:  "percentage",
+		Metrics: []mp.Metrics{
+			{Name: "user", Label: "User", Diff: false, Stacked: true, Type: "float64"},
+			{Name: "system", Label: "System", Diff: false, Stacked: true, Type: "float64"},
 		},
 	},
 	"docker.memory.#": {
@@ -69,13 +78,14 @@ var graphdef = map[string]mp.Graphs{
 
 // DockerPlugin mackerel plugin for docker
 type DockerPlugin struct {
-	Host          string
-	DockerCommand string
-	Tempfile      string
-	Method        string
-	NameFormat    string
-	Label         string
-	pathBuilder   *pathBuilder
+	Host           string
+	DockerCommand  string
+	Tempfile       string
+	Method         string
+	NameFormat     string
+	Label          string
+	pathBuilder    *pathBuilder
+	FetchedMetrics map[string]interface{}
 }
 
 func getFile(path string) (string, error) {
@@ -238,6 +248,24 @@ func guessMethod(docker string) (string, error) {
 
 // FetchMetrics interface for mackerel plugin
 func (m DockerPlugin) FetchMetrics() (map[string]interface{}, error) {
+	if m.FetchedMetrics == nil {
+		m.FetchedMetrics = make(map[string]interface{})
+	}
+	return m.FetchedMetrics, nil
+}
+
+func (m *DockerPlugin) PrefetchMetrics(fn func(m *map[string]interface{}) (e error)) error {
+	met, err := m.fetchMetrics()
+	if err == nil {
+		if err = fn(&met); err != nil {
+			return err
+		}
+		m.FetchedMetrics = met
+	}
+	return err
+}
+
+func (m DockerPlugin) fetchMetrics() (map[string]interface{}, error) {
 	dockerStats := map[string][]string{}
 	if m.Method == "API" {
 		containers, err := m.listContainer()
@@ -328,6 +356,7 @@ func (m DockerPlugin) FetchMetricsWithAPI(containers []docker.APIContainers) (ma
 func (m DockerPlugin) parseStats(stats *map[string]interface{}, name string, result *docker.Stats) error {
 	(*stats)["docker.cpuacct."+name+".user"] = (*result).CPUStats.CPUUsage.UsageInUsermode
 	(*stats)["docker.cpuacct."+name+".system"] = (*result).CPUStats.CPUUsage.UsageInKernelmode
+	(*stats)["docker.cpuacct."+name+"._host"] = (*result).CPUStats.SystemCPUUsage
 	(*stats)["docker.memory."+name+".cache"] = (*result).MemoryStats.Stats.TotalCache
 	(*stats)["docker.memory."+name+".rss"] = (*result).MemoryStats.Stats.TotalRss
 	fields := []string{"read", "write", "sync", "async"}
@@ -349,6 +378,50 @@ func (m DockerPlugin) parseStats(stats *map[string]interface{}, name string, res
 		}
 	}
 	return nil
+}
+
+func addCPUPercentageStats(stats *map[string]interface{}, h mp.MackerelPlugin) {
+	err := h.LoadLastValues()
+	if err != nil {
+		return // ignore error
+	}
+	if h.LastTime == nil || time.Now().Sub(*(h.LastTime)) > 5*time.Minute {
+		// Skip CPU stats if diff does not exist or diff is too long
+		return
+	}
+	for k, v := range h.LastStat {
+		if !strings.HasPrefix(k, "docker.cpuacct.") || !strings.HasSuffix(k, "._host") {
+			continue
+		}
+		name := strings.TrimSuffix(strings.TrimPrefix(k, "docker.cpuacct."), "._host")
+		currentHostUsage, ok := (*stats)["docker.cpuacct."+name+"._host"]
+		if !ok {
+			continue
+		}
+		hostUsage := float64(currentHostUsage.(uint64) - uint64(v.(float64)))
+		if hostUsage < 0 {
+			continue // counter seems reset
+		}
+
+		currentUserUsage, ok1 := (*stats)["docker.cpuacct."+name+".user"]
+		prevUserUsage, ok2 := h.LastStat["docker.cpuacct."+name+".user"]
+		if ok1 && ok2 {
+			userUsage := float64(currentUserUsage.(uint64) - uint64(prevUserUsage.(float64)))
+			if userUsage >= 0 {
+				fmt.Println(name, userUsage, hostUsage)
+				(*stats)["docker.cpuacct_percentage."+name+".user"] = userUsage / hostUsage * 100.0
+			}
+		}
+
+		currentSystemUsage, ok1 := (*stats)["docker.cpuacct."+name+".system"]
+		prevSystemUsage, ok2 := h.LastStat["docker.cpuacct."+name+".system"]
+		if ok1 && ok2 {
+			systemUsage := float64(currentSystemUsage.(uint64) - uint64(prevSystemUsage.(float64)))
+			if systemUsage >= 0 {
+				(*stats)["docker.cpuacct_percentage."+name+".system"] = systemUsage / hostUsage * 100.0
+			}
+		}
+	}
 }
 
 // FetchMetricsWithFile use cgroup stats files to fetch metrics
@@ -410,6 +483,18 @@ func (m DockerPlugin) FetchMetricsWithFile(dockerStats *map[string][]string) (ma
 // GraphDefinition interface for mackerel plugin
 func (m DockerPlugin) GraphDefinition() map[string]mp.Graphs {
 	return graphdef
+}
+
+func outputValues(h mp.MackerelPlugin, m DockerPlugin) {
+	err := m.PrefetchMetrics(func(met *map[string]interface{}) error {
+		addCPUPercentageStats(met, h)
+		return nil
+	})
+	if err != nil {
+		log.Fatal(err)
+	}
+	h.Plugin = m
+	h.OutputValues()
 }
 
 // Do the plugin
@@ -474,5 +559,9 @@ func Do() {
 		helper.SetTempfileByBasename(fmt.Sprintf("mackerel-plugin-docker-%s", normalizeMetricName(*optHost)))
 	}
 
-	helper.Run()
+	if os.Getenv("MACKEREL_AGENT_PLUGIN_META") != "" {
+		helper.OutputDefinitions()
+	} else {
+		outputValues(helper, docker)
+	}
 }
