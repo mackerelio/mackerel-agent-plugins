@@ -19,7 +19,6 @@
        "graphite",
        "haproxy",
        "jmx-jolokia",
-       "json",
        "jvm",
        "linux",
        "mailq",
