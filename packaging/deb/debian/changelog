@@ -1,3 +1,16 @@
+mackerel-agent-plugins (0.36.0-1) stable; urgency=low
+
+  * Add mackerel-plugin-json (by doublemarket)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/395>
+  * [awd-dynamodb] [incompatible] remove `.` from Metrics.Name (by astj)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/423>
+  * [unicorn] Support metric-key-prefix (by astj)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/425>
+  * [aws-elasticsearch] Improve CloudWatch Statistic type and add some metrics (by holidayworking)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/387>
+
+ -- mackerel <mackerel-developers@hatena.ne.jp>  Thu, 12 Oct 2017 15:21:12 +0900
+
 mackerel-agent-plugins (0.35.0-1) stable; urgency=low
 
   * [twemproxy] [incompatible] add `-enable-each-server-metrics` option (by Songmu)
