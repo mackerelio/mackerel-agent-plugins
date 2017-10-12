@@ -49,6 +49,12 @@ done
 %{__oldtargetdir}/*
 
 %changelog
+* Thu Oct 12 2017 <mackerel-developers@hatena.ne.jp> - 0.36.0
+- Add mackerel-plugin-json (by doublemarket)
+- [awd-dynamodb] [incompatible] remove `.` from Metrics.Name (by astj)
+- [unicorn] Support metric-key-prefix (by astj)
+- [aws-elasticsearch] Improve CloudWatch Statistic type and add some metrics (by holidayworking)
+
 * Wed Oct 04 2017 <mackerel-developers@hatena.ne.jp> - 0.35.0
 - [twemproxy] [incompatible] add `-enable-each-server-metrics` option (by Songmu)
 

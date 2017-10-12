@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.36.0 (2017-10-12)
+
+* Add mackerel-plugin-json #395 (doublemarket)
+* [awd-dynamodb] [incompatible] remove `.` from Metrics.Name #423 (astj)
+* [unicorn] Support metric-key-prefix #425 (astj)
+* [aws-elasticsearch] Improve CloudWatch Statistic type and add some metrics #387 (holidayworking)
+
+
 ## 0.35.0 (2017-10-04)
 
 * [twemproxy] [incompatible] add `-enable-each-server-metrics` option #419 #421 (Songmu)
