@@ -17,7 +17,7 @@ func TestTraverseMap(t *testing.T) {
 	p.ExcludeExp = regexp.MustCompile(`^$`)
 	p.IncludeExp = regexp.MustCompile(``)
 
-	bytes, _ := ioutil.ReadFile("test/jolokia.json")
+	bytes, _ := ioutil.ReadFile("testdata/jolokia.json")
 	var content interface{}
 	err := json.Unmarshal(bytes, &content)
 	if err != nil {
@@ -37,7 +37,7 @@ func TestTraverseMap(t *testing.T) {
 
 	// Tests for slice handling
 	// An object is a slice
-	bytes, _ = ioutil.ReadFile("test/array.json")
+	bytes, _ = ioutil.ReadFile("testdata/array.json")
 	err = json.Unmarshal(bytes, &content)
 	if err != nil {
 		panic(err)
@@ -50,7 +50,7 @@ func TestTraverseMap(t *testing.T) {
 	assert.EqualValues(t, 3, stat[p.Prefix+".1.count1"])
 
 	// Slices with in an object
-	bytes, _ = ioutil.ReadFile("test/array_within.json")
+	bytes, _ = ioutil.ReadFile("testdata/array_within.json")
 	err = json.Unmarshal(bytes, &content)
 	if err != nil {
 		panic(err)
