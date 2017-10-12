@@ -77,7 +77,7 @@ func (u UnicornPlugin) GraphDefinition() map[string]mp.Graphs {
 				{Name: "memory_workeravg", Label: "Worker Average", Diff: false, Stacked: false},
 			},
 		},
-		"unicorn.workers": {
+		"workers": {
 			Label: (labelPrefix + " Workers"),
 			Unit:  "integer",
 			Metrics: []mp.Metrics{
