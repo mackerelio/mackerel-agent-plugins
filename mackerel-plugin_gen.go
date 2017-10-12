@@ -21,6 +21,7 @@ import (
 	"github.com/mackerelio/mackerel-agent-plugins/mackerel-plugin-docker/lib"
 	"github.com/mackerelio/mackerel-agent-plugins/mackerel-plugin-elasticsearch/lib"
 	"github.com/mackerelio/mackerel-agent-plugins/mackerel-plugin-fluentd/lib"
+	"github.com/mackerelio/mackerel-agent-plugins/mackerel-plugin-flume/lib"
 	"github.com/mackerelio/mackerel-agent-plugins/mackerel-plugin-gostats/lib"
 	"github.com/mackerelio/mackerel-agent-plugins/mackerel-plugin-graphite/lib"
 	"github.com/mackerelio/mackerel-agent-plugins/mackerel-plugin-haproxy/lib"
@@ -35,6 +36,7 @@ import (
 	"github.com/mackerelio/mackerel-agent-plugins/mackerel-plugin-munin/lib"
 	"github.com/mackerelio/mackerel-agent-plugins/mackerel-plugin-mysql/lib"
 	"github.com/mackerelio/mackerel-agent-plugins/mackerel-plugin-nginx/lib"
+	"github.com/mackerelio/mackerel-agent-plugins/mackerel-plugin-nvidia-smi/lib"
 	"github.com/mackerelio/mackerel-agent-plugins/mackerel-plugin-openldap/lib"
 	"github.com/mackerelio/mackerel-agent-plugins/mackerel-plugin-php-apc/lib"
 	"github.com/mackerelio/mackerel-agent-plugins/mackerel-plugin-php-fpm/lib"
@@ -44,6 +46,7 @@ import (
 	"github.com/mackerelio/mackerel-agent-plugins/mackerel-plugin-proc-fd/lib"
 	"github.com/mackerelio/mackerel-agent-plugins/mackerel-plugin-rabbitmq/lib"
 	"github.com/mackerelio/mackerel-agent-plugins/mackerel-plugin-redis/lib"
+	"github.com/mackerelio/mackerel-agent-plugins/mackerel-plugin-sidekiq/lib"
 	"github.com/mackerelio/mackerel-agent-plugins/mackerel-plugin-snmp/lib"
 	"github.com/mackerelio/mackerel-agent-plugins/mackerel-plugin-solr/lib"
 	"github.com/mackerelio/mackerel-agent-plugins/mackerel-plugin-squid/lib"
@@ -93,6 +96,8 @@ func runPlugin(plug string) error {
 		mpelasticsearch.Do()
 	case "fluentd":
 		mpfluentd.Do()
+	case "flume":
+		mpflume.Do()
 	case "gostats":
 		mpgostats.Do()
 	case "graphite":
@@ -121,6 +126,8 @@ func runPlugin(plug string) error {
 		mpmysql.Do()
 	case "nginx":
 		mpnginx.Do()
+	case "nvidia-smi":
+		mpnvidiasmi.Do()
 	case "openldap":
 		mpopenldap.Do()
 	case "php-apc":
@@ -139,6 +146,8 @@ func runPlugin(plug string) error {
 		mprabbitmq.Do()
 	case "redis":
 		mpredis.Do()
+	case "sidekiq":
+		mpsidekiq.Do()
 	case "snmp":
 		mpsnmp.Do()
 	case "solr":
@@ -185,6 +194,7 @@ var plugins = []string{
 	"docker",
 	"elasticsearch",
 	"fluentd",
+	"flume",
 	"gostats",
 	"graphite",
 	"haproxy",
@@ -199,6 +209,7 @@ var plugins = []string{
 	"munin",
 	"mysql",
 	"nginx",
+	"nvidia-smi",
 	"openldap",
 	"php-apc",
 	"php-fpm",
@@ -208,6 +219,7 @@ var plugins = []string{
 	"proc-fd",
 	"rabbitmq",
 	"redis",
+	"sidekiq",
 	"snmp",
 	"solr",
 	"squid",

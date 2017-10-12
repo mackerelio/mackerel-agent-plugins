@@ -1,5 +1,45 @@
 # Changelog
 
+## 0.35.0 (2017-10-04)
+
+* [twemproxy] [incompatible] add `-enable-each-server-metrics` option #419 #421 (Songmu)
+
+
+## 0.34.0 (2017-09-27)
+
+* add mackerel-plugin-flume to package #415 (y-kuno)
+* [mysql]add MyISAM related graphs #406 (matsuu)
+* add mackerel-plugin-sidekiq to package #417 (syou6162)
+* build with Go 1.9 #414 (astj)
+* [OpenLDAP] fix get latestCSN #413 (masahide)
+* [aws-dynamodb] Add ReadThrottleEvents metric and fill 0 when *ThrottleEvents metrics are not present #409 (astj)
+
+
+## 0.33.0 (2017-09-20)
+
+* add mackerel-plugin-nvidia-smi to package #411 (syou6162)
+* [accesslog] Feature/accesslog/customize parser #410 (karupanerura)
+* Fix redundant error by golint in redis.go #408 (shibayu36)
+* add flume plugin #396 (y-kuno)
+* [mysql]add handler graphs #402 (matsuu)
+
+
+## 0.32.0 (2017-09-12)
+
+* [memcached] add evicted.reclaimed and evicted.nonzero_evictions #388 (Songmu)
+* [mysql]add missed metrics and fix graph definition #390 (matsuu)
+* [Redis] fix expired keys #398 (edangelion)
+* [accesslog] Fix for scanning long lines #400 (itchyny)
+
+
+## 0.31.0 (2017-08-30)
+
+* [redis] Change queries metric to diff of "total_commands_processed" #397 (edangelion)
+* [aws-dynamodb] Refactor and parallelize CloudWatch request with errgroup #367 (astj)
+* [plack] Don't raise errors when parsing JSON fields failed #394 (astj)
+* [jmx-jolokia] add value to thread graph #393 (y-kuno)
+
+
 ## 0.30.0 (2017-08-23)
 
 * add mackerel-plugin-openldap to package #391 (astj)

@@ -149,9 +149,10 @@ func TestFetchMetrics(t *testing.T) {
 
 	// get metrics
 	p := TwemproxyPlugin{
-		Address: "localhost:" + strconv.Itoa(statsServer.Port()),
-		Prefix:  "twemproxy",
-		Timeout: 5,
+		Address:           "localhost:" + strconv.Itoa(statsServer.Port()),
+		Prefix:            "twemproxy",
+		Timeout:           5,
+		EachServerMetrics: true,
 	}
 	metrics, err := p.FetchMetrics()
 	if err != nil {
@@ -223,6 +224,45 @@ func TestFetchMetrics(t *testing.T) {
 	}
 }
 
+func TestFetchMetrics_disableEachMetrics(t *testing.T) {
+	// response a valid stats json
+	stats = jsonStr
+
+	// get metrics
+	p := TwemproxyPlugin{
+		Address: "localhost:" + strconv.Itoa(statsServer.Port()),
+		Prefix:  "twemproxy",
+		Timeout: 5,
+	}
+	metrics, err := p.FetchMetrics()
+	if err != nil {
+		t.Errorf("Failed to FetchMetrics: %s", err)
+		return
+	}
+
+	expectedNum := 17
+	if len(metrics) != expectedNum {
+		t.Errorf("%d metrics are expected to be collected, but it was %d", expectedNum, len(metrics))
+	}
+
+	// check the metrics
+	expected := map[string]uint64{
+		"total_connections": 3895,
+		"curr_connections":  272,
+	}
+
+	for k, v := range expected {
+		value, ok := metrics[k]
+		if !ok {
+			t.Errorf("metric of %s cannot be fetched", k)
+			continue
+		}
+		if v != value {
+			t.Errorf("metric of %s should be %v, but %v", k, v, value)
+		}
+	}
+}
+
 func TestFetchMetricsFail(t *testing.T) {
 	assertPanic := func(t *testing.T, f func() (map[string]interface{}, error)) {
 		defer func() {
@@ -234,9 +274,10 @@ func TestFetchMetricsFail(t *testing.T) {
 	}
 
 	p := TwemproxyPlugin{
-		Address: "localhost:" + strconv.Itoa(statsServer.Port()),
-		Prefix:  "twemproxy",
-		Timeout: 5,
+		Address:           "localhost:" + strconv.Itoa(statsServer.Port()),
+		Prefix:            "twemproxy",
+		Timeout:           5,
+		EachServerMetrics: true,
 	}
 
 	noClientErrJSONStr := strings.Replace(

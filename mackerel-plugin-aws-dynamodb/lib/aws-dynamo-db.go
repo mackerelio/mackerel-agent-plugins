@@ -4,7 +4,10 @@ import (
 	"flag"
 	"log"
 	"strings"
+	"sync"
 	"time"
+
+	"golang.org/x/sync/errgroup"
 
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/credentials"
@@ -32,6 +35,7 @@ type metricsGroup struct {
 type metric struct {
 	MackerelName string
 	Type         string
+	FillZero     bool
 }
 
 // DynamoDBPlugin mackerel plugin for aws kinesis
@@ -70,7 +74,7 @@ func (p *DynamoDBPlugin) prepare() error {
 	return nil
 }
 
-func transformAndAppendDatapoint(dp *cloudwatch.Datapoint, dataType string, label string, stats map[string]interface{}) map[string]interface{} {
+func transformAndAppendDatapoint(stats map[string]interface{}, dp *cloudwatch.Datapoint, dataType string, label string, fillZero bool) map[string]interface{} {
 	if dp != nil {
 		switch dataType {
 		case metricsTypeAverage:
@@ -84,6 +88,8 @@ func transformAndAppendDatapoint(dp *cloudwatch.Datapoint, dataType string, labe
 		case metricsTypeSampleCount:
 			stats[label] = *dp.SampleCount
 		}
+	} else if fillZero {
+		stats[label] = 0.0
 	}
 	return stats
 }
@@ -134,7 +140,7 @@ func fetchOperationWildcardMetrics(cw cloudwatchiface.CloudWatchAPI, mg metricsG
 		if dp != nil {
 			for _, met := range mg.Metrics {
 				label := strings.Replace(met.MackerelName, "#", *operation, 1)
-				stats = transformAndAppendDatapoint(dp, met.Type, label, stats)
+				stats = transformAndAppendDatapoint(stats, dp, met.Type, label, met.FillZero)
 			}
 		}
 	}
@@ -207,8 +213,11 @@ var defaultMetricsGroup = []metricsGroup{
 	{CloudWatchName: "UserErrors", Metrics: []metric{
 		{MackerelName: "UserErrors", Type: metricsTypeSum},
 	}},
+	{CloudWatchName: "ReadThrottleEvents", Metrics: []metric{
+		{MackerelName: "ReadThrottleEvents", Type: metricsTypeSum, FillZero: true},
+	}},
 	{CloudWatchName: "WriteThrottleEvents", Metrics: []metric{
-		{MackerelName: "WriteThrottleEvents", Type: metricsTypeSum},
+		{MackerelName: "WriteThrottleEvents", Type: metricsTypeSum, FillZero: true},
 	}},
 	{CloudWatchName: "TimeToLiveDeletedItemCount", Metrics: []metric{
 		{MackerelName: "TimeToLiveDeletedItemCount", Type: metricsTypeSum},
@@ -244,26 +253,45 @@ func (p DynamoDBPlugin) FetchMetrics() (map[string]interface{}, error) {
 		Name:  aws.String("TableName"),
 		Value: aws.String(p.TableName),
 	}}
+	var mu sync.Mutex
+	var eg errgroup.Group
 	for _, met := range defaultMetricsGroup {
-		dp, err := getLastPointFromCloudWatch(p.CloudWatch, met, tableDimensions)
-		if err == nil {
-			for _, m := range met.Metrics {
-				stats = transformAndAppendDatapoint(dp, m.Type, m.MackerelName, stats)
+		met := met
+		eg.Go(func() error {
+			dp, err := getLastPointFromCloudWatch(p.CloudWatch, met, tableDimensions)
+			if err != nil {
+				return err
 			}
-		} else {
-			log.Printf("%s: %s", met, err)
-		}
+			for _, m := range met.Metrics {
+				mu.Lock()
+				stats = transformAndAppendDatapoint(stats, dp, m.Type, m.MackerelName, m.FillZero)
+				mu.Unlock()
+			}
+			return nil
+		})
 	}
 
 	for _, met := range operationalMetricsGroup {
-		operationalStats, err := fetchOperationWildcardMetrics(p.CloudWatch, met, tableDimensions)
-		if err == nil {
-			for name, s := range operationalStats {
-				stats[name] = s
+		met := met
+		eg.Go(func() error {
+			operationalStats, err := fetchOperationWildcardMetrics(p.CloudWatch, met, tableDimensions)
+			if err != nil {
+				return err
 			}
-		} else {
-			log.Printf("%s: %s", met, err)
-		}
+
+			if operationalStats != nil {
+				for name, s := range operationalStats {
+					mu.Lock()
+					stats[name] = s
+					mu.Unlock()
+				}
+			}
+			return nil
+		})
+	}
+
+	if err := eg.Wait(); err != nil {
+		return nil, err
 	}
 	return transformMetrics(stats), nil
 }
@@ -331,70 +359,70 @@ func (p DynamoDBPlugin) GraphDefinition() map[string]mp.Graphs {
 			Label: (labelPrefix + " ThrottledRequests"),
 			Unit:  "integer",
 			Metrics: []mp.Metrics{
-				{Name: "ThrottledRequests.PutItem", Label: "PutItem", Stacked: true},
-				{Name: "ThrottledRequests.DeleteItem", Label: "DeleteItem", Stacked: true},
-				{Name: "ThrottledRequests.UpdateItem", Label: "UpdateItem", Stacked: true},
-				{Name: "ThrottledRequests.GetItem", Label: "GetItem", Stacked: true},
-				{Name: "ThrottledRequests.BatchGetItem", Label: "BatchGetItem", Stacked: true},
-				{Name: "ThrottledRequests.Scan", Label: "Scan", Stacked: true},
-				{Name: "ThrottledRequests.Query", Label: "Query", Stacked: true},
-				{Name: "ThrottledRequests.BatchWriteItem", Label: "BatchWriteItem", Stacked: true},
+				{Name: "PutItem", Label: "PutItem", Stacked: true, AbsoluteName: true},
+				{Name: "DeleteItem", Label: "DeleteItem", Stacked: true, AbsoluteName: true},
+				{Name: "UpdateItem", Label: "UpdateItem", Stacked: true, AbsoluteName: true},
+				{Name: "GetItem", Label: "GetItem", Stacked: true, AbsoluteName: true},
+				{Name: "BatchGetItem", Label: "BatchGetItem", Stacked: true, AbsoluteName: true},
+				{Name: "Scan", Label: "Scan", Stacked: true, AbsoluteName: true},
+				{Name: "Query", Label: "Query", Stacked: true, AbsoluteName: true},
+				{Name: "BatchWriteItem", Label: "BatchWriteItem", Stacked: true, AbsoluteName: true},
 			},
 		},
 		"SystemErrors": {
 			Label: (labelPrefix + " SystemErrors"),
 			Unit:  "integer",
 			Metrics: []mp.Metrics{
-				{Name: "SystemErrors.PutItem", Label: "PutItem", Stacked: true},
-				{Name: "SystemErrors.DeleteItem", Label: "DeleteItem", Stacked: true},
-				{Name: "SystemErrors.UpdateItem", Label: "UpdateItem", Stacked: true},
-				{Name: "SystemErrors.GetItem", Label: "GetItem", Stacked: true},
-				{Name: "SystemErrors.BatchGetItem", Label: "BatchGetItem", Stacked: true},
-				{Name: "SystemErrors.Scan", Label: "Scan", Stacked: true},
-				{Name: "SystemErrors.Query", Label: "Query", Stacked: true},
-				{Name: "SystemErrors.BatchWriteItem", Label: "BatchWriteItem", Stacked: true},
+				{Name: "PutItem", Label: "PutItem", Stacked: true, AbsoluteName: true},
+				{Name: "DeleteItem", Label: "DeleteItem", Stacked: true, AbsoluteName: true},
+				{Name: "UpdateItem", Label: "UpdateItem", Stacked: true, AbsoluteName: true},
+				{Name: "GetItem", Label: "GetItem", Stacked: true, AbsoluteName: true},
+				{Name: "BatchGetItem", Label: "BatchGetItem", Stacked: true, AbsoluteName: true},
+				{Name: "Scan", Label: "Scan", Stacked: true, AbsoluteName: true},
+				{Name: "Query", Label: "Query", Stacked: true, AbsoluteName: true},
+				{Name: "BatchWriteItem", Label: "BatchWriteItem", Stacked: true, AbsoluteName: true},
 			},
 		},
 		"UserErrors": {
 			Label: (labelPrefix + " UserErrors"),
 			Unit:  "integer",
 			Metrics: []mp.Metrics{
-				{Name: "UserErrors.PutItem", Label: "PutItem", Stacked: true},
-				{Name: "UserErrors.DeleteItem", Label: "DeleteItem", Stacked: true},
-				{Name: "UserErrors.UpdateItem", Label: "UpdateItem", Stacked: true},
-				{Name: "UserErrors.GetItem", Label: "GetItem", Stacked: true},
-				{Name: "UserErrors.BatchGetItem", Label: "BatchGetItem", Stacked: true},
-				{Name: "UserErrors.Scan", Label: "Scan", Stacked: true},
-				{Name: "UserErrors.Query", Label: "Query", Stacked: true},
-				{Name: "UserErrors.BatchWriteItem", Label: "BatchWriteItem", Stacked: true},
+				{Name: "PutItem", Label: "PutItem", Stacked: true, AbsoluteName: true},
+				{Name: "DeleteItem", Label: "DeleteItem", Stacked: true, AbsoluteName: true},
+				{Name: "UpdateItem", Label: "UpdateItem", Stacked: true, AbsoluteName: true},
+				{Name: "GetItem", Label: "GetItem", Stacked: true, AbsoluteName: true},
+				{Name: "BatchGetItem", Label: "BatchGetItem", Stacked: true, AbsoluteName: true},
+				{Name: "Scan", Label: "Scan", Stacked: true, AbsoluteName: true},
+				{Name: "Query", Label: "Query", Stacked: true, AbsoluteName: true},
+				{Name: "BatchWriteItem", Label: "BatchWriteItem", Stacked: true, AbsoluteName: true},
 			},
 		},
 		"ReturnedItemCount": {
 			Label: (labelPrefix + " ReturnedItemCount"),
 			Unit:  "integer",
 			Metrics: []mp.Metrics{
-				{Name: "ReturnedItemCount.PutItem", Label: "PutItem"},
-				{Name: "ReturnedItemCount.DeleteItem", Label: "DeleteItem"},
-				{Name: "ReturnedItemCount.UpdateItem", Label: "UpdateItem"},
-				{Name: "ReturnedItemCount.GetItem", Label: "GetItem"},
-				{Name: "ReturnedItemCount.BatchGetItem", Label: "BatchGetItem"},
-				{Name: "ReturnedItemCount.Scan", Label: "Scan"},
-				{Name: "ReturnedItemCount.Query", Label: "Query"},
-				{Name: "ReturnedItemCount.BatchWriteItem", Label: "BatchWriteItem"},
+				{Name: "PutItem", Label: "PutItem", AbsoluteName: true},
+				{Name: "DeleteItem", Label: "DeleteItem", AbsoluteName: true},
+				{Name: "UpdateItem", Label: "UpdateItem", AbsoluteName: true},
+				{Name: "GetItem", Label: "GetItem", AbsoluteName: true},
+				{Name: "BatchGetItem", Label: "BatchGetItem", AbsoluteName: true},
+				{Name: "Scan", Label: "Scan", AbsoluteName: true},
+				{Name: "Query", Label: "Query", AbsoluteName: true},
+				{Name: "BatchWriteItem", Label: "BatchWriteItem", AbsoluteName: true},
 			},
 		},
 		"SuccessfulRequests": {
 			Label: (labelPrefix + " SuccessfulRequests"),
 			Unit:  "integer",
 			Metrics: []mp.Metrics{
-				{Name: "SuccessfulRequests.PutItem", Label: "PutItem"},
-				{Name: "SuccessfulRequests.DeleteItem", Label: "DeleteItem"},
-				{Name: "SuccessfulRequests.UpdateItem", Label: "UpdateItem"},
-				{Name: "SuccessfulRequests.GetItem", Label: "GetItem"},
-				{Name: "SuccessfulRequests.BatchGetItem", Label: "BatchGetItem"},
-				{Name: "SuccessfulRequests.Scan", Label: "Scan"},
-				{Name: "SuccessfulRequests.Query", Label: "Query"},
-				{Name: "SuccessfulRequests.BatchWriteItem", Label: "BatchWriteItem"},
+				{Name: "PutItem", Label: "PutItem", AbsoluteName: true},
+				{Name: "DeleteItem", Label: "DeleteItem", AbsoluteName: true},
+				{Name: "UpdateItem", Label: "UpdateItem", AbsoluteName: true},
+				{Name: "GetItem", Label: "GetItem", AbsoluteName: true},
+				{Name: "BatchGetItem", Label: "BatchGetItem", AbsoluteName: true},
+				{Name: "Scan", Label: "Scan", AbsoluteName: true},
+				{Name: "Query", Label: "Query", AbsoluteName: true},
+				{Name: "BatchWriteItem", Label: "BatchWriteItem", AbsoluteName: true},
 			},
 		},
 		"SuccessfulRequestLatency.#": {

@@ -31,8 +31,8 @@ func TestGraphDefinition_DisableInnoDB_EnableExtended(t *testing.T) {
 	mysql.DisableInnoDB = true
 	mysql.EnableExtended = true
 	graphdef := mysql.GraphDefinition()
-	if len(graphdef) != 14 {
-		t.Errorf("GetTempfilename: %d should be 14", len(graphdef))
+	if len(graphdef) != 18 {
+		t.Errorf("GetTempfilename: %d should be 18", len(graphdef))
 	}
 }
 
@@ -41,8 +41,8 @@ func TestGraphDefinition_EnableExtended(t *testing.T) {
 
 	mysql.EnableExtended = true
 	graphdef := mysql.GraphDefinition()
-	if len(graphdef) != 35 {
-		t.Errorf("GetTempfilename: %d should be 35", len(graphdef))
+	if len(graphdef) != 39 {
+		t.Errorf("GetTempfilename: %d should be 39", len(graphdef))
 	}
 }
 
@@ -1021,6 +1021,216 @@ END OF INNODB MONITOR OUTPUT
 	// etc
 	assert.EqualValues(t, stat["unflushed_log"], 0)
 	assert.EqualValues(t, stat["uncheckpointed_bytes"], 9)
+
+}
+
+func TestParseLockedTransactions(t *testing.T) {
+
+	stub := `=====================================
+170829 11:50:33 INNODB MONITOR OUTPUT
+=====================================
+Per second averages calculated from the last 18 seconds
+-----------------
+BACKGROUND THREAD
+-----------------
+srv_master_thread loops: 26 1_second, 26 sleeps, 2 10_second, 9 background, 9 flush
+srv_master_thread log flush and writes: 28
+----------
+SEMAPHORES
+----------
+OS WAIT ARRAY INFO: reservation count 12, signal count 11
+Mutex spin waits 6, rounds 180, OS waits 6
+RW-shared spins 6, rounds 180, OS waits 6
+RW-excl spins 0, rounds 0, OS waits 0
+Spin rounds per wait: 30.00 mutex, 30.00 RW-shared, 0.00 RW-excl
+--------
+FILE I/O
+--------
+I/O thread 0 state: waiting for completed aio requests (insert buffer thread)
+I/O thread 1 state: waiting for completed aio requests (log thread)
+I/O thread 2 state: waiting for completed aio requests (read thread)
+I/O thread 3 state: waiting for completed aio requests (read thread)
+I/O thread 4 state: waiting for completed aio requests (read thread)
+I/O thread 5 state: waiting for completed aio requests (read thread)
+I/O thread 6 state: waiting for completed aio requests (write thread)
+I/O thread 7 state: waiting for completed aio requests (write thread)
+I/O thread 8 state: waiting for completed aio requests (write thread)
+I/O thread 9 state: waiting for completed aio requests (write thread)
+Pending normal aio reads: 0 [0, 0, 0, 0] , aio writes: 0 [0, 0, 0, 0] ,
+ ibuf aio reads: 0, log i/o's: 0, sync i/o's: 0
+Pending flushes (fsync) log: 0; buffer pool: 0
+310 OS file reads, 174 OS file writes, 22 OS fsyncs
+0.00 reads/s, 0 avg bytes/read, 0.00 writes/s, 0.00 fsyncs/s
+-------------------------------------
+INSERT BUFFER AND ADAPTIVE HASH INDEX
+-------------------------------------
+Ibuf: size 1, free list len 0, seg size 2, 0 merges
+merged operations:
+ insert 0, delete mark 0, delete 0
+discarded operations:
+ insert 0, delete mark 0, delete 0
+Hash table size 276671, node heap has 1 buffer(s)
+0.00 hash searches/s, 0.00 non-hash searches/s
+---
+LOG
+---
+Log sequence number 1602283
+Log flushed up to   1602283
+Last checkpoint at  1602283
+Max checkpoint age    7782360
+Checkpoint age target 7539162
+Modified age          0
+Checkpoint age        0
+0 pending log writes, 0 pending chkp writes
+40 log i/o's done, 0.00 log i/o's/second
+----------------------
+BUFFER POOL AND MEMORY
+----------------------
+Total memory allocated 137756672; in additional pool allocated 0
+Total memory allocated by read views 88
+Internal hash tables (constant factor + variable factor)
+    Adaptive hash index 2233968 	(2213368 + 20600)
+    Page hash           139112 (buffer pool 0 only)
+    Dictionary cache    597886 	(554768 + 43118)
+    File system         83536 	(82672 + 864)
+    Lock system         334000 	(332872 + 1128)
+    Recovery system     0 	(0 + 0)
+Dictionary memory allocated 43118
+Buffer pool size        8191
+Buffer pool size, bytes 134201344
+Free buffers            8039
+Database pages          151
+Old database pages      0
+Modified db pages       0
+Pending reads 0
+Pending writes: LRU 0, flush list 0, single page 0
+Pages made young 0, not young 0
+0.00 youngs/s, 0.00 non-youngs/s
+Pages read 147, created 4, written 156
+0.00 reads/s, 0.00 creates/s, 0.00 writes/s
+No buffer pool page gets since the last printout
+Pages read ahead 0.00/s, evicted without access 0.00/s, Random read ahead 0.00/s
+LRU len: 151, unzip_LRU len: 0
+I/O sum[0]:cur[0], unzip sum[0]:cur[0]
+--------------
+ROW OPERATIONS
+--------------
+0 queries inside InnoDB, 0 queries in queue
+1 read views open inside InnoDB
+2 transactions active inside InnoDB
+2 out of 1000 descriptors used
+---OLDEST VIEW---
+Normal read view
+Read view low limit trx n:o 505
+Read view up limit trx id 505
+Read view low limit trx id 505
+Read view individually stored trx ids:
+-----------------
+Main thread process no. 458, id 139631366485760, state: waiting for server activity
+Number of rows inserted 2, updated 0, deleted 1, read 2
+0.00 inserts/s, 0.00 updates/s, 0.00 deletes/s, 0.00 reads/s
+------------
+TRANSACTIONS
+------------
+Trx id counter 507
+Purge done for trx's n:o < 505 undo n:o < 0
+History list length 1
+LIST OF TRANSACTIONS FOR EACH SESSION:
+---TRANSACTION 0, not started
+MySQL thread id 8, OS thread handle 0x7efe7cb12700, query id 52 localhost root
+SHOW ENGINE INNODB STATUS
+---TRANSACTION 506, ACTIVE 804 sec starting index read
+mysql tables in use 1, locked 1
+LOCK WAIT 2 lock struct(s), heap size 376, 1 row lock(s)
+MySQL thread id 3, OS thread handle 0x7efe7cb5b700, query id 47 localhost root statistics
+SELECT * FROM test WHERE id = 1 LOCK IN SHARE MODE
+------- TRX HAS BEEN WAITING 22 SEC FOR THIS LOCK TO BE GRANTED:
+RECORD LOCKS space id 0 page no 307 n bits 72 index ` + "`PRIMARY` of table `test`.`test`" + ` trx id 506 lock mode S locks rec but not gap waiting
+------------------
+---TRANSACTION 505, ACTIVE 815 sec
+2 lock struct(s), heap size 376, 1 row lock(s), undo log entries 1
+MySQL thread id 2, OS thread handle 0x7efe7cba4700, query id 35 localhost root
+----------------------------
+END OF INNODB MONITOR OUTPUT
+============================`
+	stat := make(map[string]float64)
+	parseInnodbStatus(stub, &stat)
+	// Innodb Semaphores
+	assert.EqualValues(t, stat["spin_waits"], 12)
+	assert.EqualValues(t, stat["spin_rounds"], 180)
+	assert.EqualValues(t, stat["os_waits"], 12)
+	assert.EqualValues(t, stat["innodb_sem_wait"], 0)         // empty
+	assert.EqualValues(t, stat["innodb_sem_wait_time_ms"], 0) // empty
+	// Innodb Transactions
+	assert.EqualValues(t, stat["innodb_transactions"], 1287)
+	assert.EqualValues(t, stat["unpurged_txns"], 2)
+	assert.EqualValues(t, stat["history_list"], 1)
+	assert.EqualValues(t, stat["current_transactions"], 3)
+	assert.EqualValues(t, stat["active_transactions"], 2)
+	assert.EqualValues(t, stat["innodb_lock_wait_secs"], 22)
+	assert.EqualValues(t, stat["read_views"], 1)
+	assert.EqualValues(t, stat["innodb_tables_in_use"], 1)
+	assert.EqualValues(t, stat["innodb_locked_tables"], 1)
+	assert.EqualValues(t, stat["locked_transactions"], 1)
+	assert.EqualValues(t, stat["innodb_lock_structs"], 4)
+	// File I/O
+	assert.EqualValues(t, stat["file_reads"], 310)
+	assert.EqualValues(t, stat["file_writes"], 174)
+	assert.EqualValues(t, stat["file_fsyncs"], 22)
+	assert.EqualValues(t, stat["pending_normal_aio_reads"], 0)
+	assert.EqualValues(t, stat["pending_normal_aio_writes"], 0)
+	assert.EqualValues(t, stat["pending_ibuf_aio_reads"], 0)
+	assert.EqualValues(t, stat["pending_aio_log_ios"], 0)
+	assert.EqualValues(t, stat["pending_aio_sync_ios"], 0)
+	assert.EqualValues(t, stat["pending_log_flushes"], 0)
+	assert.EqualValues(t, stat["pending_buf_pool_flushes"], 0)
+	// Insert Buffer and Adaptive Hash Index
+	assert.EqualValues(t, stat["ibuf_used_cells"], 1)
+	assert.EqualValues(t, stat["ibuf_free_cells"], 0)
+	assert.EqualValues(t, stat["ibuf_cell_count"], 2)
+	assert.EqualValues(t, stat["ibuf_inserts"], 0)
+	assert.EqualValues(t, stat["ibuf_merges"], 0)
+	assert.EqualValues(t, stat["ibuf_merged"], 0)
+	assert.EqualValues(t, stat["hash_index_cells_total"], 276671)
+	assert.EqualValues(t, stat["hash_index_cells_used"], 0)
+	// Log
+	assert.EqualValues(t, stat["log_writes"], 40)
+	assert.EqualValues(t, stat["pending_log_writes"], 0)
+	assert.EqualValues(t, stat["pending_chkp_writes"], 0)
+	assert.EqualValues(t, stat["log_bytes_written"], 1602283)
+	assert.EqualValues(t, stat["log_bytes_flushed"], 1602283)
+	assert.EqualValues(t, stat["last_checkpoint"], 1602283)
+	// Buffer Pool and Memory
+	assert.EqualValues(t, stat["total_mem_alloc"], 137756672)
+	assert.EqualValues(t, stat["additional_pool_alloc"], 0)
+	assert.EqualValues(t, stat["adaptive_hash_memory"], 2233968)
+	assert.EqualValues(t, stat["page_hash_memory"], 139112)
+	assert.EqualValues(t, stat["dictionary_cache_memory"], 597886)
+	assert.EqualValues(t, stat["file_system_memory"], 83536)
+	assert.EqualValues(t, stat["lock_system_memory"], 334000)
+	assert.EqualValues(t, stat["recovery_system_memory"], 0)   // empty
+	assert.EqualValues(t, stat["thread_hash_memory"], 0)       // empty
+	assert.EqualValues(t, stat["innodb_io_pattern_memory"], 0) // empty
+	assert.EqualValues(t, stat["pool_size"], 8191)
+	assert.EqualValues(t, stat["free_pages"], 8039)
+	assert.EqualValues(t, stat["database_pages"], 151)
+	assert.EqualValues(t, stat["modified_pages"], 0)
+	assert.EqualValues(t, stat["read_ahead"], 0.00)
+	assert.EqualValues(t, stat["read_evicted"], 0.00)
+	assert.EqualValues(t, stat["read_random_ahead"], 0.00)
+	assert.EqualValues(t, stat["pages_read"], 147)
+	assert.EqualValues(t, stat["pages_created"], 4)
+	assert.EqualValues(t, stat["pages_written"], 156)
+	// Row Operations
+	assert.EqualValues(t, stat["rows_inserted"], 2)
+	assert.EqualValues(t, stat["rows_updated"], 0)
+	assert.EqualValues(t, stat["rows_deleted"], 1)
+	assert.EqualValues(t, stat["rows_read"], 2)
+	assert.EqualValues(t, stat["queries_inside"], 0)
+	assert.EqualValues(t, stat["queries_queued"], 0)
+	// etc
+	assert.EqualValues(t, stat["unflushed_log"], 0)
+	assert.EqualValues(t, stat["uncheckpointed_bytes"], 0)
 
 }
 

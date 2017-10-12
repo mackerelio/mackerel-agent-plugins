@@ -1,3 +1,69 @@
+mackerel-agent-plugins (0.35.0-1) stable; urgency=low
+
+  * [twemproxy] [incompatible] add `-enable-each-server-metrics` option (by Songmu)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/419>
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/421>
+
+ -- mackerel <mackerel-developers@hatena.ne.jp>  Wed, 04 Oct 2017 11:33:26 +0900
+
+mackerel-agent-plugins (0.34.0-1) stable; urgency=low
+
+  * add mackerel-plugin-flume to package (by y-kuno)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/415>
+  * [mysql]add MyISAM related graphs (by matsuu)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/406>
+  * add mackerel-plugin-sidekiq to package (by syou6162)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/417>
+  * build with Go 1.9 (by astj)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/414>
+  * [OpenLDAP] fix get latestCSN (by masahide)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/413>
+  * [aws-dynamodb] Add ReadThrottleEvents metric and fill 0 when *ThrottleEvents metrics are not present (by astj)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/409>
+
+ -- mackerel <mackerel-developers@hatena.ne.jp>  Wed, 27 Sep 2017 11:58:38 +0900
+
+mackerel-agent-plugins (0.33.0-1) stable; urgency=low
+
+  * add mackerel-plugin-nvidia-smi to package (by syou6162)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/411>
+  * [accesslog] Feature/accesslog/customize parser (by karupanerura)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/410>
+  * Fix redundant error by golint in redis.go (by shibayu36)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/408>
+  * add flume plugin (by y-kuno)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/396>
+  * [mysql]add handler graphs (by matsuu)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/402>
+
+ -- mackerel <mackerel-developers@hatena.ne.jp>  Wed, 20 Sep 2017 12:25:57 +0900
+
+mackerel-agent-plugins (0.32.0-1) stable; urgency=low
+
+  * [memcached] add evicted.reclaimed and evicted.nonzero_evictions (by Songmu)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/388>
+  * [mysql]add missed metrics and fix graph definition (by matsuu)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/390>
+  * [Redis] fix expired keys (by edangelion)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/398>
+  * [accesslog] Fix for scanning long lines (by itchyny)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/400>
+
+ -- mackerel <mackerel-developers@hatena.ne.jp>  Tue, 12 Sep 2017 12:34:56 +0900
+
+mackerel-agent-plugins (0.31.0-1) stable; urgency=low
+
+  * [redis] Change queries metric to diff of "total_commands_processed" (by edangelion)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/397>
+  * [aws-dynamodb] Refactor and parallelize CloudWatch request with errgroup (by astj)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/367>
+  * [plack] Don't raise errors when parsing JSON fields failed (by astj)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/394>
+  * [jmx-jolokia] add value to thread graph (by y-kuno)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/393>
+
+ -- mackerel <mackerel-developers@hatena.ne.jp>  Wed, 30 Aug 2017 15:39:20 +0900
+
 mackerel-agent-plugins (0.30.0-1) stable; urgency=low
 
   * add mackerel-plugin-openldap to package (by astj)

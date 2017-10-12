@@ -28,7 +28,7 @@ This package provides metric plugins for Mackerel.
 
 %{__install} -m0755 %{_sourcedir}/build/mackerel-plugin %{buildroot}%{__targetdir}/
 
-for i in accesslog apache2 aws-dynamodb aws-ec2-cpucredit aws-elasticache aws-elasticsearch aws-elb aws-kinesis-streams aws-lambda aws-rds aws-ses conntrack elasticsearch gostats graphite haproxy jmx-jolokia jvm linux mailq memcached mongodb multicore munin mysql nginx openldap php-apc php-fpm php-opcache plack postgres proc-fd solr rabbitmq redis snmp squid td-table-count trafficserver twemproxy uwsgi-vassal varnish xentop aws-cloudfront aws-ec2-ebs fluentd docker unicorn uptime inode; do \
+for i in accesslog apache2 aws-dynamodb aws-ec2-cpucredit aws-elasticache aws-elasticsearch aws-elb aws-kinesis-streams aws-lambda aws-rds aws-ses conntrack elasticsearch flume gostats graphite haproxy jmx-jolokia jvm linux mailq memcached mongodb multicore munin mysql nginx nvidia-smi openldap php-apc php-fpm php-opcache plack postgres proc-fd solr rabbitmq redis sidekiq snmp squid td-table-count trafficserver twemproxy uwsgi-vassal varnish xentop aws-cloudfront aws-ec2-ebs fluentd docker unicorn uptime inode; do \
     ln -s ./mackerel-plugin %{buildroot}%{__targetdir}/mackerel-plugin-$i; \
 done
 
@@ -40,6 +40,36 @@ done
 %{__targetdir}/*
 
 %changelog
+* Wed Oct 04 2017 <mackerel-developers@hatena.ne.jp> - 0.35.0
+- [twemproxy] [incompatible] add `-enable-each-server-metrics` option (by Songmu)
+
+* Wed Sep 27 2017 <mackerel-developers@hatena.ne.jp> - 0.34.0
+- add mackerel-plugin-flume to package (by y-kuno)
+- [mysql]add MyISAM related graphs (by matsuu)
+- add mackerel-plugin-sidekiq to package (by syou6162)
+- build with Go 1.9 (by astj)
+- [OpenLDAP] fix get latestCSN (by masahide)
+- [aws-dynamodb] Add ReadThrottleEvents metric and fill 0 when *ThrottleEvents metrics are not present (by astj)
+
+* Wed Sep 20 2017 <mackerel-developers@hatena.ne.jp> - 0.33.0
+- add mackerel-plugin-nvidia-smi to package (by syou6162)
+- [accesslog] Feature/accesslog/customize parser (by karupanerura)
+- Fix redundant error by golint in redis.go (by shibayu36)
+- add flume plugin (by y-kuno)
+- [mysql]add handler graphs (by matsuu)
+
+* Tue Sep 12 2017 <mackerel-developers@hatena.ne.jp> - 0.32.0
+- [memcached] add evicted.reclaimed and evicted.nonzero_evictions (by Songmu)
+- [mysql]add missed metrics and fix graph definition (by matsuu)
+- [Redis] fix expired keys (by edangelion)
+- [accesslog] Fix for scanning long lines (by itchyny)
+
+* Wed Aug 30 2017 <mackerel-developers@hatena.ne.jp> - 0.31.0
+- [redis] Change queries metric to diff of "total_commands_processed" (by edangelion)
+- [aws-dynamodb] Refactor and parallelize CloudWatch request with errgroup (by astj)
+- [plack] Don't raise errors when parsing JSON fields failed (by astj)
+- [jmx-jolokia] add value to thread graph (by y-kuno)
+
 * Wed Aug 23 2017 <mackerel-developers@hatena.ne.jp> - 0.30.0
 - add mackerel-plugin-openldap to package (by astj)
 - Add Burst Balance metric for AWS EC2 EBS plugin (by ariarijp)
