@@ -1,0 +1,28 @@
+{
+  "request": {
+    "mbean": "java.lang:type=Memory",
+    "type": "read"
+  },
+  "value": {
+    "ObjectPendingFinalizationCount": null,
+    "Verbose": false,
+    "HeapMemoryUsage": {
+      "init": 1073741824,
+      "committed": 1069023232,
+      "max": 1069023232,
+      "used": 994632048
+    },
+    "NonHeapMemoryUsage": {
+      "init": 2555904,
+      "committed": 44040192,
+      "max": 1350565888,
+      "used": 43070016
+    },
+    "ObjectName": {
+      "objectName": "java.lang:type=Memory"
+    }
+  },
+  "timestamp": 1455079714,
+  "status": 200
+}
+
