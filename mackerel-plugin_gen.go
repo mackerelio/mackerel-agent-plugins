@@ -27,6 +27,7 @@ import (
 	"github.com/mackerelio/mackerel-agent-plugins/mackerel-plugin-haproxy/lib"
 	"github.com/mackerelio/mackerel-agent-plugins/mackerel-plugin-inode/lib"
 	"github.com/mackerelio/mackerel-agent-plugins/mackerel-plugin-jmx-jolokia/lib"
+	"github.com/mackerelio/mackerel-agent-plugins/mackerel-plugin-json/lib"
 	"github.com/mackerelio/mackerel-agent-plugins/mackerel-plugin-jvm/lib"
 	"github.com/mackerelio/mackerel-agent-plugins/mackerel-plugin-linux/lib"
 	"github.com/mackerelio/mackerel-agent-plugins/mackerel-plugin-mailq/lib"
@@ -108,6 +109,8 @@ func runPlugin(plug string) error {
 		mpinode.Do()
 	case "jmx-jolokia":
 		mpjmxjolokia.Do()
+	case "json":
+		mpjson.Do()
 	case "jvm":
 		mpjvm.Do()
 	case "linux":
@@ -200,6 +203,7 @@ var plugins = []string{
 	"haproxy",
 	"inode",
 	"jmx-jolokia",
+	"json",
 	"jvm",
 	"linux",
 	"mailq",
