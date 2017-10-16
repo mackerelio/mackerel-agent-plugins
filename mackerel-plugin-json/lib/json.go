@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"net/http"
+	"os"
 	"reflect"
 	"regexp"
 	"strconv"
@@ -105,8 +106,17 @@ func Do() {
 	jsonplugin.URL = *url
 	jsonplugin.Prefix = *prefix
 	jsonplugin.InsecureSkipVerify = *insecure
-	jsonplugin.ExcludeExp = regexp.MustCompile(*exclude)
-	jsonplugin.IncludeExp = regexp.MustCompile(*include)
+	var err error
+	jsonplugin.ExcludeExp, err = regexp.Compile(*exclude)
+	if err != nil {
+		fmt.Printf("exclude expression is invalid: %s", err)
+		os.Exit(1)
+	}
+	jsonplugin.IncludeExp, err = regexp.Compile(*include)
+	if err != nil {
+		fmt.Printf("include expression is invalid: %s", err)
+		os.Exit(1)
+	}
 
 	metrics, _ := jsonplugin.FetchMetrics()
 	for k, v := range metrics {
