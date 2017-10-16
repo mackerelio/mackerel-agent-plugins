@@ -116,27 +116,18 @@ func (p McrouterPlugin) FetchMetrics() (map[string]interface{}, error) {
 	for _, name := range cmdMetricNames {
 		key := fmt.Sprintf("%s.%s", statsPrefix, name)
 		ret[name] = stats[key]
-		if err != nil {
-			return nil, err
-		}
 	}
 
 	// Get result_[reply result]_count stats
 	for _, name := range resultMetricNames {
 		key := fmt.Sprintf("%s.%s", statsPrefix, name)
 		ret[name] = stats[key]
-		if err != nil {
-			return nil, err
-		}
 	}
 
 	// Get duration_us stats
 	for _, name := range []string{"duration_us"} {
 		key := fmt.Sprintf("%s.%s", statsPrefix, name)
 		ret[name] = stats[key]
-		if err != nil {
-			return nil, err
-		}
 	}
 
 	return ret, nil
