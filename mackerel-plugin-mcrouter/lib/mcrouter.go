@@ -1,14 +1,12 @@
 package mpmcrouter
 
 import (
-	"bytes"
 	"encoding/json"
 	"flag"
 	"fmt"
 	"io/ioutil"
 	"os"
 	"path"
-	"strconv"
 	"strings"
 
 	mp "github.com/mackerelio/go-mackerel-plugin-helper"
@@ -116,8 +114,8 @@ func (p McrouterPlugin) FetchMetrics() (map[string]interface{}, error) {
 
 	// Get cmd_[operation]_count stats
 	for _, name := range cmdMetricNames {
-		value := getStats(stats, statsPrefix, name)
-		ret[name], err = strconv.ParseUint(string(value), 10, 64)
+		key := fmt.Sprintf("%s.%s", statsPrefix, name)
+		ret[name] = stats[key]
 		if err != nil {
 			return nil, err
 		}
@@ -125,8 +123,8 @@ func (p McrouterPlugin) FetchMetrics() (map[string]interface{}, error) {
 
 	// Get result_[reply result]_count stats
 	for _, name := range resultMetricNames {
-		value := getStats(stats, statsPrefix, name)
-		ret[name], err = strconv.ParseUint(string(value), 10, 64)
+		key := fmt.Sprintf("%s.%s", statsPrefix, name)
+		ret[name] = stats[key]
 		if err != nil {
 			return nil, err
 		}
@@ -134,8 +132,8 @@ func (p McrouterPlugin) FetchMetrics() (map[string]interface{}, error) {
 
 	// Get duration_us stats
 	for _, name := range []string{"duration_us"} {
-		value := getStats(stats, statsPrefix, name)
-		ret[name], err = strconv.ParseFloat(string(value), 64)
+		key := fmt.Sprintf("%s.%s", statsPrefix, name)
+		ret[name] = stats[key]
 		if err != nil {
 			return nil, err
 		}
@@ -144,25 +142,19 @@ func (p McrouterPlugin) FetchMetrics() (map[string]interface{}, error) {
 	return ret, nil
 }
 
-func readStatsFile(statsFile string) (interface{}, error) {
+func readStatsFile(statsFile string) (map[string]float64, error) {
 	data, err := ioutil.ReadFile(statsFile)
 	if err != nil {
 		return nil, err
 	}
 
-	var stats interface{}
-	d := json.NewDecoder(bytes.NewBuffer(data))
-	d.UseNumber()
-	if err := d.Decode(&stats); err != nil {
+	var stats map[string]float64
+	err = json.Unmarshal(data, &stats)
+	if err != nil {
 		return nil, err
 	}
 
 	return stats, nil
-}
-
-func getStats(stats interface{}, statsPrefix string, metricName string) json.Number {
-	statsKey := fmt.Sprintf("%s.%s", statsPrefix, metricName)
-	return stats.(map[string]interface{})[statsKey].(json.Number)
 }
 
 // Do the plugin
