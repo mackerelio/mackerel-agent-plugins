@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"strings"
 
-	mp "github.com/mackerelio/go-mackerel-plugin-helper"
+	mp "github.com/mackerelio/go-mackerel-plugin"
 	"github.com/mackerelio/golib/uptime"
 )
 
@@ -28,7 +28,7 @@ func (u UptimePlugin) GraphDefinition() map[string]mp.Graphs {
 	return map[string]mp.Graphs{
 		"": {
 			Label: labelPrefix,
-			Unit:  "float",
+			Unit:  mp.UnitFloat,
 			Metrics: []mp.Metrics{
 				{Name: "seconds", Label: "Seconds"},
 			},
@@ -37,12 +37,12 @@ func (u UptimePlugin) GraphDefinition() map[string]mp.Graphs {
 }
 
 // FetchMetrics interface for mackerelplugin
-func (u UptimePlugin) FetchMetrics() (map[string]interface{}, error) {
+func (u UptimePlugin) FetchMetrics() (map[string]float64, error) {
 	ut, err := uptime.Get()
 	if err != nil {
 		return nil, fmt.Errorf("Faild to fetch uptime metrics: %s", err)
 	}
-	return map[string]interface{}{"seconds": ut}, nil
+	return map[string]float64{"seconds": ut}, nil
 }
 
 // Do the plugin
