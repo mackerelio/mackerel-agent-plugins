@@ -78,14 +78,14 @@ var graphdef = map[string]mp.Graphs{
 
 // DockerPlugin mackerel plugin for docker
 type DockerPlugin struct {
-	Host           string
-	DockerCommand  string
-	Tempfile       string
-	Method         string
-	NameFormat     string
-	Label          string
-	pathBuilder    *pathBuilder
-	FetchedMetrics map[string]interface{}
+	Host             string
+	DockerCommand    string
+	Tempfile         string
+	Method           string
+	NameFormat       string
+	Label            string
+	pathBuilder      *pathBuilder
+	lastMetricValues mp.MetricValues
 }
 
 func getFile(path string) (string, error) {
@@ -248,24 +248,6 @@ func guessMethod(docker string) (string, error) {
 
 // FetchMetrics interface for mackerel plugin
 func (m DockerPlugin) FetchMetrics() (map[string]interface{}, error) {
-	if m.FetchedMetrics == nil {
-		m.FetchedMetrics = make(map[string]interface{})
-	}
-	return m.FetchedMetrics, nil
-}
-
-func (m *DockerPlugin) PrefetchMetrics(fn func(m *map[string]interface{}) (e error)) error {
-	met, err := m.fetchMetrics()
-	if err == nil {
-		if err = fn(&met); err != nil {
-			return err
-		}
-		m.FetchedMetrics = met
-	}
-	return err
-}
-
-func (m DockerPlugin) fetchMetrics() (map[string]interface{}, error) {
 	dockerStats := map[string][]string{}
 	if m.Method == "API" {
 		containers, err := m.listContainer()
@@ -290,7 +272,16 @@ func (m DockerPlugin) fetchMetrics() (map[string]interface{}, error) {
 		}
 	}
 
-	return m.FetchMetricsWithFile(&dockerStats)
+	stats, err := m.FetchMetricsWithFile(&dockerStats)
+	if err != nil {
+		return nil, err
+	}
+
+	if time.Now().Sub(m.lastMetricValues.Timestamp) <= 5*time.Minute {
+		addCPUPercentageStats(&stats, m.lastMetricValues.Values)
+	}
+
+	return stats, nil
 }
 
 func (m DockerPlugin) generateName(container docker.APIContainers) string {
@@ -479,26 +470,6 @@ func (m DockerPlugin) GraphDefinition() map[string]mp.Graphs {
 	return graphdef
 }
 
-func outputValues(h mp.MackerelPlugin, m DockerPlugin) {
-	err := m.PrefetchMetrics(func(met *map[string]interface{}) error {
-		if err := h.LoadLastValues(); err != nil {
-			return nil // silently ignore
-		}
-		if h.LastTime == nil || time.Now().Sub(*(h.LastTime)) > 5*time.Minute {
-			// Skip CPU stats if diff does not exist or diff is too long
-			return nil
-		}
-
-		addCPUPercentageStats(met, h.LastStat)
-		return nil
-	})
-	if err != nil {
-		log.Fatal(err)
-	}
-	h.Plugin = m
-	h.OutputValues()
-}
-
 // Do the plugin
 func Do() {
 	candidateNameFormat := []string{"name", "name_id", "id", "image", "image_id", "image_name", "label"}
@@ -564,6 +535,7 @@ func Do() {
 	if os.Getenv("MACKEREL_AGENT_PLUGIN_META") != "" {
 		helper.OutputDefinitions()
 	} else {
-		outputValues(helper, docker)
+		docker.lastMetricValues, _ = helper.FetchLastValues()
+		helper.OutputValues()
 	}
 }
