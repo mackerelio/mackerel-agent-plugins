@@ -211,63 +211,63 @@ func calcCPUUsage(currentValues map[string]procStats, now time.Time, savedItem *
 	var result []cpuPercentages
 	for key, current := range currentValues {
 		last, ok := lastValues[key]
-		if ok {
-			user, err := calcPercentage(current.User, last.User, current.Total, last.Total)
-			if err != nil {
-				return nil, err
-			}
-			nice, err := calcPercentage(current.Nice, last.Nice, current.Total, last.Total)
-			if err != nil {
-				return nil, err
-			}
-			system, err := calcPercentage(current.System, last.System, current.Total, last.Total)
-			if err != nil {
-				return nil, err
-			}
-			idle, err := calcPercentage(current.Idle, last.Idle, current.Total, last.Total)
-			if err != nil {
-				return nil, err
-			}
-			iowait, err := calcPercentage(current.IoWait, last.IoWait, current.Total, last.Total)
-			if err != nil {
-				return nil, err
-			}
-			irq, err := calcPercentage(current.Irq, last.Irq, current.Total, last.Total)
-			if err != nil {
-				return nil, err
-			}
-			softirq, err := calcPercentage(current.SoftIrq, last.SoftIrq, current.Total, last.Total)
-			if err != nil {
-				return nil, err
-			}
-			steal, err := calcPercentage(current.Steal, last.Steal, current.Total, last.Total)
-			if err != nil {
-				return nil, err
-			}
-			guest, err := calcPercentage(current.Guest, last.Guest, current.Total, last.Total)
-			if err != nil {
-				return nil, err
-			}
-			guestNice, err := calcPercentage(current.GuestNice, last.GuestNice, current.Total, last.Total)
-			if err != nil {
-				return nil, err
-			}
-
-			result = append(result, cpuPercentages{
-				GroupName: key,
-				User:      user,
-				Nice:      nice,
-				System:    system,
-				Idle:      idle,
-				IoWait:    iowait,
-				Irq:       irq,
-				SoftIrq:   softirq,
-				Steal:     steal,
-				Guest:     guest,
-				GuestNice: guestNice,
-			})
+		if !ok {
+			continue
+		}
+		user, err := calcPercentage(current.User, last.User, current.Total, last.Total)
+		if err != nil {
+			return nil, err
+		}
+		nice, err := calcPercentage(current.Nice, last.Nice, current.Total, last.Total)
+		if err != nil {
+			return nil, err
+		}
+		system, err := calcPercentage(current.System, last.System, current.Total, last.Total)
+		if err != nil {
+			return nil, err
+		}
+		idle, err := calcPercentage(current.Idle, last.Idle, current.Total, last.Total)
+		if err != nil {
+			return nil, err
+		}
+		iowait, err := calcPercentage(current.IoWait, last.IoWait, current.Total, last.Total)
+		if err != nil {
+			return nil, err
+		}
+		irq, err := calcPercentage(current.Irq, last.Irq, current.Total, last.Total)
+		if err != nil {
+			return nil, err
+		}
+		softirq, err := calcPercentage(current.SoftIrq, last.SoftIrq, current.Total, last.Total)
+		if err != nil {
+			return nil, err
+		}
+		steal, err := calcPercentage(current.Steal, last.Steal, current.Total, last.Total)
+		if err != nil {
+			return nil, err
+		}
+		guest, err := calcPercentage(current.Guest, last.Guest, current.Total, last.Total)
+		if err != nil {
+			return nil, err
+		}
+		guestNice, err := calcPercentage(current.GuestNice, last.GuestNice, current.Total, last.Total)
+		if err != nil {
+			return nil, err
 		}
 
+		result = append(result, cpuPercentages{
+			GroupName: key,
+			User:      user,
+			Nice:      nice,
+			System:    system,
+			Idle:      idle,
+			IoWait:    iowait,
+			Irq:       irq,
+			SoftIrq:   softirq,
+			Steal:     steal,
+			Guest:     guest,
+			GuestNice: guestNice,
+		})
 	}
 
 	return result, nil
