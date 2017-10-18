@@ -36,37 +36,37 @@ softirq 8788848490 0 2700996173 1094252449 1510759801 0 0 1 1761055606 1241616 1
 		t.Errorf("parseProcStat: size should be 16, but '%d'", len(stat))
 	}
 	if *stat["cpu0"].User != 14786890 {
-		t.Errorf("parseProcStat: user should be 14786890, but '%f'", *stat["cpu0"].User)
+		t.Errorf("parseProcStat: user should be 14786890, but '%d'", *stat["cpu0"].User)
 	}
 	if *stat["cpu0"].Nice != 0 {
-		t.Errorf("parseProcStat: nice should be 0, but '%f'", *stat["cpu0"].Nice)
+		t.Errorf("parseProcStat: nice should be 0, but '%d'", *stat["cpu0"].Nice)
 	}
 	if *stat["cpu0"].System != 4570343 {
-		t.Errorf("parseProcStat: system should be 4570343, but '%f'", *stat["cpu0"].System)
+		t.Errorf("parseProcStat: system should be 4570343, but '%d'", *stat["cpu0"].System)
 	}
 	if *stat["cpu0"].Idle != 2196397805 {
-		t.Errorf("parseProcStat: idle should be 2196397805, but '%f'", *stat["cpu0"].Idle)
+		t.Errorf("parseProcStat: idle should be 2196397805, but '%d'", *stat["cpu0"].Idle)
 	}
 	if *stat["cpu0"].IoWait != 364717 {
-		t.Errorf("parseProcStat: iowait should be 364717, but '%f'", *stat["cpu0"].IoWait)
+		t.Errorf("parseProcStat: iowait should be 364717, but '%d'", *stat["cpu0"].IoWait)
 	}
 	if *stat["cpu0"].Irq != 4072 {
-		t.Errorf("parseProcStat: irq should be 4072, but '%f'", *stat["cpu0"].Irq)
+		t.Errorf("parseProcStat: irq should be 4072, but '%d'", *stat["cpu0"].Irq)
 	}
 	if *stat["cpu0"].SoftIrq != 1209169 {
-		t.Errorf("parseProcStat: softirq should be 1209169, but '%f'", *stat["cpu0"].SoftIrq)
+		t.Errorf("parseProcStat: softirq should be 1209169, but '%d'", *stat["cpu0"].SoftIrq)
 	}
 	if *stat["cpu0"].Steal != 526216 {
-		t.Errorf("parseProcStat: steal should be 526216, but '%f'", *stat["cpu0"].Steal)
+		t.Errorf("parseProcStat: steal should be 526216, but '%d'", *stat["cpu0"].Steal)
 	}
 	if *stat["cpu0"].Guest != 1 {
-		t.Errorf("parseProcStat: guest should be 1, but '%f'", *stat["cpu0"].Guest)
+		t.Errorf("parseProcStat: guest should be 1, but '%d'", *stat["cpu0"].Guest)
 	}
 	if *stat["cpu0"].GuestNice != 2 {
-		t.Errorf("parseProcStat: guest should be 2, but '%f'", *stat["cpu0"].Guest)
+		t.Errorf("parseProcStat: guest should be 2, but '%d'", *stat["cpu0"].Guest)
 	}
 	if stat["cpu0"].Total != 2217859215 {
-		t.Errorf("parseProcStat: total should be 2217859215, but '%f'", stat["cpu0"].Total)
+		t.Errorf("parseProcStat: total should be 2217859215, but '%d'", stat["cpu0"].Total)
 	}
 }
 
@@ -78,30 +78,30 @@ func TestParseProcStatsOldKernel(t *testing.T) {
 		t.Errorf("parseProcStat: size should be 1, but '%d'", len(stat))
 	}
 	if *stat["cpu0"].User != 14786890 {
-		t.Errorf("parseProcStat: user should be 14786890, but '%f'", *stat["cpu0"].User)
+		t.Errorf("parseProcStat: user should be 14786890, but '%d'", *stat["cpu0"].User)
 	}
 	if *stat["cpu0"].Nice != 0 {
-		t.Errorf("parseProcStat: nice should be 0, but '%f'", *stat["cpu0"].Nice)
+		t.Errorf("parseProcStat: nice should be 0, but '%d'", *stat["cpu0"].Nice)
 	}
 	if *stat["cpu0"].System != 4570343 {
-		t.Errorf("parseProcStat: system should be 4570343, but '%f'", *stat["cpu0"].System)
+		t.Errorf("parseProcStat: system should be 4570343, but '%d'", *stat["cpu0"].System)
 	}
 	if *stat["cpu0"].Idle != 2196397805 {
-		t.Errorf("parseProcStat: idle should be 2196397805, but '%f'", *stat["cpu0"].Idle)
+		t.Errorf("parseProcStat: idle should be 2196397805, but '%d'", *stat["cpu0"].Idle)
 	}
 	if stat["cpu0"].IoWait != nil {
-		t.Errorf("parseProcStat: iowait should be nil, but '%f'", *stat["cpu0"].IoWait)
+		t.Errorf("parseProcStat: iowait should be nil, but '%d'", *stat["cpu0"].IoWait)
 	}
 	if stat["cpu0"].Irq != nil {
-		t.Errorf("parseProcStat: irq should be nil, but '%f'", *stat["cpu0"].Irq)
+		t.Errorf("parseProcStat: irq should be nil, but '%d'", *stat["cpu0"].Irq)
 	}
 	if stat["cpu0"].SoftIrq != nil {
-		t.Errorf("parseProcStat: softirq should be nil, but '%f'", *stat["cpu0"].SoftIrq)
+		t.Errorf("parseProcStat: softirq should be nil, but '%d'", *stat["cpu0"].SoftIrq)
 	}
 	if stat["cpu0"].Steal != nil {
-		t.Errorf("parseProcStat: steal should be nil, but '%f'", *stat["cpu0"].Steal)
+		t.Errorf("parseProcStat: steal should be nil, but '%d'", *stat["cpu0"].Steal)
 	}
 	if stat["cpu0"].Guest != nil {
-		t.Errorf("parseProcStat: guest should be nil, but '%f'", *stat["cpu0"].Guest)
+		t.Errorf("parseProcStat: guest should be nil, but '%d'", *stat["cpu0"].Guest)
 	}
 }
