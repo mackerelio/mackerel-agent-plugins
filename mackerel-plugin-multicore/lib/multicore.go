@@ -107,43 +107,43 @@ func parseProcStat(out io.Reader) (map[string]procStats, error) {
 	var result = make(map[string]procStats)
 	for scanner.Scan() {
 		line := scanner.Text()
-		if strings.HasPrefix(line, "cpu") {
-			fields := strings.Fields(line)
-			key := fields[0]
-			values := fields[1:]
+		if !strings.HasPrefix(line, "cpu") {
+			continue
+		}
 
-			// skip total cpu usage
-			if key == "cpu" {
-				continue
-			}
+		fields := strings.Fields(line)
+		key := fields[0]
+		values := fields[1:]
 
-			floatValues, err := parseFloats(values)
-			if err != nil {
-				return nil, err
-			}
+		// skip total cpu usage
+		if key == "cpu" {
+			continue
+		}
 
-			total := 0.0
-			for _, v := range floatValues {
-				total += v
-			}
+		floatValues, err := parseFloats(values)
+		if err != nil {
+			return nil, err
+		}
 
-			filledValues := fill(floatValues, 10)
+		total := 0.0
+		for _, v := range floatValues {
+			total += v
+		}
 
-			result[key] = procStats{
-				User:      filledValues[0],
-				Nice:      filledValues[1],
-				System:    filledValues[2],
-				Idle:      filledValues[3],
-				IoWait:    filledValues[4],
-				Irq:       filledValues[5],
-				SoftIrq:   filledValues[6],
-				Steal:     filledValues[7],
-				Guest:     filledValues[8],
-				GuestNice: filledValues[9],
-				Total:     total,
-			}
-		} else {
-			break
+		filledValues := fill(floatValues, 10)
+
+		result[key] = procStats{
+			User:      filledValues[0],
+			Nice:      filledValues[1],
+			System:    filledValues[2],
+			Idle:      filledValues[3],
+			IoWait:    filledValues[4],
+			Irq:       filledValues[5],
+			SoftIrq:   filledValues[6],
+			Steal:     filledValues[7],
+			Guest:     filledValues[8],
+			GuestNice: filledValues[9],
+			Total:     total,
 		}
 	}
 	return result, nil
