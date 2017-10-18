@@ -3,6 +3,7 @@ package mpmulticore
 import (
 	"bufio"
 	"encoding/json"
+	"errors"
 	"flag"
 	"fmt"
 	"io"
@@ -49,17 +50,17 @@ type saveItem struct {
 }
 
 type procStats struct {
-	User      *float64 `json:"user"`
-	Nice      *float64 `json:"nice"`
-	System    *float64 `json:"system"`
-	Idle      *float64 `json:"idle"`
-	IoWait    *float64 `json:"iowait"`
-	Irq       *float64 `json:"irq"`
-	SoftIrq   *float64 `json:"softirq"`
-	Steal     *float64 `json:"steal"`
-	Guest     *float64 `json:"guest"`
-	GuestNice *float64 `json:"guest_nice"`
-	Total     float64  `json:"total"`
+	User      *uint64 `json:"user"`
+	Nice      *uint64 `json:"nice"`
+	System    *uint64 `json:"system"`
+	Idle      *uint64 `json:"idle"`
+	IoWait    *uint64 `json:"iowait"`
+	Irq       *uint64 `json:"irq"`
+	SoftIrq   *uint64 `json:"softirq"`
+	Steal     *uint64 `json:"steal"`
+	Guest     *uint64 `json:"guest"`
+	GuestNice *uint64 `json:"guest_nice"`
+	Total     uint64  `json:"total"`
 }
 
 type cpuPercentages struct {
@@ -76,10 +77,10 @@ type cpuPercentages struct {
 	GuestNice *float64
 }
 
-func parseFloats(values []string) ([]float64, error) {
-	var result []float64
+func parseCounters(values []string) ([]uint64, error) {
+	var result []uint64
 	for _, v := range values {
-		f, err := strconv.ParseFloat(v, 64)
+		f, err := strconv.ParseUint(v, 10, 64)
 		if err != nil {
 			return nil, err
 		}
@@ -88,15 +89,15 @@ func parseFloats(values []string) ([]float64, error) {
 	return result, nil
 }
 
-func fill(arr []float64, elementCount int) []*float64 {
-	var filled []*float64
+func fill(arr []uint64, elementCount int) []*uint64 {
+	var filled []*uint64
 	for _, v := range arr {
 		copy := v
 		filled = append(filled, &copy)
 	}
 
 	if len(arr) < elementCount {
-		emptyArray := make([]*float64, elementCount-len(arr))
+		emptyArray := make([]*uint64, elementCount-len(arr))
 		filled = append(filled, emptyArray...)
 	}
 	return filled
@@ -120,17 +121,17 @@ func parseProcStat(out io.Reader) (map[string]procStats, error) {
 			continue
 		}
 
-		floatValues, err := parseFloats(values)
+		counterValues, err := parseCounters(values)
 		if err != nil {
 			return nil, err
 		}
 
-		total := 0.0
-		for _, v := range floatValues {
+		var total uint64
+		for _, v := range counterValues {
 			total += v
 		}
 
-		filledValues := fill(floatValues, 10)
+		filledValues := fill(counterValues, 10)
 
 		result[key] = procStats{
 			User:      filledValues[0],
@@ -202,47 +203,52 @@ func calcCPUUsage(currentValues map[string]procStats, now time.Time, savedItem *
 	lastValues := savedItem.ProcStatsByCPU
 	lastTime := savedItem.LastTime
 
+	diffTime := now.Unix() - lastTime.Unix()
+	if diffTime > 600 {
+		return nil, fmt.Errorf("Too long duration")
+	}
+
 	var result []cpuPercentages
 	for key, current := range currentValues {
 		last, ok := lastValues[key]
 		if ok {
-			user, err := calcPercentage(current.User, last.User, current.Total, last.Total, now, lastTime)
+			user, err := calcPercentage(current.User, last.User, current.Total, last.Total)
 			if err != nil {
 				return nil, err
 			}
-			nice, err := calcPercentage(current.Nice, last.Nice, current.Total, last.Total, now, lastTime)
+			nice, err := calcPercentage(current.Nice, last.Nice, current.Total, last.Total)
 			if err != nil {
 				return nil, err
 			}
-			system, err := calcPercentage(current.System, last.System, current.Total, last.Total, now, lastTime)
+			system, err := calcPercentage(current.System, last.System, current.Total, last.Total)
 			if err != nil {
 				return nil, err
 			}
-			idle, err := calcPercentage(current.Idle, last.Idle, current.Total, last.Total, now, lastTime)
+			idle, err := calcPercentage(current.Idle, last.Idle, current.Total, last.Total)
 			if err != nil {
 				return nil, err
 			}
-			iowait, err := calcPercentage(current.IoWait, last.IoWait, current.Total, last.Total, now, lastTime)
+			iowait, err := calcPercentage(current.IoWait, last.IoWait, current.Total, last.Total)
 			if err != nil {
 				return nil, err
 			}
-			irq, err := calcPercentage(current.Irq, last.Irq, current.Total, last.Total, now, lastTime)
+			irq, err := calcPercentage(current.Irq, last.Irq, current.Total, last.Total)
 			if err != nil {
 				return nil, err
 			}
-			softirq, err := calcPercentage(current.SoftIrq, last.SoftIrq, current.Total, last.Total, now, lastTime)
+			softirq, err := calcPercentage(current.SoftIrq, last.SoftIrq, current.Total, last.Total)
 			if err != nil {
 				return nil, err
 			}
-			steal, err := calcPercentage(current.Steal, last.Steal, current.Total, last.Total, now, lastTime)
+			steal, err := calcPercentage(current.Steal, last.Steal, current.Total, last.Total)
 			if err != nil {
 				return nil, err
 			}
-			guest, err := calcPercentage(current.Guest, last.Guest, current.Total, last.Total, now, lastTime)
+			guest, err := calcPercentage(current.Guest, last.Guest, current.Total, last.Total)
 			if err != nil {
 				return nil, err
 			}
-			guestNice, err := calcPercentage(current.GuestNice, last.GuestNice, current.Total, last.Total, now, lastTime)
+			guestNice, err := calcPercentage(current.GuestNice, last.GuestNice, current.Total, last.Total)
 			if err != nil {
 				return nil, err
 			}
@@ -267,38 +273,20 @@ func calcCPUUsage(currentValues map[string]procStats, now time.Time, savedItem *
 	return result, nil
 }
 
-func calcPercentage(currentValue *float64, lastValue *float64, currentTotal float64, lastTotal float64, now time.Time, lastTime time.Time) (*float64, error) {
-
+func calcPercentage(currentValue *uint64, lastValue *uint64, currentTotal uint64, lastTotal uint64) (*float64, error) {
 	if currentValue == nil || lastValue == nil {
 		return nil, nil
 	}
 
-	value, err := calcDiff(*currentValue, now, *lastValue, lastTime)
-	if err != nil {
-		return nil, err
+	diff := *currentValue - *lastValue
+	total := currentTotal - lastTotal
+
+	if diff < 0 || total < 0 {
+		return nil, errors.New("counter may be reset")
 	}
 
-	total, err := calcDiff(currentTotal, now, lastTotal, lastTime)
-	if err != nil {
-		return nil, err
-	}
-
-	ret := value / total * 100.0
+	ret := float64(diff) / float64(total) * 100.0
 	return &ret, nil
-}
-
-func calcDiff(value float64, now time.Time, lastValue float64, lastTime time.Time) (float64, error) {
-	diffTime := now.Unix() - lastTime.Unix()
-	if diffTime > 600 {
-		return 0.0, fmt.Errorf("Too long duration")
-	}
-
-	diff := (value - lastValue) * 60 / float64(diffTime)
-
-	if lastValue <= value {
-		return diff, nil
-	}
-	return 0.0, fmt.Errorf("lastValue > value")
 }
 
 func fetchLoadavg5() (float64, error) {
