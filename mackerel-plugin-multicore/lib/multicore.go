@@ -198,11 +198,11 @@ func fetchSavedItem(tempFileName string) (*saveItem, error) {
 	return &stat, nil
 }
 
-func calcCPUUsage(currentValues map[string]procStats, now time.Time, savedItem *saveItem) ([]*cpuPercentages, error) {
+func calcCPUUsage(currentValues map[string]procStats, now time.Time, savedItem *saveItem) ([]cpuPercentages, error) {
 	lastValues := savedItem.ProcStatsByCPU
 	lastTime := savedItem.LastTime
 
-	var result []*cpuPercentages
+	var result []cpuPercentages
 	for key, current := range currentValues {
 		last, ok := lastValues[key]
 		if ok {
@@ -247,7 +247,7 @@ func calcCPUUsage(currentValues map[string]procStats, now time.Time, savedItem *
 				return nil, err
 			}
 
-			p := &cpuPercentages{
+			result = append(result, cpuPercentages{
 				GroupName: key,
 				User:      user,
 				Nice:      nice,
@@ -259,8 +259,7 @@ func calcCPUUsage(currentValues map[string]procStats, now time.Time, savedItem *
 				Steal:     steal,
 				Guest:     guest,
 				GuestNice: guestNice,
-			}
-			result = append(result, p)
+			})
 		}
 
 	}
@@ -326,7 +325,7 @@ func printValue(key string, value *float64, time time.Time) {
 	}
 }
 
-func outputCPUUsage(cpuUsage []*cpuPercentages, now time.Time) {
+func outputCPUUsage(cpuUsage []cpuPercentages, now time.Time) {
 	for _, u := range cpuUsage {
 		printValue(fmt.Sprintf("multicore.cpu.%s.user", u.GroupName), u.User, now)
 		printValue(fmt.Sprintf("multicore.cpu.%s.nice", u.GroupName), u.Nice, now)
