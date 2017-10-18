@@ -45,7 +45,7 @@ var graphDef = map[string]mp.Graphs{
 
 type saveItem struct {
 	LastTime       time.Time
-	ProcStatsByCPU map[string]*procStats
+	ProcStatsByCPU map[string]procStats
 }
 
 type procStats struct {
@@ -102,9 +102,9 @@ func fill(arr []float64, elementCount int) []*float64 {
 	return filled
 }
 
-func parseProcStat(out io.Reader) (map[string]*procStats, error) {
+func parseProcStat(out io.Reader) (map[string]procStats, error) {
 	scanner := bufio.NewScanner(out)
-	var result = make(map[string]*procStats)
+	var result = make(map[string]procStats)
 	for scanner.Scan() {
 		line := scanner.Text()
 		if strings.HasPrefix(line, "cpu") {
@@ -129,7 +129,7 @@ func parseProcStat(out io.Reader) (map[string]*procStats, error) {
 
 			filledValues := fill(floatValues, 10)
 
-			ps := &procStats{
+			result[key] = procStats{
 				User:      filledValues[0],
 				Nice:      filledValues[1],
 				System:    filledValues[2],
@@ -142,7 +142,6 @@ func parseProcStat(out io.Reader) (map[string]*procStats, error) {
 				GuestNice: filledValues[9],
 				Total:     total,
 			}
-			result[key] = ps
 		} else {
 			break
 		}
@@ -150,7 +149,7 @@ func parseProcStat(out io.Reader) (map[string]*procStats, error) {
 	return result, nil
 }
 
-func collectProcStatValues() (map[string]*procStats, error) {
+func collectProcStatValues() (map[string]procStats, error) {
 	file, err := os.Open("/proc/stat")
 	if err != nil {
 		return nil, err
@@ -159,7 +158,7 @@ func collectProcStatValues() (map[string]*procStats, error) {
 	return parseProcStat(file)
 }
 
-func saveValues(tempFileName string, values map[string]*procStats, now time.Time) error {
+func saveValues(tempFileName string, values map[string]procStats, now time.Time) error {
 	f, err := os.Create(tempFileName)
 	if err != nil {
 		return err
@@ -199,7 +198,7 @@ func fetchSavedItem(tempFileName string) (*saveItem, error) {
 	return &stat, nil
 }
 
-func calcCPUUsage(currentValues map[string]*procStats, now time.Time, savedItem *saveItem) ([]*cpuPercentages, error) {
+func calcCPUUsage(currentValues map[string]procStats, now time.Time, savedItem *saveItem) ([]*cpuPercentages, error) {
 	lastValues := savedItem.ProcStatsByCPU
 	lastTime := savedItem.LastTime
 
