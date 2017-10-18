@@ -200,17 +200,13 @@ func fetchSavedItem(tempFileName string) (*saveItem, error) {
 }
 
 func calcCPUUsage(currentValues map[string]procStats, now time.Time, savedItem *saveItem) ([]cpuPercentages, error) {
-	lastValues := savedItem.ProcStatsByCPU
-	lastTime := savedItem.LastTime
-
-	diffTime := now.Unix() - lastTime.Unix()
-	if diffTime > 600 {
+	if now.Sub(savedItem.LastTime).Seconds() > 600 {
 		return nil, fmt.Errorf("Too long duration")
 	}
 
 	var result []cpuPercentages
 	for key, current := range currentValues {
-		last, ok := lastValues[key]
+		last, ok := savedItem.ProcStatsByCPU[key]
 		if !ok {
 			continue
 		}
