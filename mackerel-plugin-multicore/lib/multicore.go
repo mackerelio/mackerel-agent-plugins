@@ -278,14 +278,11 @@ func calcPercentage(currentValue *uint64, lastValue *uint64, currentTotal uint64
 		return nil, nil
 	}
 
-	diff := *currentValue - *lastValue
-	total := currentTotal - lastTotal
-
-	if diff < 0 || total < 0 {
+	if *lastValue > *currentValue || lastTotal > currentTotal {
 		return nil, errors.New("counter may be reset")
 	}
 
-	ret := float64(diff) / float64(total) * 100.0
+	ret := float64(*currentValue-*lastValue) / float64(currentTotal-lastTotal) * 100.0
 	return &ret, nil
 }
 
