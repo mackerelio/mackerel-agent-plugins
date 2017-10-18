@@ -1,9 +1,11 @@
 package mpmulticore
 
 import (
+	"bufio"
 	"encoding/json"
 	"flag"
 	"fmt"
+	"io"
 	"io/ioutil"
 	"log"
 	"os"
@@ -74,14 +76,6 @@ type cpuPercentages struct {
 	GuestNice *float64
 }
 
-func getProcStat() (string, error) {
-	contentbytes, err := ioutil.ReadFile("/proc/stat")
-	if err != nil {
-		return "", err
-	}
-	return string(contentbytes), nil
-}
-
 func parseFloats(values []string) ([]float64, error) {
 	var result []float64
 	for _, v := range values {
@@ -108,9 +102,11 @@ func fill(arr []float64, elementCount int) []*float64 {
 	return filled
 }
 
-func parseProcStat(str string) (map[string]*procStats, error) {
+func parseProcStat(out io.Reader) (map[string]*procStats, error) {
+	scanner := bufio.NewScanner(out)
 	var result = make(map[string]*procStats)
-	for _, line := range strings.Split(str, "\n") {
+	for scanner.Scan() {
+		line := scanner.Text()
 		if strings.HasPrefix(line, "cpu") {
 			fields := strings.Fields(line)
 			key := fields[0]
@@ -155,11 +151,12 @@ func parseProcStat(str string) (map[string]*procStats, error) {
 }
 
 func collectProcStatValues() (map[string]*procStats, error) {
-	procStats, err := getProcStat()
+	file, err := os.Open("/proc/stat")
 	if err != nil {
 		return nil, err
 	}
-	return parseProcStat(procStats)
+	defer file.Close()
+	return parseProcStat(file)
 }
 
 func saveValues(tempFileName string, values map[string]*procStats, now time.Time) error {

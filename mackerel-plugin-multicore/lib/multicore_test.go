@@ -1,6 +1,9 @@
 package mpmulticore
 
-import "testing"
+import (
+	"strings"
+	"testing"
+)
 
 func TestParseProcStats(t *testing.T) {
 	stab := `cpu  25308301 0 19470191 35582590482 432542 4227 1237778 2053417 0 0
@@ -28,7 +31,7 @@ procs_running 2
 procs_blocked 0
 softirq 8788848490 0 2700996173 1094252449 1510759801 0 0 1 1761055606 1241616 1720542844`
 
-	stat, _ := parseProcStat(stab)
+	stat, _ := parseProcStat(strings.NewReader(stab))
 	if len(stat) != 16 {
 		t.Errorf("parseProcStat: size should be 16, but '%d'", len(stat))
 	}
@@ -70,7 +73,7 @@ softirq 8788848490 0 2700996173 1094252449 1510759801 0 0 1 1761055606 1241616 1
 func TestParseProcStatsOldKernel(t *testing.T) {
 	stab := `cpu0 14786890 0 4570343 2196397805`
 
-	stat, _ := parseProcStat(stab)
+	stat, _ := parseProcStat(strings.NewReader(stab))
 	if len(stat) != 1 {
 		t.Errorf("parseProcStat: size should be 1, but '%d'", len(stat))
 	}
