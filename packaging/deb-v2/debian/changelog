@@ -1,3 +1,12 @@
+mackerel-agent-plugins (0.37.0-1.v2) stable; urgency=low
+
+  * Implement mackerel-plugin-mcrouter (by waniji)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/420>
+  * [uptime] use go-mackerel-plugin instead of using go-mackerel-plugin-helper (by Songmu)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/428>
+
+ -- mackerel <mackerel-developers@hatena.ne.jp>  Thu, 19 Oct 2017 10:50:22 +0900
+
 mackerel-agent-plugins (0.36.0-1.v2) stable; urgency=low
 
   * Add mackerel-plugin-json (by doublemarket)

@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.37.0 (2017-10-19)
+
+* Implement mackerel-plugin-mcrouter #420 (waniji)
+* [uptime] use go-mackerel-plugin instead of using go-mackerel-plugin-helper #428 (Songmu)
+
+
 ## 0.36.0 (2017-10-12)
 
 * Add mackerel-plugin-json #395 (doublemarket)
