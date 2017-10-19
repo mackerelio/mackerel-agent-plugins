@@ -40,6 +40,10 @@ done
 %{__targetdir}/*
 
 %changelog
+* Thu Oct 19 2017 <mackerel-developers@hatena.ne.jp> - 0.37.0
+- Implement mackerel-plugin-mcrouter (by waniji)
+- [uptime] use go-mackerel-plugin instead of using go-mackerel-plugin-helper (by Songmu)
+
 * Thu Oct 12 2017 <mackerel-developers@hatena.ne.jp> - 0.36.0
 - Add mackerel-plugin-json (by doublemarket)
 - [awd-dynamodb] [incompatible] remove `.` from Metrics.Name (by astj)

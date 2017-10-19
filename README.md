@@ -40,6 +40,7 @@ Documentation for each plugin is located in its respective sub directory.
 * [mackerel-plugin-jvm](./mackerel-plugin-jvm/README.md)
 * [mackerel-plugin-linux](./mackerel-plugin-linux/README.md)
 * [mackerel-plugin-mailq](./mackerel-plugin-mailq/README.md)
+* [mackerel-plugin-mcrouter](./mackerel-plugin-mcrouter/README.md)
 * [mackerel-plugin-memcached](./mackerel-plugin-memcached/README.md)
 * [mackerel-plugin-mongodb](./mackerel-plugin-mongodb/README.md)
 * [mackerel-plugin-multicore](./mackerel-plugin-multicore/README.md)
