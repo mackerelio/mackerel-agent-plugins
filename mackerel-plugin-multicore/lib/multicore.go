@@ -77,32 +77,6 @@ type cpuPercentages struct {
 	GuestNice *float64
 }
 
-func parseCounters(values []string) ([]uint64, error) {
-	var result []uint64
-	for _, v := range values {
-		f, err := strconv.ParseUint(v, 10, 64)
-		if err != nil {
-			return nil, err
-		}
-		result = append(result, f)
-	}
-	return result, nil
-}
-
-func fill(arr []uint64, elementCount int) []*uint64 {
-	var filled []*uint64
-	for _, v := range arr {
-		copy := v
-		filled = append(filled, &copy)
-	}
-
-	if len(arr) < elementCount {
-		emptyArray := make([]*uint64, elementCount-len(arr))
-		filled = append(filled, emptyArray...)
-	}
-	return filled
-}
-
 func parseProcStat(out io.Reader) (map[string]procStats, error) {
 	scanner := bufio.NewScanner(out)
 	var result = make(map[string]procStats)
@@ -121,31 +95,30 @@ func parseProcStat(out io.Reader) (map[string]procStats, error) {
 			continue
 		}
 
-		counterValues, err := parseCounters(values)
-		if err != nil {
-			return nil, err
+		var stats procStats
+		statPtrs := []**uint64{
+			&stats.User,
+			&stats.Nice,
+			&stats.System,
+			&stats.Idle,
+			&stats.IoWait,
+			&stats.Irq,
+			&stats.SoftIrq,
+			&stats.Steal,
+			&stats.Guest,
+			&stats.GuestNice,
 		}
 
-		var total uint64
-		for _, v := range counterValues {
-			total += v
+		for i, valStr := range values {
+			val, err := strconv.ParseUint(valStr, 10, 64)
+			if err != nil {
+				return nil, err
+			}
+			*statPtrs[i] = &val
+			stats.Total += val
 		}
 
-		filledValues := fill(counterValues, 10)
-
-		result[key] = procStats{
-			User:      filledValues[0],
-			Nice:      filledValues[1],
-			System:    filledValues[2],
-			Idle:      filledValues[3],
-			IoWait:    filledValues[4],
-			Irq:       filledValues[5],
-			SoftIrq:   filledValues[6],
-			Steal:     filledValues[7],
-			Guest:     filledValues[8],
-			GuestNice: filledValues[9],
-			Total:     total,
-		}
+		result[key] = stats
 	}
 	return result, nil
 }
