@@ -118,6 +118,19 @@ func parseProcStat(out io.Reader) (map[string]procStats, error) {
 			stats.Total += val
 		}
 
+		// Since cpustat[CPUTIME_USER] includes cpustat[CPUTIME_GUEST], subtract the duplicated values from total.
+		// https://github.com/torvalds/linux/blob/4ec9f7a18/kernel/sched/cputime.c#L151-L158
+		if stats.Guest != nil {
+			stats.Total -= *stats.Guest
+			*stats.User -= *stats.Guest
+		}
+
+		// cpustat[CPUTIME_NICE] includes cpustat[CPUTIME_GUEST_NICE]
+		if stats.GuestNice != nil {
+			stats.Total -= *stats.GuestNice
+			*stats.Nice -= *stats.GuestNice
+		}
+
 		result[key] = stats
 	}
 	return result, nil
