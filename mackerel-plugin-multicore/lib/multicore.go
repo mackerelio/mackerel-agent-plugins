@@ -64,7 +64,7 @@ type procStats struct {
 }
 
 type cpuPercentages struct {
-	GroupName string
+	CPUName   string
 	User      *float64
 	Nice      *float64
 	System    *float64
@@ -227,7 +227,7 @@ func calcCPUUsage(currentValues map[string]procStats, now time.Time, savedItem *
 		guestNice := calculatePercentage(current.GuestNice, last.GuestNice, current.Total, last.Total)
 
 		result = append(result, cpuPercentages{
-			GroupName: name,
+			CPUName:   name,
 			User:      user,
 			Nice:      nice,
 			System:    system,
@@ -278,16 +278,16 @@ func printValue(key string, value *float64, time time.Time) {
 
 func outputCPUUsage(cpuUsage []cpuPercentages, now time.Time) {
 	for _, u := range cpuUsage {
-		printValue(fmt.Sprintf("multicore.cpu.%s.user", u.GroupName), u.User, now)
-		printValue(fmt.Sprintf("multicore.cpu.%s.nice", u.GroupName), u.Nice, now)
-		printValue(fmt.Sprintf("multicore.cpu.%s.system", u.GroupName), u.System, now)
-		printValue(fmt.Sprintf("multicore.cpu.%s.idle", u.GroupName), u.Idle, now)
-		printValue(fmt.Sprintf("multicore.cpu.%s.iowait", u.GroupName), u.IoWait, now)
-		printValue(fmt.Sprintf("multicore.cpu.%s.irq", u.GroupName), u.Irq, now)
-		printValue(fmt.Sprintf("multicore.cpu.%s.softirq", u.GroupName), u.SoftIrq, now)
-		printValue(fmt.Sprintf("multicore.cpu.%s.steal", u.GroupName), u.Steal, now)
-		printValue(fmt.Sprintf("multicore.cpu.%s.guest", u.GroupName), u.Guest, now)
-		printValue(fmt.Sprintf("multicore.cpu.%s.guest_nice", u.GroupName), u.GuestNice, now)
+		printValue(fmt.Sprintf("multicore.cpu.%s.user", u.CPUName), u.User, now)
+		printValue(fmt.Sprintf("multicore.cpu.%s.nice", u.CPUName), u.Nice, now)
+		printValue(fmt.Sprintf("multicore.cpu.%s.system", u.CPUName), u.System, now)
+		printValue(fmt.Sprintf("multicore.cpu.%s.idle", u.CPUName), u.Idle, now)
+		printValue(fmt.Sprintf("multicore.cpu.%s.iowait", u.CPUName), u.IoWait, now)
+		printValue(fmt.Sprintf("multicore.cpu.%s.irq", u.CPUName), u.Irq, now)
+		printValue(fmt.Sprintf("multicore.cpu.%s.softirq", u.CPUName), u.SoftIrq, now)
+		printValue(fmt.Sprintf("multicore.cpu.%s.steal", u.CPUName), u.Steal, now)
+		printValue(fmt.Sprintf("multicore.cpu.%s.guest", u.CPUName), u.Guest, now)
+		printValue(fmt.Sprintf("multicore.cpu.%s.guest_nice", u.CPUName), u.GuestNice, now)
 	}
 }
 
