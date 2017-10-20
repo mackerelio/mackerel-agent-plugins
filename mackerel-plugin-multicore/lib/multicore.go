@@ -201,58 +201,33 @@ func fetchSavedItem(tempFileName string) (*saveItem, error) {
 
 func calcCPUUsage(currentValues map[string]procStats, now time.Time, savedItem *saveItem) ([]cpuPercentages, error) {
 	if now.Sub(savedItem.LastTime).Seconds() > 600 {
-		return nil, fmt.Errorf("Too long duration")
+		return nil, errors.New("Too long duration")
 	}
 
 	var result []cpuPercentages
-	for key, current := range currentValues {
-		last, ok := savedItem.ProcStatsByCPU[key]
+	for name, current := range currentValues {
+		last, ok := savedItem.ProcStatsByCPU[name]
 		if !ok {
 			continue
 		}
-		user, err := calcPercentage(current.User, last.User, current.Total, last.Total)
-		if err != nil {
-			return nil, err
-		}
-		nice, err := calcPercentage(current.Nice, last.Nice, current.Total, last.Total)
-		if err != nil {
-			return nil, err
-		}
-		system, err := calcPercentage(current.System, last.System, current.Total, last.Total)
-		if err != nil {
-			return nil, err
-		}
-		idle, err := calcPercentage(current.Idle, last.Idle, current.Total, last.Total)
-		if err != nil {
-			return nil, err
-		}
-		iowait, err := calcPercentage(current.IoWait, last.IoWait, current.Total, last.Total)
-		if err != nil {
-			return nil, err
-		}
-		irq, err := calcPercentage(current.Irq, last.Irq, current.Total, last.Total)
-		if err != nil {
-			return nil, err
-		}
-		softirq, err := calcPercentage(current.SoftIrq, last.SoftIrq, current.Total, last.Total)
-		if err != nil {
-			return nil, err
-		}
-		steal, err := calcPercentage(current.Steal, last.Steal, current.Total, last.Total)
-		if err != nil {
-			return nil, err
-		}
-		guest, err := calcPercentage(current.Guest, last.Guest, current.Total, last.Total)
-		if err != nil {
-			return nil, err
-		}
-		guestNice, err := calcPercentage(current.GuestNice, last.GuestNice, current.Total, last.Total)
-		if err != nil {
-			return nil, err
+		if last.Total > current.Total {
+			return nil, errors.New("cpu counter has been reset")
 		}
 
+		user := calculatePercentage(current.User, last.User, current.Total, last.Total)
+		nice := calculatePercentage(current.Nice, last.Nice, current.Total, last.Total)
+		system := calculatePercentage(current.System, last.System, current.Total, last.Total)
+		idle := calculatePercentage(current.Idle, last.Idle, current.Total, last.Total)
+		iowait := calculatePercentage(current.IoWait, last.IoWait, current.Total, last.Total)
+		irq := calculatePercentage(current.Irq, last.Irq, current.Total, last.Total)
+		softirq := calculatePercentage(current.SoftIrq, last.SoftIrq, current.Total, last.Total)
+		steal := calculatePercentage(current.Steal, last.Steal, current.Total, last.Total)
+		guest := calculatePercentage(current.Guest, last.Guest, current.Total, last.Total)
+		// guest_nice available since Linux 2.6.33 (ref: man proc)
+		guestNice := calculatePercentage(current.GuestNice, last.GuestNice, current.Total, last.Total)
+
 		result = append(result, cpuPercentages{
-			GroupName: key,
+			GroupName: name,
 			User:      user,
 			Nice:      nice,
 			System:    system,
@@ -269,17 +244,12 @@ func calcCPUUsage(currentValues map[string]procStats, now time.Time, savedItem *
 	return result, nil
 }
 
-func calcPercentage(currentValue *uint64, lastValue *uint64, currentTotal uint64, lastTotal uint64) (*float64, error) {
+func calculatePercentage(currentValue *uint64, lastValue *uint64, currentTotal uint64, lastTotal uint64) *float64 {
 	if currentValue == nil || lastValue == nil {
-		return nil, nil
+		return nil
 	}
-
-	if *lastValue > *currentValue || lastTotal > currentTotal {
-		return nil, errors.New("counter may be reset")
-	}
-
 	ret := float64(*currentValue-*lastValue) / float64(currentTotal-lastTotal) * 100.0
-	return &ret, nil
+	return &ret
 }
 
 func fetchLoadavg5() (float64, error) {
