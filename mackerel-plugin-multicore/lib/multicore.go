@@ -278,16 +278,16 @@ func printValue(key string, value *float64, time time.Time) {
 
 func outputCPUUsage(cpuUsage []cpuPercentages, now time.Time) {
 	for _, u := range cpuUsage {
-		printValue(fmt.Sprintf("multicore.cpu.%s.user", u.CPUName), u.User, now)
-		printValue(fmt.Sprintf("multicore.cpu.%s.nice", u.CPUName), u.Nice, now)
-		printValue(fmt.Sprintf("multicore.cpu.%s.system", u.CPUName), u.System, now)
-		printValue(fmt.Sprintf("multicore.cpu.%s.idle", u.CPUName), u.Idle, now)
-		printValue(fmt.Sprintf("multicore.cpu.%s.iowait", u.CPUName), u.IoWait, now)
-		printValue(fmt.Sprintf("multicore.cpu.%s.irq", u.CPUName), u.Irq, now)
-		printValue(fmt.Sprintf("multicore.cpu.%s.softirq", u.CPUName), u.SoftIrq, now)
-		printValue(fmt.Sprintf("multicore.cpu.%s.steal", u.CPUName), u.Steal, now)
-		printValue(fmt.Sprintf("multicore.cpu.%s.guest", u.CPUName), u.Guest, now)
-		printValue(fmt.Sprintf("multicore.cpu.%s.guest_nice", u.CPUName), u.GuestNice, now)
+		printValue("multicore.cpu."+u.CPUName+".user", u.User, now)
+		printValue("multicore.cpu."+u.CPUName+".nice", u.Nice, now)
+		printValue("multicore.cpu."+u.CPUName+".system", u.System, now)
+		printValue("multicore.cpu."+u.CPUName+".idle", u.Idle, now)
+		printValue("multicore.cpu."+u.CPUName+".iowait", u.IoWait, now)
+		printValue("multicore.cpu."+u.CPUName+".irq", u.Irq, now)
+		printValue("multicore.cpu."+u.CPUName+".softirq", u.SoftIrq, now)
+		printValue("multicore.cpu."+u.CPUName+".steal", u.Steal, now)
+		printValue("multicore.cpu."+u.CPUName+".guest", u.Guest, now)
+		printValue("multicore.cpu."+u.CPUName+".guest_nice", u.GuestNice, now)
 	}
 }
 
