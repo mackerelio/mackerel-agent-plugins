@@ -248,33 +248,34 @@ func guessMethod(docker string) (string, error) {
 
 // FetchMetrics interface for mackerel plugin
 func (m DockerPlugin) FetchMetrics() (map[string]interface{}, error) {
-	dockerStats := map[string][]string{}
+	var stats map[string]interface{}
+
 	if m.Method == "API" {
 		containers, err := m.listContainer()
 		if err != nil {
 			return nil, err
 		}
-		return m.FetchMetricsWithAPI(containers)
-	}
-
-	data, err := m.getDockerPs()
-	if err != nil {
-		return nil, err
-	}
-	lines := strings.Split(data, "\n")
-	for n, line := range lines {
-		if n == 0 {
-			continue
+		stats, err = m.FetchMetricsWithAPI(containers)
+	} else {
+		dockerStats := map[string][]string{}
+		data, err := m.getDockerPs()
+		if err != nil {
+			return nil, err
 		}
-		fields := regexp.MustCompile(" +").Split(line, -1)
-		if len(fields) > 3 {
-			dockerStats[fields[0]] = []string{fields[1], fields[len(fields)-2]}
+		lines := strings.Split(data, "\n")
+		for n, line := range lines {
+			if n == 0 {
+				continue
+			}
+			fields := regexp.MustCompile(" +").Split(line, -1)
+			if len(fields) > 3 {
+				dockerStats[fields[0]] = []string{fields[1], fields[len(fields)-2]}
+			}
 		}
-	}
-
-	stats, err := m.FetchMetricsWithFile(&dockerStats)
-	if err != nil {
-		return nil, err
+		stats, err = m.FetchMetricsWithFile(&dockerStats)
+		if err != nil {
+			return nil, err
+		}
 	}
 
 	if time.Now().Sub(m.lastMetricValues.Timestamp) <= 5*time.Minute {
