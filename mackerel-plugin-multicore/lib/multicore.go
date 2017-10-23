@@ -83,7 +83,7 @@ func parseProcStat(out io.Reader) (map[string]procStats, error) {
 	for scanner.Scan() {
 		line := scanner.Text()
 		if !strings.HasPrefix(line, "cpu") {
-			continue
+			break
 		}
 
 		fields := strings.Fields(line)
