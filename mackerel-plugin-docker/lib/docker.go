@@ -256,6 +256,10 @@ func (m DockerPlugin) FetchMetrics() (map[string]interface{}, error) {
 			return nil, err
 		}
 		stats, err = m.FetchMetricsWithAPI(containers)
+
+		if time.Now().Sub(m.lastMetricValues.Timestamp) <= 5*time.Minute {
+			addCPUPercentageStats(&stats, m.lastMetricValues.Values)
+		}
 	} else {
 		dockerStats := map[string][]string{}
 		data, err := m.getDockerPs()
@@ -276,10 +280,6 @@ func (m DockerPlugin) FetchMetrics() (map[string]interface{}, error) {
 		if err != nil {
 			return nil, err
 		}
-	}
-
-	if time.Now().Sub(m.lastMetricValues.Timestamp) <= 5*time.Minute {
-		addCPUPercentageStats(&stats, m.lastMetricValues.Values)
 	}
 
 	return stats, nil
