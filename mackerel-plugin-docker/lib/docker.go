@@ -537,6 +537,7 @@ func Do() {
 		helper.OutputDefinitions()
 	} else {
 		docker.lastMetricValues, _ = helper.FetchLastValues()
+		helper.Plugin = docker
 		helper.OutputValues()
 	}
 }
