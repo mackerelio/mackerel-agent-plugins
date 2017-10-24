@@ -1,9 +1,12 @@
 package mpmulticore
 
 import (
+	"bufio"
 	"encoding/json"
+	"errors"
 	"flag"
 	"fmt"
+	"io"
 	"io/ioutil"
 	"log"
 	"os"
@@ -12,7 +15,7 @@ import (
 	"strings"
 	"time"
 
-	mp "github.com/mackerelio/go-mackerel-plugin-helper"
+	mp "github.com/mackerelio/go-mackerel-plugin"
 )
 
 var graphDef = map[string]mp.Graphs{
@@ -20,16 +23,16 @@ var graphDef = map[string]mp.Graphs{
 		Label: "MultiCore CPU",
 		Unit:  "percentage",
 		Metrics: []mp.Metrics{
-			{Name: "user", Label: "user", Diff: false, Stacked: true},
-			{Name: "nice", Label: "nice", Diff: false, Stacked: true},
-			{Name: "system", Label: "system", Diff: false, Stacked: true},
-			{Name: "idle", Label: "idle", Diff: false, Stacked: true},
-			{Name: "iowait", Label: "ioWait", Diff: false, Stacked: true},
-			{Name: "irq", Label: "irq", Diff: false, Stacked: true},
-			{Name: "softirq", Label: "softirq", Diff: false, Stacked: true},
-			{Name: "steal", Label: "steal", Diff: false, Stacked: true},
-			{Name: "guest", Label: "guest", Diff: false, Stacked: true},
 			{Name: "guest_nice", Label: "guest_nice", Diff: false, Stacked: true},
+			{Name: "guest", Label: "guest", Diff: false, Stacked: true},
+			{Name: "steal", Label: "steal", Diff: false, Stacked: true},
+			{Name: "softirq", Label: "softirq", Diff: false, Stacked: true},
+			{Name: "irq", Label: "irq", Diff: false, Stacked: true},
+			{Name: "iowait", Label: "ioWait", Diff: false, Stacked: true},
+			{Name: "idle", Label: "idle", Diff: false, Stacked: true},
+			{Name: "system", Label: "system", Diff: false, Stacked: true},
+			{Name: "nice", Label: "nice", Diff: false, Stacked: true},
+			{Name: "user", Label: "user", Diff: false, Stacked: true},
 		},
 	},
 	"multicore.loadavg_per_core": {
@@ -43,25 +46,25 @@ var graphDef = map[string]mp.Graphs{
 
 type saveItem struct {
 	LastTime       time.Time
-	ProcStatsByCPU map[string]*procStats
+	ProcStatsByCPU map[string]procStats
 }
 
 type procStats struct {
-	User      *float64 `json:"user"`
-	Nice      *float64 `json:"nice"`
-	System    *float64 `json:"system"`
-	Idle      *float64 `json:"idle"`
-	IoWait    *float64 `json:"iowait"`
-	Irq       *float64 `json:"irq"`
-	SoftIrq   *float64 `json:"softirq"`
-	Steal     *float64 `json:"steal"`
-	Guest     *float64 `json:"guest"`
-	GuestNice *float64 `json:"guest_nice"`
-	Total     float64  `json:"total"`
+	User      *uint64 `json:"user"`
+	Nice      *uint64 `json:"nice"`
+	System    *uint64 `json:"system"`
+	Idle      *uint64 `json:"idle"`
+	IoWait    *uint64 `json:"iowait"`
+	Irq       *uint64 `json:"irq"`
+	SoftIrq   *uint64 `json:"softirq"`
+	Steal     *uint64 `json:"steal"`
+	Guest     *uint64 `json:"guest"`
+	GuestNice *uint64 `json:"guest_nice"`
+	Total     uint64  `json:"total"`
 }
 
 type cpuPercentages struct {
-	GroupName string
+	CPUName   string
 	User      *float64
 	Nice      *float64
 	System    *float64
@@ -74,95 +77,75 @@ type cpuPercentages struct {
 	GuestNice *float64
 }
 
-func getProcStat() (string, error) {
-	contentbytes, err := ioutil.ReadFile("/proc/stat")
-	if err != nil {
-		return "", err
-	}
-	return string(contentbytes), nil
-}
-
-func parseFloats(values []string) ([]float64, error) {
-	var result []float64
-	for _, v := range values {
-		f, err := strconv.ParseFloat(v, 64)
-		if err != nil {
-			return nil, err
+func parseProcStat(out io.Reader) (map[string]procStats, error) {
+	scanner := bufio.NewScanner(out)
+	var result = make(map[string]procStats)
+	for scanner.Scan() {
+		line := scanner.Text()
+		if !strings.HasPrefix(line, "cpu") {
+			break
 		}
-		result = append(result, f)
-	}
-	return result, nil
-}
 
-func fill(arr []float64, elementCount int) []*float64 {
-	var filled []*float64
-	for _, v := range arr {
-		copy := v
-		filled = append(filled, &copy)
-	}
+		fields := strings.Fields(line)
+		key := fields[0]
+		values := fields[1:]
 
-	if len(arr) < elementCount {
-		emptyArray := make([]*float64, elementCount-len(arr))
-		filled = append(filled, emptyArray...)
-	}
-	return filled
-}
+		// skip total cpu usage
+		if key == "cpu" {
+			continue
+		}
 
-func parseProcStat(str string) (map[string]*procStats, error) {
-	var result = make(map[string]*procStats)
-	for _, line := range strings.Split(str, "\n") {
-		if strings.HasPrefix(line, "cpu") {
-			fields := strings.Fields(line)
-			key := fields[0]
-			values := fields[1:]
+		var stats procStats
+		statPtrs := []**uint64{
+			&stats.User,
+			&stats.Nice,
+			&stats.System,
+			&stats.Idle,
+			&stats.IoWait,
+			&stats.Irq,
+			&stats.SoftIrq,
+			&stats.Steal,
+			&stats.Guest,
+			&stats.GuestNice,
+		}
 
-			// skip total cpu usage
-			if key == "cpu" {
-				continue
-			}
-
-			floatValues, err := parseFloats(values)
+		for i, valStr := range values {
+			val, err := strconv.ParseUint(valStr, 10, 64)
 			if err != nil {
 				return nil, err
 			}
-
-			total := 0.0
-			for _, v := range floatValues {
-				total += v
-			}
-
-			filledValues := fill(floatValues, 10)
-
-			ps := &procStats{
-				User:      filledValues[0],
-				Nice:      filledValues[1],
-				System:    filledValues[2],
-				Idle:      filledValues[3],
-				IoWait:    filledValues[4],
-				Irq:       filledValues[5],
-				SoftIrq:   filledValues[6],
-				Steal:     filledValues[7],
-				Guest:     filledValues[8],
-				GuestNice: filledValues[9],
-				Total:     total,
-			}
-			result[key] = ps
-		} else {
-			break
+			*statPtrs[i] = &val
+			stats.Total += val
 		}
+
+		// Since cpustat[CPUTIME_USER] includes cpustat[CPUTIME_GUEST], subtract the duplicated values from total.
+		// https://github.com/torvalds/linux/blob/4ec9f7a18/kernel/sched/cputime.c#L151-L158
+		if stats.Guest != nil {
+			stats.Total -= *stats.Guest
+			*stats.User -= *stats.Guest
+		}
+
+		// cpustat[CPUTIME_NICE] includes cpustat[CPUTIME_GUEST_NICE]
+		if stats.GuestNice != nil {
+			stats.Total -= *stats.GuestNice
+			*stats.Nice -= *stats.GuestNice
+		}
+
+		result[key] = stats
 	}
 	return result, nil
 }
 
-func collectProcStatValues() (map[string]*procStats, error) {
-	procStats, err := getProcStat()
+func collectProcStatValues() (map[string]procStats, error) {
+	file, err := os.Open("/proc/stat")
 	if err != nil {
 		return nil, err
 	}
-	return parseProcStat(procStats)
+	defer file.Close()
+	return parseProcStat(file)
 }
 
-func saveValues(tempFileName string, values map[string]*procStats, now time.Time) error {
+func saveValues(tempFileName string, values map[string]procStats, now time.Time) error {
 	f, err := os.Create(tempFileName)
 	if err != nil {
 		return err
@@ -202,108 +185,57 @@ func fetchSavedItem(tempFileName string) (*saveItem, error) {
 	return &stat, nil
 }
 
-func calcCPUUsage(currentValues map[string]*procStats, now time.Time, savedItem *saveItem) ([]*cpuPercentages, error) {
-	lastValues := savedItem.ProcStatsByCPU
-	lastTime := savedItem.LastTime
+func calcCPUUsage(currentValues map[string]procStats, now time.Time, savedItem *saveItem) ([]cpuPercentages, error) {
+	if now.Sub(savedItem.LastTime).Seconds() > 600 {
+		return nil, errors.New("Too long duration")
+	}
 
-	var result []*cpuPercentages
-	for key, current := range currentValues {
-		last, ok := lastValues[key]
-		if ok {
-			user, err := calcPercentage(current.User, last.User, current.Total, last.Total, now, lastTime)
-			if err != nil {
-				return nil, err
-			}
-			nice, err := calcPercentage(current.Nice, last.Nice, current.Total, last.Total, now, lastTime)
-			if err != nil {
-				return nil, err
-			}
-			system, err := calcPercentage(current.System, last.System, current.Total, last.Total, now, lastTime)
-			if err != nil {
-				return nil, err
-			}
-			idle, err := calcPercentage(current.Idle, last.Idle, current.Total, last.Total, now, lastTime)
-			if err != nil {
-				return nil, err
-			}
-			iowait, err := calcPercentage(current.IoWait, last.IoWait, current.Total, last.Total, now, lastTime)
-			if err != nil {
-				return nil, err
-			}
-			irq, err := calcPercentage(current.Irq, last.Irq, current.Total, last.Total, now, lastTime)
-			if err != nil {
-				return nil, err
-			}
-			softirq, err := calcPercentage(current.SoftIrq, last.SoftIrq, current.Total, last.Total, now, lastTime)
-			if err != nil {
-				return nil, err
-			}
-			steal, err := calcPercentage(current.Steal, last.Steal, current.Total, last.Total, now, lastTime)
-			if err != nil {
-				return nil, err
-			}
-			guest, err := calcPercentage(current.Guest, last.Guest, current.Total, last.Total, now, lastTime)
-			if err != nil {
-				return nil, err
-			}
-			guestNice, err := calcPercentage(current.GuestNice, last.GuestNice, current.Total, last.Total, now, lastTime)
-			if err != nil {
-				return nil, err
-			}
-
-			p := &cpuPercentages{
-				GroupName: key,
-				User:      user,
-				Nice:      nice,
-				System:    system,
-				Idle:      idle,
-				IoWait:    iowait,
-				Irq:       irq,
-				SoftIrq:   softirq,
-				Steal:     steal,
-				Guest:     guest,
-				GuestNice: guestNice,
-			}
-			result = append(result, p)
+	var result []cpuPercentages
+	for name, current := range currentValues {
+		last, ok := savedItem.ProcStatsByCPU[name]
+		if !ok {
+			continue
+		}
+		if last.Total > current.Total {
+			return nil, errors.New("cpu counter has been reset")
 		}
 
+		user := calculatePercentage(current.User, last.User, current.Total, last.Total)
+		nice := calculatePercentage(current.Nice, last.Nice, current.Total, last.Total)
+		system := calculatePercentage(current.System, last.System, current.Total, last.Total)
+		idle := calculatePercentage(current.Idle, last.Idle, current.Total, last.Total)
+		iowait := calculatePercentage(current.IoWait, last.IoWait, current.Total, last.Total)
+		irq := calculatePercentage(current.Irq, last.Irq, current.Total, last.Total)
+		softirq := calculatePercentage(current.SoftIrq, last.SoftIrq, current.Total, last.Total)
+		steal := calculatePercentage(current.Steal, last.Steal, current.Total, last.Total)
+		guest := calculatePercentage(current.Guest, last.Guest, current.Total, last.Total)
+		// guest_nice available since Linux 2.6.33 (ref: man proc)
+		guestNice := calculatePercentage(current.GuestNice, last.GuestNice, current.Total, last.Total)
+
+		result = append(result, cpuPercentages{
+			CPUName:   name,
+			User:      user,
+			Nice:      nice,
+			System:    system,
+			Idle:      idle,
+			IoWait:    iowait,
+			Irq:       irq,
+			SoftIrq:   softirq,
+			Steal:     steal,
+			Guest:     guest,
+			GuestNice: guestNice,
+		})
 	}
 
 	return result, nil
 }
 
-func calcPercentage(currentValue *float64, lastValue *float64, currentTotal float64, lastTotal float64, now time.Time, lastTime time.Time) (*float64, error) {
-
+func calculatePercentage(currentValue *uint64, lastValue *uint64, currentTotal uint64, lastTotal uint64) *float64 {
 	if currentValue == nil || lastValue == nil {
-		return nil, nil
+		return nil
 	}
-
-	value, err := calcDiff(*currentValue, now, *lastValue, lastTime)
-	if err != nil {
-		return nil, err
-	}
-
-	total, err := calcDiff(currentTotal, now, lastTotal, lastTime)
-	if err != nil {
-		return nil, err
-	}
-
-	ret := value / total * 100.0
-	return &ret, nil
-}
-
-func calcDiff(value float64, now time.Time, lastValue float64, lastTime time.Time) (float64, error) {
-	diffTime := now.Unix() - lastTime.Unix()
-	if diffTime > 600 {
-		return 0.0, fmt.Errorf("Too long duration")
-	}
-
-	diff := (value - lastValue) * 60 / float64(diffTime)
-
-	if lastValue <= value {
-		return diff, nil
-	}
-	return 0.0, fmt.Errorf("lastValue > value")
+	ret := float64(*currentValue-*lastValue) / float64(currentTotal-lastTotal) * 100.0
+	return &ret
 }
 
 func fetchLoadavg5() (float64, error) {
@@ -330,18 +262,18 @@ func printValue(key string, value *float64, time time.Time) {
 	}
 }
 
-func outputCPUUsage(cpuUsage []*cpuPercentages, now time.Time) {
+func outputCPUUsage(cpuUsage []cpuPercentages, now time.Time) {
 	for _, u := range cpuUsage {
-		printValue(fmt.Sprintf("multicore.cpu.%s.user", u.GroupName), u.User, now)
-		printValue(fmt.Sprintf("multicore.cpu.%s.nice", u.GroupName), u.Nice, now)
-		printValue(fmt.Sprintf("multicore.cpu.%s.system", u.GroupName), u.System, now)
-		printValue(fmt.Sprintf("multicore.cpu.%s.idle", u.GroupName), u.Idle, now)
-		printValue(fmt.Sprintf("multicore.cpu.%s.iowait", u.GroupName), u.IoWait, now)
-		printValue(fmt.Sprintf("multicore.cpu.%s.irq", u.GroupName), u.Irq, now)
-		printValue(fmt.Sprintf("multicore.cpu.%s.softirq", u.GroupName), u.SoftIrq, now)
-		printValue(fmt.Sprintf("multicore.cpu.%s.steal", u.GroupName), u.Steal, now)
-		printValue(fmt.Sprintf("multicore.cpu.%s.guest", u.GroupName), u.Guest, now)
-		printValue(fmt.Sprintf("multicore.cpu.%s.guest_nice", u.GroupName), u.GuestNice, now)
+		printValue("multicore.cpu."+u.CPUName+".user", u.User, now)
+		printValue("multicore.cpu."+u.CPUName+".nice", u.Nice, now)
+		printValue("multicore.cpu."+u.CPUName+".system", u.System, now)
+		printValue("multicore.cpu."+u.CPUName+".idle", u.Idle, now)
+		printValue("multicore.cpu."+u.CPUName+".iowait", u.IoWait, now)
+		printValue("multicore.cpu."+u.CPUName+".irq", u.Irq, now)
+		printValue("multicore.cpu."+u.CPUName+".softirq", u.SoftIrq, now)
+		printValue("multicore.cpu."+u.CPUName+".steal", u.Steal, now)
+		printValue("multicore.cpu."+u.CPUName+".guest", u.Guest, now)
+		printValue("multicore.cpu."+u.CPUName+".guest_nice", u.GuestNice, now)
 	}
 }
 
