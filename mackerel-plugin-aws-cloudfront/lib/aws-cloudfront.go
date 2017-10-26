@@ -4,6 +4,7 @@ import (
 	"errors"
 	"flag"
 	"log"
+	"strings"
 	"time"
 
 	"github.com/aws/aws-sdk-go/aws"
@@ -20,32 +21,6 @@ const (
 	metricsTypeSum     = "Sum"
 )
 
-var graphdef = map[string]mp.Graphs{
-	"cloudfront.Requests": {
-		Label: "CloudFront Requests",
-		Unit:  "integer",
-		Metrics: []mp.Metrics{
-			{Name: "Requests", Label: "Requests"},
-		},
-	},
-	"cloudfront.Transfer": {
-		Label: "CloudFront Transfer",
-		Unit:  "bytes",
-		Metrics: []mp.Metrics{
-			{Name: "BytesDownloaded", Label: "Download", Stacked: true},
-			{Name: "BytesUploaded", Label: "Upload", Stacked: true},
-		},
-	},
-	"cloudfront.ErrorRate": {
-		Label: "CloudFront ErrorRate",
-		Unit:  "percentage",
-		Metrics: []mp.Metrics{
-			{Name: "4xxErrorRate", Label: "4xx", Stacked: true},
-			{Name: "5xxErrorRate", Label: "5xx", Stacked: true},
-		},
-	},
-}
-
 type metrics struct {
 	Name string
 	Type string
@@ -57,6 +32,15 @@ type CloudFrontPlugin struct {
 	SecretAccessKey string
 	CloudWatch      *cloudwatch.CloudWatch
 	Name            string
+	Prefix          string
+}
+
+// MetricKeyPrefix interface for PluginWithPrefix
+func (p CloudFrontPlugin) MetricKeyPrefix() string {
+	if p.Prefix == "" {
+		p.Prefix = "cloudfront"
+	}
+	return p.Prefix
 }
 
 func (p *CloudFrontPlugin) prepare() error {
@@ -150,7 +134,34 @@ func (p CloudFrontPlugin) FetchMetrics() (map[string]float64, error) {
 
 // GraphDefinition of CloudFrontPlugin
 func (p CloudFrontPlugin) GraphDefinition() map[string]mp.Graphs {
-	return graphdef
+	labelPrefix := strings.Title(p.Prefix)
+	labelPrefix = strings.Replace(labelPrefix, "-", " ", -1)
+
+	return map[string]mp.Graphs{
+		"Requests": {
+			Label: labelPrefix + " Requests",
+			Unit:  "integer",
+			Metrics: []mp.Metrics{
+				{Name: "Requests", Label: "Requests"},
+			},
+		},
+		"Transfer": {
+			Label: labelPrefix + " Transfer",
+			Unit:  "bytes",
+			Metrics: []mp.Metrics{
+				{Name: "BytesDownloaded", Label: "Download", Stacked: true},
+				{Name: "BytesUploaded", Label: "Upload", Stacked: true},
+			},
+		},
+		"ErrorRate": {
+			Label: labelPrefix + " ErrorRate",
+			Unit:  "percentage",
+			Metrics: []mp.Metrics{
+				{Name: "4xxErrorRate", Label: "4xx", Stacked: true},
+				{Name: "5xxErrorRate", Label: "5xx", Stacked: true},
+			},
+		},
+	}
 }
 
 // Do the plugin
@@ -159,6 +170,7 @@ func Do() {
 	optSecretAccessKey := flag.String("secret-access-key", "", "AWS Secret Access Key")
 	optIdentifier := flag.String("identifier", "", "Distribution ID")
 	optTempfile := flag.String("tempfile", "", "Temp file name")
+	optPrefix := flag.String("metric-key-prefix", "cloudfront", "Metric key prefix")
 	flag.Parse()
 
 	var plugin CloudFrontPlugin
@@ -166,6 +178,7 @@ func Do() {
 	plugin.AccessKeyID = *optAccessKeyID
 	plugin.SecretAccessKey = *optSecretAccessKey
 	plugin.Name = *optIdentifier
+	plugin.Prefix = *optPrefix
 
 	err := plugin.prepare()
 	if err != nil {
