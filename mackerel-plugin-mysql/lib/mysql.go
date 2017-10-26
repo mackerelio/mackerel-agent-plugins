@@ -1030,7 +1030,7 @@ func makeBigint(hi string, lo string) int64 {
 		loVal, _ = strconv.ParseInt(lo, 10, 64)
 	}
 
-	val := hiVal * loVal
+	val := hiVal<<32 + loVal
 
 	return val
 }
