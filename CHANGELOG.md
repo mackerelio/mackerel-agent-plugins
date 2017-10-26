@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.37.1 (2017-10-26)
+
+* [multicore] Refactor multicore plugin #430 (itchyny)
+
+
 ## 0.37.0 (2017-10-19)
 
 * Implement mackerel-plugin-mcrouter #420 (waniji)
