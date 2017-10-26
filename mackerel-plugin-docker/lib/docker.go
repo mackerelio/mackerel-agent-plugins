@@ -481,7 +481,7 @@ func Do() {
 
 	optHost := flag.String("host", "unix:///var/run/docker.sock", "Host for socket")
 	optCommand := flag.String("command", "docker", "Command path to docker")
-	optUseAPI := flag.String("method", "", "Specify the method to collect stats, 'API' or 'File'. If not specified, an appropriate method is chosen.")
+	optMethod := flag.String("method", "", "Specify the method to collect stats, 'API' or 'File'. If not specified, an appropriate method is chosen.")
 	optTempfile := flag.String("tempfile", "", "Temp file name")
 	optNameFormat := flag.String("name-format", "name_id", "Set the name format from "+strings.Join(candidateNameFormat, ", "))
 	optLabel := flag.String("label", "", "Use the value of the key as name in case that name-format is label.")
@@ -505,16 +505,16 @@ func Do() {
 		log.Fatalf("Label flag should be set when name flag is 'label'.")
 	}
 
-	if *optUseAPI == "" {
+	if *optMethod == "" {
 		docker.Method, err = guessMethod(docker.DockerCommand)
 		if err != nil {
 			log.Fatalf("Fail to guess stats method: %s", err.Error())
 		}
 	} else {
-		if *optUseAPI != "API" && *optUseAPI != "File" {
+		if *optMethod != "API" && *optMethod != "File" {
 			log.Fatalf("Method should be 'API', 'File' or an empty string.")
 		}
-		docker.Method = *optUseAPI
+		docker.Method = *optMethod
 	}
 
 	if docker.Method == "File" {
