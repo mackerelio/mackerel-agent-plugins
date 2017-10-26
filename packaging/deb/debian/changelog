@@ -1,3 +1,10 @@
+mackerel-agent-plugins (0.37.1-1) stable; urgency=low
+
+  * [multicore] Refactor multicore plugin (by itchyny)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/430>
+
+ -- mackerel <mackerel-developers@hatena.ne.jp>  Thu, 26 Oct 2017 11:10:54 +0900
+
 mackerel-agent-plugins (0.37.0-1) stable; urgency=low
 
   * Implement mackerel-plugin-mcrouter (by waniji)

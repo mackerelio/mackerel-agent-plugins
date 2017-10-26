@@ -40,6 +40,9 @@ done
 %{__targetdir}/*
 
 %changelog
+* Thu Oct 26 2017 <mackerel-developers@hatena.ne.jp> - 0.37.1
+- [multicore] Refactor multicore plugin (by itchyny)
+
 * Thu Oct 19 2017 <mackerel-developers@hatena.ne.jp> - 0.37.0
 - Implement mackerel-plugin-mcrouter (by waniji)
 - [uptime] use go-mackerel-plugin instead of using go-mackerel-plugin-helper (by Songmu)
