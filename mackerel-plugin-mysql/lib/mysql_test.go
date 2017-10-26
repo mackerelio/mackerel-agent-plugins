@@ -700,8 +700,8 @@ END OF INNODB MONITOR OUTPUT
 	assert.EqualValues(t, stat["innodb_sem_wait"], 0)         // empty
 	assert.EqualValues(t, stat["innodb_sem_wait_time_ms"], 0) // empty
 	// Innodb Transactions
-	assert.EqualValues(t, stat["innodb_transactions"], 0) // empty
-	assert.EqualValues(t, stat["unpurged_txns"], 0)
+	assert.EqualValues(t, stat["innodb_transactions"], 2369392)
+	assert.EqualValues(t, stat["unpurged_txns"], 1165)
 	assert.EqualValues(t, stat["history_list"], 1)
 	assert.EqualValues(t, stat["current_transactions"], 1)
 	assert.EqualValues(t, stat["active_transactions"], 0)
@@ -735,9 +735,9 @@ END OF INNODB MONITOR OUTPUT
 	assert.EqualValues(t, stat["log_writes"], 2158)
 	assert.EqualValues(t, stat["pending_log_writes"], 0)
 	assert.EqualValues(t, stat["pending_chkp_writes"], 0)
-	assert.EqualValues(t, stat["log_bytes_written"], 0)
-	assert.EqualValues(t, stat["log_bytes_flushed"], 0)
-	assert.EqualValues(t, stat["last_checkpoint"], 0)
+	assert.EqualValues(t, stat["log_bytes_written"], 51296721)
+	assert.EqualValues(t, stat["log_bytes_flushed"], 51296721)
+	assert.EqualValues(t, stat["last_checkpoint"], 51296721)
 	// Buffer Pool and Memory
 	assert.EqualValues(t, stat["total_mem_alloc"], 17874468)
 	assert.EqualValues(t, stat["additional_pool_alloc"], 1048576)
