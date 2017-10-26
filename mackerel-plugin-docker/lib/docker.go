@@ -86,6 +86,7 @@ type DockerPlugin struct {
 	Label            string
 	pathBuilder      *pathBuilder
 	lastMetricValues mp.MetricValues
+	UseCpuPercentage bool
 }
 
 func getFile(path string) (string, error) {
@@ -257,8 +258,11 @@ func (m DockerPlugin) FetchMetrics() (map[string]interface{}, error) {
 		}
 		stats, err = m.FetchMetricsWithAPI(containers)
 
-		if time.Now().Sub(m.lastMetricValues.Timestamp) <= 5*time.Minute {
-			addCPUPercentageStats(&stats, m.lastMetricValues.Values)
+		if m.UseCpuPercentage {
+			if time.Now().Sub(m.lastMetricValues.Timestamp) <= 5*time.Minute {
+				addCPUPercentageStats(&stats, m.lastMetricValues.Values)
+			}
+			removeCPUUsageStats(&stats)
 		}
 	} else {
 		dockerStats := map[string][]string{}
@@ -410,6 +414,15 @@ func addCPUPercentageStats(stats *map[string]interface{}, lastStat map[string]in
 	}
 }
 
+// remove docker.cpuacct.XXX.{user,system} from stats
+func removeCPUUsageStats(stats *map[string]interface{}) {
+	for k, _ := range *stats {
+		if strings.HasPrefix(k, "docker.cpuacct.") && !strings.HasSuffix(k, "._host") {
+			delete(*stats, k)
+		}
+	}
+}
+
 // FetchMetricsWithFile use cgroup stats files to fetch metrics
 func (m DockerPlugin) FetchMetricsWithFile(dockerStats *map[string][]string) (map[string]interface{}, error) {
 	pb := m.pathBuilder
@@ -485,6 +498,7 @@ func Do() {
 	optTempfile := flag.String("tempfile", "", "Temp file name")
 	optNameFormat := flag.String("name-format", "name_id", "Set the name format from "+strings.Join(candidateNameFormat, ", "))
 	optLabel := flag.String("label", "", "Use the value of the key as name in case that name-format is label.")
+	optCpuFormat := flag.String("cpu-format", "", "Specify which CPU metrics format to use, 'percentage' or 'usage'. 'percentage' is default for 'API' method, and is not supported in 'File' method.")
 	flag.Parse()
 
 	var docker DockerPlugin
@@ -523,6 +537,19 @@ func Do() {
 			log.Fatalf("failed to resolve docker metrics path: %s. It may be no Docker containers exists.", err)
 		}
 		docker.pathBuilder = pb
+	}
+
+	if *optCpuFormat == "percentage" {
+		if docker.Method == "File" {
+			log.Fatalf("'--cpu-format percentage' is not supported with File method.")
+		}
+		docker.UseCpuPercentage = true
+	} else if *optCpuFormat == "usage" {
+		docker.UseCpuPercentage = false
+	} else {
+		if docker.Method == "API" {
+			docker.UseCpuPercentage = true
+		}
 	}
 
 	helper := mp.NewMackerelPlugin(docker)
