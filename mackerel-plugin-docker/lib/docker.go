@@ -348,15 +348,15 @@ func (m DockerPlugin) FetchMetricsWithAPI(containers []docker.APIContainers) (ma
 	return res, nil
 }
 
-const internalCpuStatPrefix = "docker._internal.cpuacct."
+const internalCPUStatPrefix = "docker._internal.cpuacct."
 
 func (m DockerPlugin) parseStats(stats *map[string]interface{}, name string, result *docker.Stats) error {
 	if m.UseCPUPercentage {
 		// intermediate data to calc CPU percentage
-		(*stats)[internalCpuStatPrefix+name+".user"] = (*result).CPUStats.CPUUsage.UsageInUsermode
-		(*stats)[internalCpuStatPrefix+name+".system"] = (*result).CPUStats.CPUUsage.UsageInKernelmode
-		(*stats)[internalCpuStatPrefix+name+".host"] = (*result).CPUStats.SystemCPUUsage
-		(*stats)[internalCpuStatPrefix+name+".onlineCPUs"] = len((*result).CPUStats.CPUUsage.PercpuUsage)
+		(*stats)[internalCPUStatPrefix+name+".user"] = (*result).CPUStats.CPUUsage.UsageInUsermode
+		(*stats)[internalCPUStatPrefix+name+".system"] = (*result).CPUStats.CPUUsage.UsageInKernelmode
+		(*stats)[internalCPUStatPrefix+name+".host"] = (*result).CPUStats.SystemCPUUsage
+		(*stats)[internalCPUStatPrefix+name+".onlineCPUs"] = len((*result).CPUStats.CPUUsage.PercpuUsage)
 	} else {
 		(*stats)["docker.cpuacct."+name+".user"] = (*result).CPUStats.CPUUsage.UsageInUsermode
 		(*stats)["docker.cpuacct."+name+".system"] = (*result).CPUStats.CPUUsage.UsageInKernelmode
@@ -387,12 +387,12 @@ func (m DockerPlugin) parseStats(stats *map[string]interface{}, name string, res
 
 func addCPUPercentageStats(stats *map[string]interface{}, lastStat map[string]interface{}) {
 	for k, v := range lastStat {
-		if !strings.HasPrefix(k, internalCpuStatPrefix) || !strings.HasSuffix(k, ".host") {
+		if !strings.HasPrefix(k, internalCPUStatPrefix) || !strings.HasSuffix(k, ".host") {
 			continue
 		}
-		name := strings.TrimSuffix(strings.TrimPrefix(k, internalCpuStatPrefix), ".host")
-		currentHostUsage, ok1 := (*stats)[internalCpuStatPrefix+name+".host"]
-		cpuNums, ok2 := (*stats)[internalCpuStatPrefix+name+".onlineCPUs"]
+		name := strings.TrimSuffix(strings.TrimPrefix(k, internalCPUStatPrefix), ".host")
+		currentHostUsage, ok1 := (*stats)[internalCPUStatPrefix+name+".host"]
+		cpuNums, ok2 := (*stats)[internalCPUStatPrefix+name+".onlineCPUs"]
 		if !ok1 || !ok2 {
 			continue
 		}
@@ -402,8 +402,8 @@ func addCPUPercentageStats(stats *map[string]interface{}, lastStat map[string]in
 			continue // counter seems reset
 		}
 
-		currentUserUsage, ok1 := (*stats)[internalCpuStatPrefix+name+".user"]
-		prevUserUsage, ok2 := lastStat[internalCpuStatPrefix+name+".user"]
+		currentUserUsage, ok1 := (*stats)[internalCPUStatPrefix+name+".user"]
+		prevUserUsage, ok2 := lastStat[internalCPUStatPrefix+name+".user"]
 		if ok1 && ok2 {
 			userUsage := float64(currentUserUsage.(uint64) - uint64(prevUserUsage.(float64)))
 			if userUsage >= 0 {
@@ -411,8 +411,8 @@ func addCPUPercentageStats(stats *map[string]interface{}, lastStat map[string]in
 			}
 		}
 
-		currentSystemUsage, ok1 := (*stats)[internalCpuStatPrefix+name+".system"]
-		prevSystemUsage, ok2 := lastStat[internalCpuStatPrefix+name+".system"]
+		currentSystemUsage, ok1 := (*stats)[internalCPUStatPrefix+name+".system"]
+		prevSystemUsage, ok2 := lastStat[internalCPUStatPrefix+name+".system"]
 		if ok1 && ok2 {
 			systemUsage := float64(currentSystemUsage.(uint64) - uint64(prevSystemUsage.(float64)))
 			if systemUsage >= 0 {
