@@ -25,7 +25,6 @@ var graphdef = map[string]mp.Graphs{
 		Metrics: []mp.Metrics{
 			{Name: "user", Label: "User", Diff: true, Stacked: true, Type: "uint64"},
 			{Name: "system", Label: "System", Diff: true, Stacked: true, Type: "uint64"},
-			// some other fields also exist in metrics, but ther're internal intermediate data
 		},
 	},
 	"docker.cpuacct_percentage.#": {
@@ -74,6 +73,7 @@ var graphdef = map[string]mp.Graphs{
 			{Name: "async", Label: "Async", Diff: true, Stacked: true, Type: "uint64"},
 		},
 	},
+	// some other fields also exist in metrics, but ther're internal intermediate data
 }
 
 // DockerPlugin mackerel plugin for docker
@@ -262,7 +262,6 @@ func (m DockerPlugin) FetchMetrics() (map[string]interface{}, error) {
 			if time.Now().Sub(m.lastMetricValues.Timestamp) <= 5*time.Minute {
 				addCPUPercentageStats(&stats, m.lastMetricValues.Values)
 			}
-			removeCPUUsageStats(&stats)
 		}
 	} else {
 		dockerStats := map[string][]string{}
@@ -349,13 +348,22 @@ func (m DockerPlugin) FetchMetricsWithAPI(containers []docker.APIContainers) (ma
 	return res, nil
 }
 
+const internalCpuStatPrefix = "docker._internal.cpuacct."
+
 func (m DockerPlugin) parseStats(stats *map[string]interface{}, name string, result *docker.Stats) error {
-	(*stats)["docker.cpuacct."+name+".user"] = (*result).CPUStats.CPUUsage.UsageInUsermode
-	(*stats)["docker.cpuacct."+name+".system"] = (*result).CPUStats.CPUUsage.UsageInKernelmode
-	(*stats)["docker.cpuacct."+name+"._host"] = (*result).CPUStats.SystemCPUUsage
-	(*stats)["docker.cpuacct."+name+"._onlineCPUs"] = len((*result).CPUStats.CPUUsage.PercpuUsage)
+	if m.UseCPUPercentage {
+		// intermediate data to calc CPU percentage
+		(*stats)[internalCpuStatPrefix+name+".user"] = (*result).CPUStats.CPUUsage.UsageInUsermode
+		(*stats)[internalCpuStatPrefix+name+".system"] = (*result).CPUStats.CPUUsage.UsageInKernelmode
+		(*stats)[internalCpuStatPrefix+name+".host"] = (*result).CPUStats.SystemCPUUsage
+		(*stats)[internalCpuStatPrefix+name+".onlineCPUs"] = len((*result).CPUStats.CPUUsage.PercpuUsage)
+	} else {
+		(*stats)["docker.cpuacct."+name+".user"] = (*result).CPUStats.CPUUsage.UsageInUsermode
+		(*stats)["docker.cpuacct."+name+".system"] = (*result).CPUStats.CPUUsage.UsageInKernelmode
+	}
 	(*stats)["docker.memory."+name+".cache"] = (*result).MemoryStats.Stats.TotalCache
 	(*stats)["docker.memory."+name+".rss"] = (*result).MemoryStats.Stats.TotalRss
+
 	fields := []string{"read", "write", "sync", "async"}
 	for _, field := range fields {
 		for _, s := range (*result).BlkioStats.IOQueueRecursive {
@@ -379,12 +387,12 @@ func (m DockerPlugin) parseStats(stats *map[string]interface{}, name string, res
 
 func addCPUPercentageStats(stats *map[string]interface{}, lastStat map[string]interface{}) {
 	for k, v := range lastStat {
-		if !strings.HasPrefix(k, "docker.cpuacct.") || !strings.HasSuffix(k, "._host") {
+		if !strings.HasPrefix(k, internalCpuStatPrefix) || !strings.HasSuffix(k, ".host") {
 			continue
 		}
-		name := strings.TrimSuffix(strings.TrimPrefix(k, "docker.cpuacct."), "._host")
-		currentHostUsage, ok1 := (*stats)["docker.cpuacct."+name+"._host"]
-		cpuNums, ok2 := (*stats)["docker.cpuacct."+name+"._onlineCPUs"]
+		name := strings.TrimSuffix(strings.TrimPrefix(k, internalCpuStatPrefix), ".host")
+		currentHostUsage, ok1 := (*stats)[internalCpuStatPrefix+name+".host"]
+		cpuNums, ok2 := (*stats)[internalCpuStatPrefix+name+".onlineCPUs"]
 		if !ok1 || !ok2 {
 			continue
 		}
@@ -394,8 +402,8 @@ func addCPUPercentageStats(stats *map[string]interface{}, lastStat map[string]in
 			continue // counter seems reset
 		}
 
-		currentUserUsage, ok1 := (*stats)["docker.cpuacct."+name+".user"]
-		prevUserUsage, ok2 := lastStat["docker.cpuacct."+name+".user"]
+		currentUserUsage, ok1 := (*stats)[internalCpuStatPrefix+name+".user"]
+		prevUserUsage, ok2 := lastStat[internalCpuStatPrefix+name+".user"]
 		if ok1 && ok2 {
 			userUsage := float64(currentUserUsage.(uint64) - uint64(prevUserUsage.(float64)))
 			if userUsage >= 0 {
@@ -403,22 +411,13 @@ func addCPUPercentageStats(stats *map[string]interface{}, lastStat map[string]in
 			}
 		}
 
-		currentSystemUsage, ok1 := (*stats)["docker.cpuacct."+name+".system"]
-		prevSystemUsage, ok2 := lastStat["docker.cpuacct."+name+".system"]
+		currentSystemUsage, ok1 := (*stats)[internalCpuStatPrefix+name+".system"]
+		prevSystemUsage, ok2 := lastStat[internalCpuStatPrefix+name+".system"]
 		if ok1 && ok2 {
 			systemUsage := float64(currentSystemUsage.(uint64) - uint64(prevSystemUsage.(float64)))
 			if systemUsage >= 0 {
 				(*stats)["docker.cpuacct_percentage."+name+".system"] = systemUsage / hostUsage * 100.0 * float64(cpuNumsInt)
 			}
-		}
-	}
-}
-
-// remove docker.cpuacct.XXX.{user,system} from stats
-func removeCPUUsageStats(stats *map[string]interface{}) {
-	for k := range *stats {
-		if strings.HasPrefix(k, "docker.cpuacct.") && !strings.HasSuffix(k, "._host") {
-			delete(*stats, k)
 		}
 	}
 }
