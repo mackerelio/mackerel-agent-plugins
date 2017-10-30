@@ -23,8 +23,8 @@ func TestGraphDefinition(t *testing.T) {
 	var docker DockerPlugin
 
 	graphdef := docker.GraphDefinition()
-	if len(graphdef) != 5 {
-		t.Errorf("GetTempfilename: %d should be 5", len(graphdef))
+	if len(graphdef) != 6 {
+		t.Errorf("GraphDefinition: %d should be 6", len(graphdef))
 	}
 }
 
@@ -82,4 +82,55 @@ func TestGenerateName(t *testing.T) {
 		t.Errorf("generateName(name): %s should be 'bar'", docker.generateName(stub))
 	}
 
+}
+
+func TestAddCPUPercentageStats(t *testing.T) {
+	stats := map[string]interface{}{
+		"docker._internal.cpuacct.containerA.user":       uint64(3000),
+		"docker._internal.cpuacct.containerA.system":     uint64(2000),
+		"docker._internal.cpuacct.containerA.host":       uint64(100000),
+		"docker._internal.cpuacct.containerA.onlineCPUs": int(2),
+		"docker._internal.cpuacct.containerB.host":       uint64(100000),
+		"docker._internal.cpuacct.containerB.user":       uint64(3500),
+		"docker._internal.cpuacct.containerC.user":       uint64(3300),
+		"docker._internal.cpuacct.containerC.system":     uint64(2300),
+		"docker._internal.cpuacct.containerD.host":       uint64(100000),
+		"docker._internal.cpuacct.containerD.user":       uint64(3000),
+		"docker._internal.cpuacct.containerD.system":     uint64(2000),
+	}
+	oldStats := map[string]interface{}{
+		"docker._internal.cpuacct.containerA.host":   float64(90000),
+		"docker._internal.cpuacct.containerA.user":   float64(1000),
+		"docker._internal.cpuacct.containerA.system": float64(1500),
+		"docker._internal.cpuacct.containerB.host":   float64(90000),
+		"docker._internal.cpuacct.containerB.user":   float64(3000),
+		"docker._internal.cpuacct.containerC.user":   float64(3000),
+		"docker._internal.cpuacct.containerC.system": float64(2000),
+		"docker._internal.cpuacct.containerE.host":   float64(100000),
+		"docker._internal.cpuacct.containerE.user":   float64(3000),
+		"docker._internal.cpuacct.containerE.system": float64(2000),
+	}
+	addCPUPercentageStats(&stats, oldStats)
+
+	if stat, ok := stats["docker.cpuacct_percentage.containerA.user"]; !ok {
+		t.Errorf("docker.cpuacct_percentage.containerA.user should be calculated")
+	} else if stat != float64(40.0) {
+		t.Errorf("docker.cpuacct_percentage.containerA.user should be %f, but %f", stat, float64(40.0))
+	}
+
+	if _, ok := stats["docker.cpuacct_percentage.containerC.user"]; ok {
+		t.Errorf("docker.cpuacct_percentage.containerC.user should not be calculated")
+	}
+
+	if _, ok := stats["docker.cpuacct_percentage.containerB.user"]; ok {
+		t.Errorf("docker.cpuacct_percentage.containerB.user should not be calculated")
+	}
+
+	if _, ok := stats["docker.cpuacct_percentage.containerD.user"]; ok {
+		t.Errorf("docker.cpuacct_percentage.containerD.user should not be calculated")
+	}
+
+	if _, ok := stats["docker.cpuacct_percentage.containerE.user"]; ok {
+		t.Errorf("docker.cpuacct_percentage.containerE.user should not be calculated")
+	}
 }

@@ -27,6 +27,14 @@ var graphdef = map[string]mp.Graphs{
 			{Name: "system", Label: "System", Diff: true, Stacked: true, Type: "uint64"},
 		},
 	},
+	"docker.cpuacct_percentage.#": {
+		Label: "Docker CPU Percentage",
+		Unit:  "percentage",
+		Metrics: []mp.Metrics{
+			{Name: "user", Label: "User", Diff: false, Stacked: true, Type: "float64"},
+			{Name: "system", Label: "System", Diff: false, Stacked: true, Type: "float64"},
+		},
+	},
 	"docker.memory.#": {
 		Label: "Docker Memory",
 		Unit:  "integer",
@@ -65,17 +73,20 @@ var graphdef = map[string]mp.Graphs{
 			{Name: "async", Label: "Async", Diff: true, Stacked: true, Type: "uint64"},
 		},
 	},
+	// some other fields also exist in metrics, but they're internal intermediate data
 }
 
 // DockerPlugin mackerel plugin for docker
 type DockerPlugin struct {
-	Host          string
-	DockerCommand string
-	Tempfile      string
-	Method        string
-	NameFormat    string
-	Label         string
-	pathBuilder   *pathBuilder
+	Host             string
+	DockerCommand    string
+	Tempfile         string
+	Method           string
+	NameFormat       string
+	Label            string
+	pathBuilder      *pathBuilder
+	lastMetricValues mp.MetricValues
+	UseCPUPercentage bool
 }
 
 func getFile(path string) (string, error) {
@@ -238,31 +249,43 @@ func guessMethod(docker string) (string, error) {
 
 // FetchMetrics interface for mackerel plugin
 func (m DockerPlugin) FetchMetrics() (map[string]interface{}, error) {
-	dockerStats := map[string][]string{}
+	var stats map[string]interface{}
+
 	if m.Method == "API" {
 		containers, err := m.listContainer()
 		if err != nil {
 			return nil, err
 		}
-		return m.FetchMetricsWithAPI(containers)
+		stats, err = m.FetchMetricsWithAPI(containers)
+
+		if m.UseCPUPercentage {
+			if time.Now().Sub(m.lastMetricValues.Timestamp) <= 5*time.Minute {
+				addCPUPercentageStats(&stats, m.lastMetricValues.Values)
+			}
+		}
+	} else {
+		dockerStats := map[string][]string{}
+		data, err := m.getDockerPs()
+		if err != nil {
+			return nil, err
+		}
+		lines := strings.Split(data, "\n")
+		for n, line := range lines {
+			if n == 0 {
+				continue
+			}
+			fields := strings.Fields(line)
+			if len(fields) > 3 {
+				dockerStats[fields[0]] = []string{fields[1], fields[len(fields)-2]}
+			}
+		}
+		stats, err = m.FetchMetricsWithFile(&dockerStats)
+		if err != nil {
+			return nil, err
+		}
 	}
 
-	data, err := m.getDockerPs()
-	if err != nil {
-		return nil, err
-	}
-	lines := strings.Split(data, "\n")
-	for n, line := range lines {
-		if n == 0 {
-			continue
-		}
-		fields := regexp.MustCompile(" +").Split(line, -1)
-		if len(fields) > 3 {
-			dockerStats[fields[0]] = []string{fields[1], fields[len(fields)-2]}
-		}
-	}
-
-	return m.FetchMetricsWithFile(&dockerStats)
+	return stats, nil
 }
 
 func (m DockerPlugin) generateName(container docker.APIContainers) string {
@@ -325,11 +348,22 @@ func (m DockerPlugin) FetchMetricsWithAPI(containers []docker.APIContainers) (ma
 	return res, nil
 }
 
+const internalCPUStatPrefix = "docker._internal.cpuacct."
+
 func (m DockerPlugin) parseStats(stats *map[string]interface{}, name string, result *docker.Stats) error {
-	(*stats)["docker.cpuacct."+name+".user"] = (*result).CPUStats.CPUUsage.UsageInUsermode
-	(*stats)["docker.cpuacct."+name+".system"] = (*result).CPUStats.CPUUsage.UsageInKernelmode
+	if m.UseCPUPercentage {
+		// intermediate data to calc CPU percentage
+		(*stats)[internalCPUStatPrefix+name+".user"] = (*result).CPUStats.CPUUsage.UsageInUsermode
+		(*stats)[internalCPUStatPrefix+name+".system"] = (*result).CPUStats.CPUUsage.UsageInKernelmode
+		(*stats)[internalCPUStatPrefix+name+".host"] = (*result).CPUStats.SystemCPUUsage
+		(*stats)[internalCPUStatPrefix+name+".onlineCPUs"] = len((*result).CPUStats.CPUUsage.PercpuUsage)
+	} else {
+		(*stats)["docker.cpuacct."+name+".user"] = (*result).CPUStats.CPUUsage.UsageInUsermode
+		(*stats)["docker.cpuacct."+name+".system"] = (*result).CPUStats.CPUUsage.UsageInKernelmode
+	}
 	(*stats)["docker.memory."+name+".cache"] = (*result).MemoryStats.Stats.TotalCache
 	(*stats)["docker.memory."+name+".rss"] = (*result).MemoryStats.Stats.TotalRss
+
 	fields := []string{"read", "write", "sync", "async"}
 	for _, field := range fields {
 		for _, s := range (*result).BlkioStats.IOQueueRecursive {
@@ -349,6 +383,43 @@ func (m DockerPlugin) parseStats(stats *map[string]interface{}, name string, res
 		}
 	}
 	return nil
+}
+
+func addCPUPercentageStats(stats *map[string]interface{}, lastStat map[string]interface{}) {
+	for k, v := range lastStat {
+		if !strings.HasPrefix(k, internalCPUStatPrefix) || !strings.HasSuffix(k, ".host") {
+			continue
+		}
+		name := strings.TrimSuffix(strings.TrimPrefix(k, internalCPUStatPrefix), ".host")
+		currentHostUsage, ok1 := (*stats)[internalCPUStatPrefix+name+".host"]
+		cpuNums, ok2 := (*stats)[internalCPUStatPrefix+name+".onlineCPUs"]
+		if !ok1 || !ok2 {
+			continue
+		}
+		hostUsage := float64(currentHostUsage.(uint64) - uint64(v.(float64)))
+		cpuNumsInt := cpuNums.(int)
+		if hostUsage < 0 {
+			continue // counter seems reset
+		}
+
+		currentUserUsage, ok1 := (*stats)[internalCPUStatPrefix+name+".user"]
+		prevUserUsage, ok2 := lastStat[internalCPUStatPrefix+name+".user"]
+		if ok1 && ok2 {
+			userUsage := float64(currentUserUsage.(uint64) - uint64(prevUserUsage.(float64)))
+			if userUsage >= 0 {
+				(*stats)["docker.cpuacct_percentage."+name+".user"] = userUsage / hostUsage * 100.0 * float64(cpuNumsInt)
+			}
+		}
+
+		currentSystemUsage, ok1 := (*stats)[internalCPUStatPrefix+name+".system"]
+		prevSystemUsage, ok2 := lastStat[internalCPUStatPrefix+name+".system"]
+		if ok1 && ok2 {
+			systemUsage := float64(currentSystemUsage.(uint64) - uint64(prevSystemUsage.(float64)))
+			if systemUsage >= 0 {
+				(*stats)["docker.cpuacct_percentage."+name+".system"] = systemUsage / hostUsage * 100.0 * float64(cpuNumsInt)
+			}
+		}
+	}
 }
 
 // FetchMetricsWithFile use cgroup stats files to fetch metrics
@@ -422,10 +493,11 @@ func Do() {
 
 	optHost := flag.String("host", "unix:///var/run/docker.sock", "Host for socket")
 	optCommand := flag.String("command", "docker", "Command path to docker")
-	optUseAPI := flag.String("method", "", "Specify the method to collect stats, 'API' or 'File'. If not specified, an appropriate method is chosen.")
+	optMethod := flag.String("method", "", "Specify the method to collect stats, 'API' or 'File'. If not specified, an appropriate method is chosen.")
 	optTempfile := flag.String("tempfile", "", "Temp file name")
 	optNameFormat := flag.String("name-format", "name_id", "Set the name format from "+strings.Join(candidateNameFormat, ", "))
 	optLabel := flag.String("label", "", "Use the value of the key as name in case that name-format is label.")
+	optCPUFormat := flag.String("cpu-format", "", "Specify which CPU metrics format to use, 'percentage' or 'usage'. 'percentage' is default for 'API' method, and is not supported in 'File' method.")
 	flag.Parse()
 
 	var docker DockerPlugin
@@ -446,16 +518,16 @@ func Do() {
 		log.Fatalf("Label flag should be set when name flag is 'label'.")
 	}
 
-	if *optUseAPI == "" {
+	if *optMethod == "" {
 		docker.Method, err = guessMethod(docker.DockerCommand)
 		if err != nil {
 			log.Fatalf("Fail to guess stats method: %s", err.Error())
 		}
 	} else {
-		if *optUseAPI != "API" && *optUseAPI != "File" {
+		if *optMethod != "API" && *optMethod != "File" {
 			log.Fatalf("Method should be 'API', 'File' or an empty string.")
 		}
-		docker.Method = *optUseAPI
+		docker.Method = *optMethod
 	}
 
 	if docker.Method == "File" {
@@ -466,6 +538,19 @@ func Do() {
 		docker.pathBuilder = pb
 	}
 
+	if *optCPUFormat == "percentage" {
+		if docker.Method == "File" {
+			log.Fatalf("'--cpu-format percentage' is not supported with File method.")
+		}
+		docker.UseCPUPercentage = true
+	} else if *optCPUFormat == "usage" {
+		docker.UseCPUPercentage = false
+	} else {
+		if docker.Method == "API" {
+			docker.UseCPUPercentage = true
+		}
+	}
+
 	helper := mp.NewMackerelPlugin(docker)
 
 	if *optTempfile != "" {
@@ -474,5 +559,11 @@ func Do() {
 		helper.SetTempfileByBasename(fmt.Sprintf("mackerel-plugin-docker-%s", normalizeMetricName(*optHost)))
 	}
 
-	helper.Run()
+	if os.Getenv("MACKEREL_AGENT_PLUGIN_META") != "" {
+		helper.OutputDefinitions()
+	} else {
+		docker.lastMetricValues, _ = helper.FetchLastValues()
+		helper.Plugin = docker
+		helper.OutputValues()
+	}
 }
