@@ -78,10 +78,16 @@ func (p KinesisStreamsPlugin) getLastPoint(metric metrics) (float64, error) {
 		},
 	}
 
+	startTime := aws.Time(now.Add(-time.Duration(3) * time.Minute))
+	endTime := aws.Time(now)
+	if metric.Type == metricsTypeSum {
+		endTime = aws.Time(now.Add(-time.Duration(2) * time.Minute))
+	}
+
 	response, err := p.CloudWatch.GetMetricStatistics(&cloudwatch.GetMetricStatisticsInput{
 		Dimensions: dimensions,
-		StartTime:  aws.Time(now.Add(time.Duration(180) * time.Second * -1)), // 3 min
-		EndTime:    aws.Time(now),
+		StartTime:  startTime,
+		EndTime:    endTime,
 		MetricName: aws.String(metric.CloudWatchName),
 		Period:     aws.Int64(60),
 		Statistics: []*string{aws.String(metric.Type)},
