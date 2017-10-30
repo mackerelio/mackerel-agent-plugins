@@ -105,6 +105,8 @@ func (p KinesisStreamsPlugin) getLastPoint(metric metrics) (float64, error) {
 
 		latest = dp.Timestamp
 		switch metric.Type {
+		case metricsTypeSum:
+			latestVal = *dp.Sum
 		case metricsTypeAverage:
 			latestVal = *dp.Average
 		case metricsTypeMaximum:
