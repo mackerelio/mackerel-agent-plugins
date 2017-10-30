@@ -9,7 +9,7 @@ import (
 	"strings"
 
 	"github.com/fukata/golang-stats-api-handler"
-	mp "github.com/mackerelio/go-mackerel-plugin-helper"
+	mp "github.com/mackerelio/go-mackerel-plugin"
 )
 
 // GostatsPlugin mackerel plugin for go server
@@ -103,7 +103,7 @@ func (m GostatsPlugin) GraphDefinition() map[string]mp.Graphs {
 }
 
 // FetchMetrics interface for mackerelplugin
-func (m GostatsPlugin) FetchMetrics() (map[string]interface{}, error) {
+func (m GostatsPlugin) FetchMetrics() (map[string]float64, error) {
 	resp, err := http.Get(m.URI)
 	if err != nil {
 		return nil, err
@@ -113,8 +113,8 @@ func (m GostatsPlugin) FetchMetrics() (map[string]interface{}, error) {
 	return m.parseStats(resp.Body)
 }
 
-func (m GostatsPlugin) parseStats(body io.Reader) (map[string]interface{}, error) {
-	stat := make(map[string]interface{})
+func (m GostatsPlugin) parseStats(body io.Reader) (map[string]float64, error) {
+	stat := make(map[string]float64)
 	decoder := json.NewDecoder(body)
 
 	s := stats_api.Stats{}
@@ -122,21 +122,21 @@ func (m GostatsPlugin) parseStats(body io.Reader) (map[string]interface{}, error
 	if err != nil {
 		return nil, err
 	}
-	stat["goroutine_num"] = uint64(s.GoroutineNum)
-	stat["cgo_call_num"] = uint64(s.CgoCallNum)
-	stat["memory_sys"] = s.MemorySys
-	stat["memory_alloc"] = s.MemoryAlloc
-	stat["memory_stack"] = s.StackInUse
-	stat["memory_lookups"] = s.MemoryLookups
-	stat["memory_frees"] = s.MemoryFrees
-	stat["memory_mallocs"] = s.MemoryMallocs
-	stat["heap_sys"] = s.HeapSys
-	stat["heap_idle"] = s.HeapIdle
-	stat["heap_inuse"] = s.HeapInuse
-	stat["heap_released"] = s.HeapReleased
-	stat["gc_num"] = s.GcNum
-	stat["gc_per_second"] = s.GcPerSecond
-	stat["gc_pause_per_second"] = s.GcPausePerSecond
+	stat["goroutine_num"] = float64(s.GoroutineNum)
+	stat["cgo_call_num"] = float64(s.CgoCallNum)
+	stat["memory_sys"] = float64(s.MemorySys)
+	stat["memory_alloc"] = float64(s.MemoryAlloc)
+	stat["memory_stack"] = float64(s.StackInUse)
+	stat["memory_lookups"] = float64(s.MemoryLookups)
+	stat["memory_frees"] = float64(s.MemoryFrees)
+	stat["memory_mallocs"] = float64(s.MemoryMallocs)
+	stat["heap_sys"] = float64(s.HeapSys)
+	stat["heap_idle"] = float64(s.HeapIdle)
+	stat["heap_inuse"] = float64(s.HeapInuse)
+	stat["heap_released"] = float64(s.HeapReleased)
+	stat["gc_num"] = float64(s.GcNum)
+	stat["gc_per_second"] = float64(s.GcPerSecond)
+	stat["gc_pause_per_second"] = float64(s.GcPausePerSecond)
 
 	return stat, nil
 }
