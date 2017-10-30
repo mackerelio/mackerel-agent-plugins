@@ -73,7 +73,7 @@ var graphdef = map[string]mp.Graphs{
 			{Name: "async", Label: "Async", Diff: true, Stacked: true, Type: "uint64"},
 		},
 	},
-	// some other fields also exist in metrics, but ther're internal intermediate data
+	// some other fields also exist in metrics, but they're internal intermediate data
 }
 
 // DockerPlugin mackerel plugin for docker
