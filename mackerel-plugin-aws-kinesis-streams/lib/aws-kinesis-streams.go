@@ -16,6 +16,7 @@ import (
 
 const (
 	namespace          = "AWS/Kinesis"
+	metricsTypeSum     = "Sum"
 	metricsTypeAverage = "Average"
 	metricsTypeMaximum = "Maximum"
 	metricsTypeMinimum = "Minimum"
@@ -121,16 +122,16 @@ func (p KinesisStreamsPlugin) FetchMetrics() (map[string]interface{}, error) {
 	stat := make(map[string]interface{})
 
 	for _, met := range [...]metrics{
-		{CloudWatchName: "GetRecords.Bytes", MackerelName: "GetRecordsBytes", Type: metricsTypeAverage},
+		{CloudWatchName: "GetRecords.Bytes", MackerelName: "GetRecordsBytes", Type: metricsTypeSum},
 		// Max of IteratorAgeMilliseconds is useful especially when few of iterators are in trouble
 		{CloudWatchName: "GetRecords.IteratorAgeMilliseconds", MackerelName: "GetRecordsDelayMaxMilliseconds", Type: metricsTypeMaximum},
 		{CloudWatchName: "GetRecords.IteratorAgeMilliseconds", MackerelName: "GetRecordsDelayMinMilliseconds", Type: metricsTypeMinimum},
 		{CloudWatchName: "GetRecords.IteratorAgeMilliseconds", MackerelName: "GetRecordsDelayAverageMilliseconds", Type: metricsTypeAverage},
 		{CloudWatchName: "GetRecords.Latency", MackerelName: "GetRecordsLatency", Type: metricsTypeAverage},
-		{CloudWatchName: "GetRecords.Records", MackerelName: "GetRecordsRecords", Type: metricsTypeAverage},
+		{CloudWatchName: "GetRecords.Records", MackerelName: "GetRecordsRecords", Type: metricsTypeSum},
 		{CloudWatchName: "GetRecords.Success", MackerelName: "GetRecordsSuccess", Type: metricsTypeAverage},
-		{CloudWatchName: "IncomingBytes", MackerelName: "IncomingBytes", Type: metricsTypeAverage},
-		{CloudWatchName: "IncomingRecords", MackerelName: "IncomingRecords", Type: metricsTypeAverage},
+		{CloudWatchName: "IncomingBytes", MackerelName: "IncomingBytes", Type: metricsTypeSum},
+		{CloudWatchName: "IncomingRecords", MackerelName: "IncomingRecords", Type: metricsTypeSum},
 		{CloudWatchName: "PutRecord.Bytes", MackerelName: "PutRecordBytes", Type: metricsTypeAverage},
 		{CloudWatchName: "PutRecord.Latency", MackerelName: "PutRecordLatency", Type: metricsTypeAverage},
 		{CloudWatchName: "PutRecord.Success", MackerelName: "PutRecordSuccess", Type: metricsTypeAverage},
