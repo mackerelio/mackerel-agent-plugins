@@ -65,7 +65,7 @@ var graphdef = map[string]mp.Graphs{
 	},
 	"docker.blkio.io_service_bytes.#": {
 		Label: "Docker BlkIO Bytes",
-		Unit:  "integer",
+		Unit:  "bytes",
 		Metrics: []mp.Metrics{
 			{Name: "read", Label: "Read", Diff: true, Stacked: true, Type: "uint64"},
 			{Name: "write", Label: "Write", Diff: true, Stacked: true, Type: "uint64"},
