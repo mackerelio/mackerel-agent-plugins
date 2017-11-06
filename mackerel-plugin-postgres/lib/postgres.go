@@ -129,7 +129,7 @@ func fetchConnections(db *sqlx.DB, version version) (map[string]interface{}, err
 	var query string
 
 	if version.first > 9 || version.first == 9 && version.second >= 6 {
-		query = `select count(*), state, wait_event is not null from pg_stat_activity group by state, wait_event is not null`
+		query = `select count(*), state, wait_event is not null from pg_stat_activity where state is not null group by state, wait_event is not null`
 	} else {
 		query = `select count(*), state, waiting from pg_stat_activity group by state, waiting`
 	}
@@ -190,12 +190,12 @@ func fetchDatabaseSize(db *sqlx.DB) (map[string]interface{}, error) {
 	}, nil
 }
 
-var versionRe = regexp.MustCompile("PostgreSQL (\\d+)\\.(\\d+)(\\.(\\d+))? ")
+var versionRe = regexp.MustCompile("PostgreSQL (\\d+)\\.(\\d+)(\\.(\\d+))?")
 
 type version struct {
 	first  uint
 	second uint
-	thrird uint
+	third  uint
 }
 
 func fetchVersion(db *sqlx.DB) (version, error) {
@@ -227,7 +227,7 @@ func fetchVersion(db *sqlx.DB) (version, error) {
 			if err != nil {
 				return res, err
 			}
-			if len(submatch) == 5 {
+			if len(submatch) == 5 && submatch[4] != "" {
 				third, err = strconv.ParseUint(submatch[4], 10, 0)
 				if err != nil {
 					return res, err

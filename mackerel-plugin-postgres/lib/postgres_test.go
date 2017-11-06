@@ -42,3 +42,56 @@ func TestFetchStatDatabase(t *testing.T) {
 		t.Error("should be 77")
 	}
 }
+
+var fetchVersionTests = []struct {
+	response string
+	expected version
+}{
+	{
+		`
+		PostgreSQL 9.6.4 on x86_64-redhat-linux-gnu, compiled by gcc (GCC) 4.8.5 20150623 (Red Hat 4.8.5-11), 64-bit
+		`,
+		version{uint(9), uint(6), uint(4)},
+	},
+	{
+		// Azure Database for PostgreSQL
+		`
+		PostgreSQL 9.6.5, compiled by Visual C++ build 1800, 64-bit
+		`,
+		version{uint(9), uint(6), uint(5)},
+	},
+	{
+		`
+		PostgreSQL 10.0 on x86_64-pc-linux-gnu, compiled by gcc (Debian 6.3.0-18) 6.3.0 20170516, 64-bit
+		`,
+		version{uint(10), uint(0), uint(0)},
+	},
+}
+
+func TestFetchVersion(t *testing.T) {
+	for _, tc := range fetchVersionTests {
+		db, _ := sqlx.Connect("testdb", "")
+
+		columns := []string{"version"}
+
+		testdb.StubQuery(`SELECT version()`, testdb.RowsFromCSVString(columns, tc.response, '|'))
+
+		v, err := fetchVersion(db)
+
+		if err != nil {
+			t.Errorf("Expected no error, but got %s instead", err)
+		}
+		if err = db.Close(); err != nil {
+			t.Errorf("Error '%s' was not expected while closing the database", err)
+		}
+		if v.first != tc.expected.first {
+			t.Errorf("should be %d", tc.expected.first)
+		}
+		if v.second != tc.expected.second {
+			t.Errorf("should be %d", tc.expected.second)
+		}
+		if v.third != tc.expected.third {
+			t.Errorf("should be %d", tc.expected.third)
+		}
+	}
+}
