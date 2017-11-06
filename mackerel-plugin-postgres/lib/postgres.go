@@ -195,7 +195,7 @@ var versionRe = regexp.MustCompile("PostgreSQL (\\d+)\\.(\\d+)(\\.(\\d+))? ")
 type version struct {
 	first  uint
 	second uint
-	thrird uint
+	third  uint
 }
 
 func fetchVersion(db *sqlx.DB) (version, error) {
