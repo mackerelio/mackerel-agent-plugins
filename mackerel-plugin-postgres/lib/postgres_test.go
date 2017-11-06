@@ -54,6 +54,7 @@ var fetchVersionTests = []struct {
 		version{uint(9), uint(6), uint(4)},
 	},
 	{
+		// Azure Database for PostgreSQL
 		`
 		PostgreSQL 9.6.5, compiled by Visual C++ build 1800, 64-bit
 		`,
