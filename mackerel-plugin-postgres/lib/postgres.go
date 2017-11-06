@@ -227,7 +227,7 @@ func fetchVersion(db *sqlx.DB) (version, error) {
 			if err != nil {
 				return res, err
 			}
-			if len(submatch) == 5 {
+			if len(submatch) == 5 && submatch[4] != "" {
 				third, err = strconv.ParseUint(submatch[4], 10, 0)
 				if err != nil {
 					return res, err

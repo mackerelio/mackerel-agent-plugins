@@ -60,6 +60,12 @@ var fetchVersionTests = []struct {
 		`,
 		version{uint(9), uint(6), uint(5)},
 	},
+	{
+		`
+		PostgreSQL 10.0 on x86_64-pc-linux-gnu, compiled by gcc (Debian 6.3.0-18) 6.3.0 20170516, 64-bit
+		`,
+		version{uint(10), uint(0), uint(0)},
+	},
 }
 
 func TestFetchVersion(t *testing.T) {
