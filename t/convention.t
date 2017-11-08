@@ -4,6 +4,14 @@ use utf8;
 use File::Spec;
 use Test::More;
 
+# The plugins placed in other mackerelio's repositories
+my $plugins_in_other_repository = [qw(
+    mackerel-plugin-aws-ec2
+)];
+my $is_in_other_repository = {
+    map { $_ => 1 } @$plugins_in_other_repository,
+};
+
 for my $dir (<mackerel-plugin-*>) {
     my $maingo = File::Spec->catfile($dir, 'main.go');
     ok -f -r $maingo or diag "$maingo not found";
@@ -13,9 +21,13 @@ for my $dir (<mackerel-plugin-*>) {
     my $package = $dir;
        $package =~ s/(mackerel-plugin)?-//g;
        $package = "mp$package";
+    my $import = sprintf(
+        "github.com/mackerelio/%s/lib",
+        $is_in_other_repository->{$dir} ? $dir : "mackerel-agent-plugins/$dir",
+    );
     my $expect = qq[package main
 
-import "github.com/mackerelio/mackerel-agent-plugins/$dir/lib"
+import "$import"
 
 func main() {
 \t$package.Do()
