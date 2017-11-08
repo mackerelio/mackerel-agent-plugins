@@ -223,8 +223,11 @@ func guessMethod(docker string) (string, error) {
 
 	re := regexp.MustCompile(`Server API version: ([0-9]+)(?:\.([0-9]+))?`)
 	res := re.FindAllStringSubmatch(out.String(), 1)
+
+	// Recent docker does not provide server api version info in the form,
+	// But in case it's apparently newer than 1.17.
 	if len(res) < 1 || len(res[0]) < 2 {
-		log.Printf("Use API because of failing to recognize version")
+		// log.Printf("Use API because of failing to recognize version")
 		return "API", nil
 	}
 
