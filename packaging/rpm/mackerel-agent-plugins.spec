@@ -49,6 +49,13 @@ done
 %{__oldtargetdir}/*
 
 %changelog
+* Thu Nov 09 2017 <mackerel-developers@hatena.ne.jp> - 0.38.0
+- Improve mackerel-plugin-postgres (by astj)
+- [docker] Add CPU Percentage metrics (by astj)
+- [gostats] Use go-mackerel-plugin instead of go-mackerel-plugin-helper (by itchyny)
+- [mysql]Fix makeBigint calculation (by matsuu)
+- [cloudfront] add -metric-key-prefix option (by fujiwara)
+
 * Thu Oct 26 2017 <mackerel-developers@hatena.ne.jp> - 0.37.1
 - [multicore] Refactor multicore plugin (by itchyny)
 
