@@ -1,3 +1,18 @@
+mackerel-agent-plugins (0.38.0-1.v2) stable; urgency=low
+
+  * Improve mackerel-plugin-postgres (by astj)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/437>
+  * [docker] Add CPU Percentage metrics (by astj)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/424>
+  * [gostats] Use go-mackerel-plugin instead of go-mackerel-plugin-helper (by itchyny)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/429>
+  * [mysql]Fix makeBigint calculation (by matsuu)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/434>
+  * [cloudfront] add -metric-key-prefix option (by fujiwara)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/433>
+
+ -- mackerel <mackerel-developers@hatena.ne.jp>  Thu, 09 Nov 2017 11:36:32 +0900
+
 mackerel-agent-plugins (0.37.1-1.v2) stable; urgency=low
 
   * [multicore] Refactor multicore plugin (by itchyny)

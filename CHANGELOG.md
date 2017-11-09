@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.38.0 (2017-11-09)
+
+* Improve mackerel-plugin-postgres #437 (astj)
+* [docker] Add CPU Percentage metrics #424 (astj)
+* [gostats] Use go-mackerel-plugin instead of go-mackerel-plugin-helper #429 (itchyny)
+* [mysql]Fix makeBigint calculation #434 (matsuu)
+* [cloudfront] add -metric-key-prefix option #433 (fujiwara)
+
+
 ## 0.37.1 (2017-10-26)
 
 * [multicore] Refactor multicore plugin #430 (itchyny)
