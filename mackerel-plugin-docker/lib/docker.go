@@ -57,10 +57,10 @@ var graphdef = map[string]mp.Graphs{
 		Label: "Docker BlkIO IOPS",
 		Unit:  "integer",
 		Metrics: []mp.Metrics{
-			{Name: "read", Label: "Read", Diff: true, Stacked: true, Type: "uint64"},
-			{Name: "write", Label: "Write", Diff: true, Stacked: true, Type: "uint64"},
-			{Name: "sync", Label: "Sync", Diff: true, Stacked: true, Type: "uint64"},
-			{Name: "async", Label: "Async", Diff: true, Stacked: true, Type: "uint64"},
+			{Name: "read", Label: "Read", Diff: false, Stacked: true, Type: "float64"},
+			{Name: "write", Label: "Write", Diff: false, Stacked: true, Type: "float64"},
+			{Name: "sync", Label: "Sync", Diff: false, Stacked: true, Type: "float64"},
+			{Name: "async", Label: "Async", Diff: false, Stacked: true, Type: "float64"},
 		},
 	},
 	"docker.blkio.io_service_bytes.#": {
@@ -257,12 +257,6 @@ func (m DockerPlugin) FetchMetrics() (map[string]interface{}, error) {
 			return nil, err
 		}
 		stats, err = m.FetchMetricsWithAPI(containers)
-
-		if m.UseCPUPercentage {
-			if time.Now().Sub(m.lastMetricValues.Timestamp) <= 5*time.Minute {
-				addCPUPercentageStats(&stats, m.lastMetricValues.Values)
-			}
-		}
 	} else {
 		dockerStats := map[string][]string{}
 		data, err := m.getDockerPs()
@@ -282,6 +276,13 @@ func (m DockerPlugin) FetchMetrics() (map[string]interface{}, error) {
 		stats, err = m.FetchMetricsWithFile(&dockerStats)
 		if err != nil {
 			return nil, err
+		}
+	}
+
+	if time.Now().Sub(m.lastMetricValues.Timestamp) <= 5*time.Minute {
+		addBlkIOPSStats(&stats, m.lastMetricValues.Values)
+		if m.UseCPUPercentage {
+			addCPUPercentageStats(&stats, m.lastMetricValues.Values)
 		}
 	}
 
@@ -349,6 +350,7 @@ func (m DockerPlugin) FetchMetricsWithAPI(containers []docker.APIContainers) (ma
 }
 
 const internalCPUStatPrefix = "docker._internal.cpuacct."
+const internalIOServicedStatPrefix = "docker._internal.blkio.io_serviced."
 
 func (m DockerPlugin) parseStats(stats *map[string]interface{}, name string, result *docker.Stats) error {
 	if m.UseCPUPercentage {
@@ -373,7 +375,7 @@ func (m DockerPlugin) parseStats(stats *map[string]interface{}, name string, res
 		}
 		for _, s := range (*result).BlkioStats.IOServicedRecursive {
 			if s.Op == strings.Title(field) {
-				(*stats)["docker.blkio.io_serviced."+name+"."+field] = s.Value
+				(*stats)[internalIOServicedStatPrefix+name+"."+field] = s.Value
 			}
 		}
 		for _, s := range (*result).BlkioStats.IOServiceBytesRecursive {
@@ -418,6 +420,22 @@ func addCPUPercentageStats(stats *map[string]interface{}, lastStat map[string]in
 			if systemUsage >= 0 {
 				(*stats)["docker.cpuacct_percentage."+name+".system"] = systemUsage / hostUsage * 100.0 * float64(cpuNumsInt)
 			}
+		}
+	}
+}
+
+func addBlkIOPSStats(stats *map[string]interface{}, lastStat map[string]interface{}) {
+	for k, v := range lastStat {
+		if !strings.HasPrefix(k, internalIOServicedStatPrefix) {
+			continue
+		}
+		name := strings.TrimPrefix(k, internalIOServicedStatPrefix)
+		currentUsage, ok := (*stats)[internalIOServicedStatPrefix+name]
+		if !ok {
+			continue
+		}
+		if diff := float64(currentUsage.(uint64) - uint64(v.(float64))); diff >= 0 {
+			(*stats)["docker.blkio.io_serviced."+name] = diff / 60.0
 		}
 	}
 }
@@ -469,7 +487,11 @@ func (m DockerPlugin) FetchMetricsWithFile(dockerStats *map[string][]string) (ma
 						v += ret
 					}
 				}
-				res[fmt.Sprintf("docker.blkio.%s.%s_%s.%s", blkioType, normalizeMetricName(name[0]), id[0:6], strings.ToLower(stat))] = v
+				metricPrefix := fmt.Sprintf("docker.blkio.%s.", blkioType)
+				if blkioType == "io_serviced" {
+					metricPrefix = internalIOServicedStatPrefix
+				}
+				res[fmt.Sprintf("%s%s_%s.%s", metricPrefix, normalizeMetricName(name[0]), id[0:6], strings.ToLower(stat))] = v
 			}
 		}
 
