@@ -55,7 +55,7 @@ var graphdef = map[string]mp.Graphs{
 	},
 	"docker.blkio.io_serviced.#": {
 		Label: "Docker BlkIO IOPS",
-		Unit:  "integer",
+		Unit:  "iops",
 		Metrics: []mp.Metrics{
 			{Name: "read", Label: "Read", Diff: false, Stacked: true, Type: "float64"},
 			{Name: "write", Label: "Write", Diff: false, Stacked: true, Type: "float64"},
