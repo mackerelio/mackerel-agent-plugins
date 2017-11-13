@@ -16,7 +16,6 @@ Documentation for each plugin is located in its respective sub directory.
 * [mackerel-plugin-aws-elasticache](./mackerel-plugin-aws-elasticache/README.md)
 * [mackerel-plugin-aws-elasticsearch](./mackerel-plugin-aws-elasticsearch/README.md)
 * [mackerel-plugin-aws-elb](./mackerel-plugin-aws-elb/README.md)
-* [mackerel-plugin-aws-kinesis-firehose](./mackerel-plugin-aws-kinesis-firehose/README.md)
 * [mackerel-plugin-aws-kinesis-streams](./mackerel-plugin-aws-kinesis-streams/README.md)
 * [mackerel-plugin-aws-lambda](./mackerel-plugin-aws-lambda/README.md)
 * [mackerel-plugin-aws-rds](./mackerel-plugin-aws-rds/README.md)

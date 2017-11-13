@@ -1,6 +1,6 @@
 package main
 
-import "github.com/mackerelio/mackerel-agent-plugins/mackerel-plugin-aws-kinesis-firehose/lib"
+import "github.com/mackerelio/mackerel-plugin-aws-kinesis-firehose/lib"
 
 func main() {
 	mpawskinesisfirehose.Do()

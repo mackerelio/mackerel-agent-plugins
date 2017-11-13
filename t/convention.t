@@ -7,6 +7,7 @@ use Test::More;
 # The plugins placed in other mackerelio's repositories
 my $plugins_in_other_repository = [qw(
     mackerel-plugin-aws-ec2
+    mackerel-plugin-aws-kinesis-firehose
 )];
 my $is_in_other_repository = {
     map { $_ => 1 } @$plugins_in_other_repository,
