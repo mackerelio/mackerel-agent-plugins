@@ -19,7 +19,6 @@ Documentation for each plugin is located in its respective sub directory.
 * [mackerel-plugin-aws-kinesis-streams](./mackerel-plugin-aws-kinesis-streams/README.md)
 * [mackerel-plugin-aws-lambda](./mackerel-plugin-aws-lambda/README.md)
 * [mackerel-plugin-aws-rds](./mackerel-plugin-aws-rds/README.md)
-* [mackerel-plugin-aws-rekognition](./mackerel-plugin-aws-rekognition/README.md)
 * [mackerel-plugin-aws-ses](./mackerel-plugin-aws-ses/README.md)
 * [mackerel-plugin-aws-waf](./mackerel-plugin-aws-waf/README.md)
 * [mackerel-plugin-conntrack](./mackerel-plugin-conntrack/README.md)
