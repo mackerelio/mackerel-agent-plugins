@@ -8,6 +8,7 @@ use Test::More;
 my $plugins_in_other_repository = [qw(
     mackerel-plugin-aws-ec2
     mackerel-plugin-aws-kinesis-firehose
+    mackerel-plugin-aws-rekognition
 )];
 my $is_in_other_repository = {
     map { $_ => 1 } @$plugins_in_other_repository,
