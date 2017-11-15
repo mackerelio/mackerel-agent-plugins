@@ -67,7 +67,7 @@ func TestParseProcStat(t *testing.T) {
  processes 1959410`
 	stat := make(map[string]interface{})
 
-	err := parseProcStat(stub, &stat)
+	err := parseProcStat(bytes.NewBufferString(stub), &stat)
 	assert.Nil(t, err)
 	assert.EqualValues(t, stat["interrupts"], 614818624)
 	assert.EqualValues(t, stat["context_switches"], 879305394)

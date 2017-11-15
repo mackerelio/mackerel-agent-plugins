@@ -193,9 +193,6 @@ func getWho() (string, error) {
 
 // collect /proc/stat
 func collectProcStat(path string, p *map[string]interface{}) error {
-	var err error
-	var data string
-
 	graphdef["linux.interrupts"] = mp.Graphs{
 		Label: "Linux Interrupts",
 		Unit:  "integer",
@@ -218,21 +215,20 @@ func collectProcStat(path string, p *map[string]interface{}) error {
 		},
 	}
 
-	data, err = getProc(path)
+	file, err := os.Open(path)
 	if err != nil {
 		return err
 	}
-	err = parseProcStat(data, p)
-	if err != nil {
-		return err
-	}
-
-	return nil
+	defer file.Close()
+	return parseProcStat(file, p)
 }
 
 // parsing metrics from /proc/stat
-func parseProcStat(str string, p *map[string]interface{}) error {
-	for _, line := range strings.Split(str, "\n") {
+func parseProcStat(r io.Reader, p *map[string]interface{}) error {
+	scanner := bufio.NewScanner(r)
+
+	for scanner.Scan() {
+		line := scanner.Text()
 		record := strings.Fields(line)
 		if len(record) < 2 {
 			continue
