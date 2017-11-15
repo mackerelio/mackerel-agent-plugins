@@ -179,15 +179,3 @@ pswpout 113`
 	assert.EqualValues(t, stat["pswpin"], 0)
 	assert.EqualValues(t, stat["pswpout"], 113)
 }
-
-func TestGetProc(t *testing.T) {
-	stub := "/proc/diskstats"
-	_, err := os.Stat(stub)
-	if err != nil {
-		return
-	}
-
-	ret, err := getProc(stub)
-	assert.Nil(t, err)
-	assert.NotNil(t, ret)
-}

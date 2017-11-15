@@ -417,18 +417,6 @@ func parseProcVmstat(r io.Reader, p *map[string]interface{}) error {
 	return nil
 }
 
-// Getting /proc/*
-func getProc(path string) (string, error) {
-	cmd := exec.Command("cat", path)
-	var out bytes.Buffer
-	cmd.Stdout = &out
-	err := cmd.Run()
-	if err != nil {
-		return "", err
-	}
-	return out.String(), nil
-}
-
 // atof
 func atof(str string) (float64, error) {
 	return strconv.ParseFloat(strings.Trim(str, " "), 64)
