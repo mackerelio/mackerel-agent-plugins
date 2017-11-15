@@ -1,6 +1,7 @@
 package mplinux
 
 import (
+	"bytes"
 	"os"
 	"testing"
 
@@ -91,7 +92,7 @@ func TestParseProcDiskstats(t *testing.T) {
  253       2 dm-2 83 0 664 94 0 0 0 0 0 94 94`
 	stat := make(map[string]interface{})
 
-	err := parseProcDiskstats(stub, &stat)
+	err := parseProcDiskstats(bytes.NewBufferString(stub), &stat)
 	assert.Nil(t, err)
 	assert.EqualValues(t, stat["iotime_sda"], 23865772)
 	assert.EqualValues(t, stat["iotime_weighted_sda"], 436201338)

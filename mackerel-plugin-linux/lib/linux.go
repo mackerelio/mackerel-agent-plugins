@@ -1,8 +1,10 @@
 package mplinux
 
 import (
+	"bufio"
 	"bytes"
 	"fmt"
+	"io"
 	"os"
 	"os/exec"
 	"regexp"
@@ -255,14 +257,12 @@ func parseProcStat(str string, p *map[string]interface{}) error {
 
 // collect /proc/diskstats
 func collectProcDiskstats(path string, p *map[string]interface{}) error {
-	var err error
-	var data string
-
-	data, err = getProc(path)
+	file, err := os.Open(path)
 	if err != nil {
 		return err
 	}
-	err = parseProcDiskstats(data, p)
+	defer file.Close()
+	err = parseProcDiskstats(file, p)
 	if err != nil {
 		return err
 	}
@@ -271,12 +271,14 @@ func collectProcDiskstats(path string, p *map[string]interface{}) error {
 }
 
 // parsing metrics from diskstats
-func parseProcDiskstats(str string, p *map[string]interface{}) error {
-
+func parseProcDiskstats(r io.Reader, p *map[string]interface{}) error {
 	var elapsedData []mp.Metrics
 	var rwtimeData []mp.Metrics
 
-	for _, line := range strings.Split(str, "\n") {
+	scanner := bufio.NewScanner(r)
+
+	for scanner.Scan() {
+		line := scanner.Text()
 		// See also: https://www.kernel.org/doc/Documentation/ABI/testing/procfs-diskstats
 		record := strings.Fields(line)
 		if len(record) < 14 {
