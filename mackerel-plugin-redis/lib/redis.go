@@ -28,7 +28,7 @@ type RedisPlugin struct {
 
 func authenticateByPassword(c *redis.Client, password string) error {
 	if r := c.Cmd("AUTH", password); r.Err != nil {
-		logger.Errorf("Faild to authenticate. %s", r.Err)
+		logger.Errorf("Failed to authenticate. %s", r.Err)
 		return r.Err
 	}
 	return nil
