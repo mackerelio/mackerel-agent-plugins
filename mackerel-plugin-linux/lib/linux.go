@@ -43,7 +43,7 @@ func (c LinuxPlugin) GraphDefinition() map[string]mp.Graphs {
 	}
 
 	if c.Typemap["all"] || c.Typemap["netstat"] {
-		err = collectSs(&p)
+		err = collectNetworkStat(&p)
 		if err != nil {
 			return nil
 		}
@@ -109,7 +109,7 @@ func (c LinuxPlugin) FetchMetrics() (map[string]interface{}, error) {
 	}
 
 	if c.Typemap["all"] || c.Typemap["netstat"] {
-		err = collectSs(&p)
+		err = collectNetworkStat(&p)
 		if err != nil {
 			return nil, err
 		}
@@ -315,7 +315,7 @@ func parseProcDiskstats(str string, p *map[string]interface{}) error {
 }
 
 // collect ss
-func collectSs(p *map[string]interface{}) error {
+func collectNetworkStat(p *map[string]interface{}) error {
 	var err error
 	var data string
 

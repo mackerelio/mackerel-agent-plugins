@@ -99,14 +99,14 @@ func TestParseProcDiskstats(t *testing.T) {
 	assert.EqualValues(t, stat["tswriting_sda"], 423711425)
 }
 
-func TestCollectSs(t *testing.T) {
+func TestCollectNetworkStat(t *testing.T) {
 	_, err := os.Stat("/usr/sbin/ss")
 	if err != nil {
 		return
 	}
 	p := make(map[string]interface{})
 
-	assert.Nil(t, collectSs(&p))
+	assert.Nil(t, collectNetworkStat(&p))
 }
 
 func TestParseSs(t *testing.T) {
