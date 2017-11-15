@@ -389,9 +389,6 @@ func getSs() (string, error) {
 
 // collect /proc/vmstat
 func collectProcVmstat(path string, p *map[string]interface{}) error {
-	var err error
-	var data string
-
 	graphdef["linux.swap"] = mp.Graphs{
 		Label: "Linux Swap Usage",
 		Unit:  "integer",
@@ -401,21 +398,20 @@ func collectProcVmstat(path string, p *map[string]interface{}) error {
 		},
 	}
 
-	data, err = getProc(path)
+	file, err := os.Open(path)
 	if err != nil {
 		return err
 	}
-	err = parseProcVmstat(data, p)
-	if err != nil {
-		return err
-	}
-
-	return nil
+	defer file.Close()
+	return parseProcVmstat(file, p)
 }
 
 // parsing metrics from /proc/vmstat
-func parseProcVmstat(str string, p *map[string]interface{}) error {
-	for _, line := range strings.Split(str, "\n") {
+func parseProcVmstat(r io.Reader, p *map[string]interface{}) error {
+	scanner := bufio.NewScanner(r)
+
+	for scanner.Scan() {
+		line := scanner.Text()
 		record := strings.Fields(line)
 		if len(record) != 2 {
 			continue

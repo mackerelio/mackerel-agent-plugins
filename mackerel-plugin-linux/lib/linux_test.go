@@ -172,7 +172,7 @@ pswpin 0
 pswpout 113`
 	stat := make(map[string]interface{})
 
-	err := parseProcVmstat(stub, &stat)
+	err := parseProcVmstat(bytes.NewBufferString(stub), &stat)
 	assert.Nil(t, err)
 	assert.EqualValues(t, stat["pgpgin"], 770294)
 	assert.EqualValues(t, stat["pgpgout"], 31351354)
