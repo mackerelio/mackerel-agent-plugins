@@ -118,7 +118,7 @@ TIME-WAIT  0      0                         ::ffff:127.0.0.1:80                 
 ESTAB      0      0                              10.0.25.101:60826                         10.0.25.104:5672  `
 	stat := make(map[string]interface{})
 
-	err := parseSs(stub, &stat)
+	err := parseSs(bytes.NewBufferString(stub), &stat)
 	assert.Nil(t, err)
 	assert.EqualValues(t, stat["LISTEN"], 2)
 	assert.EqualValues(t, stat["TIME-WAIT"], 1)
@@ -135,23 +135,11 @@ u_str LISTEN     0      10                                  /var/run/acpid.socke
 u_str ESTAB      0      0                                    @/com/ubuntu/upstart 10582                                                  * 1887`
 	stat := make(map[string]interface{})
 
-	err := parseSs(stub, &stat)
+	err := parseSs(bytes.NewBufferString(stub), &stat)
 	assert.Nil(t, err)
 	assert.EqualValues(t, stat["LISTEN"], 2)
 	assert.EqualValues(t, stat["UNCONN"], 3)
 	assert.EqualValues(t, stat["ESTAB"], 1)
-}
-
-func TestGetSs(t *testing.T) {
-	_, err := os.Stat("/usr/sbin/ss")
-	if err != nil {
-		return
-	}
-
-	ret, err := getSs()
-	assert.Nil(t, err)
-	assert.NotNil(t, ret)
-	assert.Contains(t, ret, "State")
 }
 
 func TestCollectProcVmstat(t *testing.T) {

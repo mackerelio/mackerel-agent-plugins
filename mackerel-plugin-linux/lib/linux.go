@@ -309,9 +309,6 @@ func parseProcDiskstats(r io.Reader, p *map[string]interface{}) error {
 
 // collect ss
 func collectNetworkStat(p *map[string]interface{}) error {
-	var err error
-	var data string
-
 	graphdef["linux.ss"] = mp.Graphs{
 		Label: "Linux Network Connection States",
 		Unit:  "integer",
@@ -330,27 +327,35 @@ func collectNetworkStat(p *map[string]interface{}) error {
 			{Name: "UNKNOWN", Label: "Unknown", Diff: false, Stacked: true},
 		},
 	}
-	data, err = getSs()
-	if err != nil {
-		return err
-	}
-	err = parseSs(data, p)
-	if err != nil {
-		return err
-	}
 
-	return nil
+	cmd := exec.Command("ss", "-na")
+	out, err := cmd.StdoutPipe()
+	if err != nil {
+		return err
+	}
+	if err := cmd.Start(); err != nil {
+		return err
+	}
+	if err := parseSs(out, p); err != nil {
+		return err
+	}
+	return cmd.Wait()
 }
 
 // parsing metrics from ss
-func parseSs(str string, p *map[string]interface{}) error {
+func parseSs(r io.Reader, p *map[string]interface{}) error {
 	status := 0
-	for i, line := range strings.Split(str, "\n") {
+	first := true
+	scanner := bufio.NewScanner(r)
+
+	for scanner.Scan() {
+		line := scanner.Text()
 		record := strings.Fields(line)
 		if len(record) < 5 {
 			continue
 		}
-		if i == 0 {
+		if first {
+			first = false
 			if record[0] == "State" {
 				// for RHEL6
 				status = 0
@@ -364,18 +369,6 @@ func parseSs(str string, p *map[string]interface{}) error {
 	}
 
 	return nil
-}
-
-// Getting ss
-func getSs() (string, error) {
-	cmd := exec.Command("ss", "-na")
-	var out bytes.Buffer
-	cmd.Stdout = &out
-	err := cmd.Run()
-	if err != nil {
-		return "", err
-	}
-	return out.String(), nil
 }
 
 // collect /proc/vmstat
