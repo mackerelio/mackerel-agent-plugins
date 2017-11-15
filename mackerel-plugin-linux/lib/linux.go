@@ -262,12 +262,7 @@ func collectProcDiskstats(path string, p *map[string]interface{}) error {
 		return err
 	}
 	defer file.Close()
-	err = parseProcDiskstats(file, p)
-	if err != nil {
-		return err
-	}
-
-	return nil
+	return parseProcDiskstats(file, p)
 }
 
 // parsing metrics from diskstats
