@@ -16,6 +16,7 @@ import (
 
 const (
 	namespace          = "AWS/Kinesis"
+	metricsTypeSum     = "Sum"
 	metricsTypeAverage = "Average"
 	metricsTypeMaximum = "Maximum"
 	metricsTypeMinimum = "Minimum"
@@ -104,6 +105,8 @@ func (p KinesisStreamsPlugin) getLastPoint(metric metrics) (float64, error) {
 
 		latest = dp.Timestamp
 		switch metric.Type {
+		case metricsTypeSum:
+			latestVal = *dp.Sum
 		case metricsTypeAverage:
 			latestVal = *dp.Average
 		case metricsTypeMaximum:
@@ -121,23 +124,23 @@ func (p KinesisStreamsPlugin) FetchMetrics() (map[string]interface{}, error) {
 	stat := make(map[string]interface{})
 
 	for _, met := range [...]metrics{
-		{CloudWatchName: "GetRecords.Bytes", MackerelName: "GetRecordsBytes", Type: metricsTypeAverage},
+		{CloudWatchName: "GetRecords.Bytes", MackerelName: "GetRecordsBytes", Type: metricsTypeSum},
 		// Max of IteratorAgeMilliseconds is useful especially when few of iterators are in trouble
 		{CloudWatchName: "GetRecords.IteratorAgeMilliseconds", MackerelName: "GetRecordsDelayMaxMilliseconds", Type: metricsTypeMaximum},
 		{CloudWatchName: "GetRecords.IteratorAgeMilliseconds", MackerelName: "GetRecordsDelayMinMilliseconds", Type: metricsTypeMinimum},
 		{CloudWatchName: "GetRecords.IteratorAgeMilliseconds", MackerelName: "GetRecordsDelayAverageMilliseconds", Type: metricsTypeAverage},
 		{CloudWatchName: "GetRecords.Latency", MackerelName: "GetRecordsLatency", Type: metricsTypeAverage},
-		{CloudWatchName: "GetRecords.Records", MackerelName: "GetRecordsRecords", Type: metricsTypeAverage},
-		{CloudWatchName: "GetRecords.Success", MackerelName: "GetRecordsSuccess", Type: metricsTypeAverage},
-		{CloudWatchName: "IncomingBytes", MackerelName: "IncomingBytes", Type: metricsTypeAverage},
-		{CloudWatchName: "IncomingRecords", MackerelName: "IncomingRecords", Type: metricsTypeAverage},
-		{CloudWatchName: "PutRecord.Bytes", MackerelName: "PutRecordBytes", Type: metricsTypeAverage},
+		{CloudWatchName: "GetRecords.Records", MackerelName: "GetRecordsRecords", Type: metricsTypeSum},
+		{CloudWatchName: "GetRecords.Success", MackerelName: "GetRecordsSuccess", Type: metricsTypeSum},
+		{CloudWatchName: "IncomingBytes", MackerelName: "IncomingBytes", Type: metricsTypeSum},
+		{CloudWatchName: "IncomingRecords", MackerelName: "IncomingRecords", Type: metricsTypeSum},
+		{CloudWatchName: "PutRecord.Bytes", MackerelName: "PutRecordBytes", Type: metricsTypeSum},
 		{CloudWatchName: "PutRecord.Latency", MackerelName: "PutRecordLatency", Type: metricsTypeAverage},
-		{CloudWatchName: "PutRecord.Success", MackerelName: "PutRecordSuccess", Type: metricsTypeAverage},
+		{CloudWatchName: "PutRecord.Success", MackerelName: "PutRecordSuccess", Type: metricsTypeSum},
 		{CloudWatchName: "PutRecords.Bytes", MackerelName: "PutRecordsBytes", Type: metricsTypeAverage},
 		{CloudWatchName: "PutRecords.Latency", MackerelName: "PutRecordsLatency", Type: metricsTypeAverage},
-		{CloudWatchName: "PutRecords.Records", MackerelName: "PutRecordsRecords", Type: metricsTypeAverage},
-		{CloudWatchName: "PutRecords.Success", MackerelName: "PutRecordsSuccess", Type: metricsTypeAverage},
+		{CloudWatchName: "PutRecords.Records", MackerelName: "PutRecordsRecords", Type: metricsTypeSum},
+		{CloudWatchName: "PutRecords.Success", MackerelName: "PutRecordsSuccess", Type: metricsTypeSum},
 		{CloudWatchName: "ReadProvidionedThroughputExceeded", MackerelName: "ReadThroughputExceeded", Type: metricsTypeAverage},
 		{CloudWatchName: "WriteProvidionedThroughputExceeded", MackerelName: "WriteThroughputExceeded", Type: metricsTypeAverage},
 	} {
