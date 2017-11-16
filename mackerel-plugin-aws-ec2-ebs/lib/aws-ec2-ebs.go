@@ -290,7 +290,7 @@ func (p EBSPlugin) FetchMetrics() (map[string]interface{}, error) {
 				if err != nil {
 					retErr := errors.New(volumeID + " " + err.Error() + ":" + cloudwatchdef.MetricName)
 					if err == NoDatapointErr {
-						getStderrLogger().Println(retErr)
+						// nop
 					} else {
 						return nil, retErr
 					}
@@ -306,13 +306,6 @@ func (p EBSPlugin) FetchMetrics() (map[string]interface{}, error) {
 // GraphDefinition for plugin
 func (p EBSPlugin) GraphDefinition() map[string]mp.Graphs {
 	return graphdef
-}
-
-func getStderrLogger() *log.Logger {
-	if stderrLogger == nil {
-		stderrLogger = log.New(os.Stderr, "", log.LstdFlags)
-	}
-	return stderrLogger
 }
 
 func normalizeVolumeID(volumeID string) string {
