@@ -217,7 +217,7 @@ func (p *EBSPlugin) prepare() error {
 	return nil
 }
 
-var noDatapointErr = errors.New("fetched no datapoints")
+var errNoDataPoint = errors.New("fetched no datapoints")
 
 func (p EBSPlugin) getLastPoint(vol *ec2.Volume, metricName string, statType string) (float64, int, error) {
 	now := time.Now()
@@ -248,7 +248,7 @@ func (p EBSPlugin) getLastPoint(vol *ec2.Volume, metricName string, statType str
 
 	datapoints := resp.Datapoints
 	if len(datapoints) == 0 {
-		return 0, 0, noDatapointErr
+		return 0, 0, errNoDataPoint
 	}
 
 	latest := time.Unix(0, 0)
@@ -289,7 +289,7 @@ func (p EBSPlugin) FetchMetrics() (map[string]interface{}, error) {
 				val, period, err := p.getLastPoint(vol, cloudwatchdef.MetricName, cloudwatchdef.Statistics)
 				if err != nil {
 					retErr := errors.New(volumeID + " " + err.Error() + ":" + cloudwatchdef.MetricName)
-					if err == noDatapointErr {
+					if err == errNoDataPoint {
 						// nop
 					} else {
 						return nil, retErr
