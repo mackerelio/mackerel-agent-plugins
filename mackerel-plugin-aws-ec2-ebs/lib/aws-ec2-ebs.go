@@ -4,7 +4,6 @@ import (
 	"errors"
 	"flag"
 	"log"
-	"os"
 	"strings"
 	"time"
 
@@ -50,55 +49,55 @@ type cloudWatchSetting struct {
 var cloudwatchdefs = map[string](cloudWatchSetting){
 	"ec2.ebs.bandwidth.#.read": cloudWatchSetting{
 		MetricName: "VolumeReadBytes", Statistics: "Sum",
-		CalcFunc:   func(val float64, period float64) float64 { return val / period },
+		CalcFunc: func(val float64, period float64) float64 { return val / period },
 	},
 	"ec2.ebs.bandwidth.#.write": cloudWatchSetting{
 		MetricName: "VolumeWriteBytes", Statistics: "Sum",
-		CalcFunc:   func(val float64, period float64) float64 { return val / period },
+		CalcFunc: func(val float64, period float64) float64 { return val / period },
 	},
 	"ec2.ebs.throughput.#.read": cloudWatchSetting{
 		MetricName: "VolumeReadOps", Statistics: "Sum",
-		CalcFunc:   func(val float64, period float64) float64 { return val / period },
+		CalcFunc: func(val float64, period float64) float64 { return val / period },
 	},
 	"ec2.ebs.throughput.#.write": cloudWatchSetting{
 		MetricName: "VolumeWriteOps", Statistics: "Sum",
-		CalcFunc:   func(val float64, period float64) float64 { return val / period },
+		CalcFunc: func(val float64, period float64) float64 { return val / period },
 	},
 	"ec2.ebs.size_per_op.#.read": cloudWatchSetting{
 		MetricName: "VolumeReadBytes", Statistics: "Average",
-		CalcFunc:   func(val float64, period float64) float64 { return val },
+		CalcFunc: func(val float64, period float64) float64 { return val },
 	},
 	"ec2.ebs.size_per_op.#.write": cloudWatchSetting{
 		MetricName: "VolumeWriteBytes", Statistics: "Average",
-		CalcFunc:   func(val float64, period float64) float64 { return val },
+		CalcFunc: func(val float64, period float64) float64 { return val },
 	},
 	"ec2.ebs.latency.#.read": cloudWatchSetting{
 		MetricName: "VolumeTotalReadTime", Statistics: "Average",
-		CalcFunc:   func(val float64, period float64) float64 { return val * 1000 },
+		CalcFunc: func(val float64, period float64) float64 { return val * 1000 },
 	},
 	"ec2.ebs.latency.#.write": cloudWatchSetting{
 		MetricName: "VolumeTotalWriteTime", Statistics: "Average",
-		CalcFunc:   func(val float64, period float64) float64 { return val * 1000 },
+		CalcFunc: func(val float64, period float64) float64 { return val * 1000 },
 	},
 	"ec2.ebs.queue_length.#.queue_length": cloudWatchSetting{
 		MetricName: "VolumeQueueLength", Statistics: "Average",
-		CalcFunc:   func(val float64, period float64) float64 { return val },
+		CalcFunc: func(val float64, period float64) float64 { return val },
 	},
 	"ec2.ebs.idle_time.#.idle_time": cloudWatchSetting{
 		MetricName: "VolumeIdleTime", Statistics: "Sum",
-		CalcFunc:   func(val float64, period float64) float64 { return val / period * 100 },
+		CalcFunc: func(val float64, period float64) float64 { return val / period * 100 },
 	},
 	"ec2.ebs.throughput_delivered.#.throughput_delivered": cloudWatchSetting{
 		MetricName: "VolumeThroughputPercentage", Statistics: "Average",
-		CalcFunc:   func(val float64, period float64) float64 { return val },
+		CalcFunc: func(val float64, period float64) float64 { return val },
 	},
 	"ec2.ebs.consumed_ops.#.consumed_ops": cloudWatchSetting{
 		MetricName: "VolumeConsumedReadWriteOps", Statistics: "Sum",
-		CalcFunc:   func(val float64, period float64) float64 { return val },
+		CalcFunc: func(val float64, period float64) float64 { return val },
 	},
 	"ec2.ebs.burst_balance.#.burst_balance": cloudWatchSetting{
 		MetricName: "BurstBalance", Statistics: "Average",
-		CalcFunc:   func(val float64, period float64) float64 { return val },
+		CalcFunc: func(val float64, period float64) float64 { return val },
 	},
 }
 
@@ -217,6 +216,8 @@ func (p *EBSPlugin) prepare() error {
 	return nil
 }
 
+var errNoDataPoint = errors.New("fetched no datapoints")
+
 func (p EBSPlugin) getLastPoint(vol *ec2.Volume, metricName string, statType string) (float64, int, error) {
 	now := time.Now()
 
@@ -246,7 +247,7 @@ func (p EBSPlugin) getLastPoint(vol *ec2.Volume, metricName string, statType str
 
 	datapoints := resp.Datapoints
 	if len(datapoints) == 0 {
-		return 0, 0, errors.New("fetched no datapoints")
+		return 0, 0, errNoDataPoint
 	}
 
 	latest := time.Unix(0, 0)
@@ -287,8 +288,8 @@ func (p EBSPlugin) FetchMetrics() (map[string]interface{}, error) {
 				val, period, err := p.getLastPoint(vol, cloudwatchdef.MetricName, cloudwatchdef.Statistics)
 				if err != nil {
 					retErr := errors.New(volumeID + " " + err.Error() + ":" + cloudwatchdef.MetricName)
-					if err.Error() == "fetched no datapoints" {
-						getStderrLogger().Println(retErr)
+					if err == errNoDataPoint {
+						// nop
 					} else {
 						return nil, retErr
 					}
@@ -304,13 +305,6 @@ func (p EBSPlugin) FetchMetrics() (map[string]interface{}, error) {
 // GraphDefinition for plugin
 func (p EBSPlugin) GraphDefinition() map[string]mp.Graphs {
 	return graphdef
-}
-
-func getStderrLogger() *log.Logger {
-	if stderrLogger == nil {
-		stderrLogger = log.New(os.Stderr, "", log.LstdFlags)
-	}
-	return stderrLogger
 }
 
 func normalizeVolumeID(volumeID string) string {
