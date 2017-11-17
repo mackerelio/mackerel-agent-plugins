@@ -314,6 +314,7 @@ func (m DockerPlugin) generateName(container docker.APIContainers) string {
 // FetchMetricsWithAPI use docker API to fetch metrics
 func (m DockerPlugin) FetchMetricsWithAPI(containers []docker.APIContainers) (map[string]interface{}, error) {
 	var wg sync.WaitGroup
+	var mu sync.Mutex
 	res := map[string]interface{}{}
 	for _, container := range containers {
 		wg.Add(1)
@@ -344,7 +345,9 @@ func (m DockerPlugin) FetchMetricsWithAPI(containers []docker.APIContainers) (ma
 			if len(resultStats) == 0 {
 				log.Fatalf("Stats: Expected 1 result. Got %d.", len(resultStats))
 			}
+			mu.Lock()
 			m.parseStats(&res, metricName, resultStats[0])
+			mu.Unlock()
 		}(container)
 	}
 	wg.Wait()
