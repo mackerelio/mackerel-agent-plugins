@@ -1,6 +1,7 @@
 package mplinux
 
 import (
+	"bytes"
 	"os"
 	"testing"
 
@@ -66,7 +67,7 @@ func TestParseProcStat(t *testing.T) {
  processes 1959410`
 	stat := make(map[string]interface{})
 
-	err := parseProcStat(stub, &stat)
+	err := parseProcStat(bytes.NewBufferString(stub), &stat)
 	assert.Nil(t, err)
 	assert.EqualValues(t, stat["interrupts"], 614818624)
 	assert.EqualValues(t, stat["context_switches"], 879305394)
@@ -91,7 +92,7 @@ func TestParseProcDiskstats(t *testing.T) {
  253       2 dm-2 83 0 664 94 0 0 0 0 0 94 94`
 	stat := make(map[string]interface{})
 
-	err := parseProcDiskstats(stub, &stat)
+	err := parseProcDiskstats(bytes.NewBufferString(stub), &stat)
 	assert.Nil(t, err)
 	assert.EqualValues(t, stat["iotime_sda"], 23865772)
 	assert.EqualValues(t, stat["iotime_weighted_sda"], 436201338)
@@ -99,14 +100,14 @@ func TestParseProcDiskstats(t *testing.T) {
 	assert.EqualValues(t, stat["tswriting_sda"], 423711425)
 }
 
-func TestCollectSs(t *testing.T) {
+func TestCollectNetworkStat(t *testing.T) {
 	_, err := os.Stat("/usr/sbin/ss")
 	if err != nil {
 		return
 	}
 	p := make(map[string]interface{})
 
-	assert.Nil(t, collectSs(&p))
+	assert.Nil(t, collectNetworkStat(&p))
 }
 
 func TestParseSs(t *testing.T) {
@@ -117,7 +118,7 @@ TIME-WAIT  0      0                         ::ffff:127.0.0.1:80                 
 ESTAB      0      0                              10.0.25.101:60826                         10.0.25.104:5672  `
 	stat := make(map[string]interface{})
 
-	err := parseSs(stub, &stat)
+	err := parseSs(bytes.NewBufferString(stub), &stat)
 	assert.Nil(t, err)
 	assert.EqualValues(t, stat["LISTEN"], 2)
 	assert.EqualValues(t, stat["TIME-WAIT"], 1)
@@ -134,23 +135,11 @@ u_str LISTEN     0      10                                  /var/run/acpid.socke
 u_str ESTAB      0      0                                    @/com/ubuntu/upstart 10582                                                  * 1887`
 	stat := make(map[string]interface{})
 
-	err := parseSs(stub, &stat)
+	err := parseSs(bytes.NewBufferString(stub), &stat)
 	assert.Nil(t, err)
 	assert.EqualValues(t, stat["LISTEN"], 2)
 	assert.EqualValues(t, stat["UNCONN"], 3)
 	assert.EqualValues(t, stat["ESTAB"], 1)
-}
-
-func TestGetSs(t *testing.T) {
-	_, err := os.Stat("/usr/sbin/ss")
-	if err != nil {
-		return
-	}
-
-	ret, err := getSs()
-	assert.Nil(t, err)
-	assert.NotNil(t, ret)
-	assert.Contains(t, ret, "State")
 }
 
 func TestCollectProcVmstat(t *testing.T) {
@@ -171,22 +160,10 @@ pswpin 0
 pswpout 113`
 	stat := make(map[string]interface{})
 
-	err := parseProcVmstat(stub, &stat)
+	err := parseProcVmstat(bytes.NewBufferString(stub), &stat)
 	assert.Nil(t, err)
 	assert.EqualValues(t, stat["pgpgin"], 770294)
 	assert.EqualValues(t, stat["pgpgout"], 31351354)
 	assert.EqualValues(t, stat["pswpin"], 0)
 	assert.EqualValues(t, stat["pswpout"], 113)
-}
-
-func TestGetProc(t *testing.T) {
-	stub := "/proc/diskstats"
-	_, err := os.Stat(stub)
-	if err != nil {
-		return
-	}
-
-	ret, err := getProc(stub)
-	assert.Nil(t, err)
-	assert.NotNil(t, ret)
 }

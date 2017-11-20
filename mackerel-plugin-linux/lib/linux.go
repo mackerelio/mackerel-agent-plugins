@@ -1,8 +1,10 @@
 package mplinux
 
 import (
+	"bufio"
 	"bytes"
 	"fmt"
+	"io"
 	"os"
 	"os/exec"
 	"regexp"
@@ -43,7 +45,7 @@ func (c LinuxPlugin) GraphDefinition() map[string]mp.Graphs {
 	}
 
 	if c.Typemap["all"] || c.Typemap["netstat"] {
-		err = collectSs(&p)
+		err = collectNetworkStat(&p)
 		if err != nil {
 			return nil
 		}
@@ -109,7 +111,7 @@ func (c LinuxPlugin) FetchMetrics() (map[string]interface{}, error) {
 	}
 
 	if c.Typemap["all"] || c.Typemap["netstat"] {
-		err = collectSs(&p)
+		err = collectNetworkStat(&p)
 		if err != nil {
 			return nil, err
 		}
@@ -191,9 +193,6 @@ func getWho() (string, error) {
 
 // collect /proc/stat
 func collectProcStat(path string, p *map[string]interface{}) error {
-	var err error
-	var data string
-
 	graphdef["linux.interrupts"] = mp.Graphs{
 		Label: "Linux Interrupts",
 		Unit:  "integer",
@@ -216,21 +215,20 @@ func collectProcStat(path string, p *map[string]interface{}) error {
 		},
 	}
 
-	data, err = getProc(path)
+	file, err := os.Open(path)
 	if err != nil {
 		return err
 	}
-	err = parseProcStat(data, p)
-	if err != nil {
-		return err
-	}
-
-	return nil
+	defer file.Close()
+	return parseProcStat(file, p)
 }
 
 // parsing metrics from /proc/stat
-func parseProcStat(str string, p *map[string]interface{}) error {
-	for _, line := range strings.Split(str, "\n") {
+func parseProcStat(r io.Reader, p *map[string]interface{}) error {
+	scanner := bufio.NewScanner(r)
+
+	for scanner.Scan() {
+		line := scanner.Text()
 		record := strings.Fields(line)
 		if len(record) < 2 {
 			continue
@@ -255,28 +253,23 @@ func parseProcStat(str string, p *map[string]interface{}) error {
 
 // collect /proc/diskstats
 func collectProcDiskstats(path string, p *map[string]interface{}) error {
-	var err error
-	var data string
-
-	data, err = getProc(path)
+	file, err := os.Open(path)
 	if err != nil {
 		return err
 	}
-	err = parseProcDiskstats(data, p)
-	if err != nil {
-		return err
-	}
-
-	return nil
+	defer file.Close()
+	return parseProcDiskstats(file, p)
 }
 
 // parsing metrics from diskstats
-func parseProcDiskstats(str string, p *map[string]interface{}) error {
-
+func parseProcDiskstats(r io.Reader, p *map[string]interface{}) error {
 	var elapsedData []mp.Metrics
 	var rwtimeData []mp.Metrics
 
-	for _, line := range strings.Split(str, "\n") {
+	scanner := bufio.NewScanner(r)
+
+	for scanner.Scan() {
+		line := scanner.Text()
 		// See also: https://www.kernel.org/doc/Documentation/ABI/testing/procfs-diskstats
 		record := strings.Fields(line)
 		if len(record) < 14 {
@@ -315,10 +308,7 @@ func parseProcDiskstats(str string, p *map[string]interface{}) error {
 }
 
 // collect ss
-func collectSs(p *map[string]interface{}) error {
-	var err error
-	var data string
-
+func collectNetworkStat(p *map[string]interface{}) error {
 	graphdef["linux.ss"] = mp.Graphs{
 		Label: "Linux Network Connection States",
 		Unit:  "integer",
@@ -337,27 +327,35 @@ func collectSs(p *map[string]interface{}) error {
 			{Name: "UNKNOWN", Label: "Unknown", Diff: false, Stacked: true},
 		},
 	}
-	data, err = getSs()
-	if err != nil {
-		return err
-	}
-	err = parseSs(data, p)
-	if err != nil {
-		return err
-	}
 
-	return nil
+	cmd := exec.Command("ss", "-na")
+	out, err := cmd.StdoutPipe()
+	if err != nil {
+		return err
+	}
+	if err := cmd.Start(); err != nil {
+		return err
+	}
+	if err := parseSs(out, p); err != nil {
+		return err
+	}
+	return cmd.Wait()
 }
 
 // parsing metrics from ss
-func parseSs(str string, p *map[string]interface{}) error {
+func parseSs(r io.Reader, p *map[string]interface{}) error {
 	status := 0
-	for i, line := range strings.Split(str, "\n") {
+	first := true
+	scanner := bufio.NewScanner(r)
+
+	for scanner.Scan() {
+		line := scanner.Text()
 		record := strings.Fields(line)
 		if len(record) < 5 {
 			continue
 		}
-		if i == 0 {
+		if first {
+			first = false
 			if record[0] == "State" {
 				// for RHEL6
 				status = 0
@@ -373,23 +371,8 @@ func parseSs(str string, p *map[string]interface{}) error {
 	return nil
 }
 
-// Getting ss
-func getSs() (string, error) {
-	cmd := exec.Command("ss", "-na")
-	var out bytes.Buffer
-	cmd.Stdout = &out
-	err := cmd.Run()
-	if err != nil {
-		return "", err
-	}
-	return out.String(), nil
-}
-
 // collect /proc/vmstat
 func collectProcVmstat(path string, p *map[string]interface{}) error {
-	var err error
-	var data string
-
 	graphdef["linux.swap"] = mp.Graphs{
 		Label: "Linux Swap Usage",
 		Unit:  "integer",
@@ -399,21 +382,20 @@ func collectProcVmstat(path string, p *map[string]interface{}) error {
 		},
 	}
 
-	data, err = getProc(path)
+	file, err := os.Open(path)
 	if err != nil {
 		return err
 	}
-	err = parseProcVmstat(data, p)
-	if err != nil {
-		return err
-	}
-
-	return nil
+	defer file.Close()
+	return parseProcVmstat(file, p)
 }
 
 // parsing metrics from /proc/vmstat
-func parseProcVmstat(str string, p *map[string]interface{}) error {
-	for _, line := range strings.Split(str, "\n") {
+func parseProcVmstat(r io.Reader, p *map[string]interface{}) error {
+	scanner := bufio.NewScanner(r)
+
+	for scanner.Scan() {
+		line := scanner.Text()
 		record := strings.Fields(line)
 		if len(record) != 2 {
 			continue
@@ -426,18 +408,6 @@ func parseProcVmstat(str string, p *map[string]interface{}) error {
 	}
 
 	return nil
-}
-
-// Getting /proc/*
-func getProc(path string) (string, error) {
-	cmd := exec.Command("cat", path)
-	var out bytes.Buffer
-	cmd.Stdout = &out
-	err := cmd.Run()
-	if err != nil {
-		return "", err
-	}
-	return out.String(), nil
 }
 
 // atof
