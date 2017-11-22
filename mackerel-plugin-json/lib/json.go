@@ -80,13 +80,18 @@ func (p JSONPlugin) FetchMetrics() (map[string]float64, error) {
 		TLSClientConfig: &tls.Config{InsecureSkipVerify: p.InsecureSkipVerify},
 	}
 	client := &http.Client{Transport: tr}
-	response, _ := client.Get(p.URL)
-	bytes, _ := ioutil.ReadAll(response.Body)
+	response, err := client.Get(p.URL)
+	if err != nil {
+		return nil, err
+	}
+	bytes, err := ioutil.ReadAll(response.Body)
+	if err != nil {
+		return nil, err
+	}
 
 	var content interface{}
-	err := json.Unmarshal(bytes, &content)
-	if err != nil {
-		panic(err)
+	if err := json.Unmarshal(bytes, &content); err != nil {
+		return nil, err
 	}
 
 	return p.traverseMap(content, []string{p.Prefix})
@@ -100,6 +105,11 @@ func Do() {
 	exclude := flag.String("exclude", `^$`, "Exclude metrics that matches the expression")
 	include := flag.String("include", ``, "Output metrics that matches the expression")
 	flag.Parse()
+
+	if *url == "" {
+		fmt.Println("-url is mandatory")
+		os.Exit(1)
+	}
 
 	var jsonplugin JSONPlugin
 
