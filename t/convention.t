@@ -9,6 +9,7 @@ my $plugins_in_other_repository = [qw(
     mackerel-plugin-aws-ec2
     mackerel-plugin-aws-kinesis-firehose
     mackerel-plugin-aws-rekognition
+    mackerel-plugin-aws-waf
 )];
 my $is_in_other_repository = {
     map { $_ => 1 } @$plugins_in_other_repository,

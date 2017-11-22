@@ -20,7 +20,6 @@ Documentation for each plugin is located in its respective sub directory.
 * [mackerel-plugin-aws-lambda](./mackerel-plugin-aws-lambda/README.md)
 * [mackerel-plugin-aws-rds](./mackerel-plugin-aws-rds/README.md)
 * [mackerel-plugin-aws-ses](./mackerel-plugin-aws-ses/README.md)
-* [mackerel-plugin-aws-waf](./mackerel-plugin-aws-waf/README.md)
 * [mackerel-plugin-conntrack](./mackerel-plugin-conntrack/README.md)
 * [mackerel-plugin-docker](./mackerel-plugin-docker/README.md)
 * [mackerel-plugin-elasticsearch](./mackerel-plugin-elasticsearch/README.md)
