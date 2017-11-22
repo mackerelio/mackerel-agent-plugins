@@ -106,6 +106,11 @@ func Do() {
 	include := flag.String("include", ``, "Output metrics that matches the expression")
 	flag.Parse()
 
+	if *url == "" {
+		fmt.Println("-url is mandatory")
+		os.Exit(1)
+	}
+
 	var jsonplugin JSONPlugin
 
 	jsonplugin.URL = *url
