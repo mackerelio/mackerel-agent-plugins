@@ -107,7 +107,7 @@ func (m JVMPlugin) calculateMemorySpaceRate(gcStat map[string]float64) (map[stri
 
 func (m JVMPlugin) checkCMSGC() bool {
 	// jinfo does not work on remote
-	if m.Remote == nil {
+	if m.Remote != nil {
 		return false
 	}
 	stdout, _, exitStatus, err := runTimeoutCommand(m.JinfoPath, "-flag", "UseConcMarkSweepGC", m.Lvmid)
