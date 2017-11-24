@@ -308,15 +308,14 @@ func (m JVMPlugin) GraphDefinition() map[string]mp.Graphs {
 }
 
 func generateVmid(remote, lvmid *string) *string {
-	if remote == nil {
-		return lvmid
-	} else {
+	if remote != nil {
 		if lvmid == nil {
 			return remote
 		}
 		vmid := fmt.Sprintf("%s@%s", *lvmid, *remote)
 		return &vmid
 	}
+	return lvmid
 }
 
 // Do the plugin
