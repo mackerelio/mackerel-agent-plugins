@@ -19,7 +19,7 @@ var logger = logging.GetLogger("metrics.plugin.jvm")
 
 // JVMPlugin plugin for JVM
 type JVMPlugin struct {
-	Remote    string
+	Remote    *string
 	Lvmid     string
 	JstatPath string
 	JinfoPath string
@@ -107,7 +107,7 @@ func (m JVMPlugin) calculateMemorySpaceRate(gcStat map[string]float64) (map[stri
 
 func (m JVMPlugin) checkCMSGC() bool {
 	// jinfo does not work on remote
-	if m.Remote != "" {
+	if m.Remote == nil {
 		return false
 	}
 	stdout, _, exitStatus, err := runTimeoutCommand(m.JinfoPath, "-flag", "UseConcMarkSweepGC", m.Lvmid)
@@ -307,14 +307,14 @@ func (m JVMPlugin) GraphDefinition() map[string]mp.Graphs {
 	}
 }
 
-func generateVmid(remote string, lvmid *string) *string {
-	if remote == "" {
+func generateVmid(remote, lvmid *string) *string {
+	if remote == nil {
 		return lvmid
 	} else {
 		if lvmid == nil {
-			return &remote
+			return remote
 		}
-		vmid := fmt.Sprintf("%s@%s", *lvmid, remote)
+		vmid := fmt.Sprintf("%s@%s", *lvmid, *remote)
 		return &vmid
 	}
 }
@@ -331,7 +331,9 @@ func Do() {
 	flag.Parse()
 
 	var jvm JVMPlugin
-	jvm.Remote = *optRemote
+	if *optRemote != "" {
+		jvm.Remote = optRemote
+	}
 	jvm.JstatPath = *optJstatPath
 	jvm.JinfoPath = *optJinfoPath
 
@@ -342,7 +344,7 @@ func Do() {
 	}
 
 	if *optPidFile == "" {
-		lvmid, err := fetchLvmidByAppname(*optJavaName, generateVmid(*optRemote, nil), *optJpsPath)
+		lvmid, err := fetchLvmidByAppname(*optJavaName, generateVmid(jvm.Remote, nil), *optJpsPath)
 		if err != nil {
 			logger.Errorf("Failed to fetch lvmid. %s. Please run with the java process user.", err)
 			os.Exit(1)
