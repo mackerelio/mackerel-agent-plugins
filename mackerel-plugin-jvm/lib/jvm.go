@@ -318,8 +318,33 @@ func generateVmid(remote, lvmid *string) *string {
 	return lvmid
 }
 
+func generateRemote(remote, host string, port int) *string {
+	if remote == "" {
+		if host == "" {
+			if port != 0 {
+				// for backward compatibility
+				hostPort := fmt.Sprintf("localhost:%d", port)
+				return &hostPort
+			}
+			return nil
+		}
+		if port == 0 {
+			return &host
+		}
+		hostPort := fmt.Sprintf("%s:%d", host, port)
+		return &hostPort
+	}
+
+	if host != "" || port != 0 {
+		logger.Warningf("'-host' and '-port' are ignored, since '-remote' is specified")
+	}
+	return &remote
+}
+
 // Do the plugin
 func Do() {
+	optHost := flag.String("host", "", "jps/jstat target hostname [deprecated]")
+	optPort := flag.Int("port", 0, "jps/jstat target port [deprecarted]")
 	optRemote := flag.String("remote", "", "jps/jstat remote target. hostname[:port][/servername]")
 	optJstatPath := flag.String("jstatpath", "/usr/bin/jstat", "jstat path")
 	optJinfoPath := flag.String("jinfopath", "/usr/bin/jinfo", "jinfo path")
@@ -330,11 +355,9 @@ func Do() {
 	flag.Parse()
 
 	var jvm JVMPlugin
-	if *optRemote != "" {
-		jvm.Remote = optRemote
-	}
 	jvm.JstatPath = *optJstatPath
 	jvm.JinfoPath = *optJinfoPath
+	jvm.Remote = generateRemote(*optRemote, *optHost, *optPort)
 
 	if *optJavaName == "" {
 		logger.Errorf("javaname is required (if you use 'pidfile' option, 'javaname' is used as just a prefix of graph label)")
