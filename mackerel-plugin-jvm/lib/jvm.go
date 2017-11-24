@@ -346,7 +346,7 @@ func Do() {
 	if *optPidFile == "" {
 		lvmid, err := fetchLvmidByAppname(*optJavaName, generateVmid(jvm.Remote, nil), *optJpsPath)
 		if err != nil {
-			logger.Errorf("Failed to fetch lvmid. %s. Please run with the java process user.", err)
+			logger.Errorf("Failed to fetch lvmid. %s. Please run with the java process user when monitoring local JVM, or set proper 'remote' option when monitorint remote one.", err)
 			os.Exit(1)
 		}
 		jvm.Lvmid = lvmid
