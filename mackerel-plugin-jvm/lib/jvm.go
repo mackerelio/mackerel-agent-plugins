@@ -309,8 +309,7 @@ func generateVmid(remote, lvmid string) string {
 		if lvmid == "" {
 			return remote
 		}
-		vmid := fmt.Sprintf("%s@%s", lvmid, remote)
-		return vmid
+		return fmt.Sprintf("%s@%s", lvmid, remote)
 	}
 	return lvmid
 }
@@ -320,16 +319,14 @@ func generateRemote(remote, host string, port int) string {
 		if host == "" {
 			if port != 0 {
 				// for backward compatibility
-				hostPort := fmt.Sprintf("localhost:%d", port)
-				return hostPort
+				return fmt.Sprintf("localhost:%d", port)
 			}
 			return ""
 		}
 		if port == 0 {
 			return host
 		}
-		hostPort := fmt.Sprintf("%s:%d", host, port)
-		return hostPort
+		return fmt.Sprintf("%s:%d", host, port)
 	}
 
 	if host != "" || port != 0 {
