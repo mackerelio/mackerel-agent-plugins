@@ -47,7 +47,6 @@ Finally, if you want to get linux metrics via Mackerel, please edit mackerel-age
 ```
 [plugin.metrics.linux]
 command = "/path/to/mackerel-plugin-linux"
-type = "metric"
 ```
 
 ## Optional: Selecting get metrics
