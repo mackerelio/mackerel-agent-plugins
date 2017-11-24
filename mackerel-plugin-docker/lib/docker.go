@@ -57,10 +57,10 @@ var graphdef = map[string]mp.Graphs{
 		Label: "Docker BlkIO IOPS",
 		Unit:  "iops",
 		Metrics: []mp.Metrics{
-			{Name: "read", Label: "Read", Diff: true, Stacked: true, Type: "uint64"},
-			{Name: "write", Label: "Write", Diff: true, Stacked: true, Type: "uint64"},
-			{Name: "sync", Label: "Sync", Diff: true, Stacked: true, Type: "uint64"},
-			{Name: "async", Label: "Async", Diff: true, Stacked: true, Type: "uint64"},
+			{Name: "read", Label: "Read", Diff: true, Stacked: true, Type: "uint64", Scale: (1.0 / 60.0)},
+			{Name: "write", Label: "Write", Diff: true, Stacked: true, Type: "uint64", Scale: (1.0 / 60.0)},
+			{Name: "sync", Label: "Sync", Diff: true, Stacked: true, Type: "uint64", Scale: (1.0 / 60.0)},
+			{Name: "async", Label: "Async", Diff: true, Stacked: true, Type: "uint64", Scale: (1.0 / 60.0)},
 		},
 	},
 	"docker.blkio.io_service_bytes.#": {
