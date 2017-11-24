@@ -27,7 +27,7 @@ First, build this program.
 
 ```
 go get github.com/mackerelio/mackerel-agent-plugins
-cd $GO_HOME/src/github.com/mackerelio/mackerel-agent-plugins/mackerel-plugin-linux
+cd $(go env GOPATH)/src/github.com/mackerelio/mackerel-agent-plugins/mackerel-plugin-linux
 go test
 go build
 ```
@@ -47,7 +47,6 @@ Finally, if you want to get linux metrics via Mackerel, please edit mackerel-age
 ```
 [plugin.metrics.linux]
 command = "/path/to/mackerel-plugin-linux"
-type = "metric"
 ```
 
 ## Optional: Selecting get metrics
