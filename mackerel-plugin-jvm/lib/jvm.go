@@ -98,15 +98,15 @@ func (m JVMPlugin) calculateMemorySpaceRate(gcStat map[string]float64) (map[stri
 	ret := make(map[string]float64)
 	ret["oldSpaceRate"] = gcStat["OU"] / gcStat["OC"] * 100
 	ret["newSpaceRate"] = (gcStat["S0U"] + gcStat["S1U"] + gcStat["EU"]) / (gcStat["S0C"] + gcStat["S1C"] + gcStat["EC"]) * 100
-	if checkCMSGC(m.Lvmid, m.JinfoPath) {
+	if m.checkCMSGC() {
 		ret["CMSInitiatingOccupancyFraction"] = fetchCMSInitiatingOccupancyFraction(m.Lvmid, m.JinfoPath)
 	}
 
 	return ret, nil
 }
 
-func checkCMSGC(lvmid, JinfoPath string) bool {
-	stdout, _, exitStatus, err := runTimeoutCommand(JinfoPath, "-flag", "UseConcMarkSweepGC", lvmid)
+func (m JVMPlugin) checkCMSGC() bool {
+	stdout, _, exitStatus, err := runTimeoutCommand(m.JinfoPath, "-flag", "UseConcMarkSweepGC", m.Lvmid)
 
 	if err == nil && exitStatus.IsTimedOut() {
 		err = fmt.Errorf("jinfo command timed out")
