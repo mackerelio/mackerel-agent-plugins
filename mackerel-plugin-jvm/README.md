@@ -21,6 +21,13 @@ command = "/path/to/mackerel-plugin-jvm -javaname=NettyServer -jstatpath=/usr/bi
 user = "SOME_USER_NAME"
 ```
 
+## Monitoring remote JVM
+
+This plugin can retrieve metrics from remote jstatd with rmi protocol by setting `-remote` option.
+In this case, following limitations are applied:
+- jps and jstat commands must be executable localy from this plugin
+- 'CMS Initiating Occupancy Fraction' metric cannot be retrieved remotely
+
 ## About javaname
 
 You can check javaname by jps command.
