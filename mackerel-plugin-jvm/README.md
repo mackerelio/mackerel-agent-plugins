@@ -6,7 +6,7 @@ JVM(jstat) custom metrics plugin for mackerel.io agent.
 ## Synopsis
 
 ```shell
-mackerel-plugin-jvm -javaname=<javaname> [-pidfile=</path/to/pidfile>] [-jstatpath=</path/to/jstat] [-jpspath=/path/to/jps] [-jinfopath=/path/to/jinfo] [-host=<host>] [-port=<port>]
+mackerel-plugin-jvm -javaname=<javaname> [-pidfile=</path/to/pidfile>] [-jstatpath=</path/to/jstat] [-jpspath=/path/to/jps] [-jinfopath=/path/to/jinfo] [-remote=<host:port>]
 ```
 
 ## Requirements

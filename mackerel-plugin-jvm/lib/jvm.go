@@ -19,7 +19,7 @@ var logger = logging.GetLogger("metrics.plugin.jvm")
 
 // JVMPlugin plugin for JVM
 type JVMPlugin struct {
-	Target    string
+	Remote    string
 	Lvmid     string
 	JstatPath string
 	JinfoPath string
@@ -30,8 +30,17 @@ type JVMPlugin struct {
 // # jps
 // 26547 NettyServer
 // 6438 Jps
-func fetchLvmidByAppname(appname, target, jpsPath string) (string, error) {
-	stdout, _, exitStatus, err := runTimeoutCommand(jpsPath, target)
+func fetchLvmidByAppname(appname string, target *string, jpsPath string) (string, error) {
+	var (
+		stdout     string
+		exitStatus timeout.ExitStatus
+		err        error
+	)
+	if target != nil {
+		stdout, _, exitStatus, err = runTimeoutCommand(jpsPath, *target)
+	} else {
+		stdout, _, exitStatus, err = runTimeoutCommand(jpsPath)
+	}
 
 	if err == nil && exitStatus.IsTimedOut() {
 		err = fmt.Errorf("jps command timed out")
@@ -54,8 +63,12 @@ func fetchLvmidByAppname(appname, target, jpsPath string) (string, error) {
 	return "", fmt.Errorf("cannot get lvmid from %s (please run with the java process user)", appname)
 }
 
-func fetchJstatMetrics(lvmid, option, jstatPath string) (map[string]float64, error) {
-	stdout, _, exitStatus, err := runTimeoutCommand(jstatPath, option, lvmid)
+func (m JVMPlugin) fetchJstatMetrics(option string) (map[string]float64, error) {
+	vmid := generateVmid(m.Remote, &m.Lvmid)
+	if vmid == nil {
+		return nil, fmt.Errorf("Unexpected error")
+	}
+	stdout, _, exitStatus, err := runTimeoutCommand(m.JstatPath, option, *vmid)
 
 	if err == nil && exitStatus.IsTimedOut() {
 		err = fmt.Errorf("jstat command timed out")
@@ -172,19 +185,19 @@ func runTimeoutCommand(Path string, Args ...string) (string, string, timeout.Exi
 
 // FetchMetrics interface for mackerelplugin
 func (m JVMPlugin) FetchMetrics() (map[string]interface{}, error) {
-	gcStat, err := fetchJstatMetrics(m.Lvmid, "-gc", m.JstatPath)
+	gcStat, err := m.fetchJstatMetrics("-gc")
 	if err != nil {
 		return nil, err
 	}
-	gcCapacityStat, err := fetchJstatMetrics(m.Lvmid, "-gccapacity", m.JstatPath)
+	gcCapacityStat, err := m.fetchJstatMetrics("-gccapacity")
 	if err != nil {
 		return nil, err
 	}
-	gcNewStat, err := fetchJstatMetrics(m.Lvmid, "-gcnew", m.JstatPath)
+	gcNewStat, err := m.fetchJstatMetrics("-gcnew")
 	if err != nil {
 		return nil, err
 	}
-	gcOldStat, err := fetchJstatMetrics(m.Lvmid, "-gcold", m.JstatPath)
+	gcOldStat, err := m.fetchJstatMetrics("-gcold")
 	if err != nil {
 		return nil, err
 	}
@@ -290,10 +303,21 @@ func (m JVMPlugin) GraphDefinition() map[string]mp.Graphs {
 	}
 }
 
+func generateVmid(remote string, lvmid *string) *string {
+	if remote == "" {
+		return lvmid
+	} else {
+		if lvmid == nil {
+			return &remote
+		}
+		vmid := fmt.Sprintf("%s@%s", *lvmid, remote)
+		return &vmid
+	}
+}
+
 // Do the plugin
 func Do() {
-	optHost := flag.String("host", "localhost", "Hostname")
-	optPort := flag.String("port", "1099", "Port")
+	optRemote := flag.String("remote", "", "jps/jstat remote target. hostname[:port][/servername]")
 	optJstatPath := flag.String("jstatpath", "/usr/bin/jstat", "jstat path")
 	optJinfoPath := flag.String("jinfopath", "/usr/bin/jinfo", "jinfo path")
 	optJpsPath := flag.String("jpspath", "/usr/bin/jps", "jps path")
@@ -303,7 +327,7 @@ func Do() {
 	flag.Parse()
 
 	var jvm JVMPlugin
-	jvm.Target = fmt.Sprintf("%s:%s", *optHost, *optPort)
+	jvm.Remote = *optRemote
 	jvm.JstatPath = *optJstatPath
 	jvm.JinfoPath = *optJinfoPath
 
@@ -314,7 +338,7 @@ func Do() {
 	}
 
 	if *optPidFile == "" {
-		lvmid, err := fetchLvmidByAppname(*optJavaName, jvm.Target, *optJpsPath)
+		lvmid, err := fetchLvmidByAppname(*optJavaName, generateVmid(*optRemote, nil), *optJpsPath)
 		if err != nil {
 			logger.Errorf("Failed to fetch lvmid. %s. Please run with the java process user.", err)
 			os.Exit(1)
@@ -334,11 +358,7 @@ func Do() {
 	jvm.JavaName = *optJavaName
 
 	helper := mp.NewMackerelPlugin(jvm)
-	if *optTempfile != "" {
-		helper.Tempfile = *optTempfile
-	} else {
-		helper.SetTempfileByBasename(fmt.Sprintf("mackerel-plugin-jvm-%s", *optHost))
-	}
+	helper.Tempfile = *optTempfile
 
 	helper.Run()
 }
