@@ -6,7 +6,7 @@ JVM(jstat) custom metrics plugin for mackerel.io agent.
 ## Synopsis
 
 ```shell
-mackerel-plugin-jvm -javaname=<javaname> [-pidfile=</path/to/pidfile>] [-jstatpath=</path/to/jstat] [-jpspath=/path/to/jps] [-jinfopath=/path/to/jinfo] [-host=<host>] [-port=<port>]
+mackerel-plugin-jvm -javaname=<javaname> [-pidfile=</path/to/pidfile>] [-jstatpath=</path/to/jstat] [-jpspath=/path/to/jps] [-jinfopath=/path/to/jinfo] [-remote=<host:port>]
 ```
 
 ## Requirements
@@ -20,6 +20,13 @@ mackerel-plugin-jvm -javaname=<javaname> [-pidfile=</path/to/pidfile>] [-jstatpa
 command = "/path/to/mackerel-plugin-jvm -javaname=NettyServer -jstatpath=/usr/bin/jstat -jpspath=/usr/bin/jps -jinfopath=/usr/bin/jinfo"
 user = "SOME_USER_NAME"
 ```
+
+## Monitoring remote JVM
+
+This plugin can retrieve metrics from remote jstatd with rmi protocol by setting `-remote` option.
+In this case, following limitations are applied:
+- jps and jstat commands must be executable localy from this plugin
+- 'CMS Initiating Occupancy Fraction' metric cannot be retrieved remotely
 
 ## About javaname
 

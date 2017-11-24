@@ -19,7 +19,7 @@ var logger = logging.GetLogger("metrics.plugin.jvm")
 
 // JVMPlugin plugin for JVM
 type JVMPlugin struct {
-	Target    string
+	Remote    string
 	Lvmid     string
 	JstatPath string
 	JinfoPath string
@@ -31,7 +31,16 @@ type JVMPlugin struct {
 // 26547 NettyServer
 // 6438 Jps
 func fetchLvmidByAppname(appname, target, jpsPath string) (string, error) {
-	stdout, _, exitStatus, err := runTimeoutCommand(jpsPath, target)
+	var (
+		stdout     string
+		exitStatus timeout.ExitStatus
+		err        error
+	)
+	if target != "" {
+		stdout, _, exitStatus, err = runTimeoutCommand(jpsPath, target)
+	} else {
+		stdout, _, exitStatus, err = runTimeoutCommand(jpsPath)
+	}
 
 	if err == nil && exitStatus.IsTimedOut() {
 		err = fmt.Errorf("jps command timed out")
@@ -54,8 +63,9 @@ func fetchLvmidByAppname(appname, target, jpsPath string) (string, error) {
 	return "", fmt.Errorf("cannot get lvmid from %s (please run with the java process user)", appname)
 }
 
-func fetchJstatMetrics(lvmid, option, jstatPath string) (map[string]float64, error) {
-	stdout, _, exitStatus, err := runTimeoutCommand(jstatPath, option, lvmid)
+func (m JVMPlugin) fetchJstatMetrics(option string) (map[string]float64, error) {
+	vmid := generateVmid(m.Remote, m.Lvmid)
+	stdout, _, exitStatus, err := runTimeoutCommand(m.JstatPath, option, vmid)
 
 	if err == nil && exitStatus.IsTimedOut() {
 		err = fmt.Errorf("jstat command timed out")
@@ -81,19 +91,23 @@ func fetchJstatMetrics(lvmid, option, jstatPath string) (map[string]float64, err
 	return stat, nil
 }
 
-func calculateMemorySpaceRate(gcStat map[string]float64, m JVMPlugin) (map[string]float64, error) {
+func (m JVMPlugin) calculateMemorySpaceRate(gcStat map[string]float64) (map[string]float64, error) {
 	ret := make(map[string]float64)
 	ret["oldSpaceRate"] = gcStat["OU"] / gcStat["OC"] * 100
 	ret["newSpaceRate"] = (gcStat["S0U"] + gcStat["S1U"] + gcStat["EU"]) / (gcStat["S0C"] + gcStat["S1C"] + gcStat["EC"]) * 100
-	if checkCMSGC(m.Lvmid, m.JinfoPath) {
+	if m.checkCMSGC() {
 		ret["CMSInitiatingOccupancyFraction"] = fetchCMSInitiatingOccupancyFraction(m.Lvmid, m.JinfoPath)
 	}
 
 	return ret, nil
 }
 
-func checkCMSGC(lvmid, JinfoPath string) bool {
-	stdout, _, exitStatus, err := runTimeoutCommand(JinfoPath, "-flag", "UseConcMarkSweepGC", lvmid)
+func (m JVMPlugin) checkCMSGC() bool {
+	// jinfo does not work on remote
+	if m.Remote != "" {
+		return false
+	}
+	stdout, _, exitStatus, err := runTimeoutCommand(m.JinfoPath, "-flag", "UseConcMarkSweepGC", m.Lvmid)
 
 	if err == nil && exitStatus.IsTimedOut() {
 		err = fmt.Errorf("jinfo command timed out")
@@ -172,23 +186,23 @@ func runTimeoutCommand(Path string, Args ...string) (string, string, timeout.Exi
 
 // FetchMetrics interface for mackerelplugin
 func (m JVMPlugin) FetchMetrics() (map[string]interface{}, error) {
-	gcStat, err := fetchJstatMetrics(m.Lvmid, "-gc", m.JstatPath)
+	gcStat, err := m.fetchJstatMetrics("-gc")
 	if err != nil {
 		return nil, err
 	}
-	gcCapacityStat, err := fetchJstatMetrics(m.Lvmid, "-gccapacity", m.JstatPath)
+	gcCapacityStat, err := m.fetchJstatMetrics("-gccapacity")
 	if err != nil {
 		return nil, err
 	}
-	gcNewStat, err := fetchJstatMetrics(m.Lvmid, "-gcnew", m.JstatPath)
+	gcNewStat, err := m.fetchJstatMetrics("-gcnew")
 	if err != nil {
 		return nil, err
 	}
-	gcOldStat, err := fetchJstatMetrics(m.Lvmid, "-gcold", m.JstatPath)
+	gcOldStat, err := m.fetchJstatMetrics("-gcold")
 	if err != nil {
 		return nil, err
 	}
-	gcSpaceRate, err := calculateMemorySpaceRate(gcStat, m)
+	gcSpaceRate, err := m.calculateMemorySpaceRate(gcStat)
 	if err != nil {
 		return nil, err
 	}
@@ -290,10 +304,42 @@ func (m JVMPlugin) GraphDefinition() map[string]mp.Graphs {
 	}
 }
 
+func generateVmid(remote, lvmid string) string {
+	if remote != "" {
+		if lvmid == "" {
+			return remote
+		}
+		return fmt.Sprintf("%s@%s", lvmid, remote)
+	}
+	return lvmid
+}
+
+func generateRemote(remote, host string, port int) string {
+	if remote == "" {
+		if host == "" {
+			if port != 0 {
+				// for backward compatibility
+				return fmt.Sprintf("localhost:%d", port)
+			}
+			return ""
+		}
+		if port == 0 {
+			return host
+		}
+		return fmt.Sprintf("%s:%d", host, port)
+	}
+
+	if host != "" || port != 0 {
+		logger.Warningf("'-host' and '-port' are ignored, since '-remote' is specified")
+	}
+	return remote
+}
+
 // Do the plugin
 func Do() {
-	optHost := flag.String("host", "localhost", "Hostname")
-	optPort := flag.String("port", "1099", "Port")
+	optHost := flag.String("host", "", "jps/jstat target hostname [deprecated]")
+	optPort := flag.Int("port", 0, "jps/jstat target port [deprecated]")
+	optRemote := flag.String("remote", "", "jps/jstat remote target. hostname[:port][/servername]")
 	optJstatPath := flag.String("jstatpath", "/usr/bin/jstat", "jstat path")
 	optJinfoPath := flag.String("jinfopath", "/usr/bin/jinfo", "jinfo path")
 	optJpsPath := flag.String("jpspath", "/usr/bin/jps", "jps path")
@@ -303,9 +349,9 @@ func Do() {
 	flag.Parse()
 
 	var jvm JVMPlugin
-	jvm.Target = fmt.Sprintf("%s:%s", *optHost, *optPort)
 	jvm.JstatPath = *optJstatPath
 	jvm.JinfoPath = *optJinfoPath
+	jvm.Remote = generateRemote(*optRemote, *optHost, *optPort)
 
 	if *optJavaName == "" {
 		logger.Errorf("javaname is required (if you use 'pidfile' option, 'javaname' is used as just a prefix of graph label)")
@@ -313,10 +359,14 @@ func Do() {
 		os.Exit(1)
 	}
 
-	if *optPidFile == "" {
-		lvmid, err := fetchLvmidByAppname(*optJavaName, jvm.Target, *optJpsPath)
+	if *optPidFile != "" && jvm.Remote != "" {
+		logger.Warningf("both '-pidfile' and '-remote' specified, but '-pidfile' does not work with '-remote' therefore ignored")
+	}
+
+	if *optPidFile == "" || jvm.Remote != "" {
+		lvmid, err := fetchLvmidByAppname(*optJavaName, generateVmid(jvm.Remote, ""), *optJpsPath)
 		if err != nil {
-			logger.Errorf("Failed to fetch lvmid. %s. Please run with the java process user.", err)
+			logger.Errorf("Failed to fetch lvmid. %s. Please run with the java process user when monitoring local JVM, or set proper 'remote' option when monitorint remote one.", err)
 			os.Exit(1)
 		}
 		jvm.Lvmid = lvmid
@@ -334,11 +384,7 @@ func Do() {
 	jvm.JavaName = *optJavaName
 
 	helper := mp.NewMackerelPlugin(jvm)
-	if *optTempfile != "" {
-		helper.Tempfile = *optTempfile
-	} else {
-		helper.SetTempfileByBasename(fmt.Sprintf("mackerel-plugin-jvm-%s", *optHost))
-	}
+	helper.Tempfile = *optTempfile
 
 	helper.Run()
 }
