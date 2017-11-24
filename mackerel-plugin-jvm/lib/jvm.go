@@ -343,7 +343,11 @@ func Do() {
 		os.Exit(1)
 	}
 
-	if *optPidFile == "" {
+	if *optPidFile != "" && jvm.Remote != nil {
+		logger.Warningf("both '-pidfile' and '-remote' specified, but '-pidfile' does not work with '-remote' therefore ignored")
+	}
+
+	if *optPidFile == "" || jvm.Remote != nil {
 		lvmid, err := fetchLvmidByAppname(*optJavaName, generateVmid(jvm.Remote, nil), *optJpsPath)
 		if err != nil {
 			logger.Errorf("Failed to fetch lvmid. %s. Please run with the java process user when monitoring local JVM, or set proper 'remote' option when monitorint remote one.", err)
