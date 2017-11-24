@@ -94,7 +94,7 @@ func (m JVMPlugin) fetchJstatMetrics(option string) (map[string]float64, error) 
 	return stat, nil
 }
 
-func calculateMemorySpaceRate(gcStat map[string]float64, m JVMPlugin) (map[string]float64, error) {
+func (m JVMPlugin) calculateMemorySpaceRate(gcStat map[string]float64) (map[string]float64, error) {
 	ret := make(map[string]float64)
 	ret["oldSpaceRate"] = gcStat["OU"] / gcStat["OC"] * 100
 	ret["newSpaceRate"] = (gcStat["S0U"] + gcStat["S1U"] + gcStat["EU"]) / (gcStat["S0C"] + gcStat["S1C"] + gcStat["EC"]) * 100
@@ -201,7 +201,7 @@ func (m JVMPlugin) FetchMetrics() (map[string]interface{}, error) {
 	if err != nil {
 		return nil, err
 	}
-	gcSpaceRate, err := calculateMemorySpaceRate(gcStat, m)
+	gcSpaceRate, err := m.calculateMemorySpaceRate(gcStat)
 	if err != nil {
 		return nil, err
 	}
