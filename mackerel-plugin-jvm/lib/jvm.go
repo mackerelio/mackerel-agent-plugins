@@ -341,7 +341,7 @@ func generateRemote(remote, host string, port int) string {
 // Do the plugin
 func Do() {
 	optHost := flag.String("host", "", "jps/jstat target hostname [deprecated]")
-	optPort := flag.Int("port", 0, "jps/jstat target port [deprecarted]")
+	optPort := flag.Int("port", 0, "jps/jstat target port [deprecated]")
 	optRemote := flag.String("remote", "", "jps/jstat remote target. hostname[:port][/servername]")
 	optJstatPath := flag.String("jstatpath", "/usr/bin/jstat", "jstat path")
 	optJinfoPath := flag.String("jinfopath", "/usr/bin/jinfo", "jinfo path")
