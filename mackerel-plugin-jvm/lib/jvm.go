@@ -19,7 +19,7 @@ var logger = logging.GetLogger("metrics.plugin.jvm")
 
 // JVMPlugin plugin for JVM
 type JVMPlugin struct {
-	Remote    *string
+	Remote    string
 	Lvmid     string
 	JstatPath string
 	JinfoPath string
@@ -30,14 +30,14 @@ type JVMPlugin struct {
 // # jps
 // 26547 NettyServer
 // 6438 Jps
-func fetchLvmidByAppname(appname string, target *string, jpsPath string) (string, error) {
+func fetchLvmidByAppname(appname, target, jpsPath string) (string, error) {
 	var (
 		stdout     string
 		exitStatus timeout.ExitStatus
 		err        error
 	)
-	if target != nil {
-		stdout, _, exitStatus, err = runTimeoutCommand(jpsPath, *target)
+	if target != "" {
+		stdout, _, exitStatus, err = runTimeoutCommand(jpsPath, target)
 	} else {
 		stdout, _, exitStatus, err = runTimeoutCommand(jpsPath)
 	}
@@ -64,11 +64,8 @@ func fetchLvmidByAppname(appname string, target *string, jpsPath string) (string
 }
 
 func (m JVMPlugin) fetchJstatMetrics(option string) (map[string]float64, error) {
-	vmid := generateVmid(m.Remote, &m.Lvmid)
-	if vmid == nil {
-		return nil, fmt.Errorf("Unexpected error")
-	}
-	stdout, _, exitStatus, err := runTimeoutCommand(m.JstatPath, option, *vmid)
+	vmid := generateVmid(m.Remote, m.Lvmid)
+	stdout, _, exitStatus, err := runTimeoutCommand(m.JstatPath, option, vmid)
 
 	if err == nil && exitStatus.IsTimedOut() {
 		err = fmt.Errorf("jstat command timed out")
@@ -107,7 +104,7 @@ func (m JVMPlugin) calculateMemorySpaceRate(gcStat map[string]float64) (map[stri
 
 func (m JVMPlugin) checkCMSGC() bool {
 	// jinfo does not work on remote
-	if m.Remote != nil {
+	if m.Remote != "" {
 		return false
 	}
 	stdout, _, exitStatus, err := runTimeoutCommand(m.JinfoPath, "-flag", "UseConcMarkSweepGC", m.Lvmid)
@@ -307,38 +304,38 @@ func (m JVMPlugin) GraphDefinition() map[string]mp.Graphs {
 	}
 }
 
-func generateVmid(remote, lvmid *string) *string {
-	if remote != nil {
-		if lvmid == nil {
+func generateVmid(remote, lvmid string) string {
+	if remote != "" {
+		if lvmid == "" {
 			return remote
 		}
-		vmid := fmt.Sprintf("%s@%s", *lvmid, *remote)
-		return &vmid
+		vmid := fmt.Sprintf("%s@%s", lvmid, remote)
+		return vmid
 	}
 	return lvmid
 }
 
-func generateRemote(remote, host string, port int) *string {
+func generateRemote(remote, host string, port int) string {
 	if remote == "" {
 		if host == "" {
 			if port != 0 {
 				// for backward compatibility
 				hostPort := fmt.Sprintf("localhost:%d", port)
-				return &hostPort
+				return hostPort
 			}
-			return nil
+			return ""
 		}
 		if port == 0 {
-			return &host
+			return host
 		}
 		hostPort := fmt.Sprintf("%s:%d", host, port)
-		return &hostPort
+		return hostPort
 	}
 
 	if host != "" || port != 0 {
 		logger.Warningf("'-host' and '-port' are ignored, since '-remote' is specified")
 	}
-	return &remote
+	return remote
 }
 
 // Do the plugin
@@ -365,12 +362,12 @@ func Do() {
 		os.Exit(1)
 	}
 
-	if *optPidFile != "" && jvm.Remote != nil {
+	if *optPidFile != "" && jvm.Remote != "" {
 		logger.Warningf("both '-pidfile' and '-remote' specified, but '-pidfile' does not work with '-remote' therefore ignored")
 	}
 
-	if *optPidFile == "" || jvm.Remote != nil {
-		lvmid, err := fetchLvmidByAppname(*optJavaName, generateVmid(jvm.Remote, nil), *optJpsPath)
+	if *optPidFile == "" || jvm.Remote != "" {
+		lvmid, err := fetchLvmidByAppname(*optJavaName, generateVmid(jvm.Remote, ""), *optJpsPath)
 		if err != nil {
 			logger.Errorf("Failed to fetch lvmid. %s. Please run with the java process user when monitoring local JVM, or set proper 'remote' option when monitorint remote one.", err)
 			os.Exit(1)
