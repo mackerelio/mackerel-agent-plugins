@@ -37,7 +37,7 @@ var graphdef = map[string]mp.Graphs{
 	},
 	"docker.memory.#": {
 		Label: "Docker Memory",
-		Unit:  "integer",
+		Unit:  "bytes",
 		Metrics: []mp.Metrics{
 			{Name: "cache", Label: "Cache", Diff: false, Stacked: true},
 			{Name: "rss", Label: "RSS", Diff: false, Stacked: true},
@@ -55,17 +55,17 @@ var graphdef = map[string]mp.Graphs{
 	},
 	"docker.blkio.io_serviced.#": {
 		Label: "Docker BlkIO IOPS",
-		Unit:  "integer",
+		Unit:  "iops",
 		Metrics: []mp.Metrics{
-			{Name: "read", Label: "Read", Diff: true, Stacked: true, Type: "uint64"},
-			{Name: "write", Label: "Write", Diff: true, Stacked: true, Type: "uint64"},
-			{Name: "sync", Label: "Sync", Diff: true, Stacked: true, Type: "uint64"},
-			{Name: "async", Label: "Async", Diff: true, Stacked: true, Type: "uint64"},
+			{Name: "read", Label: "Read", Diff: true, Stacked: true, Type: "uint64", Scale: (1.0 / 60.0)},
+			{Name: "write", Label: "Write", Diff: true, Stacked: true, Type: "uint64", Scale: (1.0 / 60.0)},
+			{Name: "sync", Label: "Sync", Diff: true, Stacked: true, Type: "uint64", Scale: (1.0 / 60.0)},
+			{Name: "async", Label: "Async", Diff: true, Stacked: true, Type: "uint64", Scale: (1.0 / 60.0)},
 		},
 	},
 	"docker.blkio.io_service_bytes.#": {
 		Label: "Docker BlkIO Bytes",
-		Unit:  "integer",
+		Unit:  "bytes",
 		Metrics: []mp.Metrics{
 			{Name: "read", Label: "Read", Diff: true, Stacked: true, Type: "uint64"},
 			{Name: "write", Label: "Write", Diff: true, Stacked: true, Type: "uint64"},
