@@ -37,7 +37,7 @@ var graphdef = map[string]mp.Graphs{
 	},
 	"docker.memory.#": {
 		Label: "Docker Memory",
-		Unit:  "integer",
+		Unit:  "bytes",
 		Metrics: []mp.Metrics{
 			{Name: "cache", Label: "Cache", Diff: false, Stacked: true},
 			{Name: "rss", Label: "RSS", Diff: false, Stacked: true},
