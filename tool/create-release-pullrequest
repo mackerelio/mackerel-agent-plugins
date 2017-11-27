@@ -29,7 +29,8 @@ my $PLUGIN_PREFIX = 'mackerel-plugin-';
 my $PACKAGE_NAME = 'mackerel-agent-plugins';
 
 sub retrieve_plugins {
-    sort map {s/^$PLUGIN_PREFIX//; $_} <$PLUGIN_PREFIX*>;
+    # exclude plugins which has been moved to other repositories
+    sort map {s/^$PLUGIN_PREFIX//; $_} grep { -e "$_/lib" } <$PLUGIN_PREFIX*>;
 }
 
 sub update_readme {
