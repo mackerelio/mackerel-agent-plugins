@@ -8,8 +8,6 @@ mackerel-agent-plugins (0.39.0-1) stable; urgency=low
     <https://github.com/mackerelio/mackerel-agent-plugins/pull/451>
   * Changed README.md of mackerel-plugin-linux (by soudai)
     <https://github.com/mackerelio/mackerel-agent-plugins/pull/452>
-  * Move aws-waf to other repository (by shibayu36)
-    <https://github.com/mackerelio/mackerel-agent-plugins/pull/450>
   * [json] Fix error handling (by astj)
     <https://github.com/mackerelio/mackerel-agent-plugins/pull/449>
   * Fix license notice (by itchyny)
@@ -20,12 +18,6 @@ mackerel-agent-plugins (0.39.0-1) stable; urgency=low
     <https://github.com/mackerelio/mackerel-agent-plugins/pull/445>
   * [kinesis-streams] Use Sum aggregation for Kinesis streams statistics (by itchyny)
     <https://github.com/mackerelio/mackerel-agent-plugins/pull/435>
-  * Move mackerel-plugin-aws-rekognition to other repository (by shibayu36)
-    <https://github.com/mackerelio/mackerel-agent-plugins/pull/442>
-  * Move aws-kinesis-firehose to other repository (by shibayu36)
-    <https://github.com/mackerelio/mackerel-agent-plugins/pull/441>
-  * Move aws-ec2 code to mackerelio/mackerel-plugin-aws-ec2 (by shibayu36)
-    <https://github.com/mackerelio/mackerel-agent-plugins/pull/438>
 
  -- mackerel <mackerel-developers@hatena.ne.jp>  Tue, 28 Nov 2017 12:54:11 +0900
 

@@ -45,15 +45,11 @@ done
 - Improve docker plugin (by astj)
 - [jvm] Fix remote jvm monitoring (by astj)
 - Changed README.md of mackerel-plugin-linux (by soudai)
-- Move aws-waf to other repository (by shibayu36)
 - [json] Fix error handling (by astj)
 - Fix license notice (by itchyny)
 - [docker] Avoid concurrent map writes by multiple goroutines (by astj)
 - [aws-ec2-ebs] Do not log "fetched no datapoints" error (by astj)
 - [kinesis-streams] Use Sum aggregation for Kinesis streams statistics (by itchyny)
-- Move mackerel-plugin-aws-rekognition to other repository (by shibayu36)
-- Move aws-kinesis-firehose to other repository (by shibayu36)
-- Move aws-ec2 code to mackerelio/mackerel-plugin-aws-ec2 (by shibayu36)
 
 * Thu Nov 09 2017 <mackerel-developers@hatena.ne.jp> - 0.38.0
 - Improve mackerel-plugin-postgres (by astj)
