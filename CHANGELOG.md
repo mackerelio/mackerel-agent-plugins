@@ -1,5 +1,18 @@
 # Changelog
 
+## 0.39.0 (2017-11-28)
+
+* Don't add plugins README which has been moved #453 (astj)
+* Improve docker plugin #436 (astj)
+* [jvm] Fix remote jvm monitoring #451 (astj)
+* Changed README.md of mackerel-plugin-linux #452 (soudai)
+* [json] Fix error handling #449 (astj)
+* Fix license notice #448 (itchyny)
+* [docker] Avoid concurrent map writes by multiple goroutines #446 (astj)
+* [aws-ec2-ebs] Do not log "fetched no datapoints" error #445 (astj)
+* [kinesis-streams] Use Sum aggregation for Kinesis streams statistics #435 (itchyny)
+
+
 ## 0.38.0 (2017-11-09)
 
 * Improve mackerel-plugin-postgres #437 (astj)

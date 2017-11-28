@@ -1,3 +1,26 @@
+mackerel-agent-plugins (0.39.0-1.v2) stable; urgency=low
+
+  * Don't add plugins README which has been moved (by astj)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/453>
+  * Improve docker plugin (by astj)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/436>
+  * [jvm] Fix remote jvm monitoring (by astj)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/451>
+  * Changed README.md of mackerel-plugin-linux (by soudai)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/452>
+  * [json] Fix error handling (by astj)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/449>
+  * Fix license notice (by itchyny)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/448>
+  * [docker] Avoid concurrent map writes by multiple goroutines (by astj)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/446>
+  * [aws-ec2-ebs] Do not log "fetched no datapoints" error (by astj)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/445>
+  * [kinesis-streams] Use Sum aggregation for Kinesis streams statistics (by itchyny)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/435>
+
+ -- mackerel <mackerel-developers@hatena.ne.jp>  Tue, 28 Nov 2017 12:54:11 +0900
+
 mackerel-agent-plugins (0.38.0-1.v2) stable; urgency=low
 
   * Improve mackerel-plugin-postgres (by astj)
