@@ -137,6 +137,7 @@ func (m RedisPlugin) FetchMetrics() (map[string]interface{}, error) {
 
 	keysStat := 0.0
 	expiresStat := 0.0
+	var slaves []string
 
 	for _, line := range strings.Split(str, "\r\n") {
 		if line == "" {
@@ -153,8 +154,15 @@ func (m RedisPlugin) FetchMetrics() (map[string]interface{}, error) {
 		key, value := record[0], record[1]
 
 		if re, _ := regexp.MatchString("^slave", key); re {
+			slaves = append(slaves, key)
 			kv := strings.SplitN(value, ",", 5)
-			_, _, _, _, lag := kv[0], kv[1], kv[2], kv[3], kv[4]
+			_, _, _, offset, lag := kv[0], kv[1], kv[2], kv[3], kv[4]
+			offsetKv := strings.SplitN(offset, "=", 2)
+			offsetFv, err := strconv.ParseFloat(offsetKv[1], 64)
+			if err != nil {
+				logger.Warningf("Failed to parse slaves. %s", err)
+			}
+			stat[fmt.Sprintf("%s_offset_delay", key)] = offsetFv
 			lagKv := strings.SplitN(lag, "=", 2)
 			lagFv, err := strconv.ParseFloat(lagKv[1], 64)
 			if err != nil {
@@ -209,6 +217,10 @@ func (m RedisPlugin) FetchMetrics() (map[string]interface{}, error) {
 
 	if err := calculateCapacity(c, stat); err != nil {
 		logger.Infof("Failed to calculate capacity. (The cause may be that AWS Elasticache Redis has no `CONFIG` command.) Skip these metrics. %s", err)
+	}
+
+	for _, slave := range slaves {
+		stat[fmt.Sprintf("%s_offset_delay", slave)] = stat["master_repl_offset"].(float64) - stat[fmt.Sprintf("%s_offset_delay", slave)].(float64)
 	}
 
 	return stat, nil
@@ -312,6 +324,7 @@ func (m RedisPlugin) GraphDefinition() map[string]mp.Graphs {
 	}
 
 	var metricsLag []mp.Metrics
+	var metricsOffsetDelay []mp.Metrics
 	for _, line := range strings.Split(str, "\r\n") {
 		if line == "" {
 			continue
@@ -325,6 +338,7 @@ func (m RedisPlugin) GraphDefinition() map[string]mp.Graphs {
 
 		if re, _ := regexp.MatchString("^slave\\d+", key); re {
 			metricsLag = append(metricsLag, mp.Metrics{Name: fmt.Sprintf("%s_lag", key), Label: fmt.Sprintf("Replication lag to %s", key), Diff: false})
+			metricsOffsetDelay = append(metricsOffsetDelay, mp.Metrics{Name: fmt.Sprintf("%s_offset_delay", key), Label: fmt.Sprintf("Offset delay to %s", key), Diff: false})
 		}
 	}
 
@@ -332,6 +346,11 @@ func (m RedisPlugin) GraphDefinition() map[string]mp.Graphs {
 		Label:   (labelPrefix + " Slave Lag"),
 		Unit:    "seconds",
 		Metrics: metricsLag,
+	}
+	graphdef["offset_delay"] = mp.Graphs{
+		Label:   (labelPrefix + " Slave Offset Delay"),
+		Unit:    "count",
+		Metrics: metricsOffsetDelay,
 	}
 
 	return graphdef
