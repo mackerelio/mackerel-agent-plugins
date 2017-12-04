@@ -152,6 +152,18 @@ func (m RedisPlugin) FetchMetrics() (map[string]interface{}, error) {
 		}
 		key, value := record[0], record[1]
 
+		if re, _ := regexp.MatchString("^slave", key); re {
+			kv := strings.SplitN(value, ",", 5)
+			_, _, _, _, lag := kv[0], kv[1], kv[2], kv[3], kv[4]
+			lagKv := strings.SplitN(lag, "=", 2)
+			lagFv, err := strconv.ParseFloat(lagKv[1], 64)
+			if err != nil {
+				logger.Warningf("Failed to parse slaves. %s", err)
+			}
+			stat[fmt.Sprintf("%s_lag", key)] = lagFv
+			continue
+		}
+
 		if re, _ := regexp.MatchString("^db", key); re {
 			kv := strings.SplitN(value, ",", 3)
 			keys, expires := kv[0], kv[1]
@@ -266,6 +278,60 @@ func (m RedisPlugin) GraphDefinition() map[string]mp.Graphs {
 				{Name: "percentage_of_clients", Label: "Percentage of clients", Diff: false},
 			},
 		},
+	}
+
+	network := "tcp"
+	target := fmt.Sprintf("%s:%s", m.Host, m.Port)
+	if m.Socket != "" {
+		target = m.Socket
+		network = "unix"
+	}
+
+	c, err := redis.DialTimeout(network, target, time.Duration(m.Timeout)*time.Second)
+	if err != nil {
+		logger.Errorf("Failed to connect redis. %s", err)
+		return nil
+	}
+	defer c.Close()
+
+	if m.Password != "" {
+		if err = authenticateByPassword(c, m.Password); err != nil {
+			return nil
+		}
+	}
+
+	r := c.Cmd("info")
+	if r.Err != nil {
+		logger.Errorf("Failed to run info command. %s", r.Err)
+		return nil
+	}
+	str, err := r.Str()
+	if err != nil {
+		logger.Errorf("Failed to fetch information. %s", err)
+		return nil
+	}
+
+	var metricsLag []mp.Metrics
+	for _, line := range strings.Split(str, "\r\n") {
+		if line == "" {
+			continue
+		}
+
+		record := strings.SplitN(line, ":", 2)
+		if len(record) < 2 {
+			continue
+		}
+		key, _ := record[0], record[1]
+
+		if re, _ := regexp.MatchString("^slave\\d+", key); re {
+			metricsLag = append(metricsLag, mp.Metrics{Name: fmt.Sprintf("%s_lag", key), Label: fmt.Sprintf("Replication lag to %s", key), Diff: false})
+		}
+	}
+
+	graphdef["lag"] = mp.Graphs{
+		Label:   (labelPrefix + " Slave Lag"),
+		Unit:    "seconds",
+		Metrics: metricsLag,
 	}
 
 	return graphdef
