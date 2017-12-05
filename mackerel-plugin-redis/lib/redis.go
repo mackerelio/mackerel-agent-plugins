@@ -153,22 +153,27 @@ func (m RedisPlugin) FetchMetrics() (map[string]interface{}, error) {
 		}
 		key, value := record[0], record[1]
 
-		if re, _ := regexp.MatchString("^slave", key); re {
+		if re, _ := regexp.MatchString("^slave\\d+", key); re {
 			slaves = append(slaves, key)
-			kv := strings.SplitN(value, ",", 5)
-			_, _, _, offset, lag := kv[0], kv[1], kv[2], kv[3], kv[4]
+			kv := strings.Split(value, ",")
+			var offset, lag string
+			if len(kv) == 5 {
+				_, _, _, offset, lag = kv[0], kv[1], kv[2], kv[3], kv[4]
+				lagKv := strings.SplitN(lag, "=", 2)
+				lagFv, err := strconv.ParseFloat(lagKv[1], 64)
+				if err != nil {
+					logger.Warningf("Failed to parse slaves. %s", err)
+				}
+				stat[fmt.Sprintf("%s_lag", key)] = lagFv
+			} else {
+				_, _, _, offset = kv[0], kv[1], kv[2], kv[3]
+			}
 			offsetKv := strings.SplitN(offset, "=", 2)
 			offsetFv, err := strconv.ParseFloat(offsetKv[1], 64)
 			if err != nil {
 				logger.Warningf("Failed to parse slaves. %s", err)
 			}
 			stat[fmt.Sprintf("%s_offset_delay", key)] = offsetFv
-			lagKv := strings.SplitN(lag, "=", 2)
-			lagFv, err := strconv.ParseFloat(lagKv[1], 64)
-			if err != nil {
-				logger.Warningf("Failed to parse slaves. %s", err)
-			}
-			stat[fmt.Sprintf("%s_lag", key)] = lagFv
 			continue
 		}
 
@@ -342,15 +347,19 @@ func (m RedisPlugin) GraphDefinition() map[string]mp.Graphs {
 		}
 	}
 
-	graphdef["lag"] = mp.Graphs{
-		Label:   (labelPrefix + " Slave Lag"),
-		Unit:    "seconds",
-		Metrics: metricsLag,
+	if len(metricsLag) > 0 {
+		graphdef["lag"] = mp.Graphs{
+			Label:   (labelPrefix + " Slave Lag"),
+			Unit:    "seconds",
+			Metrics: metricsLag,
+		}
 	}
-	graphdef["offset_delay"] = mp.Graphs{
-		Label:   (labelPrefix + " Slave Offset Delay"),
-		Unit:    "count",
-		Metrics: metricsOffsetDelay,
+	if len(metricsOffsetDelay) > 0 {
+		graphdef["offset_delay"] = mp.Graphs{
+			Label:   (labelPrefix + " Slave Offset Delay"),
+			Unit:    "count",
+			Metrics: metricsOffsetDelay,
+		}
 	}
 
 	return graphdef
