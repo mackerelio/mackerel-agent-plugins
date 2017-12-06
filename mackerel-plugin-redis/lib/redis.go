@@ -137,6 +137,7 @@ func (m RedisPlugin) FetchMetrics() (map[string]interface{}, error) {
 
 	keysStat := 0.0
 	expiresStat := 0.0
+	var slaves []string
 
 	for _, line := range strings.Split(str, "\r\n") {
 		if line == "" {
@@ -151,6 +152,30 @@ func (m RedisPlugin) FetchMetrics() (map[string]interface{}, error) {
 			continue
 		}
 		key, value := record[0], record[1]
+
+		if re, _ := regexp.MatchString("^slave\\d+", key); re {
+			slaves = append(slaves, key)
+			kv := strings.Split(value, ",")
+			var offset, lag string
+			if len(kv) == 5 {
+				_, _, _, offset, lag = kv[0], kv[1], kv[2], kv[3], kv[4]
+				lagKv := strings.SplitN(lag, "=", 2)
+				lagFv, err := strconv.ParseFloat(lagKv[1], 64)
+				if err != nil {
+					logger.Warningf("Failed to parse slaves. %s", err)
+				}
+				stat[fmt.Sprintf("%s_lag", key)] = lagFv
+			} else {
+				_, _, _, offset = kv[0], kv[1], kv[2], kv[3]
+			}
+			offsetKv := strings.SplitN(offset, "=", 2)
+			offsetFv, err := strconv.ParseFloat(offsetKv[1], 64)
+			if err != nil {
+				logger.Warningf("Failed to parse slaves. %s", err)
+			}
+			stat[fmt.Sprintf("%s_offset_delay", key)] = offsetFv
+			continue
+		}
 
 		if re, _ := regexp.MatchString("^db", key); re {
 			kv := strings.SplitN(value, ",", 3)
@@ -197,6 +222,10 @@ func (m RedisPlugin) FetchMetrics() (map[string]interface{}, error) {
 
 	if err := calculateCapacity(c, stat); err != nil {
 		logger.Infof("Failed to calculate capacity. (The cause may be that AWS Elasticache Redis has no `CONFIG` command.) Skip these metrics. %s", err)
+	}
+
+	for _, slave := range slaves {
+		stat[fmt.Sprintf("%s_offset_delay", slave)] = stat["master_repl_offset"].(float64) - stat[fmt.Sprintf("%s_offset_delay", slave)].(float64)
 	}
 
 	return stat, nil
@@ -266,6 +295,71 @@ func (m RedisPlugin) GraphDefinition() map[string]mp.Graphs {
 				{Name: "percentage_of_clients", Label: "Percentage of clients", Diff: false},
 			},
 		},
+	}
+
+	network := "tcp"
+	target := fmt.Sprintf("%s:%s", m.Host, m.Port)
+	if m.Socket != "" {
+		target = m.Socket
+		network = "unix"
+	}
+
+	c, err := redis.DialTimeout(network, target, time.Duration(m.Timeout)*time.Second)
+	if err != nil {
+		logger.Errorf("Failed to connect redis. %s", err)
+		return nil
+	}
+	defer c.Close()
+
+	if m.Password != "" {
+		if err = authenticateByPassword(c, m.Password); err != nil {
+			return nil
+		}
+	}
+
+	r := c.Cmd("info")
+	if r.Err != nil {
+		logger.Errorf("Failed to run info command. %s", r.Err)
+		return nil
+	}
+	str, err := r.Str()
+	if err != nil {
+		logger.Errorf("Failed to fetch information. %s", err)
+		return nil
+	}
+
+	var metricsLag []mp.Metrics
+	var metricsOffsetDelay []mp.Metrics
+	for _, line := range strings.Split(str, "\r\n") {
+		if line == "" {
+			continue
+		}
+
+		record := strings.SplitN(line, ":", 2)
+		if len(record) < 2 {
+			continue
+		}
+		key, _ := record[0], record[1]
+
+		if re, _ := regexp.MatchString("^slave\\d+", key); re {
+			metricsLag = append(metricsLag, mp.Metrics{Name: fmt.Sprintf("%s_lag", key), Label: fmt.Sprintf("Replication lag to %s", key), Diff: false})
+			metricsOffsetDelay = append(metricsOffsetDelay, mp.Metrics{Name: fmt.Sprintf("%s_offset_delay", key), Label: fmt.Sprintf("Offset delay to %s", key), Diff: false})
+		}
+	}
+
+	if len(metricsLag) > 0 {
+		graphdef["lag"] = mp.Graphs{
+			Label:   (labelPrefix + " Slave Lag"),
+			Unit:    "seconds",
+			Metrics: metricsLag,
+		}
+	}
+	if len(metricsOffsetDelay) > 0 {
+		graphdef["offset_delay"] = mp.Graphs{
+			Label:   (labelPrefix + " Slave Offset Delay"),
+			Unit:    "count",
+			Metrics: metricsOffsetDelay,
+		}
 	}
 
 	return graphdef
