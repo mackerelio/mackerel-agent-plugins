@@ -38,14 +38,14 @@ var graphdef = map[string]mp.Graphs{
 			{Name: "listeners", Label: "Listeners"},
 		},
 	},
-	"worker-threads": {
+	"worker_threads": {
 		Label: "H2O Worker Threads",
 		Unit:  mp.UnitInteger,
 		Metrics: []mp.Metrics{
 			{Name: "worker_threads", Label: "Worker Threads"},
 		},
 	},
-	"num-sessions": {
+	"num_sessions": {
 		Label: "H2O Sessions",
 		Unit:  mp.UnitInteger,
 		Metrics: []mp.Metrics{
@@ -59,7 +59,7 @@ var graphdef = map[string]mp.Graphs{
 			{Name: "requests", Label: "In-flight Requests"},
 		},
 	},
-	"status-errors": {
+	"status_errors": {
 		Label: "H2O Status Errors",
 		Unit:  mp.UnitInteger,
 		Metrics: []mp.Metrics{
@@ -74,7 +74,7 @@ var graphdef = map[string]mp.Graphs{
 			{Name: "status_errors_400", Label: "Error 400", Diff: true},
 		},
 	},
-	"http2-errors": {
+	"http2_errors": {
 		Label: "H2O HTTP2 Errors",
 		Unit:  mp.UnitInteger,
 		Metrics: []mp.Metrics{
@@ -91,21 +91,21 @@ var graphdef = map[string]mp.Graphs{
 			{Name: "http2_errors_inadequate_security", Label: "Error Inadequate Security", Diff: true},
 		},
 	},
-	"read-closed": {
+	"read_closed": {
 		Label: "H2O Read Closed",
 		Unit:  mp.UnitInteger,
 		Metrics: []mp.Metrics{
 			{Name: "http2_read_closed", Label: "Read Closed", Diff: true},
 		},
 	},
-	"write-closed": {
+	"write_closed": {
 		Label: "H2O Write Closed",
 		Unit:  mp.UnitInteger,
 		Metrics: []mp.Metrics{
 			{Name: "http2_write_closed", Label: "Write Closed", Diff: true},
 		},
 	},
-	"connect-time": {
+	"connect_time": {
 		Label: "H2O Connect Time",
 		Unit:  mp.UnitFloat,
 		Metrics: []mp.Metrics{
@@ -116,7 +116,7 @@ var graphdef = map[string]mp.Graphs{
 			{Name: "connect_time_0", Label: "0 Percentile"},
 		},
 	},
-	"header-time": {
+	"header_time": {
 		Label: "H2O Header Time",
 		Unit:  mp.UnitFloat,
 		Metrics: []mp.Metrics{
@@ -127,7 +127,7 @@ var graphdef = map[string]mp.Graphs{
 			{Name: "header_time_0", Label: "0 Percentile"},
 		},
 	},
-	"body-time": {
+	"body_time": {
 		Label: "H2O Body Time",
 		Unit:  mp.UnitFloat,
 		Metrics: []mp.Metrics{
@@ -138,7 +138,7 @@ var graphdef = map[string]mp.Graphs{
 			{Name: "body_time_0", Label: "0 Percentile"},
 		},
 	},
-	"request-total-time": {
+	"request_total_time": {
 		Label: "H2O Request Total Time",
 		Unit:  mp.UnitFloat,
 		Metrics: []mp.Metrics{
@@ -149,7 +149,7 @@ var graphdef = map[string]mp.Graphs{
 			{Name: "request_total_time_0", Label: "0 Percentile"},
 		},
 	},
-	"process-time": {
+	"process_time": {
 		Label: "H2O Process Time",
 		Unit:  mp.UnitFloat,
 		Metrics: []mp.Metrics{
@@ -160,7 +160,7 @@ var graphdef = map[string]mp.Graphs{
 			{Name: "process_time_0", Label: "0 Percentile"},
 		},
 	},
-	"response-time": {
+	"response_time": {
 		Label: "H2O Response Time",
 		Unit:  mp.UnitFloat,
 		Metrics: []mp.Metrics{
