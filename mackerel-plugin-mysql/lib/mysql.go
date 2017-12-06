@@ -43,7 +43,7 @@ func (m MySQLPlugin) defaultGraphdef() map[string]mp.Graphs {
 	capacityMetrics := []mp.Metrics{
 		{Name: "PercentageOfConnections", Label: "Percentage Of Connections", Diff: false, Stacked: false},
 	}
-	if m.DisableInnoDB != true {
+	if m.DisableInnoDB != true && m.isAuroraReader != true {
 		capacityMetrics = append(capacityMetrics, mp.Metrics{
 			Name: "PercentageOfBufferPool", Label: "Percentage Of Buffer Pool", Diff: false, Stacked: false,
 		})
@@ -145,6 +145,7 @@ type MySQLPlugin struct {
 	DisableInnoDB  bool
 	isUnixSocket   bool
 	EnableExtended bool
+	isAuroraReader bool
 }
 
 // MetricKeyPrefix retruns the metrics key prefix
@@ -203,7 +204,15 @@ func (m MySQLPlugin) fetchShowVariables(db mysql.Conn, stat map[string]float64) 
 			if err != nil {
 				log.Println("FetchMetrics (Fetch Variables): ", err)
 			}
-			stat[variableName], _ = atof(string(row[1].([]byte)))
+			v := string(row[1].([]byte))
+			switch v {
+				case "ON", "YES":
+					stat[variableName] = 1
+				case "OFF", "NO":
+					stat[variableName] = 0
+				default:
+					stat[variableName], _ = atof(v)
+			}
 		} else {
 			log.Fatalln("FetchMetrics (Variables): row length is too small: ", len(row))
 		}
@@ -283,7 +292,7 @@ func (m MySQLPlugin) fetchProcesslist(db mysql.Conn, stat map[string]float64) er
 
 func (m MySQLPlugin) calculateCapacity(stat map[string]float64) {
 	stat["PercentageOfConnections"] = 100.0 * stat["Threads_connected"] / stat["max_connections"]
-	if m.DisableInnoDB != true {
+	if m.DisableInnoDB != true && m.isAuroraReader != true {
 		stat["PercentageOfBufferPool"] = 100.0 * stat["database_pages"] / stat["pool_size"]
 	}
 }
@@ -305,15 +314,17 @@ func (m MySQLPlugin) FetchMetrics() (map[string]interface{}, error) {
 	stat := make(map[string]float64)
 	m.fetchShowStatus(db, stat)
 
-	if m.DisableInnoDB != true {
+	m.fetchShowVariables(db, stat)
+
+	m.isAuroraReader = stat["aurora_version"] != 0 && stat["innodb_read_only"] == 1
+
+	if m.DisableInnoDB != true && m.isAuroraReader != true {
 		err := m.fetchShowInnodbStatus(db, stat)
 		if err != nil {
 			log.Println("FetchMetrics (InnoDB Status): ", err)
 			m.DisableInnoDB = true
 		}
 	}
-
-	m.fetchShowVariables(db, stat)
 
 	m.fetchShowSlaveStatus(db, stat)
 
