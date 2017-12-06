@@ -28,7 +28,7 @@ var graphdef = map[string]mp.Graphs{
 		Unit:  mp.UnitInteger,
 		Metrics: []mp.Metrics{
 			{Name: "connections", Label: "Active connections"},
-			{Name: "max-connections", Label: "Max connections"},
+			{Name: "max_connections", Label: "Max connections"},
 		},
 	},
 	"listeners": {
@@ -42,14 +42,14 @@ var graphdef = map[string]mp.Graphs{
 		Label: "H2O Worker Threads",
 		Unit:  mp.UnitInteger,
 		Metrics: []mp.Metrics{
-			{Name: "worker-threads", Label: "Worker Threads"},
+			{Name: "worker_threads", Label: "Worker Threads"},
 		},
 	},
 	"num-sessions": {
 		Label: "H2O Sessions",
 		Unit:  mp.UnitInteger,
 		Metrics: []mp.Metrics{
-			{Name: "num-sessions", Label: "Sessions"},
+			{Name: "num_sessions", Label: "Sessions"},
 		},
 	},
 	"requests": {
@@ -63,123 +63,123 @@ var graphdef = map[string]mp.Graphs{
 		Label: "H2O Status Errors",
 		Unit:  mp.UnitInteger,
 		Metrics: []mp.Metrics{
-			{Name: "status-errors_503", Label: "Error 503", Diff: true},
-			{Name: "status-errors_502", Label: "Error 502", Diff: true},
-			{Name: "status-errors_500", Label: "Error 500", Diff: true},
-			{Name: "status-errors_417", Label: "Error 417", Diff: true},
-			{Name: "status-errors_416", Label: "Error 416", Diff: true},
-			{Name: "status-errors_405", Label: "Error 405", Diff: true},
-			{Name: "status-errors_404", Label: "Error 404", Diff: true},
-			{Name: "status-errors_403", Label: "Error 403", Diff: true},
-			{Name: "status-errors_400", Label: "Error 400", Diff: true},
+			{Name: "status_errors_503", Label: "Error 503", Diff: true},
+			{Name: "status_errors_502", Label: "Error 502", Diff: true},
+			{Name: "status_errors_500", Label: "Error 500", Diff: true},
+			{Name: "status_errors_417", Label: "Error 417", Diff: true},
+			{Name: "status_errors_416", Label: "Error 416", Diff: true},
+			{Name: "status_errors_405", Label: "Error 405", Diff: true},
+			{Name: "status_errors_404", Label: "Error 404", Diff: true},
+			{Name: "status_errors_403", Label: "Error 403", Diff: true},
+			{Name: "status_errors_400", Label: "Error 400", Diff: true},
 		},
 	},
 	"http2-errors": {
 		Label: "H2O HTTP2 Errors",
 		Unit:  mp.UnitInteger,
 		Metrics: []mp.Metrics{
-			{Name: "http2-errors_protocol", Label: "Error protocol", Diff: true},
-			{Name: "http2-errors_internal", Label: "Error internal", Diff: true},
-			{Name: "http2-errors_flow-control", Label: "Error Flow Control", Diff: true},
-			{Name: "http2-errors_settings-timeout", Label: "Error Setting Timeout", Diff: true},
-			{Name: "http2-errors_frame-size", Label: "Error Frame Size", Diff: true},
-			{Name: "http2-errors_refused-stream", Label: "Error Refused Stream", Diff: true},
-			{Name: "http2-errors_cancel", Label: "Error Cancel", Diff: true},
-			{Name: "http2-errors_compression", Label: "Error Compression", Diff: true},
-			{Name: "http2-errors_connect", Label: "Error Connect", Diff: true},
-			{Name: "http2-errors_enhance-your-calm", Label: "Error Enhance Your Calm", Diff: true},
-			{Name: "http2-errors_inadequate-security", Label: "Error Inadequate Security", Diff: true},
+			{Name: "http2_errors_protocol", Label: "Error protocol", Diff: true},
+			{Name: "http2_errors_internal", Label: "Error internal", Diff: true},
+			{Name: "http2_errors_flow_control", Label: "Error Flow Control", Diff: true},
+			{Name: "http2_errors_settings_timeout", Label: "Error Setting Timeout", Diff: true},
+			{Name: "http2_errors_frame_size", Label: "Error Frame Size", Diff: true},
+			{Name: "http2_errors_refused_stream", Label: "Error Refused Stream", Diff: true},
+			{Name: "http2_errors_cancel", Label: "Error Cancel", Diff: true},
+			{Name: "http2_errors_compression", Label: "Error Compression", Diff: true},
+			{Name: "http2_errors_connect", Label: "Error Connect", Diff: true},
+			{Name: "http2_errors_enhance_your_calm", Label: "Error Enhance Your Calm", Diff: true},
+			{Name: "http2_errors_inadequate_security", Label: "Error Inadequate Security", Diff: true},
 		},
 	},
 	"read-closed": {
 		Label: "H2O Read Closed",
 		Unit:  mp.UnitInteger,
 		Metrics: []mp.Metrics{
-			{Name: "http2_read-closed", Label: "Read Closed", Diff: true},
+			{Name: "http2_read_closed", Label: "Read Closed", Diff: true},
 		},
 	},
 	"write-closed": {
 		Label: "H2O Write Closed",
 		Unit:  mp.UnitInteger,
 		Metrics: []mp.Metrics{
-			{Name: "http2_write-closed", Label: "Write Closed", Diff: true},
+			{Name: "http2_write_closed", Label: "Write Closed", Diff: true},
 		},
 	},
 	"connect-time": {
 		Label: "H2O Connect Time",
 		Unit:  mp.UnitFloat,
 		Metrics: []mp.Metrics{
-			{Name: "connect-time-99", Label: "99 Percentile"},
-			{Name: "connect-time-75", Label: "75 Percentile"},
-			{Name: "connect-time-50", Label: "50 Percentile"},
-			{Name: "connect-time-25", Label: "25 Percentile"},
-			{Name: "connect-time-0", Label: "0 Percentile"},
+			{Name: "connect_time_99", Label: "99 Percentile"},
+			{Name: "connect_time_75", Label: "75 Percentile"},
+			{Name: "connect_time_50", Label: "50 Percentile"},
+			{Name: "connect_time_25", Label: "25 Percentile"},
+			{Name: "connect_time_0", Label: "0 Percentile"},
 		},
 	},
 	"header-time": {
 		Label: "H2O Header Time",
 		Unit:  mp.UnitFloat,
 		Metrics: []mp.Metrics{
-			{Name: "header-time-99", Label: "99 Percentile"},
-			{Name: "header-time-75", Label: "75 Percentile"},
-			{Name: "header-time-50", Label: "50 Percentile"},
-			{Name: "header-time-25", Label: "25 Percentile"},
-			{Name: "header-time-0", Label: "0 Percentile"},
+			{Name: "header_time_99", Label: "99 Percentile"},
+			{Name: "header_time_75", Label: "75 Percentile"},
+			{Name: "header_time_50", Label: "50 Percentile"},
+			{Name: "header_time_25", Label: "25 Percentile"},
+			{Name: "header_time_0", Label: "0 Percentile"},
 		},
 	},
 	"body-time": {
 		Label: "H2O Body Time",
 		Unit:  mp.UnitFloat,
 		Metrics: []mp.Metrics{
-			{Name: "body-time-99", Label: "99 Percentile"},
-			{Name: "body-time-75", Label: "75 Percentile"},
-			{Name: "body-time-50", Label: "50 Percentile"},
-			{Name: "body-time-25", Label: "25 Percentile"},
-			{Name: "body-time-0", Label: "0 Percentile"},
+			{Name: "body_time_99", Label: "99 Percentile"},
+			{Name: "body_time_75", Label: "75 Percentile"},
+			{Name: "body_time_50", Label: "50 Percentile"},
+			{Name: "body_time_25", Label: "25 Percentile"},
+			{Name: "body_time_0", Label: "0 Percentile"},
 		},
 	},
 	"request-total-time": {
 		Label: "H2O Request Total Time",
 		Unit:  mp.UnitFloat,
 		Metrics: []mp.Metrics{
-			{Name: "request-total-time-99", Label: "99 Percentile"},
-			{Name: "request-total-time-75", Label: "75 Percentile"},
-			{Name: "request-total-time-50", Label: "50 Percentile"},
-			{Name: "request-total-time-25", Label: "25 Percentile"},
-			{Name: "request-total-time-0", Label: "0 Percentile"},
+			{Name: "request_total_time_99", Label: "99 Percentile"},
+			{Name: "request_total_time_75", Label: "75 Percentile"},
+			{Name: "request_total_time_50", Label: "50 Percentile"},
+			{Name: "request_total_time_25", Label: "25 Percentile"},
+			{Name: "request_total_time_0", Label: "0 Percentile"},
 		},
 	},
 	"process-time": {
 		Label: "H2O Process Time",
 		Unit:  mp.UnitFloat,
 		Metrics: []mp.Metrics{
-			{Name: "process-time-99", Label: "99 Percentile"},
-			{Name: "process-time-75", Label: "75 Percentile"},
-			{Name: "process-time-50", Label: "50 Percentile"},
-			{Name: "process-time-25", Label: "25 Percentile"},
-			{Name: "process-time-0", Label: "0 Percentile"},
+			{Name: "process_time_99", Label: "99 Percentile"},
+			{Name: "process_time_75", Label: "75 Percentile"},
+			{Name: "process_time_50", Label: "50 Percentile"},
+			{Name: "process_time_25", Label: "25 Percentile"},
+			{Name: "process_time_0", Label: "0 Percentile"},
 		},
 	},
 	"response-time": {
 		Label: "H2O Response Time",
 		Unit:  mp.UnitFloat,
 		Metrics: []mp.Metrics{
-			{Name: "response-time-99", Label: "99 Percentile"},
-			{Name: "response-time-75", Label: "75 Percentile"},
-			{Name: "response-time-50", Label: "50 Percentile"},
-			{Name: "response-time-25", Label: "25 Percentile"},
-			{Name: "response-time-0", Label: "0 Percentile"},
+			{Name: "response_time_99", Label: "99 Percentile"},
+			{Name: "response_time_75", Label: "75 Percentile"},
+			{Name: "response_time_50", Label: "50 Percentile"},
+			{Name: "response_time_25", Label: "25 Percentile"},
+			{Name: "response_time_0", Label: "0 Percentile"},
 		},
 	},
 	"duration": {
 		Label: "H2O Duration",
 		Unit:  mp.UnitFloat,
 		Metrics: []mp.Metrics{
-			{Name: "duration-99", Label: "99 Percentile"},
-			{Name: "duration-75", Label: "75 Percentile"},
-			{Name: "duration-50", Label: "50 Percentile"},
-			{Name: "duration-25", Label: "25 Percentile"},
-			{Name: "duration-0", Label: "0 Percentile"},
+			{Name: "duration_99", Label: "99 Percentile"},
+			{Name: "duration_75", Label: "75 Percentile"},
+			{Name: "duration_50", Label: "50 Percentile"},
+			{Name: "duration_25", Label: "25 Percentile"},
+			{Name: "duration_0", Label: "0 Percentile"},
 		},
 	},
 }
@@ -257,6 +257,8 @@ func (h2o H2OPlugin) parseStats(body io.Reader) (map[string]float64, error) {
 		return nil, err
 	}
 
+	r := strings.NewReplacer(".", "_", "-", "_")
+
 	for k, v := range stat {
 		switch k {
 		case "server-version", "openssl-version", "current-time", "restart-time", "generation":
@@ -271,7 +273,7 @@ func (h2o H2OPlugin) parseStats(body io.Reader) (map[string]float64, error) {
 			if !ok {
 				return nil, fmt.Errorf("cannot get \"%s\" value", k)
 			}
-			metrics[strings.Replace(k, ".", "_", -1)] = f
+			metrics[r.Replace(k)] = f
 		}
 	}
 

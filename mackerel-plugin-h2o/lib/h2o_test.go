@@ -166,7 +166,7 @@ func TestParse(t *testing.T) {
 	assert.EqualValues(t, 288, stat["uptime"])
 	assert.EqualValues(t, 1, stat["requests"])
 	assert.EqualValues(t, 1, stat["connections"])
-	assert.EqualValues(t, 2, stat["status-errors_404"])
-	assert.EqualValues(t, 3, stat["http2_read-closed"])
-	assert.EqualValues(t, 0, stat["connect-time-25"])
+	assert.EqualValues(t, 2, stat["status_errors_404"])
+	assert.EqualValues(t, 3, stat["http2_read_closed"])
+	assert.EqualValues(t, 0, stat["connect_time_25"])
 }
