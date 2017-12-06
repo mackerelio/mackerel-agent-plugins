@@ -2,6 +2,7 @@ package mph2o
 
 import (
 	"encoding/json"
+	"errors"
 	"flag"
 	"fmt"
 	"io"
@@ -262,7 +263,7 @@ func (h2o H2OPlugin) parseStats(body io.Reader) (map[string]float64, error) {
 		case "requests":
 			requests, ok := stat["requests"].([]interface{})
 			if !ok {
-				return nil, fmt.Errorf("cannot get \"%s\" value", "requests")
+				return nil, errors.New("cannot get \"requests\" value")
 			}
 			metrics["requests"] = float64(len(requests))
 		default:
