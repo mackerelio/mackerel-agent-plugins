@@ -111,7 +111,7 @@ command = "/path/to/mackerel-plugin-h2o"
 - h2o.request-total-time.request-total-time-25
 - h2o.request-total-time.request-total-time-50
 - h2o.request-total-time.request-total-time-75
-- h2o.request-total-time.request-total-time-9
+- h2o.request-total-time.request-total-time-99
 
 ### h2o.process-time
 
