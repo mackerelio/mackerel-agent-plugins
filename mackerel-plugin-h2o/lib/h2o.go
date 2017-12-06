@@ -271,7 +271,7 @@ func (h2o H2OPlugin) parseStats(body io.Reader) (map[string]float64, error) {
 		default:
 			f, ok := v.(float64)
 			if !ok {
-				return nil, fmt.Errorf("cannot get \"%s\" value", k)
+				return nil, fmt.Errorf("cannot get %q value", k)
 			}
 			metrics[r.Replace(k)] = f
 		}
