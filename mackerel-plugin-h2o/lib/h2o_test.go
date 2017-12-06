@@ -1,8 +1,8 @@
 package mph2o
 
 import (
-	"bytes"
 	"fmt"
+	"strings"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -158,7 +158,7 @@ func TestParse(t *testing.T) {
  "duration-99": 0
 }`
 
-	h2oStats := bytes.NewBufferString(stub)
+	h2oStats := strings.NewReader(stub)
 
 	stat, err := h2o.parseStats(h2oStats)
 	fmt.Println(stat)
