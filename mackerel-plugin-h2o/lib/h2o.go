@@ -18,7 +18,7 @@ const prefix = "h2o"
 var graphdef = map[string]mp.Graphs{
 	"uptime": {
 		Label: "H2O Uptime",
-		Unit:  mp.UnitInteger,
+		Unit:  mp.UnitFloat,
 		Metrics: []mp.Metrics{
 			{Name: "uptime", Label: "Seconds"},
 		},
@@ -107,7 +107,7 @@ var graphdef = map[string]mp.Graphs{
 	},
 	"connect-time": {
 		Label: "H2O Connect Time",
-		Unit:  mp.UnitInteger,
+		Unit:  mp.UnitFloat,
 		Metrics: []mp.Metrics{
 			{Name: "connect-time-0", Label: "0 Percentile"},
 			{Name: "connect-time-25", Label: "25 Percentile"},
@@ -118,7 +118,7 @@ var graphdef = map[string]mp.Graphs{
 	},
 	"header-time": {
 		Label: "H2O Header Time",
-		Unit:  mp.UnitInteger,
+		Unit:  mp.UnitFloat,
 		Metrics: []mp.Metrics{
 			{Name: "header-time-0", Label: "0 Percentile"},
 			{Name: "header-time-25", Label: "25 Percentile"},
@@ -129,7 +129,7 @@ var graphdef = map[string]mp.Graphs{
 	},
 	"body-time": {
 		Label: "H2O Body Time",
-		Unit:  mp.UnitInteger,
+		Unit:  mp.UnitFloat,
 		Metrics: []mp.Metrics{
 			{Name: "body-time-0", Label: "0 Percentile"},
 			{Name: "body-time-25", Label: "25 Percentile"},
@@ -140,7 +140,7 @@ var graphdef = map[string]mp.Graphs{
 	},
 	"request-total-time": {
 		Label: "H2O Request Total Time",
-		Unit:  mp.UnitInteger,
+		Unit:  mp.UnitFloat,
 		Metrics: []mp.Metrics{
 			{Name: "request-total-time-0", Label: "0 Percentile"},
 			{Name: "request-total-time-25", Label: "25 Percentile"},
@@ -151,7 +151,7 @@ var graphdef = map[string]mp.Graphs{
 	},
 	"process-time": {
 		Label: "H2O Process Time",
-		Unit:  mp.UnitInteger,
+		Unit:  mp.UnitFloat,
 		Metrics: []mp.Metrics{
 			{Name: "process-time-0", Label: "0 Percentile"},
 			{Name: "process-time-25", Label: "25 Percentile"},
@@ -162,7 +162,7 @@ var graphdef = map[string]mp.Graphs{
 	},
 	"response-time": {
 		Label: "H2O Response Time",
-		Unit:  mp.UnitInteger,
+		Unit:  mp.UnitFloat,
 		Metrics: []mp.Metrics{
 			{Name: "response-time-0", Label: "0 Percentile"},
 			{Name: "response-time-25", Label: "25 Percentile"},
@@ -173,7 +173,7 @@ var graphdef = map[string]mp.Graphs{
 	},
 	"duration": {
 		Label: "H2O Duration",
-		Unit:  mp.UnitInteger,
+		Unit:  mp.UnitFloat,
 		Metrics: []mp.Metrics{
 			{Name: "duration-0", Label: "0 Percentile"},
 			{Name: "duration-25", Label: "25 Percentile"},
