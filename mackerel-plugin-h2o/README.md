@@ -28,111 +28,111 @@ command = "/path/to/mackerel-plugin-h2o"
 
 ### h2o.connections
 
-- h2o.connections.max-connections
+- h2o.connections.max_connections
 - h2o.connections.connections
 
 ### h2o.listeners
 
 - h2o.listeners.listeners
 
-### h2o.worker-threads
+### h2o.worker_threads
 
-- h2o.worker-threads.worker-threads
+- h2o.worker_threads.worker_threads
 
-### h2o.num-sessions
+### h2o.num_sessions
 
-- h2o.num-sessions.num-sessions
+- h2o.num_sessions.num_sessions
 
 ### h2o.requests
 
 - h2o.requests.requests
 
-### h2o.status-errors
+### h2o.status_errors
 
-- h2o.status-errors.status-errors_400
-- h2o.status-errors.status-errors_403
-- h2o.status-errors.status-errors_404
-- h2o.status-errors.status-errors_405
-- h2o.status-errors.status-errors_416
-- h2o.status-errors.status-errors_417
-- h2o.status-errors.status-errors_500
-- h2o.status-errors.status-errors_502
-- h2o.status-errors.status-errors_503
+- h2o.status_errors.status_errors_400
+- h2o.status_errors.status_errors_403
+- h2o.status_errors.status_errors_404
+- h2o.status_errors.status_errors_405
+- h2o.status_errors.status_errors_416
+- h2o.status_errors.status_errors_417
+- h2o.status_errors.status_errors_500
+- h2o.status_errors.status_errors_502
+- h2o.status_errors.status_errors_503
 
-### h2o.http2-errors
+### h2o.http2_errors
 
-- h2o.http2-errors.http2-errors_protocol
-- h2o.http2-errors.http2-errors_internal
-- h2o.http2-errors.http2-errors_flow-control
-- h2o.http2-errors.http2-errors_settings-timeout
-- h2o.http2-errors.http2-errors_frame-size
-- h2o.http2-errors.http2-errors_refused-stream
-- h2o.http2-errors.http2-errors_cancel
-- h2o.http2-errors.http2-errors_compression
-- h2o.http2-errors.http2-errors_connect
-- h2o.http2-errors.http2-errors_enhance-your-calm
-- h2o.http2-errors.http2-errors_inadequate-security
+- h2o.http2_errors.http2_errors_protocol
+- h2o.http2_errors.http2_errors_internal
+- h2o.http2_errors.http2_errors_flow_control
+- h2o.http2_errors.http2_errors_settings_timeout
+- h2o.http2_errors.http2_errors_frame_size
+- h2o.http2_errors.http2_errors_refused_stream
+- h2o.http2_errors.http2_errors_cancel
+- h2o.http2_errors.http2_errors_compression
+- h2o.http2_errors.http2_errors_connect
+- h2o.http2_errors.http2_errors_enhance_your_calm
+- h2o.http2_errors.http2_errors_inadequate_security
 
-### h2o.read-closed
+### h2o.read_closed
 
-- h2o.read-closed.http2_read-closed
+- h2o.read_closed.http2_read_closed
 
-### h2o.write-closed
+### h2o.write_closed
 
-- h2o.write-closed.http2_write-closed
+- h2o.write_closed.http2_write_closed
 
-### h1o.connect-time
+### h1o.connect_time
 
-- h2o.connect-time.connect-time-0
-- h2o.connect-time.connect-time-25
-- h2o.connect-time.connect-time-50
-- h2o.connect-time.connect-time-75
-- h2o.connect-time.connect-time-99
+- h2o.connect_time.connect_time_0
+- h2o.connect_time.connect_time_25
+- h2o.connect_time.connect_time_50
+- h2o.connect_time.connect_time_75
+- h2o.connect_time.connect_time_99
 
-### h2o.header-time
+### h2o.header_time
 
-- h2o.header-time.header-time-0
-- h2o.header-time.header-time-25
-- h2o.header-time.header-time-50
-- h2o.header-time.header-time-75
-- h2o.header-time.header-time-99
+- h2o.header_time.header_time_0
+- h2o.header_time.header_time_25
+- h2o.header_time.header_time_50
+- h2o.header_time.header_time_75
+- h2o.header_time.header_time_99
 
-### h2o.body-time
+### h2o.body_time
 
-- h2o.body-time.body-time-0
-- h2o.body-time.body-time-25
-- h2o.body-time.body-time-50
-- h2o.body-time.body-time-75
-- h2o.body-time.body-time-99
+- h2o.body_time.body_time_0
+- h2o.body_time.body_time_25
+- h2o.body_time.body_time_50
+- h2o.body_time.body_time_75
+- h2o.body_time.body_time_99
 
-### h2o.request-total-time
+### h2o.request_total_time
 
-- h2o.request-total-time.request-total-time-0
-- h2o.request-total-time.request-total-time-25
-- h2o.request-total-time.request-total-time-50
-- h2o.request-total-time.request-total-time-75
-- h2o.request-total-time.request-total-time-99
+- h2o.request_total_time.request_total_time_0
+- h2o.request_total_time.request_total_time_25
+- h2o.request_total_time.request_total_time_50
+- h2o.request_total_time.request_total_time_75
+- h2o.request_total_time.request_total_time_99
 
-### h2o.process-time
+### h2o.process_time
 
-- h2o.process-time.process-time-0
-- h2o.process-time.process-time-25
-- h2o.process-time.process-time-50
-- h2o.process-time.process-time-75
-- h2o.process-time.process-time-99
+- h2o.process_time.process_time_0
+- h2o.process_time.process_time_25
+- h2o.process_time.process_time_50
+- h2o.process_time.process_time_75
+- h2o.process_time.process_time_99
 
-### h2o.response-time
+### h2o.response_time
 
-- h2o.response-time.response-time-0
-- h2o.response-time.response-time-25
-- h2o.response-time.response-time-50
-- h2o.response-time.response-time-75
-- h2o.response-time.response-time-99
+- h2o.response_time.response_time_0
+- h2o.response_time.response_time_25
+- h2o.response_time.response_time_50
+- h2o.response_time.response_time_75
+- h2o.response_time.response_time_99
 
 ### h2o.duration
 
-- h2o.duration.duration-0
-- h2o.duration.duration-25
-- h2o.duration.duration-50
-- h2o.duration.duration-75
-- h2o.duration.duration-99
+- h2o.duration.duration_0
+- h2o.duration.duration_25
+- h2o.duration.duration_50
+- h2o.duration.duration_75
+- h2o.duration.duration_99
