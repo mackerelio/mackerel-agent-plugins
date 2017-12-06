@@ -192,7 +192,7 @@ func (m MySQLPlugin) fetchShowInnodbStatus(db mysql.Conn, stat map[string]float6
 	return nil
 }
 
-func (m MySQLPlugin) fetchShowVariables(db mysql.Conn, stat map[string]float64) error {
+func (m MySQLPlugin) fetchShowVariables(db mysql.Conn, rawStat map[string]string, stat map[string]float64) error {
 	rows, _, err := db.Query("SHOW VARIABLES")
 	if err != nil {
 		log.Fatalln("FetchMetrics (Variables): ", err)
@@ -204,18 +204,13 @@ func (m MySQLPlugin) fetchShowVariables(db mysql.Conn, stat map[string]float64) 
 			if err != nil {
 				log.Println("FetchMetrics (Fetch Variables): ", err)
 			}
-			v := string(row[1].([]byte))
-			switch v {
-				case "ON", "YES":
-					stat[variableName] = 1
-				case "OFF", "NO":
-					stat[variableName] = 0
-				default:
-					stat[variableName], _ = atof(v)
-			}
+			rawStat[variableName] = string(row[1].([]byte))
 		} else {
 			log.Fatalln("FetchMetrics (Variables): row length is too small: ", len(row))
 		}
+	}
+	for variableName, v := range rawStat {
+		stat[variableName], _ = atof(v)
 	}
 	if m.EnableExtended {
 		err = fetchShowVariablesBackwardCompatibile(stat)
@@ -312,11 +307,12 @@ func (m MySQLPlugin) FetchMetrics() (map[string]interface{}, error) {
 	defer db.Close()
 
 	stat := make(map[string]float64)
+	rawStat := make(map[string]string)
 	m.fetchShowStatus(db, stat)
 
-	m.fetchShowVariables(db, stat)
+	m.fetchShowVariables(db, rawStat, stat)
 
-	m.isAuroraReader = stat["aurora_version"] != 0 && stat["innodb_read_only"] == 1
+	m.isAuroraReader = rawStat["aurora_version"] != "" && rawStat["innodb_read_only"] == "ON"
 
 	if m.DisableInnoDB != true && m.isAuroraReader != true {
 		err := m.fetchShowInnodbStatus(db, stat)
