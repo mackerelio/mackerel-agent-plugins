@@ -43,7 +43,7 @@ func (m MySQLPlugin) defaultGraphdef() map[string]mp.Graphs {
 	capacityMetrics := []mp.Metrics{
 		{Name: "PercentageOfConnections", Label: "Percentage Of Connections", Diff: false, Stacked: false},
 	}
-	if m.DisableInnoDB != true {
+	if m.DisableInnoDB != true && m.isAuroraReader != true {
 		capacityMetrics = append(capacityMetrics, mp.Metrics{
 			Name: "PercentageOfBufferPool", Label: "Percentage Of Buffer Pool", Diff: false, Stacked: false,
 		})
@@ -145,6 +145,7 @@ type MySQLPlugin struct {
 	DisableInnoDB  bool
 	isUnixSocket   bool
 	EnableExtended bool
+	isAuroraReader bool
 }
 
 // MetricKeyPrefix retruns the metrics key prefix
@@ -191,7 +192,7 @@ func (m MySQLPlugin) fetchShowInnodbStatus(db mysql.Conn, stat map[string]float6
 	return nil
 }
 
-func (m MySQLPlugin) fetchShowVariables(db mysql.Conn, stat map[string]float64) error {
+func (m MySQLPlugin) fetchShowVariables(db mysql.Conn, rawStat map[string]string, stat map[string]float64) error {
 	rows, _, err := db.Query("SHOW VARIABLES")
 	if err != nil {
 		log.Fatalln("FetchMetrics (Variables): ", err)
@@ -203,10 +204,13 @@ func (m MySQLPlugin) fetchShowVariables(db mysql.Conn, stat map[string]float64) 
 			if err != nil {
 				log.Println("FetchMetrics (Fetch Variables): ", err)
 			}
-			stat[variableName], _ = atof(string(row[1].([]byte)))
+			rawStat[variableName] = string(row[1].([]byte))
 		} else {
 			log.Fatalln("FetchMetrics (Variables): row length is too small: ", len(row))
 		}
+	}
+	for variableName, v := range rawStat {
+		stat[variableName], _ = atof(v)
 	}
 	if m.EnableExtended {
 		err = fetchShowVariablesBackwardCompatibile(stat)
@@ -283,7 +287,7 @@ func (m MySQLPlugin) fetchProcesslist(db mysql.Conn, stat map[string]float64) er
 
 func (m MySQLPlugin) calculateCapacity(stat map[string]float64) {
 	stat["PercentageOfConnections"] = 100.0 * stat["Threads_connected"] / stat["max_connections"]
-	if m.DisableInnoDB != true {
+	if m.DisableInnoDB != true && m.isAuroraReader != true {
 		stat["PercentageOfBufferPool"] = 100.0 * stat["database_pages"] / stat["pool_size"]
 	}
 }
@@ -303,17 +307,20 @@ func (m MySQLPlugin) FetchMetrics() (map[string]interface{}, error) {
 	defer db.Close()
 
 	stat := make(map[string]float64)
+	rawStat := make(map[string]string)
 	m.fetchShowStatus(db, stat)
 
-	if m.DisableInnoDB != true {
+	m.fetchShowVariables(db, rawStat, stat)
+
+	m.isAuroraReader = rawStat["aurora_version"] != "" && rawStat["innodb_read_only"] == "ON"
+
+	if m.DisableInnoDB != true && m.isAuroraReader != true {
 		err := m.fetchShowInnodbStatus(db, stat)
 		if err != nil {
 			log.Println("FetchMetrics (InnoDB Status): ", err)
 			m.DisableInnoDB = true
 		}
 	}
-
-	m.fetchShowVariables(db, stat)
 
 	m.fetchShowSlaveStatus(db, stat)
 
