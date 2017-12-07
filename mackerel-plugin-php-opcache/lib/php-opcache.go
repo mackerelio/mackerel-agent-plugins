@@ -107,11 +107,11 @@ func getPhpOpcacheMetrics(host string, port uint16, path string) (string, error)
 	if err != nil {
 		return "", err
 	}
+	defer resp.Body.Close()
 	if resp.StatusCode != http.StatusOK {
 		return "", fmt.Errorf("HTTP status error: %d", resp.StatusCode)
 	}
 	body, err := ioutil.ReadAll(resp.Body)
-	resp.Body.Close()
 	if err != nil {
 		return "", err
 	}
