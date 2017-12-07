@@ -37,7 +37,7 @@ func init() {
 	processState["State_other"] = true
 }
 
-func (m MySQLPlugin) defaultGraphdef() map[string]mp.Graphs {
+func (m *MySQLPlugin) defaultGraphdef() map[string]mp.Graphs {
 	labelPrefix := strings.Title(strings.Replace(m.MetricKeyPrefix(), "mysql", "MySQL", -1))
 
 	capacityMetrics := []mp.Metrics{
@@ -148,14 +148,14 @@ type MySQLPlugin struct {
 }
 
 // MetricKeyPrefix retruns the metrics key prefix
-func (m MySQLPlugin) MetricKeyPrefix() string {
+func (m *MySQLPlugin) MetricKeyPrefix() string {
 	if m.prefix == "" {
 		m.prefix = "mysql"
 	}
 	return m.prefix
 }
 
-func (m MySQLPlugin) fetchShowStatus(db mysql.Conn, stat map[string]float64) error {
+func (m *MySQLPlugin) fetchShowStatus(db mysql.Conn, stat map[string]float64) error {
 	rows, _, err := db.Query("show /*!50002 global */ status")
 	if err != nil {
 		log.Fatalln("FetchMetrics (Status): ", err)
@@ -177,7 +177,7 @@ func (m MySQLPlugin) fetchShowStatus(db mysql.Conn, stat map[string]float64) err
 	return nil
 }
 
-func (m MySQLPlugin) fetchShowInnodbStatus(db mysql.Conn, stat map[string]float64) error {
+func (m *MySQLPlugin) fetchShowInnodbStatus(db mysql.Conn, stat map[string]float64) error {
 	row, _, err := db.QueryFirst("SHOW /*!50000 ENGINE*/ INNODB STATUS")
 	if err != nil {
 		log.Fatalln("FetchMetrics (InnoDB Status): ", err)
@@ -191,7 +191,7 @@ func (m MySQLPlugin) fetchShowInnodbStatus(db mysql.Conn, stat map[string]float6
 	return nil
 }
 
-func (m MySQLPlugin) fetchShowVariables(db mysql.Conn, stat map[string]float64) error {
+func (m *MySQLPlugin) fetchShowVariables(db mysql.Conn, stat map[string]float64) error {
 	rows, _, err := db.Query("SHOW VARIABLES")
 	if err != nil {
 		log.Fatalln("FetchMetrics (Variables): ", err)
@@ -233,7 +233,7 @@ func fetchShowVariablesBackwardCompatibile(stat map[string]float64) error {
 	return nil
 }
 
-func (m MySQLPlugin) fetchShowSlaveStatus(db mysql.Conn, stat map[string]float64) error {
+func (m *MySQLPlugin) fetchShowSlaveStatus(db mysql.Conn, stat map[string]float64) error {
 	rows, res, err := db.Query("show slave status")
 	if err != nil {
 		log.Fatalln("FetchMetrics (Slave Status): ", err)
@@ -253,7 +253,7 @@ func (m MySQLPlugin) fetchShowSlaveStatus(db mysql.Conn, stat map[string]float64
 	return nil
 }
 
-func (m MySQLPlugin) fetchProcesslist(db mysql.Conn, stat map[string]float64) error {
+func (m *MySQLPlugin) fetchProcesslist(db mysql.Conn, stat map[string]float64) error {
 	rows, _, err := db.Query("SHOW PROCESSLIST")
 	if err != nil {
 		log.Fatalln("FetchMetrics (Processlist): ", err)
@@ -281,7 +281,7 @@ func (m MySQLPlugin) fetchProcesslist(db mysql.Conn, stat map[string]float64) er
 	return nil
 }
 
-func (m MySQLPlugin) calculateCapacity(stat map[string]float64) {
+func (m *MySQLPlugin) calculateCapacity(stat map[string]float64) {
 	stat["PercentageOfConnections"] = 100.0 * stat["Threads_connected"] / stat["max_connections"]
 	if m.DisableInnoDB != true {
 		stat["PercentageOfBufferPool"] = 100.0 * stat["database_pages"] / stat["pool_size"]
@@ -289,7 +289,7 @@ func (m MySQLPlugin) calculateCapacity(stat map[string]float64) {
 }
 
 // FetchMetrics interface for mackerelplugin
-func (m MySQLPlugin) FetchMetrics() (map[string]interface{}, error) {
+func (m *MySQLPlugin) FetchMetrics() (map[string]interface{}, error) {
 	proto := "tcp"
 	if m.isUnixSocket {
 		proto = "unix"
@@ -332,7 +332,7 @@ func (m MySQLPlugin) FetchMetrics() (map[string]interface{}, error) {
 }
 
 // GraphDefinition interface for mackerelplugin
-func (m MySQLPlugin) GraphDefinition() map[string]mp.Graphs {
+func (m *MySQLPlugin) GraphDefinition() map[string]mp.Graphs {
 	graphdef := m.defaultGraphdef()
 	if !m.DisableInnoDB {
 		graphdef = m.addGraphdefWithInnoDBMetrics(graphdef)
@@ -343,7 +343,7 @@ func (m MySQLPlugin) GraphDefinition() map[string]mp.Graphs {
 	return graphdef
 }
 
-func (m MySQLPlugin) addGraphdefWithInnoDBMetrics(graphdef map[string]mp.Graphs) map[string]mp.Graphs {
+func (m *MySQLPlugin) addGraphdefWithInnoDBMetrics(graphdef map[string]mp.Graphs) map[string]mp.Graphs {
 	labelPrefix := strings.Title(strings.Replace(m.MetricKeyPrefix(), "mysql", "MySQL", -1))
 	graphdef["innodb_rows"] = mp.Graphs{
 		Label: labelPrefix + " innodb Rows",
@@ -533,7 +533,7 @@ func (m MySQLPlugin) addGraphdefWithInnoDBMetrics(graphdef map[string]mp.Graphs)
 	return graphdef
 }
 
-func (m MySQLPlugin) addExtendedGraphdef(graphdef map[string]mp.Graphs) map[string]mp.Graphs {
+func (m *MySQLPlugin) addExtendedGraphdef(graphdef map[string]mp.Graphs) map[string]mp.Graphs {
 	//TODO
 	labelPrefix := strings.Title(strings.Replace(m.MetricKeyPrefix(), "mysql", "MySQL", -1))
 	graphdef["query_cache"] = mp.Graphs{
@@ -1061,7 +1061,7 @@ func Do() {
 	mysql.DisableInnoDB = *optInnoDB
 	mysql.prefix = *optMetricKeyPrefix
 	mysql.EnableExtended = *optEnableExtended
-	helper := mp.NewMackerelPlugin(mysql)
+	helper := mp.NewMackerelPlugin(&mysql)
 	helper.Tempfile = *optTempfile
 	helper.Run()
 }
