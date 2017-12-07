@@ -187,6 +187,7 @@ func getMetaData(url string) string {
 		log.Println("Failed to getMetaData:", err)
 		return ""
 	}
+	defer res.Body.Close()
 
 	b, _ := ioutil.ReadAll(res.Body)
 	return string(b)
