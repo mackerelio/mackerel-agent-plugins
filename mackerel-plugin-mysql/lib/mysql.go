@@ -145,6 +145,7 @@ type MySQLPlugin struct {
 	DisableInnoDB  bool
 	isUnixSocket   bool
 	EnableExtended bool
+	isAuroraReader bool
 }
 
 // MetricKeyPrefix retruns the metrics key prefix
@@ -197,17 +198,23 @@ func (m *MySQLPlugin) fetchShowVariables(db mysql.Conn, stat map[string]float64)
 		log.Fatalln("FetchMetrics (Variables): ", err)
 	}
 
+	rawStat := make(map[string]string)
 	for _, row := range rows {
 		if len(row) > 1 {
 			variableName := string(row[0].([]byte))
 			if err != nil {
 				log.Println("FetchMetrics (Fetch Variables): ", err)
 			}
-			stat[variableName], _ = atof(string(row[1].([]byte)))
+			value := string(row[1].([]byte))
+			rawStat[variableName] = value
+			stat[variableName], _ = atof(value)
 		} else {
 			log.Fatalln("FetchMetrics (Variables): row length is too small: ", len(row))
 		}
 	}
+
+	m.isAuroraReader = rawStat["aurora_version"] != "" && rawStat["innodb_read_only"] == "ON"
+
 	if m.EnableExtended {
 		err = fetchShowVariablesBackwardCompatibile(stat)
 		if err != nil {
@@ -283,7 +290,7 @@ func (m *MySQLPlugin) fetchProcesslist(db mysql.Conn, stat map[string]float64) e
 
 func (m *MySQLPlugin) calculateCapacity(stat map[string]float64) {
 	stat["PercentageOfConnections"] = 100.0 * stat["Threads_connected"] / stat["max_connections"]
-	if m.DisableInnoDB != true {
+	if m.DisableInnoDB != true && m.isAuroraReader != true {
 		stat["PercentageOfBufferPool"] = 100.0 * stat["database_pages"] / stat["pool_size"]
 	}
 }
@@ -305,15 +312,15 @@ func (m *MySQLPlugin) FetchMetrics() (map[string]interface{}, error) {
 	stat := make(map[string]float64)
 	m.fetchShowStatus(db, stat)
 
-	if m.DisableInnoDB != true {
+	m.fetchShowVariables(db, stat)
+
+	if m.DisableInnoDB != true && m.isAuroraReader != true {
 		err := m.fetchShowInnodbStatus(db, stat)
 		if err != nil {
 			log.Println("FetchMetrics (InnoDB Status): ", err)
 			m.DisableInnoDB = true
 		}
 	}
-
-	m.fetchShowVariables(db, stat)
 
 	m.fetchShowSlaveStatus(db, stat)
 
