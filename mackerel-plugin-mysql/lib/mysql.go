@@ -288,9 +288,35 @@ func (m *MySQLPlugin) fetchProcesslist(db mysql.Conn, stat map[string]float64) e
 	return nil
 }
 
+func (m *MySQLPlugin) pseudoFetchShowInnodbStatus(stat map[string]float64) {
+	for dst, src := range map[string]string{
+		"database_pages":    "Innodb_buffer_pool_pages_data",
+		"free_pages":        "Innodb_buffer_pool_pages_free",
+		"file_fsyncs":       "Innodb_data_fsyncs",
+		"file_reads":        "Innodb_data_reads",
+		"file_writes":       "Innodb_data_writes",
+		"modified_pages":    "Innodb_buffer_pool_pages_dirty",
+		"rows_deleted":      "Innodb_rows_deleted",
+		"rows_inserted":     "Innodb_rows_inserted",
+		"rows_read":         "Innodb_rows_read",
+		"rows_updated":      "Innodb_rows_updated",
+		"pool_size":         "Innodb_buffer_pool_pages_total",
+		"pages_created":     "Innodb_pages_created",
+		"pages_read":        "Innodb_pages_read",
+		"pages_written":     "Innodb_pages_written",
+		"read_ahead":        "Innodb_buffer_pool_read_ahead",
+		"read_evicted":      "Innodb_buffer_pool_read_ahead_evicted",
+		"read_random_ahead": "Innodb_buffer_pool_read_ahead_rnd",
+	} {
+		if v, found := stat[src]; found {
+			setIfEmpty(&stat, dst, v)
+		}
+	}
+}
+
 func (m *MySQLPlugin) calculateCapacity(stat map[string]float64) {
 	stat["PercentageOfConnections"] = 100.0 * stat["Threads_connected"] / stat["max_connections"]
-	if m.DisableInnoDB != true && m.isAuroraReader != true {
+	if m.DisableInnoDB != true {
 		stat["PercentageOfBufferPool"] = 100.0 * stat["database_pages"] / stat["pool_size"]
 	}
 }
@@ -314,7 +340,9 @@ func (m *MySQLPlugin) FetchMetrics() (map[string]interface{}, error) {
 
 	m.fetchShowVariables(db, stat)
 
-	if m.DisableInnoDB != true && m.isAuroraReader != true {
+	if m.isAuroraReader {
+		m.pseudoFetchShowInnodbStatus(stat)
+	} else if m.DisableInnoDB != true {
 		err := m.fetchShowInnodbStatus(db, stat)
 		if err != nil {
 			log.Println("FetchMetrics (InnoDB Status): ", err)
