@@ -17,13 +17,14 @@ var logger = logging.GetLogger("metrics.plugin.redis")
 
 // RedisPlugin mackerel plugin for Redis
 type RedisPlugin struct {
-	Host     string
-	Port     string
-	Password string
-	Socket   string
-	Prefix   string
-	Timeout  int
-	Tempfile string
+	Host          string
+	Port          string
+	Password      string
+	Socket        string
+	Prefix        string
+	Timeout       int
+	Tempfile      string
+	ConfigCommand string
 }
 
 func authenticateByPassword(c *redis.Client, password string) error {
@@ -34,10 +35,10 @@ func authenticateByPassword(c *redis.Client, password string) error {
 	return nil
 }
 
-func fetchPercentageOfMemory(c *redis.Client, stat map[string]interface{}) error {
-	r := c.Cmd("CONFIG", "GET", "maxmemory")
+func (m RedisPlugin) fetchPercentageOfMemory(c *redis.Client, stat map[string]interface{}) error {
+	r := c.Cmd(m.ConfigCommand, "GET", "maxmemory")
 	if r.Err != nil {
-		logger.Errorf("Failed to run `CONFIG GET maxmemory` command. %s", r.Err)
+		logger.Errorf("Failed to run `%s GET maxmemory` command. %s", m.ConfigCommand, r.Err)
 		return r.Err
 	}
 
@@ -62,10 +63,10 @@ func fetchPercentageOfMemory(c *redis.Client, stat map[string]interface{}) error
 	return nil
 }
 
-func fetchPercentageOfClients(c *redis.Client, stat map[string]interface{}) error {
-	r := c.Cmd("CONFIG", "GET", "maxclients")
+func (m RedisPlugin) fetchPercentageOfClients(c *redis.Client, stat map[string]interface{}) error {
+	r := c.Cmd(m.ConfigCommand, "GET", "maxclients")
 	if r.Err != nil {
-		logger.Errorf("Failed to run `CONFIG GET maxclients` command. %s", r.Err)
+		logger.Errorf("Failed to run `%s GET maxclients` command. %s", m.ConfigCommand, r.Err)
 		return r.Err
 	}
 
@@ -86,11 +87,11 @@ func fetchPercentageOfClients(c *redis.Client, stat map[string]interface{}) erro
 	return nil
 }
 
-func calculateCapacity(c *redis.Client, stat map[string]interface{}) error {
-	if err := fetchPercentageOfMemory(c, stat); err != nil {
+func (m RedisPlugin) calculateCapacity(c *redis.Client, stat map[string]interface{}) error {
+	if err := m.fetchPercentageOfMemory(c, stat); err != nil {
 		return err
 	}
-	return fetchPercentageOfClients(c, stat)
+	return m.fetchPercentageOfClients(c, stat)
 }
 
 // MetricKeyPrefix interface for PluginWithPrefix
@@ -220,8 +221,10 @@ func (m RedisPlugin) FetchMetrics() (map[string]interface{}, error) {
 		stat["expired"] = 0.0
 	}
 
-	if err := calculateCapacity(c, stat); err != nil {
-		logger.Infof("Failed to calculate capacity. (The cause may be that AWS Elasticache Redis has no `CONFIG` command.) Skip these metrics. %s", err)
+	if m.ConfigCommand != "" {
+		if err := m.calculateCapacity(c, stat); err != nil {
+			logger.Infof("Failed to calculate capacity. (The cause may be that AWS Elasticache Redis has no `%s` command.) Skip these metrics. %s", m.ConfigCommand, err)
+		}
 	}
 
 	for _, slave := range slaves {
@@ -374,11 +377,14 @@ func Do() {
 	optPrefix := flag.String("metric-key-prefix", "redis", "Metric key prefix")
 	optTimeout := flag.Int("timeout", 5, "Timeout")
 	optTempfile := flag.String("tempfile", "", "Temp file name")
+	optConfigCommand := flag.String("config-command", "CONFIG", "custom CONFIG command. disable CONFIG command when passed \"\"")
+
 	flag.Parse()
 
 	redis := RedisPlugin{
-		Timeout: *optTimeout,
-		Prefix:  *optPrefix,
+		Timeout:       *optTimeout,
+		Prefix:        *optPrefix,
+		ConfigCommand: *optConfigCommand,
 	}
 	if *optSocket != "" {
 		redis.Socket = *optSocket
