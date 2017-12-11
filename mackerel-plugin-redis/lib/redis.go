@@ -377,7 +377,7 @@ func Do() {
 	optPrefix := flag.String("metric-key-prefix", "redis", "Metric key prefix")
 	optTimeout := flag.Int("timeout", 5, "Timeout")
 	optTempfile := flag.String("tempfile", "", "Temp file name")
-	optConfigCommand := flag.String("config-command", "CONFIG", "custom CONFIG command. disable CONFIG command when passed \"\"")
+	optConfigCommand := flag.String("config-command", "CONFIG", "Custom CONFIG command. Disable CONFIG command when passed \"\".")
 
 	flag.Parse()
 
