@@ -52,3 +52,4 @@ debian/mackerel-plugin-docker
 debian/mackerel-plugin-unicorn
 debian/mackerel-plugin-uptime
 debian/mackerel-plugin-inode
+debian/mackerel-plugin-h2o
