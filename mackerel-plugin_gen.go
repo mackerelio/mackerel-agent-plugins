@@ -24,6 +24,7 @@ import (
 	"github.com/mackerelio/mackerel-agent-plugins/mackerel-plugin-flume/lib"
 	"github.com/mackerelio/mackerel-agent-plugins/mackerel-plugin-gostats/lib"
 	"github.com/mackerelio/mackerel-agent-plugins/mackerel-plugin-graphite/lib"
+	"github.com/mackerelio/mackerel-agent-plugins/mackerel-plugin-h2o/lib"
 	"github.com/mackerelio/mackerel-agent-plugins/mackerel-plugin-haproxy/lib"
 	"github.com/mackerelio/mackerel-agent-plugins/mackerel-plugin-inode/lib"
 	"github.com/mackerelio/mackerel-agent-plugins/mackerel-plugin-jmx-jolokia/lib"
@@ -102,6 +103,8 @@ func runPlugin(plug string) error {
 		mpgostats.Do()
 	case "graphite":
 		mpgraphite.Do()
+	case "h2o":
+		mph2o.Do()
 	case "haproxy":
 		mphaproxy.Do()
 	case "inode":
@@ -197,6 +200,7 @@ var plugins = []string{
 	"flume",
 	"gostats",
 	"graphite",
+	"h2o",
 	"haproxy",
 	"inode",
 	"jmx-jolokia",
