@@ -54,7 +54,8 @@
        "docker",
        "unicorn",
        "uptime",
-       "inode"
+       "inode",
+       "h2o"
     ]
 }
 
