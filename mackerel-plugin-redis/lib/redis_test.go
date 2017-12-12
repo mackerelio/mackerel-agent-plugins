@@ -41,9 +41,10 @@ func TestFetchMetricsUnixSocket(t *testing.T) {
 	time.Sleep(3 * time.Second)
 
 	redis := RedisPlugin{
-		Timeout: 5,
-		Prefix:  "redis",
-		Socket:  s.Config["unixsocket"],
+		Timeout:       5,
+		Prefix:        "redis",
+		Socket:        s.Config["unixsocket"],
+		ConfigCommand: "CONFIG",
 	}
 	stat, err := redis.FetchMetrics()
 
@@ -77,9 +78,10 @@ func TestFetchMetricsPercentageOfMemory(t *testing.T) {
 	defer s.Stop()
 
 	rp := RedisPlugin{
-		Timeout: 5,
-		Prefix:  "redis",
-		Socket:  s.Config["unixsocket"],
+		Timeout:       5,
+		Prefix:        "redis",
+		Socket:        s.Config["unixsocket"],
+		ConfigCommand: "CONFIG",
 	}
 
 	conn, err := redis.Dial("unix", s.Config["unixsocket"])
@@ -133,9 +135,10 @@ func TestFetchMetrics(t *testing.T) {
 	}
 	defer s.Stop()
 	redis := RedisPlugin{
-		Timeout: 5,
-		Prefix:  "redis",
-		Port:    portStr,
+		Timeout:       5,
+		Prefix:        "redis",
+		Port:          portStr,
+		ConfigCommand: "CONFIG",
 	}
 	stat, err := redis.FetchMetrics()
 
