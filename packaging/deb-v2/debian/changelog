@@ -1,3 +1,20 @@
+mackerel-agent-plugins (0.40.0-1.v2) stable; urgency=low
+
+  * Add h2o to package (by astj)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/464>
+  * Redis Plugin supports custom CONFIG command (by dozen)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/463>
+  * add mackerel-plugin-h2o (by hayajo)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/456>
+  * add defer to closing the response body, and change position it. (by qt-luigi)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/461>
+  * add that close the response body (by qt-luigi)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/460>
+  * [redis] Add Redis replication delay and lag metrics (by kizkoh)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/455>
+
+ -- mackerel <mackerel-developers@hatena.ne.jp>  Tue, 12 Dec 2017 14:02:51 +0900
+
 mackerel-agent-plugins (0.39.0-1.v2) stable; urgency=low
 
   * Don't add plugins README which has been moved (by astj)

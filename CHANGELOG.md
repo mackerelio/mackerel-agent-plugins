@@ -1,5 +1,15 @@
 # Changelog
 
+## 0.40.0 (2017-12-12)
+
+* Add h2o to package #464 (astj)
+* Redis Plugin supports custom CONFIG command #463 (dozen)
+* add mackerel-plugin-h2o #456 (hayajo)
+* add defer to closing the response body, and change position it. #461 (qt-luigi)
+* add that close the response body #460 (qt-luigi)
+* [redis] Add Redis replication delay and lag metrics #455 (kizkoh)
+
+
 ## 0.39.0 (2017-11-28)
 
 * Don't add plugins README which has been moved #453 (astj)

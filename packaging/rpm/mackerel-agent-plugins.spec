@@ -30,7 +30,7 @@ This package provides plugins for Mackerel.
 
 %{__mkdir} -p %{buildroot}%{__targetdir}
 
-for i in accesslog apache2 aws-dynamodb aws-ec2-cpucredit aws-elasticache aws-elasticsearch aws-elb aws-kinesis-streams aws-lambda aws-rds aws-ses conntrack elasticsearch flume gostats graphite haproxy jmx-jolokia jvm linux mailq memcached mongodb multicore munin mysql nginx nvidia-smi openldap php-apc php-fpm php-opcache plack postgres proc-fd solr rabbitmq redis sidekiq snmp squid td-table-count trafficserver twemproxy uwsgi-vassal varnish xentop aws-cloudfront aws-ec2-ebs fluentd docker unicorn uptime inode; do \
+for i in accesslog apache2 aws-dynamodb aws-ec2-cpucredit aws-elasticache aws-elasticsearch aws-elb aws-kinesis-streams aws-lambda aws-rds aws-ses conntrack elasticsearch flume gostats graphite haproxy jmx-jolokia jvm linux mailq memcached mongodb multicore munin mysql nginx nvidia-smi openldap php-apc php-fpm php-opcache plack postgres proc-fd solr rabbitmq redis sidekiq snmp squid td-table-count trafficserver twemproxy uwsgi-vassal varnish xentop aws-cloudfront aws-ec2-ebs fluentd docker unicorn uptime inode h2o; do \
     %{__install} -m0755 %{_sourcedir}/%{_bindir}/mackerel-plugin-$i %{buildroot}%{__targetdir}/; \
 done
 
@@ -49,6 +49,14 @@ done
 %{__oldtargetdir}/*
 
 %changelog
+* Tue Dec 12 2017 <mackerel-developers@hatena.ne.jp> - 0.40.0
+- Add h2o to package (by astj)
+- Redis Plugin supports custom CONFIG command (by dozen)
+- add mackerel-plugin-h2o (by hayajo)
+- add defer to closing the response body, and change position it. (by qt-luigi)
+- add that close the response body (by qt-luigi)
+- [redis] Add Redis replication delay and lag metrics (by kizkoh)
+
 * Tue Nov 28 2017 <mackerel-developers@hatena.ne.jp> - 0.39.0
 - Don't add plugins README which has been moved (by astj)
 - Improve docker plugin (by astj)
