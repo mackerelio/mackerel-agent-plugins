@@ -340,13 +340,15 @@ func (m *MySQLPlugin) FetchMetrics() (map[string]interface{}, error) {
 
 	m.fetchShowVariables(db, stat)
 
-	if m.isAuroraReader {
-		m.pseudoFetchShowInnodbStatus(stat)
-	} else if m.DisableInnoDB != true {
-		err := m.fetchShowInnodbStatus(db, stat)
-		if err != nil {
-			log.Println("FetchMetrics (InnoDB Status): ", err)
-			m.DisableInnoDB = true
+	if m.DisableInnoDB != true {
+		if m.isAuroraReader {
+			m.pseudoFetchShowInnodbStatus(stat)
+		} else {
+			err := m.fetchShowInnodbStatus(db, stat)
+			if err != nil {
+				log.Println("FetchMetrics (InnoDB Status): ", err)
+				m.DisableInnoDB = true
+			}
 		}
 	}
 
