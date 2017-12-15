@@ -297,10 +297,6 @@ func (m *MySQLPlugin) convertInnodbStats(stat map[string]float64) {
 		"file_reads":        "Innodb_data_reads",
 		"file_writes":       "Innodb_data_writes",
 		"modified_pages":    "Innodb_buffer_pool_pages_dirty",
-		"rows_deleted":      "Innodb_rows_deleted",
-		"rows_inserted":     "Innodb_rows_inserted",
-		"rows_read":         "Innodb_rows_read",
-		"rows_updated":      "Innodb_rows_updated",
 		"pool_size":         "Innodb_buffer_pool_pages_total",
 		"pages_created":     "Innodb_pages_created",
 		"pages_read":        "Innodb_pages_read",
@@ -986,20 +982,6 @@ func parseInnodbStatus(str string, p *map[string]float64) {
 			setIfEmpty(p, "pages_created", v)
 			v, _ = atof(record[6])
 			setIfEmpty(p, "pages_written", v)
-			continue
-		}
-
-		// Row Operations
-		if strings.Index(line, "Number of rows inserted") == 0 {
-			(*p)["rows_inserted"], _ = atof(record[4])
-			(*p)["rows_updated"], _ = atof(record[6])
-			(*p)["rows_deleted"], _ = atof(record[8])
-			(*p)["rows_read"], _ = atof(record[10])
-			continue
-		}
-		if strings.Index(line, " queries inside InnoDB, ") == 0 {
-			(*p)["queries_inside"], _ = atof(record[0])
-			(*p)["queries_queued"], _ = atof(record[4])
 			continue
 		}
 
