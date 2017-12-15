@@ -145,6 +145,7 @@ type MySQLPlugin struct {
 	DisableInnoDB  bool
 	isUnixSocket   bool
 	EnableExtended bool
+	isAuroraReader bool
 }
 
 // MetricKeyPrefix retruns the metrics key prefix
@@ -197,17 +198,23 @@ func (m *MySQLPlugin) fetchShowVariables(db mysql.Conn, stat map[string]float64)
 		log.Fatalln("FetchMetrics (Variables): ", err)
 	}
 
+	rawStat := make(map[string]string)
 	for _, row := range rows {
 		if len(row) > 1 {
 			variableName := string(row[0].([]byte))
 			if err != nil {
 				log.Println("FetchMetrics (Fetch Variables): ", err)
 			}
-			stat[variableName], _ = atof(string(row[1].([]byte)))
+			value := string(row[1].([]byte))
+			rawStat[variableName] = value
+			stat[variableName], _ = atof(value)
 		} else {
 			log.Fatalln("FetchMetrics (Variables): row length is too small: ", len(row))
 		}
 	}
+
+	m.isAuroraReader = rawStat["aurora_version"] != "" && rawStat["innodb_read_only"] == "ON"
+
 	if m.EnableExtended {
 		err = fetchShowVariablesBackwardCompatibile(stat)
 		if err != nil {
@@ -281,6 +288,32 @@ func (m *MySQLPlugin) fetchProcesslist(db mysql.Conn, stat map[string]float64) e
 	return nil
 }
 
+func (m *MySQLPlugin) pseudoFetchShowInnodbStatus(stat map[string]float64) {
+	for dst, src := range map[string]string{
+		"database_pages":    "Innodb_buffer_pool_pages_data",
+		"free_pages":        "Innodb_buffer_pool_pages_free",
+		"file_fsyncs":       "Innodb_data_fsyncs",
+		"file_reads":        "Innodb_data_reads",
+		"file_writes":       "Innodb_data_writes",
+		"modified_pages":    "Innodb_buffer_pool_pages_dirty",
+		"rows_deleted":      "Innodb_rows_deleted",
+		"rows_inserted":     "Innodb_rows_inserted",
+		"rows_read":         "Innodb_rows_read",
+		"rows_updated":      "Innodb_rows_updated",
+		"pool_size":         "Innodb_buffer_pool_pages_total",
+		"pages_created":     "Innodb_pages_created",
+		"pages_read":        "Innodb_pages_read",
+		"pages_written":     "Innodb_pages_written",
+		"read_ahead":        "Innodb_buffer_pool_read_ahead",
+		"read_evicted":      "Innodb_buffer_pool_read_ahead_evicted",
+		"read_random_ahead": "Innodb_buffer_pool_read_ahead_rnd",
+	} {
+		if v, found := stat[src]; found {
+			setIfEmpty(&stat, dst, v)
+		}
+	}
+}
+
 func (m *MySQLPlugin) calculateCapacity(stat map[string]float64) {
 	stat["PercentageOfConnections"] = 100.0 * stat["Threads_connected"] / stat["max_connections"]
 	if m.DisableInnoDB != true {
@@ -305,15 +338,19 @@ func (m *MySQLPlugin) FetchMetrics() (map[string]interface{}, error) {
 	stat := make(map[string]float64)
 	m.fetchShowStatus(db, stat)
 
+	m.fetchShowVariables(db, stat)
+
 	if m.DisableInnoDB != true {
-		err := m.fetchShowInnodbStatus(db, stat)
-		if err != nil {
-			log.Println("FetchMetrics (InnoDB Status): ", err)
-			m.DisableInnoDB = true
+		if m.isAuroraReader {
+			m.pseudoFetchShowInnodbStatus(stat)
+		} else {
+			err := m.fetchShowInnodbStatus(db, stat)
+			if err != nil {
+				log.Println("FetchMetrics (InnoDB Status): ", err)
+				m.DisableInnoDB = true
+			}
 		}
 	}
-
-	m.fetchShowVariables(db, stat)
 
 	m.fetchShowSlaveStatus(db, stat)
 
