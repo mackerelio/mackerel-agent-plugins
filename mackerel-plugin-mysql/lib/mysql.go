@@ -288,7 +288,8 @@ func (m *MySQLPlugin) fetchProcesslist(db mysql.Conn, stat map[string]float64) e
 	return nil
 }
 
-func (m *MySQLPlugin) pseudoFetchShowInnodbStatus(stat map[string]float64) {
+// for backward compatibility, convert stat names
+func (m *MySQLPlugin) convertInnodbStats(stat map[string]float64) {
 	for dst, src := range map[string]string{
 		"database_pages":    "Innodb_buffer_pool_pages_data",
 		"free_pages":        "Innodb_buffer_pool_pages_free",
@@ -341,9 +342,8 @@ func (m *MySQLPlugin) FetchMetrics() (map[string]interface{}, error) {
 	m.fetchShowVariables(db, stat)
 
 	if m.DisableInnoDB != true {
-		if m.isAuroraReader {
-			m.pseudoFetchShowInnodbStatus(stat)
-		} else {
+		m.convertInnodbStats(stat)
+		if !m.isAuroraReader {
 			err := m.fetchShowInnodbStatus(db, stat)
 			if err != nil {
 				log.Println("FetchMetrics (InnoDB Status): ", err)
