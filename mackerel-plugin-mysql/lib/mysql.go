@@ -795,12 +795,6 @@ func parseInnodbStatus(str string, p *map[string]float64) {
 		}
 
 		// File I/O
-		if strings.Index(line, " OS file reads, ") > 0 {
-			(*p)["file_reads"], _ = atof(record[0])
-			(*p)["file_writes"], _ = atof(record[4])
-			(*p)["file_fsyncs"], _ = atof(record[8])
-			continue
-		}
 		if strings.Index(line, "Pending normal aio reads:") == 0 {
 			(*p)["pending_normal_aio_reads"], _ = atof(record[4])
 			(*p)["pending_normal_aio_writes"], _ = atof(record[7])
@@ -944,44 +938,6 @@ func parseInnodbStatus(str string, p *map[string]float64) {
 		if strings.Index(line, "innodb_io_pattern   ") == 0 {
 			v, _ := atof(record[1])
 			setIfEmpty(p, "innodb_io_pattern_memory", v)
-			continue
-		}
-		if strings.Index(line, "Buffer pool size ") == 0 {
-			v, _ := atof(record[3])
-			setIfEmpty(p, "pool_size", v)
-			continue
-		}
-		if strings.Index(line, "Free buffers") == 0 {
-			v, _ := atof(record[2])
-			setIfEmpty(p, "free_pages", v)
-			continue
-		}
-		if strings.Index(line, "Database pages") == 0 {
-			v, _ := atof(record[2])
-			setIfEmpty(p, "database_pages", v)
-			continue
-		}
-		if strings.Index(line, "Modified db pages") == 0 {
-			v, _ := atof(record[3])
-			setIfEmpty(p, "modified_pages", v)
-			continue
-		}
-		if strings.Index(line, "Pages read ahead") == 0 {
-			v, _ := atof(record[3])
-			setIfEmpty(p, "read_ahead", v)
-			v, _ = atof(record[7])
-			setIfEmpty(p, "read_evicted", v)
-			v, _ = atof(record[11])
-			setIfEmpty(p, "read_random_ahead", v)
-			continue
-		}
-		if strings.Index(line, "Pages read") == 0 {
-			v, _ := atof(record[2])
-			setIfEmpty(p, "pages_read", v)
-			v, _ = atof(record[4])
-			setIfEmpty(p, "pages_created", v)
-			v, _ = atof(record[6])
-			setIfEmpty(p, "pages_written", v)
 			continue
 		}
 
