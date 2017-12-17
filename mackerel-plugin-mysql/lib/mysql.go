@@ -1076,7 +1076,7 @@ func makeBigint(hi string, lo string) int64 {
 func Do() {
 	optHost := flag.String("host", "localhost", "Hostname")
 	optPort := flag.String("port", "3306", "Port")
-	optSocket := flag.String("socket", "", "Port")
+	optSocket := flag.String("socket", "", "Path to unix socket")
 	optUser := flag.String("username", "root", "Username")
 	optPass := flag.String("password", "", "Password")
 	optTempfile := flag.String("tempfile", "", "Temp file name")
