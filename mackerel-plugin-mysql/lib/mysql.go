@@ -181,7 +181,7 @@ func (m *MySQLPlugin) fetchShowStatus(db mysql.Conn, stat map[string]float64) er
 func (m *MySQLPlugin) fetchShowInnodbStatus(db mysql.Conn, stat map[string]float64) error {
 	row, _, err := db.QueryFirst("SHOW /*!50000 ENGINE*/ INNODB STATUS")
 	if err != nil {
-		log.Fatalln("FetchMetrics (InnoDB Status): ", err)
+		return err
 	}
 
 	if len(row) > 0 {
@@ -342,7 +342,7 @@ func (m *MySQLPlugin) FetchMetrics() (map[string]interface{}, error) {
 		if !m.isAuroraReader {
 			err := m.fetchShowInnodbStatus(db, stat)
 			if err != nil {
-				log.Println("FetchMetrics (InnoDB Status): ", err)
+				log.Println("Disabled InnoDB stats due to failure (You should set -disable_innodb): ", err)
 				m.DisableInnoDB = true
 			}
 		}
