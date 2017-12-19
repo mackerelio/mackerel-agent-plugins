@@ -288,7 +288,8 @@ func (m *MySQLPlugin) fetchProcesslist(db mysql.Conn, stat map[string]float64) e
 	return nil
 }
 
-func (m *MySQLPlugin) pseudoFetchShowInnodbStatus(stat map[string]float64) {
+// for backward compatibility, convert stat names
+func (m *MySQLPlugin) convertInnodbStats(stat map[string]float64) {
 	for dst, src := range map[string]string{
 		"database_pages":    "Innodb_buffer_pool_pages_data",
 		"free_pages":        "Innodb_buffer_pool_pages_free",
@@ -296,10 +297,6 @@ func (m *MySQLPlugin) pseudoFetchShowInnodbStatus(stat map[string]float64) {
 		"file_reads":        "Innodb_data_reads",
 		"file_writes":       "Innodb_data_writes",
 		"modified_pages":    "Innodb_buffer_pool_pages_dirty",
-		"rows_deleted":      "Innodb_rows_deleted",
-		"rows_inserted":     "Innodb_rows_inserted",
-		"rows_read":         "Innodb_rows_read",
-		"rows_updated":      "Innodb_rows_updated",
 		"pool_size":         "Innodb_buffer_pool_pages_total",
 		"pages_created":     "Innodb_pages_created",
 		"pages_read":        "Innodb_pages_read",
@@ -341,9 +338,8 @@ func (m *MySQLPlugin) FetchMetrics() (map[string]interface{}, error) {
 	m.fetchShowVariables(db, stat)
 
 	if m.DisableInnoDB != true {
-		if m.isAuroraReader {
-			m.pseudoFetchShowInnodbStatus(stat)
-		} else {
+		m.convertInnodbStats(stat)
+		if !m.isAuroraReader {
 			err := m.fetchShowInnodbStatus(db, stat)
 			if err != nil {
 				log.Println("FetchMetrics (InnoDB Status): ", err)
@@ -799,12 +795,6 @@ func parseInnodbStatus(str string, p *map[string]float64) {
 		}
 
 		// File I/O
-		if strings.Index(line, " OS file reads, ") > 0 {
-			(*p)["file_reads"], _ = atof(record[0])
-			(*p)["file_writes"], _ = atof(record[4])
-			(*p)["file_fsyncs"], _ = atof(record[8])
-			continue
-		}
 		if strings.Index(line, "Pending normal aio reads:") == 0 {
 			(*p)["pending_normal_aio_reads"], _ = atof(record[4])
 			(*p)["pending_normal_aio_writes"], _ = atof(record[7])
@@ -948,58 +938,6 @@ func parseInnodbStatus(str string, p *map[string]float64) {
 		if strings.Index(line, "innodb_io_pattern   ") == 0 {
 			v, _ := atof(record[1])
 			setIfEmpty(p, "innodb_io_pattern_memory", v)
-			continue
-		}
-		if strings.Index(line, "Buffer pool size ") == 0 {
-			v, _ := atof(record[3])
-			setIfEmpty(p, "pool_size", v)
-			continue
-		}
-		if strings.Index(line, "Free buffers") == 0 {
-			v, _ := atof(record[2])
-			setIfEmpty(p, "free_pages", v)
-			continue
-		}
-		if strings.Index(line, "Database pages") == 0 {
-			v, _ := atof(record[2])
-			setIfEmpty(p, "database_pages", v)
-			continue
-		}
-		if strings.Index(line, "Modified db pages") == 0 {
-			v, _ := atof(record[3])
-			setIfEmpty(p, "modified_pages", v)
-			continue
-		}
-		if strings.Index(line, "Pages read ahead") == 0 {
-			v, _ := atof(record[3])
-			setIfEmpty(p, "read_ahead", v)
-			v, _ = atof(record[7])
-			setIfEmpty(p, "read_evicted", v)
-			v, _ = atof(record[11])
-			setIfEmpty(p, "read_random_ahead", v)
-			continue
-		}
-		if strings.Index(line, "Pages read") == 0 {
-			v, _ := atof(record[2])
-			setIfEmpty(p, "pages_read", v)
-			v, _ = atof(record[4])
-			setIfEmpty(p, "pages_created", v)
-			v, _ = atof(record[6])
-			setIfEmpty(p, "pages_written", v)
-			continue
-		}
-
-		// Row Operations
-		if strings.Index(line, "Number of rows inserted") == 0 {
-			(*p)["rows_inserted"], _ = atof(record[4])
-			(*p)["rows_updated"], _ = atof(record[6])
-			(*p)["rows_deleted"], _ = atof(record[8])
-			(*p)["rows_read"], _ = atof(record[10])
-			continue
-		}
-		if strings.Index(line, " queries inside InnoDB, ") == 0 {
-			(*p)["queries_inside"], _ = atof(record[0])
-			(*p)["queries_queued"], _ = atof(record[4])
 			continue
 		}
 
