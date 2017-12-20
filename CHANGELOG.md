@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.41.0 (2017-12-20)
+
+* [mysql] Fix some InnoDB stats #469 (astj)
+* [mysql] Fix message for socket option #468 (utisam)
+* MySQL Plugin support Aurora reader node #462 (dozen)
+
+
 ## 0.40.0 (2017-12-12)
 
 * Add h2o to package #464 (astj)
