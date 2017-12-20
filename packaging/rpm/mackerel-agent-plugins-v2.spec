@@ -40,6 +40,9 @@ done
 %{__targetdir}/*
 
 %changelog
+* Wed Dec 20 2017 <mackerel-developers@hatena.ne.jp> - 0.41.1
+- [mysql] set Diff: true for some stats which are actually counter values (by astj)
+
 * Wed Dec 20 2017 <mackerel-developers@hatena.ne.jp> - 0.41.0
 - [mysql] Fix some InnoDB stats (by astj)
 - [mysql] Fix message for socket option (by utisam)
