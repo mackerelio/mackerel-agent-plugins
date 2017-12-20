@@ -181,7 +181,8 @@ func (m *MySQLPlugin) fetchShowStatus(db mysql.Conn, stat map[string]float64) er
 func (m *MySQLPlugin) fetchShowInnodbStatus(db mysql.Conn, stat map[string]float64) error {
 	row, _, err := db.QueryFirst("SHOW /*!50000 ENGINE*/ INNODB STATUS")
 	if err != nil {
-		log.Fatalln("FetchMetrics (InnoDB Status): ", err)
+		log.Println("FetchMetrics (InnoDB Status): ", err)
+		log.Fatalln("Hint: If you don't use InnoDB and see InnoDB Status error, you should set -disable_innodb")
 	}
 
 	if len(row) > 0 {
