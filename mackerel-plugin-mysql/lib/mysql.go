@@ -414,9 +414,9 @@ func (m *MySQLPlugin) addGraphdefWithInnoDBMetrics(graphdef map[string]mp.Graphs
 		Label: labelPrefix + " innodb Buffer Pool Read (/sec)",
 		Unit:  "float",
 		Metrics: []mp.Metrics{
-			{Name: "read_ahead", Label: "Pages Read Ahead", Diff: false, Stacked: false},
-			{Name: "read_evicted", Label: "Evicted Without Access", Diff: false, Stacked: false},
-			{Name: "read_random_ahead", Label: "Random Read Ahead", Diff: false, Stacked: false},
+			{Name: "read_ahead", Label: "Pages Read Ahead", Diff: true, Stacked: false},
+			{Name: "read_evicted", Label: "Evicted Without Access", Diff: true, Stacked: false},
+			{Name: "read_random_ahead", Label: "Random Read Ahead", Diff: true, Stacked: false},
 		},
 	}
 	graphdef["innodb_buffer_pool_activity"] = mp.Graphs{
