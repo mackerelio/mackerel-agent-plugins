@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.41.1 (2017-12-20)
+
+* [mysql] set Diff: true for some stats which are actually counter values #472 (astj)
+
+
 ## 0.41.0 (2017-12-20)
 
 * [mysql] Fix some InnoDB stats #469 (astj)
