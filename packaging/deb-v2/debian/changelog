@@ -1,3 +1,14 @@
+mackerel-agent-plugins (0.41.0-1.v2) stable; urgency=low
+
+  * [mysql] Fix some InnoDB stats (by astj)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/469>
+  * [mysql] Fix message for socket option (by utisam)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/468>
+  * MySQL Plugin support Aurora reader node (by dozen)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/462>
+
+ -- mackerel <mackerel-developers@hatena.ne.jp>  Wed, 20 Dec 2017 11:19:13 +0900
+
 mackerel-agent-plugins (0.40.0-1.v2) stable; urgency=low
 
   * Add h2o to package (by astj)

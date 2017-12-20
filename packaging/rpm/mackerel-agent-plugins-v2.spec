@@ -40,6 +40,11 @@ done
 %{__targetdir}/*
 
 %changelog
+* Wed Dec 20 2017 <mackerel-developers@hatena.ne.jp> - 0.41.0
+- [mysql] Fix some InnoDB stats (by astj)
+- [mysql] Fix message for socket option (by utisam)
+- MySQL Plugin support Aurora reader node (by dozen)
+
 * Tue Dec 12 2017 <mackerel-developers@hatena.ne.jp> - 0.40.0
 - Add h2o to package (by astj)
 - Redis Plugin supports custom CONFIG command (by dozen)
