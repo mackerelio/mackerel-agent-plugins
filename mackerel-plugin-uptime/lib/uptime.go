@@ -6,7 +6,7 @@ import (
 	"strings"
 
 	mp "github.com/mackerelio/go-mackerel-plugin"
-	"github.com/mackerelio/golib/uptime"
+	"github.com/mackerelio/go-osstat/uptime"
 )
 
 // UptimePlugin mackerel plugin
@@ -42,7 +42,7 @@ func (u UptimePlugin) FetchMetrics() (map[string]float64, error) {
 	if err != nil {
 		return nil, fmt.Errorf("Failed to fetch uptime metrics: %s", err)
 	}
-	return map[string]float64{"seconds": ut}, nil
+	return map[string]float64{"seconds": ut.Seconds()}, nil
 }
 
 // Do the plugin
