@@ -1,11 +1,13 @@
 package mphaproxy
 
 import (
+	"bufio"
 	"encoding/csv"
 	"errors"
 	"flag"
 	"fmt"
 	"io"
+	"net"
 	"net/http"
 	"strconv"
 	"time"
@@ -43,10 +45,19 @@ type HAProxyPlugin struct {
 	URI      string
 	Username string
 	Password string
+	Socket   string
 }
 
 // FetchMetrics interface for mackerelplugin
 func (p HAProxyPlugin) FetchMetrics() (map[string]float64, error) {
+	if p.Socket == "" {
+		return p.fetchMetricsFromTCP()
+	} else {
+		return p.fetchMetricsFromSocket()
+	}
+}
+
+func (p HAProxyPlugin) fetchMetricsFromTCP() (map[string]float64, error) {
 	client := &http.Client{
 		Timeout: time.Duration(5) * time.Second,
 	}
@@ -73,6 +84,18 @@ func (p HAProxyPlugin) FetchMetrics() (map[string]float64, error) {
 	return p.parseStats(resp.Body)
 }
 
+func (p HAProxyPlugin) fetchMetricsFromSocket() (map[string]float64, error) {
+	client, err := net.Dial("unix", p.Socket)
+	if err != nil {
+		return nil, err
+	}
+	defer client.Close()
+
+	fmt.Fprintln(client, "show stat")
+
+	return p.parseStats(bufio.NewReader(client))
+}
+
 func (p HAProxyPlugin) parseStats(statsBody io.Reader) (map[string]float64, error) {
 	stat := make(map[string]float64)
 	reader := csv.NewReader(statsBody)
@@ -84,7 +107,7 @@ func (p HAProxyPlugin) parseStats(statsBody io.Reader) (map[string]float64, erro
 		}
 
 		if len(columns) < 60 {
-			return nil, errors.New("length of stats csv is too short (specified uri may be wrong)")
+			return nil, errors.New("length of stats csv is too short (specified uri/socket may be wrong)")
 		}
 
 		if columns[1] != "BACKEND" {
@@ -136,6 +159,7 @@ func Do() {
 	optUsername := flag.String("username", "", "Username for Basic Auth")
 	optPassword := flag.String("password", "", "Password for Basic Auth")
 	optTempfile := flag.String("tempfile", "", "Temp file name")
+	optSocket := flag.String("socket", "", "Unix Domain Socket")
 	flag.Parse()
 
 	var haproxy HAProxyPlugin
@@ -151,6 +175,10 @@ func Do() {
 
 	if *optPassword != "" {
 		haproxy.Password = *optPassword
+	}
+
+	if *optSocket != "" {
+		haproxy.Socket = *optSocket
 	}
 
 	helper := mp.NewMackerelPlugin(haproxy)
