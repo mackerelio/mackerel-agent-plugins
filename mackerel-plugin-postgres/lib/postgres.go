@@ -131,7 +131,7 @@ func fetchConnections(db *sqlx.DB, version version) (map[string]interface{}, err
 	if version.first > 9 || version.first == 9 && version.second >= 6 {
 		query = `select count(*), state, wait_event is not null from pg_stat_activity where state is not null group by state, wait_event is not null`
 	} else {
-		query = `select count(*), state, waiting from pg_stat_activity group by state, waiting`
+		query = `select count(*), state, waiting from pg_stat_activity where state is not null group by state, waiting`
 	}
 	rows, err := db.Query(query)
 	if err != nil {
