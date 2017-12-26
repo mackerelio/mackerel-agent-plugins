@@ -50,11 +50,14 @@ type HAProxyPlugin struct {
 
 // FetchMetrics interface for mackerelplugin
 func (p HAProxyPlugin) FetchMetrics() (map[string]float64, error) {
+	var metrics map[string]float64
+	var err error
 	if p.Socket == "" {
-		return p.fetchMetricsFromTCP()
+		metrics, err = p.fetchMetricsFromTCP()
 	} else {
-		return p.fetchMetricsFromSocket()
+		metrics, err = p.fetchMetricsFromSocket()
 	}
+	return metrics, err
 }
 
 func (p HAProxyPlugin) fetchMetricsFromTCP() (map[string]float64, error) {
