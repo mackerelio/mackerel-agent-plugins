@@ -187,7 +187,6 @@ func (m MongoDBPlugin) fetchStatus() (bson.M, error) {
 		Addrs:    []string{m.URL},
 		Direct: true,
 	}
-	
 	session, err := mgo.DialWithInfo(mongoDBDialInfo)
 	if err != nil {
 		return nil, err
