@@ -183,13 +183,18 @@ type MongoDBPlugin struct {
 }
 
 func (m MongoDBPlugin) fetchStatus() (bson.M, error) {
-	session, err := mgo.Dial(m.URL)
+	mongoDBDialInfo := &mgo.DialInfo{
+		Addrs:    []string{m.URL},
+		Direct: true,
+	}
+	
+	session, err := mgo.DialWithInfo(mongoDBDialInfo)
 	if err != nil {
 		return nil, err
 	}
 
 	defer session.Close()
-	session.SetMode(mgo.Monotonic, true)
+	session.SetMode(mgo.Eventual, true)
 	serverStatus := bson.M{}
 	if err := session.Run("serverStatus", &serverStatus); err != nil {
 		return nil, err
@@ -275,9 +280,9 @@ func Do() {
 	var mongodb MongoDBPlugin
 	mongodb.Verbose = *optVerbose
 	if *optUser == "" && *optPass == "" {
-		mongodb.URL = fmt.Sprintf("mongodb://%s:%s/?connect=direct", *optHost, *optPort)
+		mongodb.URL = fmt.Sprintf("%s:%s", *optHost, *optPort)
 	} else {
-		mongodb.URL = fmt.Sprintf("mongodb://%s:%s@%s:%s/?connect=direct", *optUser, *optPass, *optHost, *optPort)
+		mongodb.URL = fmt.Sprintf("%s:%s@%s:%s", *optUser, *optPass, *optHost, *optPort)
 	}
 
 	helper := mp.NewMackerelPlugin(mongodb)
