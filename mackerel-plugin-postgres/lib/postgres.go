@@ -408,7 +408,7 @@ func (p PostgresPlugin) GraphDefinition() map[string]mp.Graphs {
 		},
 		"xlog_location": {
 			Label: (labelPrefix + " Amount of Transaction location change"),
-			Unit:  "integer",
+			Unit:  "bytes",
 			Metrics: []mp.Metrics{
 				{Name: "xlog_location_bytes", Label: "Amount of Transaction location change (byte)", Diff: true, Stacked: false},
 			},
