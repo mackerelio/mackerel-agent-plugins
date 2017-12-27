@@ -7,6 +7,7 @@ import (
 	"reflect"
 	"strconv"
 	"strings"
+	"time"
 
 	mp "github.com/mackerelio/go-mackerel-plugin-helper"
 	"github.com/mackerelio/golib/logging"
@@ -186,6 +187,7 @@ func (m MongoDBPlugin) fetchStatus() (bson.M, error) {
 	mongoDBDialInfo := &mgo.DialInfo{
 		Addrs:    []string{m.URL},
 		Direct: true,
+		Timeout:  10 * time.Second,
 	}
 	session, err := mgo.DialWithInfo(mongoDBDialInfo)
 	if err != nil {
