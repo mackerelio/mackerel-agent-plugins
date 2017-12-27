@@ -190,7 +190,7 @@ func fetchDatabaseSize(db *sqlx.DB) (map[string]interface{}, error) {
 	}, nil
 }
 
-func fetchXlogLocation(db *sqlx.DB) (map[string]interface{}, error) {
+func fetchXlogLocation(db *sqlx.DB, version version) (map[string]interface{}, error) {
 	rows, err := db.Query("SELECT pg_is_in_recovery()")
 	if err != nil {
 		logger.Errorf("Failed to select pg_is_in_recovery. %s", err)
@@ -208,16 +208,28 @@ func fetchXlogLocation(db *sqlx.DB) (map[string]interface{}, error) {
 	}
 
 	if !recovery {
-		rows, err := db.Query(`SELECT pg_xlog_location_diff(pg_current_xlog_location(), '0/0')`)
-		if err != nil {
-			logger.Errorf("Failed to select pg_xlog_location_diff. %s", err)
-			return nil, err
-		}
-
 		var bytes float64
-		for rows.Next() {
-			if err := rows.Scan(&bytes); err != nil {
-				logger.Warningf("Failed to scan %s", err)
+		if version.first >= 10 {
+			rows, err := db.Query(`SELECT pg_wal_lsn_diff(pg_current_wal_lsn(), '0/0')`)
+			if err != nil {
+				logger.Errorf("Failed to select pg_wal_lsn_diff. %s", err)
+				return nil, err
+			}
+			for rows.Next() {
+				if err := rows.Scan(&bytes); err != nil {
+					logger.Warningf("Failed to scan %s", err)
+				}
+			}
+		} else if version.first == 9 && version.second >= 2 {
+			rows, err := db.Query(`SELECT pg_xlog_location_diff(pg_current_xlog_location(), '0/0')`)
+			if err != nil {
+				logger.Errorf("Failed to select pg_xlog_location_diff. %s", err)
+				return nil, err
+			}
+			for rows.Next() {
+				if err := rows.Scan(&bytes); err != nil {
+					logger.Warningf("Failed to scan %s", err)
+				}
 			}
 		}
 		stat["xlog_location_bytes"] = bytes
@@ -318,7 +330,7 @@ func (p PostgresPlugin) FetchMetrics() (map[string]interface{}, error) {
 	if err != nil {
 		return nil, err
 	}
-	statXlogLocation, err := fetchXlogLocation(db)
+	statXlogLocation, err := fetchXlogLocation(db, version)
 	if err != nil {
 		return nil, err
 	}
