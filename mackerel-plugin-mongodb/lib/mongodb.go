@@ -187,7 +187,7 @@ func (m MongoDBPlugin) fetchStatus() (bson.M, error) {
 	mongoDBDialInfo := &mgo.DialInfo{
 		Addrs:    []string{m.URL},
 		Direct: true,
-		Timeout:  60 * time.Second,
+		Timeout:  30 * time.Second,
 		
 	}
 	session, err := mgo.DialWithInfo(mongoDBDialInfo)
@@ -282,9 +282,9 @@ func Do() {
 	var mongodb MongoDBPlugin
 	mongodb.Verbose = *optVerbose
 	if *optUser == "" && *optPass == "" {
-		mongodb.URL = fmt.Sprintf("mongodb://%s:%s", *optHost, *optPort)
+		mongodb.URL = fmt.Sprintf("%s:%s", *optHost, *optPort)
 	} else {
-		mongodb.URL = fmt.Sprintf("mongodb://%s:%s@%s:%s", *optUser, *optPass, *optHost, *optPort)
+		mongodb.URL = fmt.Sprintf("%s:%s@%s:%s", *optUser, *optPass, *optHost, *optPort)
 	}
 
 	helper := mp.NewMackerelPlugin(mongodb)
