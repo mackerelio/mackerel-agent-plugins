@@ -7,6 +7,7 @@ import (
 	"reflect"
 	"strconv"
 	"strings"
+	"time"
 
 	mp "github.com/mackerelio/go-mackerel-plugin-helper"
 	"github.com/mackerelio/golib/logging"
@@ -178,17 +179,27 @@ func getFloatValue(s map[string]interface{}, keys []string) (float64, error) {
 
 // MongoDBPlugin mackerel plugin for mongo
 type MongoDBPlugin struct {
-	URL     string
-	Verbose bool
+	URL      string
+	Username string
+	Password string
+	Verbose  bool
 }
 
 func (m MongoDBPlugin) fetchStatus() (bson.M, error) {
-	session, err := mgo.Dial(m.URL)
+	mongoDBDialInfo := &mgo.DialInfo{
+		Addrs:    []string{m.URL},
+		Username: m.Username,
+		Password: m.Password,
+		Direct:   true,
+		Timeout:  10 * time.Second,
+	}
+	session, err := mgo.DialWithInfo(mongoDBDialInfo)
 	if err != nil {
 		return nil, err
 	}
 
 	defer session.Close()
+	session.SetMode(mgo.Eventual, true)
 	serverStatus := bson.M{}
 	if err := session.Run("serverStatus", &serverStatus); err != nil {
 		return nil, err
@@ -273,11 +284,9 @@ func Do() {
 
 	var mongodb MongoDBPlugin
 	mongodb.Verbose = *optVerbose
-	if *optUser == "" && *optPass == "" {
-		mongodb.URL = fmt.Sprintf("mongodb://%s:%s", *optHost, *optPort)
-	} else {
-		mongodb.URL = fmt.Sprintf("mongodb://%s:%s@%s:%s", *optUser, *optPass, *optHost, *optPort)
-	}
+	mongodb.URL = fmt.Sprintf("%s:%s", *optHost, *optPort)
+	mongodb.Username = fmt.Sprintf("%s", *optUser)
+	mongodb.Password = fmt.Sprintf("%s", *optPass)
 
 	helper := mp.NewMackerelPlugin(mongodb)
 	if *optTempfile != "" {
