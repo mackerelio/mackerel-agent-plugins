@@ -179,14 +179,18 @@ func getFloatValue(s map[string]interface{}, keys []string) (float64, error) {
 
 // MongoDBPlugin mackerel plugin for mongo
 type MongoDBPlugin struct {
-	URL     string
-	Verbose bool
+	URL      string
+	Username string
+	Password string
+	Verbose  bool
 }
 
 func (m MongoDBPlugin) fetchStatus() (bson.M, error) {
 	mongoDBDialInfo := &mgo.DialInfo{
 		Addrs:    []string{m.URL},
-		Direct: true,
+		Username: m.Username,
+		Password: m.Password,
+		Direct:   true,
 		Timeout:  10 * time.Second,
 	}
 	session, err := mgo.DialWithInfo(mongoDBDialInfo)
@@ -280,11 +284,9 @@ func Do() {
 
 	var mongodb MongoDBPlugin
 	mongodb.Verbose = *optVerbose
-	if *optUser == "" && *optPass == "" {
-		mongodb.URL = fmt.Sprintf("%s:%s", *optHost, *optPort)
-	} else {
-		mongodb.URL = fmt.Sprintf("%s:%s@%s:%s", *optUser, *optPass, *optHost, *optPort)
-	}
+	mongodb.URL = fmt.Sprintf("%s:%s", *optHost, *optPort)
+	mongodb.Username = fmt.Sprintf("%s", *optUser)
+	mongodb.Password = fmt.Sprintf("%s", *optPass)
 
 	helper := mp.NewMackerelPlugin(mongodb)
 	if *optTempfile != "" {
