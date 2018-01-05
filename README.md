@@ -25,7 +25,6 @@ Documentation for each plugin is located in its respective sub directory.
 * [mackerel-plugin-elasticsearch](./mackerel-plugin-elasticsearch/README.md)
 * [mackerel-plugin-fluentd](./mackerel-plugin-fluentd/README.md)
 * [mackerel-plugin-flume](./mackerel-plugin-flume/README.md)
-* [mackerel-plugin-gcp-compute-engine](./mackerel-plugin-gcp-compute-engine/README.md)
 * [mackerel-plugin-gearmand](./mackerel-plugin-gearmand/README.md)
 * [mackerel-plugin-gostats](./mackerel-plugin-gostats/README.md)
 * [mackerel-plugin-graphite](./mackerel-plugin-graphite/README.md)
