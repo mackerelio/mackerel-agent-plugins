@@ -11,6 +11,7 @@ my $plugins_in_other_repository = [qw(
     mackerel-plugin-aws-rekognition
     mackerel-plugin-aws-waf
     mackerel-plugin-gcp-compute-engine
+    mackerel-plugin-gearmand
 )];
 my $is_in_other_repository = {
     map { $_ => 1 } @$plugins_in_other_repository,
