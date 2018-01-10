@@ -1,5 +1,17 @@
 # Changelog
 
+## 0.42.0 (2018-01-10)
+
+* Move mackerel-plugin-json to other repository #482 (shibayu36)
+* Move mackerel-plugin-gearmand #480 (shibayu36)
+* Move to mackerelio/mackerel-plugin-gcp-compute-engine #479 (shibayu36)
+* [mongodb] fix connections_current metric mongodb-Replica-Set #467 (vfa-cancc)
+* [haproxy]support unix domain socket #477 (hbadmin)
+* [postgres]state may be null even in old versions #478 (matsuu)
+* [uptime] use go-osstat/uptime instead of golib/uptime for getting more accurate uptime #475 (Songmu)
+* [mysql] add a hint for -disable_innodb #474 (astj)
+
+
 ## 0.41.1 (2017-12-20)
 
 * [mysql] set Diff: true for some stats which are actually counter values #472 (astj)

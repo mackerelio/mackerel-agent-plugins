@@ -1,3 +1,24 @@
+mackerel-agent-plugins (0.42.0-1) stable; urgency=low
+
+  * Move mackerel-plugin-json to other repository (by shibayu36)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/482>
+  * Move mackerel-plugin-gearmand (by shibayu36)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/480>
+  * Move to mackerelio/mackerel-plugin-gcp-compute-engine (by shibayu36)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/479>
+  * [mongodb] fix connections_current metric mongodb-Replica-Set (by vfa-cancc)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/467>
+  * [haproxy]support unix domain socket (by hbadmin)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/477>
+  * [postgres]state may be null even in old versions (by matsuu)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/478>
+  * [uptime] use go-osstat/uptime instead of golib/uptime for getting more accurate uptime (by Songmu)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/475>
+  * [mysql] add a hint for -disable_innodb (by astj)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/474>
+
+ -- mackerel <mackerel-developers@hatena.ne.jp>  Wed, 10 Jan 2018 16:15:26 +0900
+
 mackerel-agent-plugins (0.41.1-1) stable; urgency=low
 
   * [mysql] set Diff: true for some stats which are actually counter values (by astj)
