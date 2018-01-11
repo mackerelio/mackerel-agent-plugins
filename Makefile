@@ -76,6 +76,10 @@ rpm-v2:
 	rpmbuild --define "_sourcedir `pwd`"  --define "_version ${VERSION}" \
 	  --define "buildarch x86_64" --define "dist .el7.centos" \
 	  -bb packaging/rpm/mackerel-agent-plugins-v2.spec
+	make build/mackerel-plugin GOOS=linux GOARCH=amd64
+	rpmbuild --define "_sourcedir `pwd`"  --define "_version ${VERSION}" \
+	  --define "buildarch x86_64" --define "dist .amzn2" \
+	  -bb packaging/rpm/mackerel-agent-plugins-v2.spec
 
 deb: deb-v1 deb-v2
 
