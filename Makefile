@@ -8,7 +8,8 @@ BINDIR  = build/$(GOOS)/$(GOARCH)
 
 all: lint cover testconvention rpm deb
 
-$(BINDIR)/mackerel-plugin-%: mackerel-plugin-%/lib/*.go
+.SECONDEXPANSION:
+$(BINDIR)/mackerel-plugin-%: mackerel-plugin-%/main.go $$(wildcard mackerel-plugin-%/lib/*.go)
 	@if [ ! -d $(BINDIR) ]; then mkdir -p $(BINDIR); fi
 	go build -ldflags="-s -w" -o $@ ./`basename $@`
 
