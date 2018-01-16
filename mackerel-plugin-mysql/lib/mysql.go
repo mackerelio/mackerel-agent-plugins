@@ -1018,20 +1018,11 @@ func Do() {
 	optPort := flag.String("port", "3306", "Port")
 	optSocket := flag.String("socket", "", "Path to unix socket")
 	optUser := flag.String("username", "root", "Username")
-	optPass := flag.String("password", "", "Password (or set environment `MYSQL_PASSWORD`)")
+	optPass := flag.String("password", os.Getenv("MYSQL_PASSWORD"), "Password")
 	optTempfile := flag.String("tempfile", "", "Temp file name")
 	optInnoDB := flag.Bool("disable_innodb", false, "Disable InnoDB metrics")
 	optMetricKeyPrefix := flag.String("metric-key-prefix", "mysql", "metric key prefix")
 	optEnableExtended := flag.Bool("enable_extended", false, "Enable Extended metrics")
-
-	if v := os.Getenv("MYSQL_PASSWORD"); v != "" {
-		if f := flag.Lookup("password"); f != nil {
-			if err := f.Value.Set(v); err != nil {
-				log.Fatalln("Flag: ", err)
-			}
-		}
-	}
-
 	flag.Parse()
 
 	var mysql MySQLPlugin
