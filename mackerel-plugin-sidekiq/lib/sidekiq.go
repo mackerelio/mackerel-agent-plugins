@@ -3,6 +3,7 @@ package mpsidekiq
 import (
 	"flag"
 	"fmt"
+	"os"
 	"strconv"
 
 	r "github.com/go-redis/redis"
@@ -197,7 +198,7 @@ func (sp SidekiqPlugin) MetricKeyPrefix() string {
 func Do() {
 	optHost := flag.String("host", "localhost", "Hostname")
 	optPort := flag.String("port", "6379", "Port")
-	optPassword := flag.String("password", "", "Password")
+	optPassword := flag.String("password", os.Getenv("SIDEKIQ_PASSWORD"), "Password")
 	optDB := flag.Int("db", 0, "DB")
 	optPrefix := flag.String("metric-key-prefix", "sidekiq", "Metric key prefix")
 	optTempfile := flag.String("tempfile", "", "Temp file name")
