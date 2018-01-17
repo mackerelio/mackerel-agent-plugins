@@ -2,6 +2,7 @@ package mprabbitmq
 
 import (
 	"flag"
+	"os"
 
 	mp "github.com/mackerelio/go-mackerel-plugin-helper"
 	"github.com/michaelklishin/rabbit-hole"
@@ -67,9 +68,14 @@ func (r RabbitMQPlugin) GraphDefinition() map[string]mp.Graphs {
 
 // Do the plugin
 func Do() {
+	defaultPass := "guest"
+	if v, ok := os.LookupEnv("RABBITMQ_PASSWORD"); ok {
+		defaultPass = v
+	}
+
 	optURI := flag.String("uri", "http://localhost:15672", "URI")
 	optUser := flag.String("user", "guest", "User")
-	optPass := flag.String("password", "guest", "Password")
+	optPass := flag.String("password", defaultPass, "Password")
 	flag.Parse()
 
 	var rabbitmq RabbitMQPlugin
