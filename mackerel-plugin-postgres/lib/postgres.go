@@ -376,7 +376,7 @@ func Do() {
 	optPort := flag.String("port", "5432", "Database port")
 	optUser := flag.String("user", "", "Postgres User")
 	optDatabase := flag.String("database", "", "Database name")
-	optPass := flag.String("password", "", "Postgres Password")
+	optPass := flag.String("password", os.Getenv("PGPASSWORD"), "Postgres Password")
 	optPrefix := flag.String("metric-key-prefix", "postgres", "Metric key prefix")
 	optSSLmode := flag.String("sslmode", "disable", "Whether or not to use SSL")
 	optConnectTimeout := flag.Int("connect_timeout", 5, "Maximum wait for connection, in seconds.")

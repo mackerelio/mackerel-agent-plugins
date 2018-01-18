@@ -9,6 +9,7 @@ import (
 	"io"
 	"net"
 	"net/http"
+	"os"
 	"strconv"
 	"time"
 
@@ -160,7 +161,7 @@ func Do() {
 	optPort := flag.String("port", "80", "Port")
 	optPath := flag.String("path", "/", "Path")
 	optUsername := flag.String("username", "", "Username for Basic Auth")
-	optPassword := flag.String("password", "", "Password for Basic Auth")
+	optPassword := flag.String("password", os.Getenv("HAPROXY_PASSWORD"), "Password for Basic Auth")
 	optTempfile := flag.String("tempfile", "", "Temp file name")
 	optSocket := flag.String("socket", "", "Unix Domain Socket")
 	flag.Parse()

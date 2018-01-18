@@ -4,6 +4,7 @@ import (
 	"flag"
 	"fmt"
 	"log"
+	"os"
 	"strconv"
 	"strings"
 
@@ -1017,7 +1018,7 @@ func Do() {
 	optPort := flag.String("port", "3306", "Port")
 	optSocket := flag.String("socket", "", "Path to unix socket")
 	optUser := flag.String("username", "root", "Username")
-	optPass := flag.String("password", "", "Password")
+	optPass := flag.String("password", os.Getenv("MYSQL_PASSWORD"), "Password")
 	optTempfile := flag.String("tempfile", "", "Temp file name")
 	optInnoDB := flag.Bool("disable_innodb", false, "Disable InnoDB metrics")
 	optMetricKeyPrefix := flag.String("metric-key-prefix", "mysql", "metric key prefix")

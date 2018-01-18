@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"flag"
 	"fmt"
+	"os"
 	"reflect"
 	"strconv"
 	"strings"
@@ -277,7 +278,7 @@ func Do() {
 	optHost := flag.String("host", "localhost", "Hostname")
 	optPort := flag.String("port", "27017", "Port")
 	optUser := flag.String("username", "", "Username")
-	optPass := flag.String("password", "", "Password")
+	optPass := flag.String("password", os.Getenv("MONGODB_PASSWORD"), "Password")
 	optVerbose := flag.Bool("v", false, "Verbose mode")
 	optTempfile := flag.String("tempfile", "", "Temp file name")
 	flag.Parse()
