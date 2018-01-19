@@ -373,7 +373,7 @@ func (m RedisPlugin) GraphDefinition() map[string]mp.Graphs {
 func Do() {
 	optHost := flag.String("host", "localhost", "Hostname")
 	optPort := flag.String("port", "6379", "Port")
-	optPassowrd := flag.String("password", os.Getenv("REDIS_PASSWORD"), "Password")
+	optPassword := flag.String("password", os.Getenv("REDIS_PASSWORD"), "Password")
 	optSocket := flag.String("socket", "", "Server socket (overrides host and port)")
 	optPrefix := flag.String("metric-key-prefix", "redis", "Metric key prefix")
 	optTimeout := flag.Int("timeout", 5, "Timeout")
@@ -392,7 +392,7 @@ func Do() {
 	} else {
 		redis.Host = *optHost
 		redis.Port = *optPort
-		redis.Password = *optPassowrd
+		redis.Password = *optPassword
 	}
 	helper := mp.NewMackerelPlugin(redis)
 	helper.Tempfile = *optTempfile
