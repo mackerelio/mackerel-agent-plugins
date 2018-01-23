@@ -40,6 +40,12 @@ done
 %{__targetdir}/*
 
 %changelog
+* Tue Jan 23 2018 <mackerel-developers@hatena.ne.jp> - 0.43.0
+- Setting password via environment variable (by hayajo)
+- update rpm-v2 task for building Amazon Linux 2 package (by hayajo)
+- Support BSD (by miwarin)
+- make `make build` works for some plugins which moved out from this repository (by astj)
+
 * Wed Jan 10 2018 <mackerel-developers@hatena.ne.jp> - 0.42.0
 - Move mackerel-plugin-json to other repository (by shibayu36)
 - Move mackerel-plugin-gearmand (by shibayu36)
