@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.43.0 (2018-01-23)
+
+* Setting password via environment variable #488 (hayajo)
+* update rpm-v2 task for building Amazon Linux 2 package #485 (hayajo)
+* Support BSD #487 (miwarin)
+* make `make build` works for some plugins which moved out from this repository #486 (astj)
+
+
 ## 0.42.0 (2018-01-10)
 
 * Move mackerel-plugin-json to other repository #482 (shibayu36)
