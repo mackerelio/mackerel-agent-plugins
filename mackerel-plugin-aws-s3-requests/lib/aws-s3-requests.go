@@ -55,7 +55,7 @@ func (p S3RequestsPlugin) MetricKeyPrefix() string {
 	return p.KeyPrefix
 }
 
-// MetricLabelPrefix
+// MetricLabelPrefix ...
 func (p S3RequestsPlugin) MetricLabelPrefix() string {
 	if p.LabelPrefix == "" {
 		return "S3"
