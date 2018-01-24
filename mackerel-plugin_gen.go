@@ -16,6 +16,7 @@ import (
 	"github.com/mackerelio/mackerel-agent-plugins/mackerel-plugin-aws-kinesis-streams/lib"
 	"github.com/mackerelio/mackerel-agent-plugins/mackerel-plugin-aws-lambda/lib"
 	"github.com/mackerelio/mackerel-agent-plugins/mackerel-plugin-aws-rds/lib"
+	"github.com/mackerelio/mackerel-agent-plugins/mackerel-plugin-aws-s3-requests/lib"
 	"github.com/mackerelio/mackerel-agent-plugins/mackerel-plugin-aws-ses/lib"
 	"github.com/mackerelio/mackerel-agent-plugins/mackerel-plugin-conntrack/lib"
 	"github.com/mackerelio/mackerel-agent-plugins/mackerel-plugin-docker/lib"
@@ -87,6 +88,8 @@ func runPlugin(plug string) error {
 		mpawslambda.Do()
 	case "aws-rds":
 		mpawsrds.Do()
+	case "aws-s3-requests":
+		mpawss3requests.Do()
 	case "aws-ses":
 		mpawsses.Do()
 	case "conntrack":
@@ -192,6 +195,7 @@ var plugins = []string{
 	"aws-kinesis-streams",
 	"aws-lambda",
 	"aws-rds",
+	"aws-s3-requests",
 	"aws-ses",
 	"conntrack",
 	"docker",
