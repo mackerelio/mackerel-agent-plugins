@@ -278,7 +278,6 @@ func Do() {
 	optRegion := flag.String("region", "", "AWS Region")
 	optBucketName := flag.String("bucket-name", "", "S3 bucket Name")
 	optFilterID := flag.String("filter-id", "", "S3 FilterId in metrics configuration")
-	optTempfile := flag.String("tempfile", "", "Temp file name")
 	optKeyPrefix := flag.String("metric-key-prefix", "s3-requests", "Metric key prefix")
 	optLabelPrefix := flag.String("metric-label-prefix", "S3", "Metric label prefix")
 	flag.Parse()
@@ -299,8 +298,5 @@ func Do() {
 		log.Fatalln(err)
 	}
 
-	helper := mp.NewMackerelPlugin(plugin)
-	helper.Tempfile = *optTempfile
-
-	helper.Run()
+	mp.NewMackerelPlugin(plugin).Run()
 }
