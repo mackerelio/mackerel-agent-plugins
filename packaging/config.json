@@ -12,6 +12,7 @@
        "aws-lambda",
        "aws-rds",
        "aws-ses",
+       "aws-s3-requests",
        "conntrack",
        "elasticsearch",
        "flume",
