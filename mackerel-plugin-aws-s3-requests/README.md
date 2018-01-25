@@ -26,7 +26,7 @@ command = "mackerel-plugin-aws-s3-requests -bucket-name=MyBucket -filter-id=Some
 
 ## List of Metrics
 
-You can customize graph labels and metric names by command line parameters `--metric-label-prefix` and `--metric-key-prefix`.
+You can customize graph labels and metric names by command line parameters `-metric-label-prefix` and `-metric-key-prefix`.
 
 | Graph Label | Metric Label | Metric (Full) Name | CloudWatch Name | CloudWatch Stastics |
 |-----------------------------------|--------------|----------------------------------------------------------------|---------------------|:-------------------:|
