@@ -21,7 +21,7 @@ mackerel-plugin-aws-s3-requests -bucket-name=<bucket-name> -filter-id=<filter-id
 
 ```
 [plugin.metrics.aws-s3-requests]
-command = "/path/to/mackerel-plugin-aws-s3-requests -bucket-name=MyBucket -filter-id=SomeFilterId -region=ap-northeast-1"
+command = "mackerel-plugin-aws-s3-requests -bucket-name=MyBucket -filter-id=SomeFilterId -region=ap-northeast-1"
 ```
 
 ## List of Metrics
