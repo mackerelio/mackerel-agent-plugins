@@ -10,21 +10,25 @@ import (
 	"github.com/fsouza/go-dockerclient"
 )
 
+// These tests do not check logger's output yet.
+// You can see logger's output by `go test -v`
 func TestFetchMetrics(t *testing.T) {
 	port := "27017"
 
-	opts := createContainerOptions("latest", port)
+	for _, tag := range []string{"3.0", "3.2", "latest"} {
+		opts := createContainerOptions(tag, port)
 
-	err := invokeFunctionWithContainer(func() {
-		var mongodb MongoDBPlugin = MongoDBPlugin{URL: "localhost:" + port}
-		_, err := mongodb.FetchMetrics()
+		err := invokeFunctionWithContainer(func() {
+			var mongodb MongoDBPlugin = MongoDBPlugin{URL: "localhost:" + port}
+			_, err := mongodb.FetchMetrics()
+			if err != nil {
+				t.Errorf("Error: %s", err.Error())
+			}
+		}, opts)
+
 		if err != nil {
 			t.Errorf("Error: %s", err.Error())
 		}
-	}, opts)
-
-	if err != nil {
-		t.Errorf("Error: %s", err.Error())
 	}
 }
 
