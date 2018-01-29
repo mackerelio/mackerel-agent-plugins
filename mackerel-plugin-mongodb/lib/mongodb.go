@@ -7,11 +7,11 @@ import (
 	"os"
 	"reflect"
 	"strconv"
-	"strings"
 	"time"
 
 	"github.com/globalsign/mgo"
 	"github.com/globalsign/mgo/bson"
+	"github.com/hashicorp/go-version"
 	mp "github.com/mackerelio/go-mackerel-plugin-helper"
 	"github.com/mackerelio/golib/logging"
 )
@@ -235,15 +235,18 @@ func (m MongoDBPlugin) getVersion(serverStatus bson.M) string {
 func (m MongoDBPlugin) parseStatus(serverStatus bson.M) (map[string]interface{}, error) {
 	stat := make(map[string]interface{})
 	metricPlace := &metricPlace22
-	version := m.getVersion(serverStatus)
-	if strings.HasPrefix(version, "2.4") {
-		metricPlace = &metricPlace24
-	} else if strings.HasPrefix(version, "2.6") {
-		metricPlace = &metricPlace24
-	} else if strings.HasPrefix(version, "3.0") {
-		metricPlace = &metricPlace30
-	} else if strings.HasPrefix(version, "3.2") {
+
+	cv, err := version.NewVersion(m.getVersion(serverStatus))
+	if err != nil {
+		return stat, err
+	}
+
+	if v, _ := version.NewVersion("3.2"); cv.Equal(v) || cv.GreaterThan(v) {
 		metricPlace = &metricPlace32
+	} else if v, _ := version.NewVersion("3.0"); cv.Equal(v) || cv.GreaterThan(v) {
+		metricPlace = &metricPlace30
+	} else if v, _ := version.NewVersion("2.4"); cv.Equal(v) || cv.GreaterThan(v) {
+		metricPlace = &metricPlace24
 	}
 
 	for k, v := range *metricPlace {
@@ -264,12 +267,18 @@ func (m MongoDBPlugin) GraphDefinition() map[string]mp.Graphs {
 	if err != nil {
 		return graphdef
 	}
-	version := m.getVersion(serverStatus)
-	if strings.HasPrefix(version, "3.0") {
-		return graphdef30
-	} else if strings.HasPrefix(version, "3.2") {
-		return graphdef32
+
+	cv, err := version.NewVersion(m.getVersion(serverStatus))
+	if err != nil {
+		return graphdef
 	}
+
+	if v, _ := version.NewVersion("3.2"); cv.Equal(v) || cv.GreaterThan(v) {
+		return graphdef32
+	} else if v, _ := version.NewVersion("3.0"); cv.Equal(v) || cv.GreaterThan(v) {
+		return graphdef30
+	}
+
 	return graphdef
 }
 
