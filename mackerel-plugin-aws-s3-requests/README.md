@@ -36,7 +36,7 @@ You can customize graph labels and metric names by command line parameters `-met
 | S3 Requests | Delete | `custom.s3-requests.requests.DeleteRequests` | DeleteRequests | Sum |
 | S3 Requests | Head | `custom.s3-requests.requests.HeadRequests` | HeadRequests | Sum |
 | S3 Requests | Post | `custom.s3-requests.requests.PostRequests` | PostRequests | Sum |
-| S3 Requests | Listt | `custom.s3-requests.requests.ListRequests` | ListRequests | Sum |
+| S3 Requests | List | `custom.s3-requests.requests.ListRequests` | ListRequests | Sum |
 | S3 Errors | 4xx | `custom.s3-requests.errors.4xxErrors` | 4xxErrors | Sum |
 | S3 Errors | 5xx | `custom.s3-requests.errors.5xxErrors` | 5xxErrors | Sum |
 | S3 Bytes | Downloaded | `custom.s3-requests.bytes.BytesDownloaded` | BytesDownloaded | Sum |
