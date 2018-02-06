@@ -39,7 +39,7 @@ type ESPlugin struct {
 }
 
 // MetricKeyPrefix interface for PluginWithPrefix
-func (p *ESPlugin) MetricKeyPrefix() string {
+func (p ESPlugin) MetricKeyPrefix() string {
 	if p.KeyPrefix == "" {
 		return "es"
 	}
