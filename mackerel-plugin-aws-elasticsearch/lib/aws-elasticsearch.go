@@ -47,7 +47,7 @@ func (p ESPlugin) MetricKeyPrefix() string {
 }
 
 // MetricLabelPrefix ...
-func (p *ESPlugin) MetricLabelPrefix() string {
+func (p ESPlugin) MetricLabelPrefix() string {
 	if p.LabelPrefix == "" {
 		return "AWS ES"
 	}
