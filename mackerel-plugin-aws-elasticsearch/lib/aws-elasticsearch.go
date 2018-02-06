@@ -21,147 +21,6 @@ const (
 	metricsTypeMinimum = "Minimum"
 )
 
-var graphdef = map[string]mp.Graphs{
-	"es.ClusterStatus": {
-		Label: "AWS ES ClusterStatus",
-		Unit:  "integer",
-		Metrics: []mp.Metrics{
-			{Name: "ClusterStatus.green", Label: "green"},
-			{Name: "ClusterStatus.yellow", Label: "yellow"},
-			{Name: "ClusterStatus.red", Label: "red"},
-		},
-	},
-	"es.Nodes": {
-		Label: "AWS ES Nodes",
-		Unit:  "integer",
-		Metrics: []mp.Metrics{
-			{Name: "Nodes", Label: "Nodes"},
-		},
-	},
-	"es.SearchableDocuments": {
-		Label: "AWS ES SearchableDocuments",
-		Unit:  "integer",
-		Metrics: []mp.Metrics{
-			{Name: "SearchableDocuments", Label: "SearchableDocuments"},
-		},
-	},
-	"es.DeletedDocuments": {
-		Label: "AWS ES DeletedDocuments",
-		Unit:  "integer",
-		Metrics: []mp.Metrics{
-			{Name: "DeletedDocuments", Label: "DeletedDocuments"},
-		},
-	},
-	"es.CPUUtilization": {
-		Label: "AWS ES CPU Utilization",
-		Unit:  "percentage",
-		Metrics: []mp.Metrics{
-			{Name: "CPUUtilization", Label: "CPUUtilization"},
-		},
-	},
-	"es.FreeStorageSpace": {
-		Label: "AWS ES Free Storage Space",
-		Unit:  "bytes",
-		Metrics: []mp.Metrics{
-			{Name: "FreeStorageSpace", Label: "FreeStorageSpace"},
-		},
-	},
-	"es.ClusterUsedSpace": {
-		Label: "AWS ES Cluster Used Space",
-		Unit:  "bytes",
-		Metrics: []mp.Metrics{
-			{Name: "ClusterUsedSpace", Label: "ClusterUsedSpace"},
-		},
-	},
-	"es.ClusterIndexWritesBlocked": {
-		Label: "AWS ES ClusterIndexWritesBlocked",
-		Unit:  "integer",
-		Metrics: []mp.Metrics{
-			{Name: "ClusterIndexWritesBlocked", Label: "ClusterIndexWritesBlocked"},
-		},
-	},
-	"es.JVMMemoryPressure": {
-		Label: "AWS ES JVMMemoryPressure",
-		Unit:  "percentage",
-		Metrics: []mp.Metrics{
-			{Name: "JVMMemoryPressure", Label: "JVMMemoryPressure"},
-		},
-	},
-	"es.AutomatedSnapshotFailure": {
-		Label: "AWS ES AutomatedSnapshotFailure",
-		Unit:  "integer",
-		Metrics: []mp.Metrics{
-			{Name: "AutomatedSnapshotFailure", Label: "AutomatedSnapshotFailure"},
-		},
-	},
-	"es.KibanaHealthyNodes": {
-		Label: "AWS ES KibanaHealthyNodes",
-		Unit:  "integer",
-		Metrics: []mp.Metrics{
-			{Name: "KibanaHealthyNodes", Label: "KibanaHealthyNodes"},
-		},
-	},
-	"es.MasterCPUUtilization": {
-		Label: "AWS ES MasterCPUUtilization",
-		Unit:  "percentage",
-		Metrics: []mp.Metrics{
-			{Name: "MasterCPUUtilization", Label: "MasterCPUUtilization"},
-		},
-	},
-	"es.MasterFreeStorageSpace": {
-		Label: "AWS ES MasterFreeStorageSpace",
-		Unit:  "bytes",
-		Metrics: []mp.Metrics{
-			{Name: "MasterFreeStorageSpace", Label: "MasterFreeStorageSpace"},
-		},
-	},
-	"es.MasterJVMMemoryPressure": {
-		Label: "AWS ES MasterJVMMemoryPressure",
-		Unit:  "percentage",
-		Metrics: []mp.Metrics{
-			{Name: "MasterJVMMemoryPressure", Label: "MasterJVMMemoryPressure"},
-		},
-	},
-	"es.MasterReachableFromNode": {
-		Label: "AWS ES MasterReachableFromNode",
-		Unit:  "percentage",
-		Metrics: []mp.Metrics{
-			{Name: "MasterReachableFromNode", Label: "MasterReachableFromNode"},
-		},
-	},
-	"es.Latency": {
-		Label: "AWS ES Latency",
-		Unit:  "float",
-		Metrics: []mp.Metrics{
-			{Name: "ReadLatency", Label: "ReadLatency"},
-			{Name: "WriteLatency", Label: "WriteLatency"},
-		},
-	},
-	"es.Throughput": {
-		Label: "AWS ES Throughput",
-		Unit:  "bytes/sec",
-		Metrics: []mp.Metrics{
-			{Name: "ReadThroughput", Label: "ReadThroughput"},
-			{Name: "WriteThroughput", Label: "WriteThroughput"},
-		},
-	},
-	"es.DiskQueueDepth": {
-		Label: "AWS ES DiskQueueDepth",
-		Unit:  "integer",
-		Metrics: []mp.Metrics{
-			{Name: "DiskQueueDepth", Label: "DiskQueueDepth"},
-		},
-	},
-	"es.IOPS": {
-		Label: "AWS ES IOPS",
-		Unit:  "iops",
-		Metrics: []mp.Metrics{
-			{Name: "ReadIOPS", Label: "ReadIOPS"},
-			{Name: "WriteIOPS", Label: "WriteIOPS"},
-		},
-	},
-}
-
 type metrics struct {
 	Name string
 	Type string
@@ -175,6 +34,24 @@ type ESPlugin struct {
 	Domain          string
 	ClientID        string
 	CloudWatch      *cloudwatch.CloudWatch
+	KeyPrefix       string
+	LabelPrefix     string
+}
+
+// MetricKeyPrefix interface for PluginWithPrefix
+func (p ESPlugin) MetricKeyPrefix() string {
+	if p.KeyPrefix == "" {
+		return "es"
+	}
+	return p.KeyPrefix
+}
+
+// MetricLabelPrefix ...
+func (p ESPlugin) MetricLabelPrefix() string {
+	if p.LabelPrefix == "" {
+		return "AWS ES"
+	}
+	return p.LabelPrefix
 }
 
 func (p *ESPlugin) prepare() error {
@@ -306,7 +183,147 @@ func (p ESPlugin) FetchMetrics() (map[string]float64, error) {
 
 // GraphDefinition interface for mackerelplugin
 func (p ESPlugin) GraphDefinition() map[string]mp.Graphs {
-	return graphdef
+	labelPrefix := p.MetricLabelPrefix()
+	return map[string]mp.Graphs{
+		"ClusterStatus": {
+			Label: (labelPrefix + " ClusterStatus"),
+			Unit:  "integer",
+			Metrics: []mp.Metrics{
+				{Name: "ClusterStatus.green", Label: "green"},
+				{Name: "ClusterStatus.yellow", Label: "yellow"},
+				{Name: "ClusterStatus.red", Label: "red"},
+			},
+		},
+		"Nodes": {
+			Label: (labelPrefix + " Nodes"),
+			Unit:  "integer",
+			Metrics: []mp.Metrics{
+				{Name: "Nodes", Label: "Nodes"},
+			},
+		},
+		"SearchableDocuments": {
+			Label: (labelPrefix + " SearchableDocuments"),
+			Unit:  "integer",
+			Metrics: []mp.Metrics{
+				{Name: "SearchableDocuments", Label: "SearchableDocuments"},
+			},
+		},
+		"DeletedDocuments": {
+			Label: (labelPrefix + " DeletedDocuments"),
+			Unit:  "integer",
+			Metrics: []mp.Metrics{
+				{Name: "DeletedDocuments", Label: "DeletedDocuments"},
+			},
+		},
+		"CPUUtilization": {
+			Label: (labelPrefix + " CPU Utilization"),
+			Unit:  "percentage",
+			Metrics: []mp.Metrics{
+				{Name: "CPUUtilization", Label: "CPUUtilization"},
+			},
+		},
+		"FreeStorageSpace": {
+			Label: (labelPrefix + " Free Storage Space"),
+			Unit:  "bytes",
+			Metrics: []mp.Metrics{
+				{Name: "FreeStorageSpace", Label: "FreeStorageSpace"},
+			},
+		},
+		"ClusterUsedSpace": {
+			Label: (labelPrefix + " Cluster Used Space"),
+			Unit:  "bytes",
+			Metrics: []mp.Metrics{
+				{Name: "ClusterUsedSpace", Label: "ClusterUsedSpace"},
+			},
+		},
+		"ClusterIndexWritesBlocked": {
+			Label: (labelPrefix + " ClusterIndexWritesBlocked"),
+			Unit:  "integer",
+			Metrics: []mp.Metrics{
+				{Name: "ClusterIndexWritesBlocked", Label: "ClusterIndexWritesBlocked"},
+			},
+		},
+		"JVMMemoryPressure": {
+			Label: (labelPrefix + " JVMMemoryPressure"),
+			Unit:  "percentage",
+			Metrics: []mp.Metrics{
+				{Name: "JVMMemoryPressure", Label: "JVMMemoryPressure"},
+			},
+		},
+		"AutomatedSnapshotFailure": {
+			Label: (labelPrefix + " AutomatedSnapshotFailure"),
+			Unit:  "integer",
+			Metrics: []mp.Metrics{
+				{Name: "AutomatedSnapshotFailure", Label: "AutomatedSnapshotFailure"},
+			},
+		},
+		"KibanaHealthyNodes": {
+			Label: (labelPrefix + " KibanaHealthyNodes"),
+			Unit:  "integer",
+			Metrics: []mp.Metrics{
+				{Name: "KibanaHealthyNodes", Label: "KibanaHealthyNodes"},
+			},
+		},
+		"MasterCPUUtilization": {
+			Label: (labelPrefix + " MasterCPUUtilization"),
+			Unit:  "percentage",
+			Metrics: []mp.Metrics{
+				{Name: "MasterCPUUtilization", Label: "MasterCPUUtilization"},
+			},
+		},
+		"MasterFreeStorageSpace": {
+			Label: (labelPrefix + " MasterFreeStorageSpace"),
+			Unit:  "bytes",
+			Metrics: []mp.Metrics{
+				{Name: "MasterFreeStorageSpace", Label: "MasterFreeStorageSpace"},
+			},
+		},
+		"MasterJVMMemoryPressure": {
+			Label: (labelPrefix + " MasterJVMMemoryPressure"),
+			Unit:  "percentage",
+			Metrics: []mp.Metrics{
+				{Name: "MasterJVMMemoryPressure", Label: "MasterJVMMemoryPressure"},
+			},
+		},
+		"MasterReachableFromNode": {
+			Label: (labelPrefix + " MasterReachableFromNode"),
+			Unit:  "percentage",
+			Metrics: []mp.Metrics{
+				{Name: "MasterReachableFromNode", Label: "MasterReachableFromNode"},
+			},
+		},
+		"Latency": {
+			Label: (labelPrefix + " Latency"),
+			Unit:  "float",
+			Metrics: []mp.Metrics{
+				{Name: "ReadLatency", Label: "ReadLatency"},
+				{Name: "WriteLatency", Label: "WriteLatency"},
+			},
+		},
+		"Throughput": {
+			Label: (labelPrefix + " Throughput"),
+			Unit:  "bytes/sec",
+			Metrics: []mp.Metrics{
+				{Name: "ReadThroughput", Label: "ReadThroughput"},
+				{Name: "WriteThroughput", Label: "WriteThroughput"},
+			},
+		},
+		"DiskQueueDepth": {
+			Label: (labelPrefix + " DiskQueueDepth"),
+			Unit:  "integer",
+			Metrics: []mp.Metrics{
+				{Name: "DiskQueueDepth", Label: "DiskQueueDepth"},
+			},
+		},
+		"IOPS": {
+			Label: (labelPrefix + " IOPS"),
+			Unit:  "iops",
+			Metrics: []mp.Metrics{
+				{Name: "ReadIOPS", Label: "ReadIOPS"},
+				{Name: "WriteIOPS", Label: "WriteIOPS"},
+			},
+		},
+	}
 }
 
 // Do the plugin
@@ -317,6 +334,8 @@ func Do() {
 	optClientID := flag.String("client-id", "", "AWS Client ID")
 	optDomain := flag.String("domain", "", "ES domain name")
 	optTempfile := flag.String("tempfile", "", "Temp file name")
+	optKeyPrefix := flag.String("metric-key-prefix", "es", "Metric key prefix")
+	optLabelPrefix := flag.String("metric-label-prefix", "AWS ES", "Metric label prefix")
 	flag.Parse()
 
 	var es ESPlugin
@@ -335,6 +354,8 @@ func Do() {
 	es.ClientID = *optClientID
 	es.AccessKeyID = *optAccessKeyID
 	es.SecretAccessKey = *optSecretAccessKey
+	es.KeyPrefix = *optKeyPrefix
+	es.LabelPrefix = *optLabelPrefix
 
 	err := es.prepare()
 	if err != nil {

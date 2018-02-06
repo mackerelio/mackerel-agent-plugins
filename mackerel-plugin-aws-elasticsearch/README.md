@@ -6,7 +6,7 @@ AWS Elasticsearch Service custom metrics plugin for mackerel.io agent.
 ## Synopsis
 
 ```shell
-mackerel-plugin-aws-elasticsearch -domain=<aws-elasticsearch-domain> -client-id=<aws-client-id> [-region=<aws-region>] [-access-key-id=<aws-access-key-id>] [-secret-access-key=<aws-secret-access-key>] [-tempfile=<tmpfile>]
+mackerel-plugin-aws-elasticsearch -domain=<aws-elasticsearch-domain> -client-id=<aws-client-id> [-region=<aws-region>] [-access-key-id=<aws-access-key-id>] [-secret-access-key=<aws-secret-access-key>] [-metric-key-prefix=<prefix>] [-metric-label-prefix=<prefix>] [-tempfile=<tmpfile>]
 ```
 
 ## AWS IAM Policy
