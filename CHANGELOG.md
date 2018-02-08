@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.44.0 (2018-02-08)
+
+* [aws-elasticsearch] support metric-{key,label}-prefix #495 (astj)
+* [mongodb] Fix warning message on MongoDB 3.4, 3.6 #493 (hayajo)
+* Add mackerel-plugin-aws-s3-requests #492 (astj)
+* Migrate from `go-mgo/mgo` to `globalsign/mgo` #491 (hayajo)
+
+
 ## 0.43.0 (2018-01-23)
 
 * Setting password via environment variable #488 (hayajo)

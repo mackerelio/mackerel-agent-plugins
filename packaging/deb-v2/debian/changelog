@@ -1,3 +1,16 @@
+mackerel-agent-plugins (0.44.0-1.v2) stable; urgency=low
+
+  * [aws-elasticsearch] support metric-{key,label}-prefix (by astj)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/495>
+  * [mongodb] Fix warning message on MongoDB 3.4, 3.6 (by hayajo)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/493>
+  * Add mackerel-plugin-aws-s3-requests (by astj)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/492>
+  * Migrate from `go-mgo/mgo` to `globalsign/mgo` (by hayajo)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/491>
+
+ -- mackerel <mackerel-developers@hatena.ne.jp>  Thu, 08 Feb 2018 10:48:23 +0900
+
 mackerel-agent-plugins (0.43.0-1.v2) stable; urgency=low
 
   * Setting password via environment variable (by hayajo)

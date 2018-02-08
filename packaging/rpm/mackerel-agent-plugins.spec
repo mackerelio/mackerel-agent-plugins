@@ -30,7 +30,7 @@ This package provides plugins for Mackerel.
 
 %{__mkdir} -p %{buildroot}%{__targetdir}
 
-for i in accesslog apache2 aws-dynamodb aws-ec2-cpucredit aws-elasticache aws-elasticsearch aws-elb aws-kinesis-streams aws-lambda aws-rds aws-ses conntrack elasticsearch flume gostats graphite haproxy jmx-jolokia jvm linux mailq memcached mongodb multicore munin mysql nginx nvidia-smi openldap php-apc php-fpm php-opcache plack postgres proc-fd solr rabbitmq redis sidekiq snmp squid td-table-count trafficserver twemproxy uwsgi-vassal varnish xentop aws-cloudfront aws-ec2-ebs fluentd docker unicorn uptime inode h2o; do \
+for i in accesslog apache2 aws-dynamodb aws-ec2-cpucredit aws-elasticache aws-elasticsearch aws-elb aws-kinesis-streams aws-lambda aws-rds aws-ses aws-s3-requests conntrack elasticsearch flume gostats graphite haproxy jmx-jolokia jvm linux mailq memcached mongodb multicore munin mysql nginx nvidia-smi openldap php-apc php-fpm php-opcache plack postgres proc-fd solr rabbitmq redis sidekiq snmp squid td-table-count trafficserver twemproxy uwsgi-vassal varnish xentop aws-cloudfront aws-ec2-ebs fluentd docker unicorn uptime inode h2o; do \
     %{__install} -m0755 %{_sourcedir}/%{_bindir}/mackerel-plugin-$i %{buildroot}%{__targetdir}/; \
 done
 
@@ -49,6 +49,12 @@ done
 %{__oldtargetdir}/*
 
 %changelog
+* Thu Feb 08 2018 <mackerel-developers@hatena.ne.jp> - 0.44.0
+- [aws-elasticsearch] support metric-{key,label}-prefix (by astj)
+- [mongodb] Fix warning message on MongoDB 3.4, 3.6 (by hayajo)
+- Add mackerel-plugin-aws-s3-requests (by astj)
+- Migrate from `go-mgo/mgo` to `globalsign/mgo` (by hayajo)
+
 * Tue Jan 23 2018 <mackerel-developers@hatena.ne.jp> - 0.43.0
 - Setting password via environment variable (by hayajo)
 - update rpm-v2 task for building Amazon Linux 2 package (by hayajo)
