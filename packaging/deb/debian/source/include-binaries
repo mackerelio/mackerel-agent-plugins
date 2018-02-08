@@ -9,6 +9,7 @@ debian/mackerel-plugin-aws-kinesis-streams
 debian/mackerel-plugin-aws-lambda
 debian/mackerel-plugin-aws-rds
 debian/mackerel-plugin-aws-ses
+debian/mackerel-plugin-aws-s3-requests
 debian/mackerel-plugin-conntrack
 debian/mackerel-plugin-elasticsearch
 debian/mackerel-plugin-flume
