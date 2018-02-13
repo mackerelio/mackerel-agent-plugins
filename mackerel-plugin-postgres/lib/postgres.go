@@ -190,6 +190,54 @@ func fetchDatabaseSize(db *sqlx.DB) (map[string]interface{}, error) {
 	}, nil
 }
 
+func fetchXlogLocation(db *sqlx.DB, version version) (map[string]interface{}, error) {
+	rows, err := db.Query("SELECT pg_is_in_recovery()")
+	if err != nil {
+		logger.Errorf("Failed to select pg_is_in_recovery. %s", err)
+		return nil, err
+	}
+	var recovery bool
+	for rows.Next() {
+		if err := rows.Scan(&recovery); err != nil {
+			logger.Warningf("Failed to scan %s", err)
+		}
+	}
+
+	stat := map[string]interface{}{
+		"xlog_location_bytes": 0.0,
+	}
+
+	if !recovery {
+		var bytes float64
+		if version.first >= 10 {
+			rows, err := db.Query(`SELECT pg_wal_lsn_diff(pg_current_wal_lsn(), '0/0')`)
+			if err != nil {
+				logger.Errorf("Failed to select pg_wal_lsn_diff. %s", err)
+				return nil, err
+			}
+			for rows.Next() {
+				if err := rows.Scan(&bytes); err != nil {
+					logger.Warningf("Failed to scan %s", err)
+				}
+			}
+		} else if version.first == 9 && version.second >= 2 {
+			rows, err := db.Query(`SELECT pg_xlog_location_diff(pg_current_xlog_location(), '0/0')`)
+			if err != nil {
+				logger.Errorf("Failed to select pg_xlog_location_diff. %s", err)
+				return nil, err
+			}
+			for rows.Next() {
+				if err := rows.Scan(&bytes); err != nil {
+					logger.Warningf("Failed to scan %s", err)
+				}
+			}
+		}
+		stat["xlog_location_bytes"] = bytes
+	}
+
+	return stat, nil
+}
+
 var versionRe = regexp.MustCompile("PostgreSQL (\\d+)\\.(\\d+)(\\.(\\d+))?")
 
 type version struct {
@@ -282,11 +330,16 @@ func (p PostgresPlugin) FetchMetrics() (map[string]interface{}, error) {
 	if err != nil {
 		return nil, err
 	}
+	statXlogLocation, err := fetchXlogLocation(db, version)
+	if err != nil {
+		return nil, err
+	}
 
 	stat := make(map[string]interface{})
 	mergeStat(stat, statStatDatabase)
 	mergeStat(stat, statConnections)
 	mergeStat(stat, statDatabaseSize)
+	mergeStat(stat, statXlogLocation)
 
 	return stat, err
 }
@@ -363,6 +416,13 @@ func (p PostgresPlugin) GraphDefinition() map[string]mp.Graphs {
 			Unit:  "integer",
 			Metrics: []mp.Metrics{
 				{Name: "temp_bytes", Label: "Temporary file size (byte)", Diff: true, Stacked: false},
+			},
+		},
+		"xlog_location": {
+			Label: (labelPrefix + " Amount of Transaction location change"),
+			Unit:  "bytes",
+			Metrics: []mp.Metrics{
+				{Name: "xlog_location_bytes", Label: "Amount of Transaction location change (byte)", Diff: true, Stacked: false},
 			},
 		},
 	}
