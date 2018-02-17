@@ -33,7 +33,7 @@ type JVMPlugin struct {
 func fetchLvmidByAppname(appname, target, jpsPath string) (string, error) {
 	var (
 		stdout     string
-		exitStatus timeout.ExitStatus
+		exitStatus *timeout.ExitStatus
 		err        error
 	)
 	if target != "" {
@@ -146,7 +146,7 @@ func mergeStat(dst, src map[string]float64) {
 	}
 }
 
-func runTimeoutCommand(Path string, Args ...string) (string, string, timeout.ExitStatus, error) {
+func runTimeoutCommand(Path string, Args ...string) (string, string, *timeout.ExitStatus, error) {
 	var TimeoutDuration = 10 * time.Second
 	var TimeoutKillAfter = 5 * time.Second
 	tio := &timeout.Timeout{
