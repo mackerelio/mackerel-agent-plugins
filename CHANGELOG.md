@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.45.0 (2018-03-01)
+
+* [postgres] Add amount of xlog_location change #476 (kizkoh)
+
+
 ## 0.44.0 (2018-02-08)
 
 * [aws-elasticsearch] support metric-{key,label}-prefix #495 (astj)
