@@ -49,6 +49,9 @@ done
 %{__oldtargetdir}/*
 
 %changelog
+* Thu Mar 01 2018 <mackerel-developers@hatena.ne.jp> - 0.45.0
+- [postgres] Add amount of xlog_location change (by kizkoh)
+
 * Thu Feb 08 2018 <mackerel-developers@hatena.ne.jp> - 0.44.0
 - [aws-elasticsearch] support metric-{key,label}-prefix (by astj)
 - [mongodb] Fix warning message on MongoDB 3.4, 3.6 (by hayajo)
