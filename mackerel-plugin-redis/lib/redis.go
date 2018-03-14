@@ -299,6 +299,13 @@ func (m RedisPlugin) GraphDefinition() map[string]mp.Graphs {
 				{Name: "percentage_of_clients", Label: "Percentage of clients", Diff: false},
 			},
 		},
+		"uptime": {
+			Label: (labelPrefix + " Uptime"),
+			Unit:  "integer",
+			Metrics: []mp.Metrics{
+				{Name: "uptime_in_seconds", Label: "Uptime In Seconds", Diff: false},
+			},
+		},
 	}
 
 	network := "tcp"
