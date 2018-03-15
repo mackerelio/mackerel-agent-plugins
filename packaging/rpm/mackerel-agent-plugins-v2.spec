@@ -40,6 +40,10 @@ done
 %{__targetdir}/*
 
 %changelog
+* Thu Mar 15 2018 <mackerel-developers@hatena.ne.jp> - 0.46.0
+- [Redis] send uptime (by dozen)
+- [redis] expired_keys change to diff true (by dozen)
+
 * Thu Mar 01 2018 <mackerel-developers@hatena.ne.jp> - 0.45.0
 - [postgres] Add amount of xlog_location change (by kizkoh)
 

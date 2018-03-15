@@ -1,3 +1,12 @@
+mackerel-agent-plugins (0.46.0-1.v2) stable; urgency=low
+
+  * [Redis] send uptime (by dozen)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/502>
+  * [redis] expired_keys change to diff true (by dozen)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/501>
+
+ -- mackerel <mackerel-developers@hatena.ne.jp>  Thu, 15 Mar 2018 10:33:31 +0900
+
 mackerel-agent-plugins (0.45.0-1.v2) stable; urgency=low
 
   * [postgres] Add amount of xlog_location change (by kizkoh)

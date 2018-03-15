@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.46.0 (2018-03-15)
+
+* [Redis] send uptime #502 (dozen)
+* [redis] expired_keys change to diff true #501 (dozen)
+
+
 ## 0.45.0 (2018-03-01)
 
 * [postgres] Add amount of xlog_location change #476 (kizkoh)
