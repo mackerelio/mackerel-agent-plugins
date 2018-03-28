@@ -20,6 +20,8 @@ var graphdef = map[string]mp.Graphs{
 		Metrics: []mp.Metrics{
 			{Name: "usage", Label: "Usage", Diff: false},
 			{Name: "balance", Label: "Balance", Diff: false},
+			{Name: "surplus_balance", Label: "Surplus Usage", Diff: false},
+			{Name: "surplus_charged", Label: "Surplus Charged", Diff: false},
 		},
 	},
 }
@@ -101,6 +103,16 @@ func (p CPUCreditPlugin) FetchMetrics() (map[string]float64, error) {
 	}
 
 	stat["balance"], err = getLastPointAverage(cw, dimension, "CPUCreditBalance")
+	if err != nil {
+		return nil, err
+	}
+
+	stat["surplus_balance"], err = getLastPointAverage(cw, dimension, "CPUSurplusCreditBalance")
+	if err != nil {
+		return nil, err
+	}
+
+	stat["surplus_charged"], err = getLastPointAverage(cw, dimension, "CPUSurplusCreditsCharged")
 	if err != nil {
 		return nil, err
 	}
