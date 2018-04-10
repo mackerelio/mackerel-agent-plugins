@@ -49,6 +49,9 @@ done
 %{__oldtargetdir}/*
 
 %changelog
+* Tue Apr 10 2018 <mackerel-developers@hatena.ne.jp> - 0.47.0
+- [aws-ec2-cpucredit] Add T2 unlimited CPU credit metrics (by astj)
+
 * Thu Mar 15 2018 <mackerel-developers@hatena.ne.jp> - 0.46.0
 - [Redis] send uptime (by dozen)
 - [redis] expired_keys change to diff true (by dozen)

@@ -1,3 +1,10 @@
+mackerel-agent-plugins (0.47.0-1.v2) stable; urgency=low
+
+  * [aws-ec2-cpucredit] Add T2 unlimited CPU credit metrics (by astj)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/504>
+
+ -- mackerel <mackerel-developers@hatena.ne.jp>  Tue, 10 Apr 2018 12:12:34 +0900
+
 mackerel-agent-plugins (0.46.0-1.v2) stable; urgency=low
 
   * [Redis] send uptime (by dozen)

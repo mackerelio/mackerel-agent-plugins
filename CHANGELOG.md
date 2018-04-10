@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.47.0 (2018-04-10)
+
+* [aws-ec2-cpucredit] Add T2 unlimited CPU credit metrics #504 (astj)
+
+
 ## 0.46.0 (2018-03-15)
 
 * [Redis] send uptime #502 (dozen)
