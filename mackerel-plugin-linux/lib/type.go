@@ -35,7 +35,7 @@ func (b *blockDevice) isRemovable() bool {
 }
 
 func (b *blockDevice) stat() ([]string, error) {
-	var stat []string
+	stat := []string{}
 
 	content, err := ioutil.ReadFile(filepath.Join(b.path, "stat"))
 	if err != nil {

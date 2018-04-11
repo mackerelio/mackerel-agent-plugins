@@ -253,7 +253,7 @@ func parseProcStat(r io.Reader, p *map[string]interface{}) error {
 }
 
 func collectBlockDevices(path string) ([]*blockDevice, error) {
-	var devices []*blockDevice
+	devices := []*blockDevice{}
 	sysBlockDir := filepath.Join(path, "block")
 
 	files, err := ioutil.ReadDir(sysBlockDir)
@@ -268,7 +268,7 @@ func collectBlockDevices(path string) ([]*blockDevice, error) {
 
 		realPath, err := filepath.EvalSymlinks(filepath.Join(sysBlockDir, f.Name()))
 		if err != nil {
-			return nil, err
+			return devices, err
 		}
 
 		devices = append(devices, &blockDevice{path: realPath})
