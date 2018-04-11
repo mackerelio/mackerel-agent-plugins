@@ -5,9 +5,10 @@ import (
 	"bytes"
 	"fmt"
 	"io"
+	"io/ioutil"
 	"os"
 	"os/exec"
-	"regexp"
+	"path/filepath"
 	"strconv"
 	"strings"
 
@@ -16,9 +17,9 @@ import (
 )
 
 const (
-	pathVmstat    = "/proc/vmstat"
-	pathDiskstats = "/proc/diskstats"
-	pathStat      = "/proc/stat"
+	pathVmstat = "/proc/vmstat"
+	pathStat   = "/proc/stat"
+	pathSysfs  = "/sys"
 )
 
 // metric value structure
@@ -52,7 +53,7 @@ func (c LinuxPlugin) GraphDefinition() map[string]mp.Graphs {
 	}
 
 	if c.Typemap["all"] || c.Typemap["diskstats"] {
-		err = collectProcDiskstats(pathDiskstats, &p)
+		err = collectDiskStats(pathSysfs, &p)
 		if err != nil {
 			return nil
 		}
@@ -118,7 +119,7 @@ func (c LinuxPlugin) FetchMetrics() (map[string]interface{}, error) {
 	}
 
 	if c.Typemap["all"] || c.Typemap["diskstats"] {
-		err = collectProcDiskstats(pathDiskstats, &p)
+		err = collectDiskStats(pathSysfs, &p)
 		if err != nil {
 			return nil, err
 		}
@@ -251,45 +252,63 @@ func parseProcStat(r io.Reader, p *map[string]interface{}) error {
 	return nil
 }
 
-// collect /proc/diskstats
-func collectProcDiskstats(path string, p *map[string]interface{}) error {
-	file, err := os.Open(path)
+func collectBlockDevices(path string) ([]*blockDevice, error) {
+	var devices []*blockDevice
+	sysBlockDir := filepath.Join(path, "block")
+
+	files, err := ioutil.ReadDir(sysBlockDir)
 	if err != nil {
-		return err
+		return devices, err
 	}
-	defer file.Close()
-	return parseProcDiskstats(file, p)
+
+	for _, f := range files {
+		if f.Mode()&os.ModeSymlink != os.ModeSymlink {
+			continue
+		}
+
+		realPath, err := filepath.EvalSymlinks(filepath.Join(sysBlockDir, f.Name()))
+		if err != nil {
+			return nil, err
+		}
+
+		devices = append(devices, &blockDevice{path: realPath})
+	}
+
+	return devices, nil
 }
 
-// parsing metrics from diskstats
-func parseProcDiskstats(r io.Reader, p *map[string]interface{}) error {
+// correct /sys/block/<device>/stat
+func collectDiskStats(path string, p *map[string]interface{}) error {
 	var elapsedData []mp.Metrics
 	var rwtimeData []mp.Metrics
 
-	scanner := bufio.NewScanner(r)
+	devices, err := collectBlockDevices(path)
+	if err != nil {
+		return err
+	}
 
-	for scanner.Scan() {
-		line := scanner.Text()
-		// See also: https://www.kernel.org/doc/Documentation/ABI/testing/procfs-diskstats
-		record := strings.Fields(line)
-		if len(record) < 14 {
-			continue
-		}
-		device := record[2]
-		matched, err := regexp.MatchString("[0-9]$", device)
-		if matched || err != nil {
+	for _, d := range devices {
+		// exclude virtual devices and removable devices
+		if d.isVirtual() || d.isRemovable() {
 			continue
 		}
 
-		(*p)[fmt.Sprintf("iotime_%s", device)], _ = atof(record[12])
-		(*p)[fmt.Sprintf("iotime_weighted_%s", device)], _ = atof(record[13])
-		elapsedData = append(elapsedData, mp.Metrics{Name: fmt.Sprintf("iotime_%s", device), Label: fmt.Sprintf("%s IO Time", device), Diff: true})
-		elapsedData = append(elapsedData, mp.Metrics{Name: fmt.Sprintf("iotime_weighted_%s", device), Label: fmt.Sprintf("%s IO Time Weighted", device), Diff: true})
+		stat, err := d.stat()
+		if err != nil {
+			return err
+		}
 
-		(*p)[fmt.Sprintf("tsreading_%s", device)], _ = atof(record[6])
-		(*p)[fmt.Sprintf("tswriting_%s", device)], _ = atof(record[10])
-		rwtimeData = append(rwtimeData, mp.Metrics{Name: fmt.Sprintf("tsreading_%s", device), Label: fmt.Sprintf("%s Read", device), Diff: true})
-		rwtimeData = append(rwtimeData, mp.Metrics{Name: fmt.Sprintf("tswriting_%s", device), Label: fmt.Sprintf("%s Write", device), Diff: true})
+		name := d.name()
+
+		(*p)[fmt.Sprintf("iotime_%s", name)], _ = atof(stat[9])
+		(*p)[fmt.Sprintf("iotime_weighted_%s", name)], _ = atof(stat[10])
+		elapsedData = append(elapsedData, mp.Metrics{Name: fmt.Sprintf("iotime_%s", name), Label: fmt.Sprintf("%s IO Time", name), Diff: true})
+		elapsedData = append(elapsedData, mp.Metrics{Name: fmt.Sprintf("iotime_weighted_%s", name), Label: fmt.Sprintf("%s IO Time Weighted", name), Diff: true})
+
+		(*p)[fmt.Sprintf("tsreading_%s", name)], _ = atof(stat[3])
+		(*p)[fmt.Sprintf("tswriting_%s", name)], _ = atof(stat[7])
+		rwtimeData = append(rwtimeData, mp.Metrics{Name: fmt.Sprintf("tsreading_%s", name), Label: fmt.Sprintf("%s Read", name), Diff: true})
+		rwtimeData = append(rwtimeData, mp.Metrics{Name: fmt.Sprintf("tswriting_%s", name), Label: fmt.Sprintf("%s Write", name), Diff: true})
 	}
 
 	graphdef["linux.disk.elapsed"] = mp.Graphs{

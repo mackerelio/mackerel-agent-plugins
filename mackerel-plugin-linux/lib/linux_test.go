@@ -74,32 +74,6 @@ func TestParseProcStat(t *testing.T) {
 	assert.EqualValues(t, stat["forks"], 1959410)
 }
 
-func TestCollectProcDiskstats(t *testing.T) {
-	path := "/proc/diskstats"
-	_, err := os.Stat(path)
-	if err != nil {
-		return
-	}
-	p := make(map[string]interface{})
-
-	assert.Nil(t, collectProcDiskstats(path, &p))
-}
-
-func TestParseProcDiskstats(t *testing.T) {
-	stub := `   1       0 ram0 0 0 0 0 0 0 0 0 0 0 0
-   8       0 sda 324351 303093 35032074 12441261 4456146 5387174 68639686 423711425 0 23865772 436201338
-   8       1 sda1 678 405 10970 4696 276 22946 46462 1217036 0 53528 1221732
- 253       2 dm-2 83 0 664 94 0 0 0 0 0 94 94`
-	stat := make(map[string]interface{})
-
-	err := parseProcDiskstats(bytes.NewBufferString(stub), &stat)
-	assert.Nil(t, err)
-	assert.EqualValues(t, stat["iotime_sda"], 23865772)
-	assert.EqualValues(t, stat["iotime_weighted_sda"], 436201338)
-	assert.EqualValues(t, stat["tsreading_sda"], 12441261)
-	assert.EqualValues(t, stat["tswriting_sda"], 423711425)
-}
-
 func TestCollectNetworkStat(t *testing.T) {
 	_, err := os.Stat("/usr/sbin/ss")
 	if err != nil {
@@ -166,4 +140,8 @@ pswpout 113`
 	assert.EqualValues(t, stat["pgpgout"], 31351354)
 	assert.EqualValues(t, stat["pswpin"], 0)
 	assert.EqualValues(t, stat["pswpout"], 113)
+}
+
+func TestCollectDiskstats(t *testing.T) {
+	// TODO
 }
