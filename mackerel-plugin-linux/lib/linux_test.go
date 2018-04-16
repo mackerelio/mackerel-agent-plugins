@@ -2,6 +2,7 @@ package mplinux
 
 import (
 	"bytes"
+	"fmt"
 	"os"
 	"testing"
 
@@ -143,5 +144,26 @@ pswpout 113`
 }
 
 func TestCollectDiskstats(t *testing.T) {
-	// TODO
+	path := "/sys"
+
+	_, err := os.Stat(path)
+	if err != nil {
+		return
+	}
+	p := make(map[string]interface{})
+
+	assert.Nil(t, collectDiskStats(path, &p))
+}
+
+func TestParseDiksStat(t *testing.T) {
+	name := "testdevice"
+	stub := `  36049      277  3702446    36470  1165021   131631 15197712  1648460        0   771090  1684180`
+	stat := make(map[string]interface{})
+
+	err := parseDiskStat(name, stub, &stat)
+	assert.Nil(t, err)
+	assert.EqualValues(t, stat[fmt.Sprintf("iotime_%s", name)], 771090)
+	assert.EqualValues(t, stat[fmt.Sprintf("iotime_weighted_%s", name)], 1684180)
+	assert.EqualValues(t, stat[fmt.Sprintf("tsreading_%s", name)], 36470)
+	assert.EqualValues(t, stat[fmt.Sprintf("tswriting_%s", name)], 1648460)
 }
