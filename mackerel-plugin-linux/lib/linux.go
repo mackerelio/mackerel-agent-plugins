@@ -5,9 +5,10 @@ import (
 	"bytes"
 	"fmt"
 	"io"
+	"io/ioutil"
 	"os"
 	"os/exec"
-	"regexp"
+	"path/filepath"
 	"strconv"
 	"strings"
 
@@ -16,9 +17,9 @@ import (
 )
 
 const (
-	pathVmstat    = "/proc/vmstat"
-	pathDiskstats = "/proc/diskstats"
-	pathStat      = "/proc/stat"
+	pathVmstat = "/proc/vmstat"
+	pathStat   = "/proc/stat"
+	pathSysfs  = "/sys"
 )
 
 // metric value structure
@@ -52,7 +53,7 @@ func (c LinuxPlugin) GraphDefinition() map[string]mp.Graphs {
 	}
 
 	if c.Typemap["all"] || c.Typemap["diskstats"] {
-		err = collectProcDiskstats(pathDiskstats, &p)
+		err = collectDiskStats(pathSysfs, &p)
 		if err != nil {
 			return nil
 		}
@@ -118,7 +119,7 @@ func (c LinuxPlugin) FetchMetrics() (map[string]interface{}, error) {
 	}
 
 	if c.Typemap["all"] || c.Typemap["diskstats"] {
-		err = collectProcDiskstats(pathDiskstats, &p)
+		err = collectDiskStats(pathSysfs, &p)
 		if err != nil {
 			return nil, err
 		}
@@ -251,45 +252,61 @@ func parseProcStat(r io.Reader, p *map[string]interface{}) error {
 	return nil
 }
 
-// collect /proc/diskstats
-func collectProcDiskstats(path string, p *map[string]interface{}) error {
-	file, err := os.Open(path)
-	if err != nil {
-		return err
-	}
-	defer file.Close()
-	return parseProcDiskstats(file, p)
-}
-
-// parsing metrics from diskstats
-func parseProcDiskstats(r io.Reader, p *map[string]interface{}) error {
+// collect /sys/block/<device>/stat
+// See also. http://man7.org/linux/man-pages/man5/sysfs.5.html
+func collectDiskStats(path string, p *map[string]interface{}) error {
 	var elapsedData []mp.Metrics
 	var rwtimeData []mp.Metrics
 
-	scanner := bufio.NewScanner(r)
+	sysBlockDir := filepath.Join(path, "block")
 
-	for scanner.Scan() {
-		line := scanner.Text()
-		// See also: https://www.kernel.org/doc/Documentation/ABI/testing/procfs-diskstats
-		record := strings.Fields(line)
-		if len(record) < 14 {
-			continue
-		}
-		device := record[2]
-		matched, err := regexp.MatchString("[0-9]$", device)
-		if matched || err != nil {
+	devices, err := ioutil.ReadDir(sysBlockDir)
+	if err != nil {
+		return err
+	}
+
+	for _, d := range devices {
+		if d.Mode()&os.ModeSymlink != os.ModeSymlink {
 			continue
 		}
 
-		(*p)[fmt.Sprintf("iotime_%s", device)], _ = atof(record[12])
-		(*p)[fmt.Sprintf("iotime_weighted_%s", device)], _ = atof(record[13])
-		elapsedData = append(elapsedData, mp.Metrics{Name: fmt.Sprintf("iotime_%s", device), Label: fmt.Sprintf("%s IO Time", device), Diff: true})
-		elapsedData = append(elapsedData, mp.Metrics{Name: fmt.Sprintf("iotime_weighted_%s", device), Label: fmt.Sprintf("%s IO Time Weighted", device), Diff: true})
+		name := d.Name()
 
-		(*p)[fmt.Sprintf("tsreading_%s", device)], _ = atof(record[6])
-		(*p)[fmt.Sprintf("tswriting_%s", device)], _ = atof(record[10])
-		rwtimeData = append(rwtimeData, mp.Metrics{Name: fmt.Sprintf("tsreading_%s", device), Label: fmt.Sprintf("%s Read", device), Diff: true})
-		rwtimeData = append(rwtimeData, mp.Metrics{Name: fmt.Sprintf("tswriting_%s", device), Label: fmt.Sprintf("%s Write", device), Diff: true})
+		// /sys/block/<device> is a symbolic link for block device
+		realPath, err := filepath.EvalSymlinks(filepath.Join(sysBlockDir, name))
+		if err != nil {
+			return err
+		}
+
+		// exclude virtual device
+		if strings.Index(realPath, "/devices/virtual/") != -1 {
+			continue
+		}
+
+		// exclude removable device
+		content, err := ioutil.ReadFile(filepath.Join(realPath, "removable"))
+		if err != nil {
+			return err
+		}
+		if len(content) > 0 && string(content[0]) == "1" {
+			continue
+		}
+
+		content, err = ioutil.ReadFile(filepath.Join(realPath, "stat"))
+		if err != nil {
+			return err
+		}
+
+		err = parseDiskStat(name, string(content), p)
+		if err != nil {
+			return err
+		}
+
+		elapsedData = append(elapsedData, mp.Metrics{Name: fmt.Sprintf("iotime_%s", name), Label: fmt.Sprintf("%s IO Time", name), Diff: true})
+		elapsedData = append(elapsedData, mp.Metrics{Name: fmt.Sprintf("iotime_weighted_%s", name), Label: fmt.Sprintf("%s IO Time Weighted", name), Diff: true})
+
+		rwtimeData = append(rwtimeData, mp.Metrics{Name: fmt.Sprintf("tsreading_%s", name), Label: fmt.Sprintf("%s Read", name), Diff: true})
+		rwtimeData = append(rwtimeData, mp.Metrics{Name: fmt.Sprintf("tswriting_%s", name), Label: fmt.Sprintf("%s Write", name), Diff: true})
 	}
 
 	graphdef["linux.disk.elapsed"] = mp.Graphs{
@@ -303,6 +320,21 @@ func parseProcDiskstats(r io.Reader, p *map[string]interface{}) error {
 		Unit:    "integer",
 		Metrics: rwtimeData,
 	}
+
+	return nil
+}
+
+func parseDiskStat(name, stat string, p *map[string]interface{}) error {
+	fields := strings.Fields(stat)
+	if len(fields) != 11 {
+		return nil
+	}
+
+	// See also. https://www.kernel.org/doc/Documentation/block/stat.txt
+	(*p)[fmt.Sprintf("iotime_%s", name)], _ = atof(fields[9])           // io_ticks
+	(*p)[fmt.Sprintf("iotime_weighted_%s", name)], _ = atof(fields[10]) // time_in_queue
+	(*p)[fmt.Sprintf("tsreading_%s", name)], _ = atof(fields[3])        // read ticks
+	(*p)[fmt.Sprintf("tswriting_%s", name)], _ = atof(fields[7])        // write ticks
 
 	return nil
 }

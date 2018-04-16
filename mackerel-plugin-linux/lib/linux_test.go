@@ -2,6 +2,7 @@ package mplinux
 
 import (
 	"bytes"
+	"fmt"
 	"os"
 	"testing"
 
@@ -74,32 +75,6 @@ func TestParseProcStat(t *testing.T) {
 	assert.EqualValues(t, stat["forks"], 1959410)
 }
 
-func TestCollectProcDiskstats(t *testing.T) {
-	path := "/proc/diskstats"
-	_, err := os.Stat(path)
-	if err != nil {
-		return
-	}
-	p := make(map[string]interface{})
-
-	assert.Nil(t, collectProcDiskstats(path, &p))
-}
-
-func TestParseProcDiskstats(t *testing.T) {
-	stub := `   1       0 ram0 0 0 0 0 0 0 0 0 0 0 0
-   8       0 sda 324351 303093 35032074 12441261 4456146 5387174 68639686 423711425 0 23865772 436201338
-   8       1 sda1 678 405 10970 4696 276 22946 46462 1217036 0 53528 1221732
- 253       2 dm-2 83 0 664 94 0 0 0 0 0 94 94`
-	stat := make(map[string]interface{})
-
-	err := parseProcDiskstats(bytes.NewBufferString(stub), &stat)
-	assert.Nil(t, err)
-	assert.EqualValues(t, stat["iotime_sda"], 23865772)
-	assert.EqualValues(t, stat["iotime_weighted_sda"], 436201338)
-	assert.EqualValues(t, stat["tsreading_sda"], 12441261)
-	assert.EqualValues(t, stat["tswriting_sda"], 423711425)
-}
-
 func TestCollectNetworkStat(t *testing.T) {
 	_, err := os.Stat("/usr/sbin/ss")
 	if err != nil {
@@ -166,4 +141,29 @@ pswpout 113`
 	assert.EqualValues(t, stat["pgpgout"], 31351354)
 	assert.EqualValues(t, stat["pswpin"], 0)
 	assert.EqualValues(t, stat["pswpout"], 113)
+}
+
+func TestCollectDiskStats(t *testing.T) {
+	path := "/sys"
+
+	_, err := os.Stat(path)
+	if err != nil {
+		return
+	}
+	p := make(map[string]interface{})
+
+	assert.Nil(t, collectDiskStats(path, &p))
+}
+
+func TestParseDiskStat(t *testing.T) {
+	name := "testdevice"
+	stub := `  36049      277  3702446    36470  1165021   131631 15197712  1648460        0   771090  1684180`
+	stat := make(map[string]interface{})
+
+	err := parseDiskStat(name, stub, &stat)
+	assert.Nil(t, err)
+	assert.EqualValues(t, stat[fmt.Sprintf("iotime_%s", name)], 771090)
+	assert.EqualValues(t, stat[fmt.Sprintf("iotime_weighted_%s", name)], 1684180)
+	assert.EqualValues(t, stat[fmt.Sprintf("tsreading_%s", name)], 36470)
+	assert.EqualValues(t, stat[fmt.Sprintf("tswriting_%s", name)], 1648460)
 }
