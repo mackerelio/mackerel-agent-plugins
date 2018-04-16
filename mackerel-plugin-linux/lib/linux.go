@@ -252,7 +252,7 @@ func parseProcStat(r io.Reader, p *map[string]interface{}) error {
 	return nil
 }
 
-// correct /sys/block/<device>/stat
+// collect /sys/block/<device>/stat
 // See also. http://man7.org/linux/man-pages/man5/sysfs.5.html
 func collectDiskStats(path string, p *map[string]interface{}) error {
 	var elapsedData []mp.Metrics

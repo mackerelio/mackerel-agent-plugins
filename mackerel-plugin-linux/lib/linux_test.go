@@ -143,7 +143,7 @@ pswpout 113`
 	assert.EqualValues(t, stat["pswpout"], 113)
 }
 
-func TestCollectDiskstats(t *testing.T) {
+func TestCollectDiskStats(t *testing.T) {
 	path := "/sys"
 
 	_, err := os.Stat(path)
@@ -155,7 +155,7 @@ func TestCollectDiskstats(t *testing.T) {
 	assert.Nil(t, collectDiskStats(path, &p))
 }
 
-func TestParseDiksStat(t *testing.T) {
+func TestParseDiskStat(t *testing.T) {
 	name := "testdevice"
 	stub := `  36049      277  3702446    36470  1165021   131631 15197712  1648460        0   771090  1684180`
 	stat := make(map[string]interface{})
