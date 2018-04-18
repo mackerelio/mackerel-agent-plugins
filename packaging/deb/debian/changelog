@@ -1,3 +1,10 @@
+mackerel-agent-plugins (0.48.0-1) stable; urgency=low
+
+  * [linux] collect disk stats of NVMe devices and ignore virtual/removable devices (by hayajo)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/506>
+
+ -- mackerel <mackerel-developers@hatena.ne.jp>  Wed, 18 Apr 2018 12:26:03 +0900
+
 mackerel-agent-plugins (0.47.0-1) stable; urgency=low
 
   * [aws-ec2-cpucredit] Add T2 unlimited CPU credit metrics (by astj)
