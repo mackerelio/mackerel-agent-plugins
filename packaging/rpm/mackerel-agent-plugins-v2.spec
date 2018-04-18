@@ -40,6 +40,9 @@ done
 %{__targetdir}/*
 
 %changelog
+* Wed Apr 18 2018 <mackerel-developers@hatena.ne.jp> - 0.48.0
+- [linux] collect disk stats of NVMe devices and ignore virtual/removable devices (by hayajo)
+
 * Tue Apr 10 2018 <mackerel-developers@hatena.ne.jp> - 0.47.0
 - [aws-ec2-cpucredit] Add T2 unlimited CPU credit metrics (by astj)
 

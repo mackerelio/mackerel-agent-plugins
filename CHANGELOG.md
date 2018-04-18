@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.48.0 (2018-04-18)
+
+* [linux] collect disk stats of NVMe devices and ignore virtual/removable devices #506 (hayajo)
+
+
 ## 0.47.0 (2018-04-10)
 
 * [aws-ec2-cpucredit] Add T2 unlimited CPU credit metrics #504 (astj)
