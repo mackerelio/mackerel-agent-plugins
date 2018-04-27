@@ -9,6 +9,7 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
+	"regexp"
 	"strconv"
 	"strings"
 
@@ -21,6 +22,8 @@ const (
 	pathStat   = "/proc/stat"
 	pathSysfs  = "/sys"
 )
+
+var collectVirtualDevice = regexp.MustCompile("^fio[a-z]+$") // ioDrive(FusionIO)
 
 // metric value structure
 // note: all metrics are add dynamic at collect*().
@@ -280,7 +283,9 @@ func collectDiskStats(path string, p *map[string]interface{}) error {
 
 		// exclude virtual device
 		if strings.Index(realPath, "/devices/virtual/") != -1 {
-			continue
+			if !collectVirtualDevice.Match([]byte(name)) {
+				continue
+			}
 		}
 
 		// exclude removable device
