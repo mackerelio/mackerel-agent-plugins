@@ -167,3 +167,35 @@ func TestParseDiskStat(t *testing.T) {
 	assert.EqualValues(t, stat[fmt.Sprintf("tsreading_%s", name)], 36470)
 	assert.EqualValues(t, stat[fmt.Sprintf("tswriting_%s", name)], 1648460)
 }
+
+func TestCollectVirtualDevice(t *testing.T) {
+	cases := []struct {
+		name     string
+		expected bool
+	}{
+		{
+			name:     "loop0",
+			expected: false,
+		},
+		{
+			name:     "dm-3",
+			expected: false,
+		},
+		{
+			name:     "fioa", // ioDrive(FusionIO) #1
+			expected: true,
+		},
+		{
+			name:     "fioz", // ioDrive(FusionIO) #26
+			expected: true,
+		},
+		{
+			name:     "fioaa", // ioDrive(FusionIO) #27
+			expected: true,
+		},
+	}
+
+	for _, c := range cases {
+		assert.EqualValues(t, c.expected, collectVirtualDevice.Match([]byte(c.name)))
+	}
+}
