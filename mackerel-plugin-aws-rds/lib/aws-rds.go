@@ -189,6 +189,13 @@ func (p RDSPlugin) baseGraphDefs() map[string]mp.Graphs {
 				{Name: "NetworkReceiveThroughput", Label: "Receive"},
 			},
 		},
+		p.Prefix + ".BurstBalance": {
+			Label: p.LabelPrefix + " Burst Balance",
+			Unit:  "percentage",
+			Metrics: []mp.Metrics{
+				{Name: "BurstBalance", Label: "BurstBalance"},
+			},
+		},
 	}
 }
 
