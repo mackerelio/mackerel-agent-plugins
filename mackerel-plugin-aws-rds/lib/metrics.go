@@ -111,6 +111,13 @@ func (p RDSPlugin) auroraGraphDefinition() map[string]mp.Graphs {
 				{Name: "DatabaseConnections", Label: "DatabaseConnections"},
 			},
 		},
+		p.Prefix + ".FreeLocalStorage": {
+			Label: p.LabelPrefix + " Free Local Storage",
+			Unit:  "bytes",
+			Metrics: []mp.Metrics{
+				{Name: "FreeLocalStorage", Label: "FreeLocalStorage"},
+			},
+		},
 		p.Prefix + ".FreeableMemory": {
 			Label: p.LabelPrefix + " Freeable Memory",
 			Unit:  "bytes",
