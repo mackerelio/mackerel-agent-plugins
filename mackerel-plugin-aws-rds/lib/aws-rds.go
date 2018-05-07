@@ -100,8 +100,8 @@ func (p RDSPlugin) FetchMetrics() (map[string]float64, error) {
 func (p RDSPlugin) baseGraphDefs() map[string]mp.Graphs {
 	return map[string]mp.Graphs{
 		p.Prefix + ".DiskQueueDepth": {
-			Label: p.LabelPrefix + " BinLogDiskUsage",
-			Unit:  "bytes",
+			Label: p.LabelPrefix + " Disk Queue Depth",
+			Unit:  "float",
 			Metrics: []mp.Metrics{
 				{Name: "DiskQueueDepth", Label: "Depth"},
 			},
