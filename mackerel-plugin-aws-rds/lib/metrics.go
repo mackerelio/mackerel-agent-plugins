@@ -147,8 +147,8 @@ func (p RDSPlugin) auroraGraphDefinition() map[string]mp.Graphs {
 			},
 		},
 		p.Prefix + ".Throughput": {
-			Label: p.LabelPrefix + " Throughput",
-			Unit:  "bytes/sec",
+			Label: p.LabelPrefix + " Throughput [ops/sec]",
+			Unit:  "float",
 			Metrics: []mp.Metrics{
 				{Name: "SelectThroughput", Label: "Select"},
 				{Name: "InsertThroughput", Label: "Insert"},
