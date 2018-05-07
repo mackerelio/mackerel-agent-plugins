@@ -118,19 +118,40 @@ func (p RDSPlugin) auroraGraphDefinition() map[string]mp.Graphs {
 				{Name: "FreeableMemory", Label: "FreeableMemory"},
 			},
 		},
+		p.Prefix + ".EngineUptime": {
+			Label: p.LabelPrefix + " Engine Uptime",
+			Unit:  "integer",
+			Metrics: []mp.Metrics{
+				{Name: "EngineUptime", Label: "EngineUptime"},
+			},
+		},
+		p.Prefix + ".AuroraReplicaLag": {
+			Label: p.LabelPrefix + " Aurora ReplicaLag",
+			Unit:  "float",
+			Metrics: []mp.Metrics{
+				{Name: "AuroraReplicaLagMaximum", Label: "Maximum"},
+				{Name: "AuroraReplicaLagMinimum", Label: "Minimum"},
+			},
+		},
+		p.Prefix + ".NetworkThroughput": {
+			Label: p.LabelPrefix + " Network Throughput",
+			Unit:  "bytes/sec",
+			Metrics: []mp.Metrics{
+				{Name: "NetworkTransmitThroughput", Label: "Transmit"},
+				{Name: "NetworkReceiveThroughput", Label: "Receive"},
+			},
+		},
+	}
+}
+
+func (p RDSPlugin) auroraMySQLGraphDefinition() map[string]mp.Graphs {
+	return map[string]mp.Graphs{
 		p.Prefix + ".Transaction": {
 			Label: p.LabelPrefix + " Transaction",
 			Unit:  "float",
 			Metrics: []mp.Metrics{
 				{Name: "ActiveTransactions", Label: "Active"},
 				{Name: "BlockedTransactions", Label: "Blocked"},
-			},
-		},
-		p.Prefix + ".EngineUptime": {
-			Label: p.LabelPrefix + " Engine Uptime",
-			Unit:  "float",
-			Metrics: []mp.Metrics{
-				{Name: "EngineUptime", Label: "EngineUptime"},
 			},
 		},
 		p.Prefix + ".Latency": {
@@ -188,12 +209,70 @@ func (p RDSPlugin) auroraGraphDefinition() map[string]mp.Graphs {
 				{Name: "AuroraBinlogReplicaLag", Label: "BinlogReplicaLag"},
 			},
 		},
-		p.Prefix + ".AuroraReplicaLag": {
-			Label: p.LabelPrefix + " Aurora ReplicaLag",
+	}
+}
+
+func (p RDSPlugin) auroraPostgreSQLGraphDefinition() map[string]mp.Graphs {
+	return map[string]mp.Graphs{
+		p.Prefix + ".DiskQueueDepth": {
+			Label: p.LabelPrefix + " Disk Queue Depth",
 			Unit:  "float",
 			Metrics: []mp.Metrics{
-				{Name: "AuroraReplicaLagMaximum", Label: "Maximum"},
-				{Name: "AuroraReplicaLagMinimum", Label: "Minimum"},
+				{Name: "DiskQueueDepth", Label: "Depth"},
+			},
+		},
+		p.Prefix + ".SwapUsage": {
+			Label: p.LabelPrefix + " Swap Usage",
+			Unit:  "bytes",
+			Metrics: []mp.Metrics{
+				{Name: "SwapUsage", Label: "SwapUsage"},
+			},
+		},
+		p.Prefix + ".IOPS": {
+			Label: p.LabelPrefix + " IOPS",
+			Unit:  "iops",
+			Metrics: []mp.Metrics{
+				{Name: "ReadIOPS", Label: "Read"},
+				{Name: "WriteIOPS", Label: "Write"},
+			},
+		},
+		p.Prefix + ".Latency": {
+			Label: p.LabelPrefix + " Latency [msec]",
+			Unit:  "float",
+			Metrics: []mp.Metrics{
+				{Name: "ReadLatency", Label: "Read"},
+				{Name: "WriteLatency", Label: "Write"},
+				{Name: "CommitLatency", Label: "Commit"},
+			},
+		},
+		p.Prefix + ".Throughput": {
+			Label: p.LabelPrefix + " Throughput",
+			Unit:  "bytes/sec",
+			Metrics: []mp.Metrics{
+				{Name: "ReadThroughput", Label: "Read"},
+				{Name: "WriteThroughput", Label: "Write"},
+				{Name: "CommitThroughput", Label: "Commit"},
+			},
+		},
+		p.Prefix + ".CacheHitRatio": {
+			Label: p.LabelPrefix + " Cache Hit Ratio",
+			Unit:  "percentage",
+			Metrics: []mp.Metrics{
+				{Name: "ResultSetCacheHitRatio", Label: "ResultSet"},
+			},
+		},
+		p.Prefix + ".MaximumUsedTransactionIDs": {
+			Label: p.LabelPrefix + " Maximum Used Transaction IDs",
+			Unit:  "float",
+			Metrics: []mp.Metrics{
+				{Name: "MaximumUsedTransactionIDs", Label: "IDs"},
+			},
+		},
+		p.Prefix + ".TransactionLogsDiskUsage": {
+			Label: p.LabelPrefix + " Transaction Logs Disk Usage",
+			Unit:  "bytes",
+			Metrics: []mp.Metrics{
+				{Name: "TransactionLogsDiskUsage", Label: "DiskUsage"},
 			},
 		},
 	}
