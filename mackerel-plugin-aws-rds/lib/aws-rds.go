@@ -207,8 +207,10 @@ func (p RDSPlugin) GraphDefinition() map[string]mp.Graphs {
 		graphdef = mergeGraphDefs(graphdef, p.mySQLGraphDefinition())
 	case "postgresql":
 		graphdef = mergeGraphDefs(graphdef, p.postgreSQLGraphDefinition())
-	case "aurora":
-		graphdef = p.auroraGraphDefinition()
+	case "aurora", "aurora-mysql":
+		graphdef = mergeGraphDefs(p.auroraGraphDefinition(), p.auroraMySQLGraphDefinition())
+	case "aurora-postgresql":
+		graphdef = mergeGraphDefs(p.auroraGraphDefinition(), p.auroraPostgreSQLGraphDefinition())
 	}
 	return graphdef
 }
