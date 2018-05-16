@@ -1,3 +1,16 @@
+mackerel-agent-plugins (0.49.0-1.v2) stable; urgency=low
+
+  * [aws-rds]support Aurora PostgreSQL engine (by matsuu)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/512>
+  * [aws-rds]fix unit for some metrics (by matsuu)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/511>
+  * [aws-rds]add BurstBalance metric (by matsuu)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/510>
+  * [linux] fix for collectiong ioDrive(FusionIO) diskstats (by hayajo)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/509>
+
+ -- mackerel <mackerel-developers@hatena.ne.jp>  Wed, 16 May 2018 23:22:36 +0900
+
 mackerel-agent-plugins (0.48.0-1.v2) stable; urgency=low
 
   * [linux] collect disk stats of NVMe devices and ignore virtual/removable devices (by hayajo)

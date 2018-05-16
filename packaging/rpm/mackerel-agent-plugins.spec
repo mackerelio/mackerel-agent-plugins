@@ -49,6 +49,12 @@ done
 %{__oldtargetdir}/*
 
 %changelog
+* Wed May 16 2018 <mackerel-developers@hatena.ne.jp> - 0.49.0
+- [aws-rds]support Aurora PostgreSQL engine (by matsuu)
+- [aws-rds]fix unit for some metrics (by matsuu)
+- [aws-rds]add BurstBalance metric (by matsuu)
+- [linux] fix for collectiong ioDrive(FusionIO) diskstats (by hayajo)
+
 * Wed Apr 18 2018 <mackerel-developers@hatena.ne.jp> - 0.48.0
 - [linux] collect disk stats of NVMe devices and ignore virtual/removable devices (by hayajo)
 
