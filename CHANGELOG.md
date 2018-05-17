@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.49.0 (2018-05-16)
+
+* [aws-rds]support Aurora PostgreSQL engine #512 (matsuu)
+* [aws-rds]fix unit for some metrics #511 (matsuu)
+* [aws-rds]add BurstBalance metric #510 (matsuu)
+* [linux] fix for collectiong ioDrive(FusionIO) diskstats #509 (hayajo)
+
+
 ## 0.48.0 (2018-04-18)
 
 * [linux] collect disk stats of NVMe devices and ignore virtual/removable devices #506 (hayajo)
