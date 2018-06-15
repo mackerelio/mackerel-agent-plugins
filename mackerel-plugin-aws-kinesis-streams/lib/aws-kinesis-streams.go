@@ -141,8 +141,8 @@ func (p KinesisStreamsPlugin) FetchMetrics() (map[string]interface{}, error) {
 		{CloudWatchName: "PutRecords.Latency", MackerelName: "PutRecordsLatency", Type: metricsTypeAverage},
 		{CloudWatchName: "PutRecords.Records", MackerelName: "PutRecordsRecords", Type: metricsTypeSum},
 		{CloudWatchName: "PutRecords.Success", MackerelName: "PutRecordsSuccess", Type: metricsTypeSum},
-		{CloudWatchName: "ReadProvidionedThroughputExceeded", MackerelName: "ReadThroughputExceeded", Type: metricsTypeAverage},
-		{CloudWatchName: "WriteProvidionedThroughputExceeded", MackerelName: "WriteThroughputExceeded", Type: metricsTypeAverage},
+		{CloudWatchName: "ReadProvisionedThroughputExceeded", MackerelName: "ReadThroughputExceeded", Type: metricsTypeAverage},
+		{CloudWatchName: "WriteProvisionedThroughputExceeded", MackerelName: "WriteThroughputExceeded", Type: metricsTypeAverage},
 	} {
 		v, err := p.getLastPoint(met)
 		if err == nil {
