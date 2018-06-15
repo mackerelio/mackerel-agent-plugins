@@ -294,7 +294,7 @@ func mergeStat(dst, src map[string]interface{}) {
 	}
 }
 
-// MetricKeyPrefix retruns the metrics key prefix
+// MetricKeyPrefix returns the metrics key prefix
 func (p PostgresPlugin) MetricKeyPrefix() string {
 	if p.Prefix == "" {
 		p.Prefix = "postgres"

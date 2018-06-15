@@ -149,7 +149,7 @@ type MySQLPlugin struct {
 	isAuroraReader bool
 }
 
-// MetricKeyPrefix retruns the metrics key prefix
+// MetricKeyPrefix returns the metrics key prefix
 func (m *MySQLPlugin) MetricKeyPrefix() string {
 	if m.prefix == "" {
 		m.prefix = "mysql"
