@@ -49,6 +49,10 @@ done
 %{__oldtargetdir}/*
 
 %changelog
+* Wed Jun 20 2018 <mackerel-developers@hatena.ne.jp> - 0.50.0
+- [aws-kinesis-streams] Collect (Write|Read)ProvisionedThroughputExceeded metrics correctly (by shibayu36)
+- [aws-s3-requests] CloudWatch GetMetricStatics parameters (by astj)
+
 * Wed May 16 2018 <mackerel-developers@hatena.ne.jp> - 0.49.0
 - [aws-rds]support Aurora PostgreSQL engine (by matsuu)
 - [aws-rds]fix unit for some metrics (by matsuu)

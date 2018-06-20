@@ -1,3 +1,12 @@
+mackerel-agent-plugins (0.50.0-1) stable; urgency=low
+
+  * [aws-kinesis-streams] Collect (Write|Read)ProvisionedThroughputExceeded metrics correctly (by shibayu36)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/515>
+  * [aws-s3-requests] CloudWatch GetMetricStatics parameters (by astj)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/514>
+
+ -- mackerel <mackerel-developers@hatena.ne.jp>  Wed, 20 Jun 2018 10:56:43 +0900
+
 mackerel-agent-plugins (0.49.0-1) stable; urgency=low
 
   * [aws-rds]support Aurora PostgreSQL engine (by matsuu)
