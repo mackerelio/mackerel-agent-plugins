@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.50.0 (2018-06-20)
+
+* [aws-kinesis-streams] Collect (Write|Read)ProvisionedThroughputExceeded metrics correctly #515 (shibayu36)
+* [aws-s3-requests] CloudWatch GetMetricStatics parameters #514 (astj)
+
+
 ## 0.49.0 (2018-05-16)
 
 * [aws-rds]support Aurora PostgreSQL engine #512 (matsuu)
