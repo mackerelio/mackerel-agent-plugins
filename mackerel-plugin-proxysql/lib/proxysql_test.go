@@ -36,7 +36,7 @@ func TestParseStatsMysqlGlobal(t *testing.T) {
 	}
 
 	expect := map[string]float64{
-		"ProxySQL_Uptime": 3600,
+		"proxysql_uptime": 3600,
 	}
 
 	for k := range expect {

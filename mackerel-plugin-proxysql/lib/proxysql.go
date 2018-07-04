@@ -18,10 +18,10 @@ func (m *ProxySQLPlugin) proyxsqlGraphDef() map[string]mp.Graphs {
 	labelPrefix := strings.Title(strings.Replace(m.MetricKeyPrefix(), "proxysql", "ProxySQL", -1))
 	return map[string]mp.Graphs{
 		"uptime": {
-			Label: labelPrefix + "Uptime",
+			Label: labelPrefix + " Uptime",
 			Unit:  mp.UnitInteger,
 			Metrics: []mp.Metrics{
-				{Name: "ProxySQL_Uptime", Label: "Seconds"},
+				{Name: "proxysql_uptime", Label: "Seconds"},
 			},
 		},
 	}
@@ -50,7 +50,7 @@ func (m *ProxySQLPlugin) parseStatsMySQLGlobal(rows *sql.Rows, stat map[string]f
 			return fmt.Errorf("parseStatsMySQLGlobal (stats_mysql_global): %s", err)
 		}
 
-		stat[name], err = strconv.ParseFloat(value, 64)
+		stat[strings.ToLower(name)], err = strconv.ParseFloat(value, 64)
 		if err != nil {
 			return fmt.Errorf("%s", err)
 		}
