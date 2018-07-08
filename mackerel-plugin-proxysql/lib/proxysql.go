@@ -24,6 +24,32 @@ func (m *ProxySQLPlugin) proyxsqlGraphDef() map[string]mp.Graphs {
 				{Name: "proxysql_uptime", Label: "Seconds"},
 			},
 		},
+		"querycache.count": {
+			Label: labelPrefix + " Query Cache Counts",
+			Unit:  mp.UnitInteger,
+			Metrics: []mp.Metrics{
+				{Name: "query_cache_count_get", Label: "Query Cache Count Get"},
+				{Name: "query_cache_count_get_ok", Label: "Query Cache Get OK", Stacked: true},
+				{Name: "query_cache_count_set", Label: "Query Cache Set", Stacked: true},
+			},
+		},
+		"querycache.bytes": {
+			Label: labelPrefix + " Query Cache Bytes In/Out",
+			Unit:  mp.UnitBytes,
+			Metrics: []mp.Metrics{
+				{Name: "query_cache_bytes_in", Label: "Query Cache Bytes In", Diff: true},
+				{Name: "query_cache_bytes_out", Label: "Query Cache Bytes Out", Diff: true},
+			},
+		},
+		"querycache.size": {
+			Label: labelPrefix + " Query Size",
+			Unit:  mp.UnitInteger,
+			Metrics: []mp.Metrics{
+				{Name: "query_cache_memory_bytes", Label: "Query Cache Memory Bytes", Stacked: true},
+				{Name: "query_cache_purged", Label: "Query Cache Purged", Diff: true},
+				{Name: "query_cache_entries", Label: "Query Cache Entries", Diff: true},
+			},
+		},
 	}
 }
 
