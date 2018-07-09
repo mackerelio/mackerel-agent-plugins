@@ -8,7 +8,7 @@ import (
 
 func TestGraphDefinition(t *testing.T) {
 	var proxysql ProxySQLPlugin
-	expect := 4
+	expect := 5
 
 	graphdef := proxysql.GraphDefinition()
 	if len(graphdef) != expect {
@@ -25,6 +25,14 @@ func TestParseStatsMysqlGlobal(t *testing.T) {
 
 	rows := sqlmock.NewRows([]string{"Variable_Name", "Variable_Value"}).
 		AddRow("ProxySQL_Uptime", "3600").
+		AddRow("Client_Connections_aborted", "2").
+		AddRow("Client_Connections_connected", "6").
+		AddRow("Client_Connections_created", "6").
+		AddRow("Server_Connections_aborted", "0").
+		AddRow("Server_Connections_connected", "7").
+		AddRow("Server_Connections_created", "7").
+		AddRow("Server_Connections_delayed", "0").
+		AddRow("Client_Connections_non_idle", "0").
 		AddRow("Query_Cache_Memory_bytes", "0").
 		AddRow("Query_Cache_count_GET", "0").
 		AddRow("Query_Cache_count_GET_OK", "0").
@@ -45,15 +53,23 @@ func TestParseStatsMysqlGlobal(t *testing.T) {
 	}
 
 	expect := map[string]float64{
-		"proxysql_uptime":          3600,
-		"query_cache_memory_bytes": 0,
-		"query_cache_count_get":    0,
-		"query_cache_count_get_ok": 0,
-		"query_cache_count_set":    0,
-		"query_cache_bytes_in":     0,
-		"query_cache_bytes_out":    0,
-		"query_cache_purged":       0,
-		"query_cache_entries":      0,
+		"proxysql_uptime":              3600,
+		"client_connections_aborted":   2,
+		"client_connections_connected": 6,
+		"client_connections_created":   6,
+		"server_connections_aborted":   0,
+		"server_connections_connected": 7,
+		"server_connections_created":   7,
+		"server_connections_delayed":   0,
+		"client_connections_non_idle":  0,
+		"query_cache_memory_bytes":     0,
+		"query_cache_count_get":        0,
+		"query_cache_count_get_ok":     0,
+		"query_cache_count_set":        0,
+		"query_cache_bytes_in":         0,
+		"query_cache_bytes_out":        0,
+		"query_cache_purged":           0,
+		"query_cache_entries":          0,
 	}
 
 	for k := range expect {
