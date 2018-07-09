@@ -14,7 +14,7 @@ import (
 	_ "github.com/ziutek/mymysql/godrv"
 )
 
-func (m *ProxySQLPlugin) proyxsqlGraphDef() map[string]mp.Graphs {
+func (m *ProxySQLPlugin) proxysqlGraphDef() map[string]mp.Graphs {
 	labelPrefix := strings.Title(strings.Replace(m.MetricKeyPrefix(), "proxysql", "ProxySQL", -1))
 	return map[string]mp.Graphs{
 		"uptime": {
@@ -113,7 +113,7 @@ func (m *ProxySQLPlugin) FetchMetrics() (map[string]float64, error) {
 
 // GraphDefinition interface for mackerelplugin
 func (m *ProxySQLPlugin) GraphDefinition() map[string]mp.Graphs {
-	return m.proyxsqlGraphDef()
+	return m.proxysqlGraphDef()
 }
 
 // Do the plugin
