@@ -55,6 +55,15 @@ func (m *ProxySQLPlugin) proxysqlGraphDef() map[string]mp.Graphs {
 				{Name: "mysql_monitor_workers", Label: "Monitors Workers", Diff: true},
 			},
 		},
+		"memories": {
+			Label: labelPrefix + " Memory Bytes",
+			Unit:  mp.UnitBytes,
+			Metrics: []mp.Metrics{
+				{Name: "sqlite3_memory_bytes", Label: "SQLite3 Memory Bytes", Stacked: true},
+				{Name: "connpool_memory_bytes", Label: "Connection Pool Memory Bytes", Stacked: true},
+				{Name: "query_cache_memory_bytes", Label: "Query Cache Memory Bytes", Stacked: true},
+			},
+		},
 		"querycache.count": {
 			Label: labelPrefix + " Query Cache Counts",
 			Unit:  mp.UnitInteger,
@@ -76,7 +85,6 @@ func (m *ProxySQLPlugin) proxysqlGraphDef() map[string]mp.Graphs {
 			Label: labelPrefix + " Query Size",
 			Unit:  mp.UnitInteger,
 			Metrics: []mp.Metrics{
-				{Name: "query_cache_memory_bytes", Label: "Query Cache Memory Bytes", Stacked: true},
 				{Name: "query_cache_purged", Label: "Query Cache Purged", Diff: true},
 				{Name: "query_cache_entries", Label: "Query Cache Entries", Diff: true},
 			},
