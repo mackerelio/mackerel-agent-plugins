@@ -47,6 +47,14 @@ func (m *ProxySQLPlugin) proxysqlGraphDef() map[string]mp.Graphs {
 				{Name: "server_connections_delayed", Label: "Server Connections Delayed", Diff: true},
 			},
 		},
+		"workers": {
+			Label: labelPrefix + " Workers",
+			Unit:  mp.UnitInteger,
+			Metrics: []mp.Metrics{
+				{Name: "mysql_thread_workers", Label: "Thread Workers", Diff: true},
+				{Name: "mysql_monitor_workers", Label: "Monitors Workers", Diff: true},
+			},
+		},
 		"querycache.count": {
 			Label: labelPrefix + " Query Cache Counts",
 			Unit:  mp.UnitInteger,

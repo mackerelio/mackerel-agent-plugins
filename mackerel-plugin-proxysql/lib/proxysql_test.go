@@ -8,7 +8,7 @@ import (
 
 func TestGraphDefinition(t *testing.T) {
 	var proxysql ProxySQLPlugin
-	expect := 6
+	expect := 7
 
 	graphdef := proxysql.GraphDefinition()
 	if len(graphdef) != expect {
@@ -36,6 +36,8 @@ func TestParseStatsMysqlGlobal(t *testing.T) {
 		AddRow("Client_Connections_non_idle", "0").
 		AddRow("Questions", "38").
 		AddRow("Slow_queries", "0").
+		AddRow("MySQL_Thread_Workers", "4").
+		AddRow("MySQL_Monitor_Workers", "8").
 		AddRow("Query_Cache_Memory_bytes", "0").
 		AddRow("Query_Cache_count_GET", "0").
 		AddRow("Query_Cache_count_GET_OK", "0").
@@ -68,6 +70,8 @@ func TestParseStatsMysqlGlobal(t *testing.T) {
 		"client_connections_non_idle":  0,
 		"questions":                    38,
 		"slow_queries":                 0,
+		"mysql_thread_workers":         4,
+		"mysql_monitor_workers":        8,
 		"query_cache_memory_bytes":     0,
 		"query_cache_count_get":        0,
 		"query_cache_count_get_ok":     0,
