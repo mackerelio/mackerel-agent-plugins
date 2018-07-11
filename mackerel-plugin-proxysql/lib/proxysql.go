@@ -24,6 +24,15 @@ func (m *ProxySQLPlugin) proxysqlGraphDef() map[string]mp.Graphs {
 				{Name: "proxysql_uptime", Label: "Seconds"},
 			},
 		},
+		"queries": {
+			Label: labelPrefix + " Queries",
+			Unit:  mp.UnitInteger,
+			Metrics: []mp.Metrics{
+				{Name: "active_transactions", Label: "Active Transactions"},
+				{Name: "questions", Label: "Questions", Diff: true},
+				{Name: "slow_queries", Label: "Slow queries", Diff: true},
+			},
+		},
 		"connections": {
 			Label: labelPrefix + " Connections",
 			Unit:  mp.UnitInteger,
