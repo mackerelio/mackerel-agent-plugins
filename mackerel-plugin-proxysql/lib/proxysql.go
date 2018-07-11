@@ -24,7 +24,17 @@ func (m *ProxySQLPlugin) proxysqlGraphDef() map[string]mp.Graphs {
 				{Name: "proxysql_uptime", Label: "Seconds"},
 			},
 		},
-		"queries": {
+		"traffic": {
+			Label: labelPrefix + " Traffic",
+			Unit:  mp.UnitInteger,
+			Metrics: []mp.Metrics{
+				{Name: "queries_backends_bytes_recv", Label: "Queries backends bytes received", Diff: true},
+				{Name: "queries_backends_bytes_sent", Label: "Queries backends bytes sent", Diff: true},
+				{Name: "queries_frontends_bytes_recv", Label: "Queries frontends bytes received", Diff: true},
+				{Name: "queries_frontends_bytes_sent", Label: "Queries frontends bytes sent", Diff: true},
+			},
+		},
+		"queries.": {
 			Label: labelPrefix + " Queries",
 			Unit:  mp.UnitInteger,
 			Metrics: []mp.Metrics{
