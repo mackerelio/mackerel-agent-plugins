@@ -8,7 +8,7 @@ import (
 
 func TestGraphDefinition(t *testing.T) {
 	var proxysql ProxySQLPlugin
-	expect := 9
+	expect := 10
 
 	graphdef := proxysql.GraphDefinition()
 	if len(graphdef) != expect {
@@ -38,6 +38,18 @@ func TestParseStatsMysqlGlobal(t *testing.T) {
 		AddRow("Queries_backends_bytes_sent", "498").
 		AddRow("Queries_frontends_bytes_recv", "1358").
 		AddRow("Queries_frontends_bytes_sent", "5752").
+		AddRow("Com_autocommit", "0").
+		AddRow("Com_autocommit_filtered", "0").
+		AddRow("Com_commit", "0").
+		AddRow("Com_commit_filtered", "0").
+		AddRow("Com_rollback", "0").
+		AddRow("Com_rollback_filtered", "0").
+		AddRow("Com_backend_stmt_prepare", "0").
+		AddRow("Com_backend_stmt_execute", "0").
+		AddRow("Com_backend_stmt_close", "0").
+		AddRow("Com_frontend_stmt_prepare", "0").
+		AddRow("Com_frontend_stmt_execute", "0").
+		AddRow("Com_frontend_stmt_close", "0").
 		AddRow("Questions", "38").
 		AddRow("Slow_queries", "0").
 		AddRow("MySQL_Thread_Workers", "4").
@@ -78,6 +90,18 @@ func TestParseStatsMysqlGlobal(t *testing.T) {
 		"queries_backends_bytes_sent":  498,
 		"queries_frontends_bytes_recv": 1358,
 		"queries_frontends_bytes_sent": 5752,
+		"com_autocommit":               0,
+		"com_autocommit_filtered":      0,
+		"com_commit":                   0,
+		"com_commit_filtered":          0,
+		"com_rollback":                 0,
+		"com_rollback_filtered":        0,
+		"com_backend_stmt_prepare":     0,
+		"com_backend_stmt_execute":     0,
+		"com_backend_stmt_close":       0,
+		"com_frontend_stmt_prepare":    0,
+		"com_frontend_stmt_execute":    0,
+		"com_frontend_stmt_close":      0,
 		"questions":                    38,
 		"slow_queries":                 0,
 		"mysql_thread_workers":         4,
