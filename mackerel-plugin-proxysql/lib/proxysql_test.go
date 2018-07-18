@@ -8,7 +8,7 @@ import (
 
 func TestGraphDefinition(t *testing.T) {
 	var proxysql ProxySQLPlugin
-	expect := 10
+	expect := 11
 
 	graphdef := proxysql.GraphDefinition()
 	if len(graphdef) != expect {
@@ -56,6 +56,11 @@ func TestParseStatsMysqlGlobal(t *testing.T) {
 		AddRow("MySQL_Monitor_Workers", "8").
 		AddRow("SQLite3_memory_bytes", "2830120").
 		AddRow("ConnPool_memory_bytes", "160").
+		AddRow("Stmt_Client_Active_Total", "0").
+		AddRow("Stmt_Client_Active_Unique", "0").
+		AddRow("Stmt_Server_Active_Total", "0").
+		AddRow("Stmt_Server_Active_Unique", "0").
+		AddRow("Stmt_Cached", "0").
 		AddRow("Query_Cache_Memory_bytes", "0").
 		AddRow("Query_Cache_count_GET", "0").
 		AddRow("Query_Cache_count_GET_OK", "0").
@@ -108,6 +113,11 @@ func TestParseStatsMysqlGlobal(t *testing.T) {
 		"mysql_monitor_workers":        8,
 		"sqlite3_memory_bytes":         2830120,
 		"connpool_memory_bytes":        160,
+		"stmt_client_active_total":     0,
+		"stmt_client_active_unique":    0,
+		"stmt_server_active_total":     0,
+		"stmt_server_active_unique":    0,
+		"stmt_cached":                  0,
 		"query_cache_memory_bytes":     0,
 		"query_cache_count_get":        0,
 		"query_cache_count_get_ok":     0,

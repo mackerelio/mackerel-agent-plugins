@@ -92,6 +92,17 @@ func (m *ProxySQLPlugin) proxysqlGraphDef() map[string]mp.Graphs {
 				{Name: "query_cache_memory_bytes", Label: "Query Cache Memory Bytes", Stacked: true},
 			},
 		},
+		"statement": {
+			Label: labelPrefix + " Statement",
+			Unit:  mp.UnitInteger,
+			Metrics: []mp.Metrics{
+				{Name: "stmt_client_active_total", Label: "Statement Client Active Total"},
+				{Name: "stmt_client_active_unique", Label: "Statement Client Active Unique"},
+				{Name: "stmt_server_active_total", Label: "Statement Server Active Total"},
+				{Name: "stmt_server_active_unique", Label: "Statement Server Active Unique"},
+				{Name: "stmt_cached", Label: "Statement Cached"},
+			},
+		},
 		"querycache.count": {
 			Label: labelPrefix + " Query Cache Counts",
 			Unit:  mp.UnitInteger,
