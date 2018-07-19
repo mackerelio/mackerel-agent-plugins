@@ -22,3 +22,7 @@ This plugin support following version (or later) of SQL servers.
 
 * Microsoft SQL Server 2017
 * Microsoft SQL Express 2017
+
+## Development
+
+To update lib/wmi.go, you need to install [mattn/wmi2struct](https://github.com/mattn/wmi2struct) on Windows.
