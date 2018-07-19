@@ -168,16 +168,11 @@ func Do() {
 	optTempfile := flag.String("tempfile", "", "Temp file name")
 	flag.Parse()
 
-	var plugin MSSQLPlugin
-	plugin.prefix = *optPrefix
-	plugin.instance = strings.ToUpper(*optInstance)
-	helper := mp.NewMackerelPlugin(plugin)
-
-	if *optTempfile != "" {
-		helper.Tempfile = *optTempfile
-	} else {
-		helper.Tempfile = "/tmp/mackerel-plugin-mssql"
+	plugin := MSSQLPlugin{
+		prefix:   *optPrefix,
+		instance: strings.ToUpper(*optInstance),
 	}
-
+	helper := mp.NewMackerelPlugin(plugin)
+	helper.Tempfile = *optTempfile
 	helper.Run()
 }
