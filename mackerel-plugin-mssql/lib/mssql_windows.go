@@ -6,6 +6,7 @@ package mpmssql
 
 import (
 	"flag"
+	"os"
 	"strings"
 
 	"github.com/StackExchange/wmi"
@@ -168,9 +169,14 @@ func Do() {
 	optTempfile := flag.String("tempfile", "", "Temp file name")
 	flag.Parse()
 
+	instance := strings.ToUpper(*optInstance)
+	if instance != "SQLSERVER" && instance != "SQLEXPRESS" {
+		flag.Usage()
+		os.Exit(2)
+	}
 	plugin := MSSQLPlugin{
 		prefix:   *optPrefix,
-		instance: strings.ToUpper(*optInstance),
+		instance: instance,
 	}
 	helper := mp.NewMackerelPlugin(plugin)
 	helper.Tempfile = *optTempfile
