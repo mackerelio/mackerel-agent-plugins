@@ -16,3 +16,9 @@ mackerel-plugin-mssql [-metric-key-prefix=<PREFIX>] [-instance=<SQLSERVER|SQLEXP
 command = "/path/to/mackerel-plugin-mssql"
 ```
 
+## Supported Version
+
+This plugin support following version (or later) of SQL servers.
+
+* Microsoft SQL Server 2017
+* Microsoft SQL Express 2017
