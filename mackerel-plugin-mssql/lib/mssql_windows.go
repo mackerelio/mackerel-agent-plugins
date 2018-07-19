@@ -94,7 +94,7 @@ func (m MSSQLPlugin) GraphDefinition() map[string](mp.Graphs) {
 				{
 					Name:    "buffer_page_life_expectancy",
 					Label:   "Page Life Expectancy",
-					Diff:    false,
+					Diff:    true,
 					Stacked: true,
 				},
 				{
@@ -112,19 +112,19 @@ func (m MSSQLPlugin) GraphDefinition() map[string](mp.Graphs) {
 				{
 					Name:    "stats_batch_requests",
 					Label:   "Batch Requests",
-					Diff:    false,
+					Diff:    true,
 					Stacked: true,
 				},
 				{
 					Name:    "stats_sql_compilations",
 					Label:   "SQL Compilations",
-					Diff:    false,
+					Diff:    true,
 					Stacked: true,
 				},
 				{
 					Name:    "stats_sql_recompilations",
 					Label:   "SQL Re-Compilations",
-					Diff:    false,
+					Diff:    true,
 					Stacked: true,
 				},
 				{
@@ -154,7 +154,7 @@ func (m MSSQLPlugin) GraphDefinition() map[string](mp.Graphs) {
 				{
 					Name:    "access_page_splits",
 					Label:   "Page Splits",
-					Diff:    false,
+					Diff:    true,
 					Stacked: true,
 				},
 			},
