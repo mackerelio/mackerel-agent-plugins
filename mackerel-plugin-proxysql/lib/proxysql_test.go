@@ -8,7 +8,7 @@ import (
 
 func TestGraphDefinition(t *testing.T) {
 	var proxysql ProxySQLPlugin
-	expect := 11
+	expect := 12
 
 	graphdef := proxysql.GraphDefinition()
 	if len(graphdef) != expect {
@@ -54,6 +54,14 @@ func TestParseStatsMysqlGlobal(t *testing.T) {
 		AddRow("Slow_queries", "0").
 		AddRow("MySQL_Thread_Workers", "4").
 		AddRow("MySQL_Monitor_Workers", "8").
+		AddRow("ConnPool_get_conn_immediate", "0").
+		AddRow("ConnPool_get_conn_success", "34").
+		AddRow("ConnPool_get_conn_failure", "0").
+		AddRow("MyHGM_myconnpoll_get", "34").
+		AddRow("MyHGM_myconnpoll_get_ok", "34").
+		AddRow("MyHGM_myconnpoll_push", "33").
+		AddRow("MyHGM_myconnpoll_destroy", "7").
+		AddRow("MyHGM_myconnpoll_reset", "1").
 		AddRow("SQLite3_memory_bytes", "2830120").
 		AddRow("ConnPool_memory_bytes", "160").
 		AddRow("Stmt_Client_Active_Total", "0").
@@ -111,6 +119,14 @@ func TestParseStatsMysqlGlobal(t *testing.T) {
 		"slow_queries":                 0,
 		"mysql_thread_workers":         4,
 		"mysql_monitor_workers":        8,
+		"connpool_get_conn_immediate":  0,
+		"connpool_get_conn_success":    34,
+		"connpool_get_conn_failure":    0,
+		"myhgm_myconnpoll_get":         34,
+		"myhgm_myconnpoll_get_ok":      34,
+		"myhgm_myconnpoll_push":        33,
+		"myhgm_myconnpoll_destroy":     7,
+		"myhgm_myconnpoll_reset":       1,
 		"sqlite3_memory_bytes":         2830120,
 		"connpool_memory_bytes":        160,
 		"stmt_client_active_total":     0,

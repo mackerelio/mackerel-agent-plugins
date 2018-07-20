@@ -75,6 +75,21 @@ func (m *ProxySQLPlugin) proxysqlGraphDef() map[string]mp.Graphs {
 				{Name: "server_connections_delayed", Label: "Server Connections Delayed", Diff: true},
 			},
 		},
+		"connectionpool": {
+			Label: labelPrefix + " Connection Pool",
+			Unit:  mp.UnitInteger,
+			Metrics: []mp.Metrics{
+				{Name: "connpool_get_conn_immediate", Label: "Connpool Get Conn Immediate", Diff: true},
+				// connpool_get_conn_success and connpool_get_conn_failure looks to be the same as myhgm_myconnpoll_get and myhgm_myconnpoll_get_ok.
+				// {Name: "connpool_get_conn_success", Label: "Connpool Get Conn Success", Diff: true},
+				// {Name: "connpool_get_conn_failure", Label: "Connpool Get Conn Failure", Diff: true},
+				{Name: "myhgm_myconnpoll_get", Label: "Connpool Get", Diff: true},
+				{Name: "myhgm_myconnpoll_get_ok", Label: "Connpool Get OK", Diff: true},
+				{Name: "myhgm_myconnpoll_push", Label: "Connpool Push", Diff: true},
+				{Name: "myhgm_myconnpoll_destroy", Label: "Connpool Destroy", Diff: true},
+				{Name: "myhgm_myconnpoll_reset", Label: "Connpool Reset", Diff: true},
+			},
+		},
 		"workers": {
 			Label: labelPrefix + " Workers",
 			Unit:  mp.UnitInteger,
