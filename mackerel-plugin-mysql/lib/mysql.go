@@ -167,7 +167,7 @@ func (m *MySQLPlugin) fetchVersion(db mysql.Conn) (version [3]int, err error) {
 		if len(row) > 1 {
 			versionString := string(row[1].([]byte))
 			if i := strings.IndexRune(versionString, '-'); i >= 0 {
-				// trim -log or -debug
+				// Trim -log or -debug, -MariaDB-...
 				versionString = versionString[:i]
 			}
 			xs := strings.Split(versionString, ".")
