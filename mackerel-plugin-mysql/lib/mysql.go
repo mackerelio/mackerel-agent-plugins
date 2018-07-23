@@ -166,6 +166,10 @@ func (m *MySQLPlugin) fetchVersion(db mysql.Conn) (version [3]int, err error) {
 	for _, row := range rows {
 		if len(row) > 1 {
 			versionString := string(row[1].([]byte))
+			if i := strings.IndexRune(versionString, '-'); i >= 0 {
+				// trim -log or -debug
+				versionString = versionString[:i]
+			}
 			xs := strings.Split(versionString, ".")
 			if len(xs) >= 2 {
 				version[0], _ = strconv.Atoi(xs[0])
