@@ -154,7 +154,7 @@ Number of rows inserted 3089, updated 220, deleted 212, read 2099881
 END OF INNODB MONITOR OUTPUT`
 	stat := make(map[string]float64)
 
-	parseInnodbStatus(stub, &stat)
+	parseInnodbStatus(stub, false, &stat)
 	// Innodb Semaphores
 	assert.EqualValues(t, stat["spin_waits"], 947)
 	assert.EqualValues(t, stat["spin_rounds"], 9442)
@@ -162,8 +162,8 @@ END OF INNODB MONITOR OUTPUT`
 	assert.EqualValues(t, stat["innodb_sem_wait"], 0)         // empty
 	assert.EqualValues(t, stat["innodb_sem_wait_time_ms"], 0) // empty
 	// Innodb Transactions
-	assert.EqualValues(t, stat["innodb_transactions"], 71194252676)
-	assert.EqualValues(t, stat["unpurged_txns"], 49185)
+	assert.EqualValues(t, stat["innodb_transactions"], 1093821584)
+	assert.EqualValues(t, stat["unpurged_txns"], 6021)
 	assert.EqualValues(t, stat["history_list"], 649)
 	assert.EqualValues(t, stat["current_transactions"], 6)
 	assert.EqualValues(t, stat["active_transactions"], 0)
@@ -324,7 +324,7 @@ END OF INNODB MONITOR OUTPUT
 ============================`
 	stat := make(map[string]float64)
 
-	parseInnodbStatus(stub, &stat)
+	parseInnodbStatus(stub, true, &stat)
 	// Innodb Semaphores
 	assert.EqualValues(t, stat["spin_waits"], 5020565400)
 	assert.EqualValues(t, stat["spin_rounds"], 3687067031)
@@ -497,7 +497,7 @@ END OF INNODB MONITOR OUTPUT
 ============================`
 	stat := make(map[string]float64)
 
-	parseInnodbStatus(stub, &stat)
+	parseInnodbStatus(stub, true, &stat)
 	// Innodb Semaphores
 	assert.EqualValues(t, stat["spin_waits"], 180466733)
 	assert.EqualValues(t, stat["spin_rounds"], 142931556)
@@ -632,7 +632,7 @@ END OF INNODB MONITOR OUTPUT
 ============================`
 	stat := make(map[string]float64)
 
-	parseInnodbStatus(stub, &stat)
+	parseInnodbStatus(stub, true, &stat)
 	// Innodb Semaphores
 	assert.EqualValues(t, stat["spin_waits"], 1762)
 	assert.EqualValues(t, stat["spin_rounds"], 30300)
@@ -864,7 +864,7 @@ END OF INNODB MONITOR OUTPUT
 ============================
 `
 	stat := make(map[string]float64)
-	parseInnodbStatus(stub, &stat)
+	parseInnodbStatus(stub, false, &stat)
 	// Innodb Semaphores
 	assert.EqualValues(t, stat["spin_waits"], 0)
 	assert.EqualValues(t, stat["spin_rounds"], 0) // empty
@@ -872,8 +872,8 @@ END OF INNODB MONITOR OUTPUT
 	assert.EqualValues(t, stat["innodb_sem_wait"], 0)         // empty
 	assert.EqualValues(t, stat["innodb_sem_wait_time_ms"], 0) // empty
 	// Innodb Transactions
-	assert.EqualValues(t, stat["innodb_transactions"], 299348) // empty
-	assert.EqualValues(t, stat["unpurged_txns"], 19167)
+	assert.EqualValues(t, stat["innodb_transactions"], 49154) // empty
+	assert.EqualValues(t, stat["unpurged_txns"], 4479)
 	assert.EqualValues(t, stat["history_list"], 775)
 	assert.EqualValues(t, stat["current_transactions"], 1)
 	assert.EqualValues(t, stat["active_transactions"], 0)
@@ -1054,7 +1054,7 @@ MySQL thread id 2, OS thread handle 0x7efe7cba4700, query id 35 localhost root
 END OF INNODB MONITOR OUTPUT
 ============================`
 	stat := make(map[string]float64)
-	parseInnodbStatus(stub, &stat)
+	parseInnodbStatus(stub, false, &stat)
 	// Innodb Semaphores
 	assert.EqualValues(t, stat["spin_waits"], 12)
 	assert.EqualValues(t, stat["spin_rounds"], 180)
@@ -1062,7 +1062,7 @@ END OF INNODB MONITOR OUTPUT
 	assert.EqualValues(t, stat["innodb_sem_wait"], 0)         // empty
 	assert.EqualValues(t, stat["innodb_sem_wait_time_ms"], 0) // empty
 	// Innodb Transactions
-	assert.EqualValues(t, stat["innodb_transactions"], 1287)
+	assert.EqualValues(t, stat["innodb_transactions"], 507)
 	assert.EqualValues(t, stat["unpurged_txns"], 2)
 	assert.EqualValues(t, stat["history_list"], 1)
 	assert.EqualValues(t, stat["current_transactions"], 3)
