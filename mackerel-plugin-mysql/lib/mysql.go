@@ -223,7 +223,11 @@ func (m *MySQLPlugin) fetchShowInnodbStatus(db mysql.Conn, stat map[string]float
 		log.Println(err)
 	}
 	// Transaction IDs are printed in hex format in version < 5.6.4.
-	// Ref: https://github.com/mysql/mysql-server/commit/3420dc52b68c9afcee0a19ba7c19a73c2fbb2913
+	//   Ref: https://github.com/mysql/mysql-server/commit/3420dc52b68c9afcee0a19ba7c19a73c2fbb2913
+	//        https://github.com/mysql/mysql-server/blob/mysql-5.6.3/storage/innobase/include/trx0types.h#L32
+	//        https://github.com/mysql/mysql-server/blob/mysql-5.6.4/storage/innobase/include/trx0types.h#L32
+	// MariaDB 10.x is recognized as newer than 5.6.4, which should be correct.
+	//   Ref: https://github.com/MariaDB/server/blob/mariadb-10.0.0/storage/innobase/include/trx0types.h#L32
 	if v[0] < 5 || v[0] == 5 && v[1] < 6 || v[0] == 5 && v[1] == 6 && v[2] < 4 {
 		trxIDHexFormat = true
 	}
