@@ -760,7 +760,7 @@ func parseInnodbStatus(str string, trxIDHexFormat bool, p *map[string]float64) {
 			increaseMap(p, "os_waits", record[8])
 			continue
 		}
-		if strings.HasPrefix(line, "RW-shared spins") && strings.Index(line, ";") > 0 {
+		if strings.HasPrefix(line, "RW-shared spins") && strings.Contains(line, ";") {
 			// 5.5, 5.6
 			increaseMap(p, "spin_waits", record[2])
 			increaseMap(p, "os_waits", record[5])
@@ -768,7 +768,7 @@ func parseInnodbStatus(str string, trxIDHexFormat bool, p *map[string]float64) {
 			increaseMap(p, "os_waits", record[11])
 			continue
 		}
-		if strings.HasPrefix(line, "RW-shared spins") && strings.Index(line, "; RW-excl spins") < 0 {
+		if strings.HasPrefix(line, "RW-shared spins") && !strings.Contains(line, "; RW-excl spins") {
 			// 5.1
 			increaseMap(p, "spin_waits", record[2])
 			increaseMap(p, "os_waits", record[7])
@@ -780,7 +780,7 @@ func parseInnodbStatus(str string, trxIDHexFormat bool, p *map[string]float64) {
 			increaseMap(p, "os_waits", record[7])
 			continue
 		}
-		if strings.Index(line, "seconds the semaphore:") > 0 {
+		if strings.Contains(line, "seconds the semaphore:") {
 			increaseMap(p, "innodb_sem_waits", "1")
 			wait, _ := atof(record[9])
 			wait = wait * 1000
@@ -814,7 +814,7 @@ func parseInnodbStatus(str string, trxIDHexFormat bool, p *map[string]float64) {
 		}
 		if isTransaction && strings.HasPrefix(line, "---TRANSACTION") {
 			increaseMap(p, "current_transactions", "1")
-			if strings.Index(line, "ACTIVE") > 0 {
+			if strings.Contains(line, "ACTIVE") {
 				increaseMap(p, "active_transactions", "1")
 			}
 			continue
@@ -823,7 +823,7 @@ func parseInnodbStatus(str string, trxIDHexFormat bool, p *map[string]float64) {
 			increaseMap(p, "innodb_lock_wait_secs", record[5])
 			continue
 		}
-		if strings.Index(line, "read views open inside InnoDB") > 0 {
+		if strings.Contains(line, "read views open inside InnoDB") {
 			(*p)["read_views"], _ = atof(record[0])
 			continue
 		}
@@ -871,12 +871,12 @@ func parseInnodbStatus(str string, trxIDHexFormat bool, p *map[string]float64) {
 			(*p)["ibuf_used_cells"], _ = atof(record[2])
 			(*p)["ibuf_free_cells"], _ = atof(record[6])
 			(*p)["ibuf_cell_count"], _ = atof(record[9])
-			if strings.Index(line, "merges") > 0 {
+			if strings.Contains(line, "merges") {
 				(*p)["ibuf_merges"], _ = atof(record[10])
 			}
 			continue
 		}
-		if strings.Index(line, ", delete mark ") > 0 && strings.HasPrefix(prevLine, "merged operations:") {
+		if strings.Contains(line, ", delete mark ") && strings.HasPrefix(prevLine, "merged operations:") {
 			(*p)["ibuf_inserts"], _ = atof(record[1])
 			v1, _ := atof(record[1])
 			v2, _ := atof(record[4])
@@ -884,7 +884,7 @@ func parseInnodbStatus(str string, trxIDHexFormat bool, p *map[string]float64) {
 			(*p)["ibuf_merged"] = v1 + v2 + v3
 			continue
 		}
-		if strings.Index(line, " merged recs, ") > 0 {
+		if strings.Contains(line, " merged recs, ") {
 			(*p)["ibuf_inserts"], _ = atof(record[0])
 			(*p)["ibuf_merged"], _ = atof(record[2])
 			(*p)["ibuf_merges"], _ = atof(record[5])
@@ -892,7 +892,7 @@ func parseInnodbStatus(str string, trxIDHexFormat bool, p *map[string]float64) {
 		}
 		if strings.HasPrefix(line, "Hash table size ") {
 			(*p)["hash_index_cells_total"], _ = atof(record[3])
-			if strings.Index(line, "used cells") > 0 {
+			if strings.Contains(line, "used cells") {
 				(*p)["hash_index_cells_used"], _ = atof(record[6])
 			} else {
 				(*p)["hash_index_cells_used"] = 0
@@ -901,11 +901,11 @@ func parseInnodbStatus(str string, trxIDHexFormat bool, p *map[string]float64) {
 		}
 
 		// Log
-		if strings.Index(line, " log i/o's done, ") > 0 {
+		if strings.Contains(line, " log i/o's done, ") {
 			(*p)["log_writes"], _ = atof(record[0])
 			continue
 		}
-		if strings.Index(line, " pending log writes, ") > 0 {
+		if strings.Contains(line, " pending log writes, ") {
 			(*p)["pending_log_writes"], _ = atof(record[0])
 			(*p)["pending_chkp_writes"], _ = atof(record[4])
 			continue
@@ -937,7 +937,7 @@ func parseInnodbStatus(str string, trxIDHexFormat bool, p *map[string]float64) {
 
 		// Buffer Pool and Memory
 		// 5.6 or before
-		if strings.HasPrefix(line, "Total memory allocated") && strings.Index(line, "in additional pool allocated") > 0 {
+		if strings.HasPrefix(line, "Total memory allocated") && strings.Contains(line, "in additional pool allocated") {
 			(*p)["total_mem_alloc"], _ = atof(record[3])
 			(*p)["additional_pool_alloc"], _ = atof(record[8])
 			continue
