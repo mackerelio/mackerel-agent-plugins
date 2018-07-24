@@ -1,6 +1,7 @@
 package mpmysql
 
 import (
+	"errors"
 	"flag"
 	"fmt"
 	"log"
@@ -157,6 +158,36 @@ func (m *MySQLPlugin) MetricKeyPrefix() string {
 	return m.prefix
 }
 
+func (m *MySQLPlugin) fetchVersion(db mysql.Conn) (version [3]int, err error) {
+	rows, _, err := db.Query("SHOW VARIABLES WHERE VARIABLE_NAME = 'VERSION'")
+	if err != nil {
+		return
+	}
+	for _, row := range rows {
+		if len(row) > 1 {
+			versionString := string(row[1].([]byte))
+			if i := strings.IndexRune(versionString, '-'); i >= 0 {
+				// Trim -log or -debug, -MariaDB-...
+				versionString = versionString[:i]
+			}
+			xs := strings.Split(versionString, ".")
+			if len(xs) >= 2 {
+				version[0], _ = strconv.Atoi(xs[0])
+				version[1], _ = strconv.Atoi(xs[1])
+				if len(xs) >= 3 {
+					version[2], _ = strconv.Atoi(xs[2])
+				}
+			}
+			break
+		}
+	}
+	if version[0] == 0 {
+		err = errors.New("failed to get mysql version")
+		return
+	}
+	return
+}
+
 func (m *MySQLPlugin) fetchShowStatus(db mysql.Conn, stat map[string]float64) error {
 	rows, _, err := db.Query("show /*!50002 global */ status")
 	if err != nil {
@@ -186,8 +217,23 @@ func (m *MySQLPlugin) fetchShowInnodbStatus(db mysql.Conn, stat map[string]float
 		log.Fatalln("Hint: If you don't use InnoDB and see InnoDB Status error, you should set -disable_innodb")
 	}
 
+	var trxIDHexFormat bool
+	v, err := m.fetchVersion(db)
+	if err != nil {
+		log.Println(err)
+	}
+	// Transaction IDs are printed in hex format in version < 5.6.4.
+	//   Ref: https://github.com/mysql/mysql-server/commit/3420dc52b68c9afcee0a19ba7c19a73c2fbb2913
+	//        https://github.com/mysql/mysql-server/blob/mysql-5.6.3/storage/innobase/include/trx0types.h#L32
+	//        https://github.com/mysql/mysql-server/blob/mysql-5.6.4/storage/innobase/include/trx0types.h#L32
+	// MariaDB 10.x is recognized as newer than 5.6.4, which should be correct.
+	//   Ref: https://github.com/MariaDB/server/blob/mariadb-10.0.0/storage/innobase/include/trx0types.h#L32
+	if v[0] < 5 || v[0] == 5 && v[1] < 6 || v[0] == 5 && v[1] == 6 && v[2] < 4 {
+		trxIDHexFormat = true
+	}
+
 	if len(row) > 0 {
-		parseInnodbStatus(string(row[len(row)-1].([]byte)), &stat)
+		parseInnodbStatus(string(row[len(row)-1].([]byte)), trxIDHexFormat, &stat)
 	} else {
 		return fmt.Errorf("row length is too small: %d", len(row))
 	}
@@ -699,7 +745,7 @@ func setIfEmpty(p *map[string]float64, key string, val float64) {
 	}
 }
 
-func parseInnodbStatus(str string, p *map[string]float64) {
+func parseInnodbStatus(str string, trxIDHexFormat bool, p *map[string]float64) {
 	isTransaction := false
 	prevLine := ""
 
@@ -748,7 +794,7 @@ func parseInnodbStatus(str string, p *map[string]float64) {
 			if len(record) >= 5 {
 				loVal = record[4]
 			}
-			val := makeBigint(record[3], loVal)
+			val := makeBigint(record[3], loVal, trxIDHexFormat)
 			increaseMap(p, "innodb_transactions", fmt.Sprintf("%d", val))
 			isTransaction = true
 			continue
@@ -757,7 +803,7 @@ func parseInnodbStatus(str string, p *map[string]float64) {
 			if record[7] == "undo" {
 				record[7] = ""
 			}
-			val := makeBigint(record[6], record[7])
+			val := makeBigint(record[6], record[7], trxIDHexFormat)
 			trx := (*p)["innodb_transactions"] - float64(val)
 			increaseMap(p, "unpurged_txns", fmt.Sprintf("%.f", trx))
 			continue
@@ -867,7 +913,7 @@ func parseInnodbStatus(str string, p *map[string]float64) {
 		if strings.Index(line, "Log sequence number") == 0 {
 			val, _ := atof(record[3])
 			if len(record) >= 5 {
-				val = float64(makeBigint(record[3], record[4]))
+				val = float64(makeBigint(record[3], record[4], false))
 			}
 			(*p)["log_bytes_written"] = val
 			continue
@@ -875,7 +921,7 @@ func parseInnodbStatus(str string, p *map[string]float64) {
 		if strings.Index(line, "Log flushed up to") == 0 {
 			val, _ := atof(record[4])
 			if len(record) >= 6 {
-				val = float64(makeBigint(record[4], record[5]))
+				val = float64(makeBigint(record[4], record[5], false))
 			}
 			(*p)["log_bytes_flushed"] = val
 			continue
@@ -883,7 +929,7 @@ func parseInnodbStatus(str string, p *map[string]float64) {
 		if strings.Index(line, "Last checkpoint at") == 0 {
 			val, _ := atof(record[3])
 			if len(record) >= 5 {
-				val = float64(makeBigint(record[3], record[4]))
+				val = float64(makeBigint(record[3], record[4], false))
 			}
 			(*p)["last_checkpoint"] = val
 			continue
@@ -992,9 +1038,13 @@ func increaseMap(p *map[string]float64, key string, src string) {
 	(*p)[key] = (*p)[key] + val
 }
 
-func makeBigint(hi string, lo string) int64 {
+func makeBigint(hi string, lo string, hexFormat bool) int64 {
 	if lo == "" {
-		val, _ := strconv.ParseInt(hi, 16, 64)
+		if hexFormat {
+			val, _ := strconv.ParseInt(hi, 16, 64)
+			return val
+		}
+		val, _ := strconv.ParseInt(hi, 10, 64)
 		return val
 	}
 
