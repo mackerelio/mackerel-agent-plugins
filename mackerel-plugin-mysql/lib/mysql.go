@@ -754,13 +754,13 @@ func parseInnodbStatus(str string, trxIDHexFormat bool, p *map[string]float64) {
 		record := strings.Fields(line)
 
 		// Innodb Semaphores
-		if strings.Index(line, "Mutex spin waits") == 0 {
+		if strings.HasPrefix(line, "Mutex spin waits") {
 			increaseMap(p, "spin_waits", record[3])
 			increaseMap(p, "spin_rounds", record[5])
 			increaseMap(p, "os_waits", record[8])
 			continue
 		}
-		if strings.Index(line, "RW-shared spins") == 0 && strings.Index(line, ";") > 0 {
+		if strings.HasPrefix(line, "RW-shared spins") && strings.Contains(line, ";") {
 			// 5.5, 5.6
 			increaseMap(p, "spin_waits", record[2])
 			increaseMap(p, "os_waits", record[5])
@@ -768,19 +768,19 @@ func parseInnodbStatus(str string, trxIDHexFormat bool, p *map[string]float64) {
 			increaseMap(p, "os_waits", record[11])
 			continue
 		}
-		if strings.Index(line, "RW-shared spins") == 0 && strings.Index(line, "; RW-excl spins") < 0 {
+		if strings.HasPrefix(line, "RW-shared spins") && !strings.Contains(line, "; RW-excl spins") {
 			// 5.1
 			increaseMap(p, "spin_waits", record[2])
 			increaseMap(p, "os_waits", record[7])
 			continue
 		}
-		if strings.Index(line, "RW-excl spins") == 0 {
+		if strings.HasPrefix(line, "RW-excl spins") {
 			// 5.5, 5.6
 			increaseMap(p, "spin_waits", record[2])
 			increaseMap(p, "os_waits", record[7])
 			continue
 		}
-		if strings.Index(line, "seconds the semaphore:") > 0 {
+		if strings.Contains(line, "seconds the semaphore:") {
 			increaseMap(p, "innodb_sem_waits", "1")
 			wait, _ := atof(record[9])
 			wait = wait * 1000
@@ -789,7 +789,7 @@ func parseInnodbStatus(str string, trxIDHexFormat bool, p *map[string]float64) {
 		}
 
 		// Innodb Transactions
-		if strings.Index(line, "Trx id counter") == 0 {
+		if strings.HasPrefix(line, "Trx id counter") {
 			loVal := ""
 			if len(record) >= 5 {
 				loVal = record[4]
@@ -799,7 +799,7 @@ func parseInnodbStatus(str string, trxIDHexFormat bool, p *map[string]float64) {
 			isTransaction = true
 			continue
 		}
-		if strings.Index(line, "Purge done for trx") == 0 {
+		if strings.HasPrefix(line, "Purge done for trx") {
 			if record[7] == "undo" {
 				record[7] = ""
 			}
@@ -808,32 +808,32 @@ func parseInnodbStatus(str string, trxIDHexFormat bool, p *map[string]float64) {
 			increaseMap(p, "unpurged_txns", fmt.Sprintf("%.f", trx))
 			continue
 		}
-		if strings.Index(line, "History list length") == 0 {
+		if strings.HasPrefix(line, "History list length") {
 			increaseMap(p, "history_list", record[3])
 			continue
 		}
-		if isTransaction && strings.Index(line, "---TRANSACTION") == 0 {
+		if isTransaction && strings.HasPrefix(line, "---TRANSACTION") {
 			increaseMap(p, "current_transactions", "1")
-			if strings.Index(line, "ACTIVE") > 0 {
+			if strings.Contains(line, "ACTIVE") {
 				increaseMap(p, "active_transactions", "1")
 			}
 			continue
 		}
-		if isTransaction && strings.Index(line, "------- TRX HAS BEEN") == 0 {
+		if isTransaction && strings.HasPrefix(line, "------- TRX HAS BEEN") {
 			increaseMap(p, "innodb_lock_wait_secs", record[5])
 			continue
 		}
-		if strings.Index(line, "read views open inside InnoDB") > 0 {
+		if strings.Contains(line, "read views open inside InnoDB") {
 			(*p)["read_views"], _ = atof(record[0])
 			continue
 		}
-		if isTransaction && strings.Index(line, "mysql tables in use") == 0 {
+		if isTransaction && strings.HasPrefix(line, "mysql tables in use") {
 			increaseMap(p, "innodb_tables_in_use", record[4])
 			increaseMap(p, "innodb_locked_tables", record[6])
 			continue
 		}
 		if isTransaction && strings.Index(line, "lock struct(s)") > 0 {
-			if strings.Index(line, "LOCK WAIT") == 0 {
+			if strings.HasPrefix(line, "LOCK WAIT") {
 				increaseMap(p, "innodb_lock_structs", record[2])
 				increaseMap(p, "locked_transactions", "1")
 			} else {
@@ -843,12 +843,12 @@ func parseInnodbStatus(str string, trxIDHexFormat bool, p *map[string]float64) {
 		}
 
 		// File I/O
-		if strings.Index(line, "Pending normal aio reads:") == 0 {
+		if strings.HasPrefix(line, "Pending normal aio reads:") {
 			(*p)["pending_normal_aio_reads"], _ = atof(record[4])
 			(*p)["pending_normal_aio_writes"], _ = atof(record[7])
 			continue
 		}
-		if strings.Index(line, "ibuf aio reads") == 0 && len(record) >= 10 {
+		if strings.HasPrefix(line, "ibuf aio reads") && len(record) >= 10 {
 			(*p)["pending_ibuf_aio_reads"], _ = atof(record[3])
 			(*p)["pending_aio_log_ios"], _ = atof(record[6])
 			(*p)["pending_aio_sync_ios"], _ = atof(record[9])
@@ -861,22 +861,22 @@ func parseInnodbStatus(str string, trxIDHexFormat bool, p *map[string]float64) {
 		}
 
 		// Insert Buffer and Adaptive Hash Index
-		if strings.Index(line, "Ibuf for space 0: size ") == 0 {
+		if strings.HasPrefix(line, "Ibuf for space 0: size ") {
 			(*p)["ibuf_used_cells"], _ = atof(record[5])
 			(*p)["ibuf_free_cells"], _ = atof(record[9])
 			(*p)["ibuf_cell_count"], _ = atof(record[12])
 			continue
 		}
-		if strings.Index(line, "Ibuf: size ") == 0 {
+		if strings.HasPrefix(line, "Ibuf: size ") {
 			(*p)["ibuf_used_cells"], _ = atof(record[2])
 			(*p)["ibuf_free_cells"], _ = atof(record[6])
 			(*p)["ibuf_cell_count"], _ = atof(record[9])
-			if strings.Index(line, "merges") > 0 {
+			if strings.Contains(line, "merges") {
 				(*p)["ibuf_merges"], _ = atof(record[10])
 			}
 			continue
 		}
-		if strings.Index(line, ", delete mark ") > 0 && strings.Index(prevLine, "merged operations:") == 0 {
+		if strings.Contains(line, ", delete mark ") && strings.HasPrefix(prevLine, "merged operations:") {
 			(*p)["ibuf_inserts"], _ = atof(record[1])
 			v1, _ := atof(record[1])
 			v2, _ := atof(record[4])
@@ -884,15 +884,15 @@ func parseInnodbStatus(str string, trxIDHexFormat bool, p *map[string]float64) {
 			(*p)["ibuf_merged"] = v1 + v2 + v3
 			continue
 		}
-		if strings.Index(line, " merged recs, ") > 0 {
+		if strings.Contains(line, " merged recs, ") {
 			(*p)["ibuf_inserts"], _ = atof(record[0])
 			(*p)["ibuf_merged"], _ = atof(record[2])
 			(*p)["ibuf_merges"], _ = atof(record[5])
 			continue
 		}
-		if strings.Index(line, "Hash table size ") == 0 {
+		if strings.HasPrefix(line, "Hash table size ") {
 			(*p)["hash_index_cells_total"], _ = atof(record[3])
-			if strings.Index(line, "used cells") > 0 {
+			if strings.Contains(line, "used cells") {
 				(*p)["hash_index_cells_used"], _ = atof(record[6])
 			} else {
 				(*p)["hash_index_cells_used"] = 0
@@ -901,16 +901,16 @@ func parseInnodbStatus(str string, trxIDHexFormat bool, p *map[string]float64) {
 		}
 
 		// Log
-		if strings.Index(line, " log i/o's done, ") > 0 {
+		if strings.Contains(line, " log i/o's done, ") {
 			(*p)["log_writes"], _ = atof(record[0])
 			continue
 		}
-		if strings.Index(line, " pending log writes, ") > 0 {
+		if strings.Contains(line, " pending log writes, ") {
 			(*p)["pending_log_writes"], _ = atof(record[0])
 			(*p)["pending_chkp_writes"], _ = atof(record[4])
 			continue
 		}
-		if strings.Index(line, "Log sequence number") == 0 {
+		if strings.HasPrefix(line, "Log sequence number") {
 			val, _ := atof(record[3])
 			if len(record) >= 5 {
 				val = float64(makeBigint(record[3], record[4], false))
@@ -918,7 +918,7 @@ func parseInnodbStatus(str string, trxIDHexFormat bool, p *map[string]float64) {
 			(*p)["log_bytes_written"] = val
 			continue
 		}
-		if strings.Index(line, "Log flushed up to") == 0 {
+		if strings.HasPrefix(line, "Log flushed up to") {
 			val, _ := atof(record[4])
 			if len(record) >= 6 {
 				val = float64(makeBigint(record[4], record[5], false))
@@ -926,7 +926,7 @@ func parseInnodbStatus(str string, trxIDHexFormat bool, p *map[string]float64) {
 			(*p)["log_bytes_flushed"] = val
 			continue
 		}
-		if strings.Index(line, "Last checkpoint at") == 0 {
+		if strings.HasPrefix(line, "Last checkpoint at") {
 			val, _ := atof(record[3])
 			if len(record) >= 5 {
 				val = float64(makeBigint(record[3], record[4], false))
@@ -937,53 +937,53 @@ func parseInnodbStatus(str string, trxIDHexFormat bool, p *map[string]float64) {
 
 		// Buffer Pool and Memory
 		// 5.6 or before
-		if strings.Index(line, "Total memory allocated") == 0 && strings.Index(line, "in additional pool allocated") > 0 {
+		if strings.HasPrefix(line, "Total memory allocated") && strings.Contains(line, "in additional pool allocated") {
 			(*p)["total_mem_alloc"], _ = atof(record[3])
 			(*p)["additional_pool_alloc"], _ = atof(record[8])
 			continue
 		}
 		// 5.7
-		if strings.Index(line, "Total large memory allocated") == 0 {
+		if strings.HasPrefix(line, "Total large memory allocated") {
 			(*p)["total_mem_alloc"], _ = atof(record[4])
 			continue
 		}
 
-		if strings.Index(line, "Adaptive hash index ") == 0 {
+		if strings.HasPrefix(line, "Adaptive hash index ") {
 			v, _ := atof(record[3])
 			setIfEmpty(p, "adaptive_hash_memory", v)
 			continue
 		}
-		if strings.Index(line, "Page hash           ") == 0 {
+		if strings.HasPrefix(line, "Page hash           ") {
 			v, _ := atof(record[2])
 			setIfEmpty(p, "page_hash_memory", v)
 			continue
 		}
-		if strings.Index(line, "Dictionary cache    ") == 0 {
+		if strings.HasPrefix(line, "Dictionary cache    ") {
 			v, _ := atof(record[2])
 			setIfEmpty(p, "dictionary_cache_memory", v)
 			continue
 		}
-		if strings.Index(line, "File system         ") == 0 {
+		if strings.HasPrefix(line, "File system         ") {
 			v, _ := atof(record[2])
 			setIfEmpty(p, "file_system_memory", v)
 			continue
 		}
-		if strings.Index(line, "Lock system         ") == 0 {
+		if strings.HasPrefix(line, "Lock system         ") {
 			v, _ := atof(record[2])
 			setIfEmpty(p, "lock_system_memory", v)
 			continue
 		}
-		if strings.Index(line, "Recovery system     ") == 0 {
+		if strings.HasPrefix(line, "Recovery system     ") {
 			v, _ := atof(record[2])
 			setIfEmpty(p, "recovery_system_memory", v)
 			continue
 		}
-		if strings.Index(line, "Threads             ") == 0 {
+		if strings.HasPrefix(line, "Threads             ") {
 			v, _ := atof(record[1])
 			setIfEmpty(p, "thread_hash_memory", v)
 			continue
 		}
-		if strings.Index(line, "innodb_io_pattern   ") == 0 {
+		if strings.HasPrefix(line, "innodb_io_pattern   ") {
 			v, _ := atof(record[1])
 			setIfEmpty(p, "innodb_io_pattern_memory", v)
 			continue
