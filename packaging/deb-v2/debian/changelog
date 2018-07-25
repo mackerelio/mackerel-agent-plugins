@@ -1,3 +1,12 @@
+mackerel-agent-plugins (0.51.0-1.v2) stable; urgency=low
+
+  * [mysql] Fix decoding transaction ids from mysql innodb status (by itchyny)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/521>
+  * add MSSQL plugin (by mattn)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/520>
+
+ -- mackerel <mackerel-developers@hatena.ne.jp>  Wed, 25 Jul 2018 12:49:02 +0900
+
 mackerel-agent-plugins (0.50.0-1.v2) stable; urgency=low
 
   * [aws-kinesis-streams] Collect (Write|Read)ProvisionedThroughputExceeded metrics correctly (by shibayu36)

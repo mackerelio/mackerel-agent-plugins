@@ -38,6 +38,7 @@ Documentation for each plugin is located in its respective sub directory.
 * [mackerel-plugin-mcrouter](./mackerel-plugin-mcrouter/README.md)
 * [mackerel-plugin-memcached](./mackerel-plugin-memcached/README.md)
 * [mackerel-plugin-mongodb](./mackerel-plugin-mongodb/README.md)
+* [mackerel-plugin-mssql](./mackerel-plugin-mssql/README.md)
 * [mackerel-plugin-multicore](./mackerel-plugin-multicore/README.md)
 * [mackerel-plugin-munin](./mackerel-plugin-munin/README.md)
 * [mackerel-plugin-murmur](./mackerel-plugin-murmur/README.md)
