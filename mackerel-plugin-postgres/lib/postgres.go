@@ -223,7 +223,7 @@ func fetchXlogLocation(db *sqlx.DB, version version) (map[string]interface{}, er
 		} else if version.first == 9 && version.second >= 2 {
 			rows, err := db.Query(`SELECT pg_xlog_location_diff(pg_current_xlog_location(), '0/0')`)
 			if err != nil {
-				logger.Errorf("Failed to select pg_xlog_location_diff. %s", err)
+				logger.Debugf("Failed to select pg_xlog_location_diff. %s", err)
 				// pg_current_xlog_location() is currently not supported for Amazon Aurora
 				return nil, nil
 			}
