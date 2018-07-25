@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.51.0 (2018-07-25)
+
+* [mysql] Fix decoding transaction ids from mysql innodb status #521 (itchyny)
+* add MSSQL plugin #520 (mattn)
+
+
 ## 0.50.0 (2018-06-20)
 
 * [aws-kinesis-streams] Collect (Write|Read)ProvisionedThroughputExceeded metrics correctly #515 (shibayu36)

@@ -60,7 +60,7 @@ func run(args []string) int {
 	return exitOK
 }
 
-const version = "0.50.0"
+const version = "0.51.0"
 
 var gitcommit string
 
