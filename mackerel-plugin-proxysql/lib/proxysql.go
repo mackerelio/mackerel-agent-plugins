@@ -34,7 +34,7 @@ func (m *ProxySQLPlugin) proxysqlGraphDef() map[string]mp.Graphs {
 				{Name: "queries_frontends_bytes_sent", Label: "Queries frontends bytes sent", Diff: true},
 			},
 		},
-		"queries.": {
+		"queries": {
 			Label: labelPrefix + " Queries",
 			Unit:  mp.UnitInteger,
 			Metrics: []mp.Metrics{
