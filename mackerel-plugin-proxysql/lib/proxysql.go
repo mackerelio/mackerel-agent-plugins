@@ -94,8 +94,8 @@ func (m *ProxySQLPlugin) proxysqlGraphDef() map[string]mp.Graphs {
 			Label: labelPrefix + " Workers",
 			Unit:  mp.UnitInteger,
 			Metrics: []mp.Metrics{
-				{Name: "mysql_thread_workers", Label: "Thread Workers", Diff: true},
-				{Name: "mysql_monitor_workers", Label: "Monitors Workers", Diff: true},
+				{Name: "mysql_thread_workers", Label: "Thread Workers"},
+				{Name: "mysql_monitor_workers", Label: "Monitors Workers"},
 			},
 		},
 		"memories": {
