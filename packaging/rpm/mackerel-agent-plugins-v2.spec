@@ -40,6 +40,9 @@ done
 %{__targetdir}/*
 
 %changelog
+* Thu Aug 30 2018 <mackerel-developers@hatena.ne.jp> - 0.51.1
+- [postgres]Ignore error to support Aurora (by matsuu)
+
 * Wed Jul 25 2018 <mackerel-developers@hatena.ne.jp> - 0.51.0
 - [mysql] Fix decoding transaction ids from mysql innodb status (by itchyny)
 - add MSSQL plugin (by mattn)

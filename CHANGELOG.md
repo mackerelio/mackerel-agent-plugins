@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.51.1 (2018-08-30)
+
+* [postgres]Ignore error to support Aurora #519 (matsuu)
+
+
 ## 0.51.0 (2018-07-25)
 
 * [mysql] Fix decoding transaction ids from mysql innodb status #521 (itchyny)
