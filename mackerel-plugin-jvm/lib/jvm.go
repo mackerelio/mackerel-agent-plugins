@@ -70,7 +70,7 @@ func (m JVMPlugin) fetchJstatMetrics(option string) (map[string]float64, error) 
 	if err == nil && exitStatus.IsTimedOut() {
 		err = fmt.Errorf("jstat command timed out")
 	}
-	if err != nil {
+	if err != nil || exitStatus.GetChildExitCode() != 0 {
 		logger.Errorf("Failed to run exec jstat. %s. Please run with the java process user.", err)
 		return nil, err
 	}
