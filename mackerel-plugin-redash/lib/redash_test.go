@@ -150,13 +150,13 @@ func TestFetchMetrics(t *testing.T) {
 		"task_scheduled_count.wait.scheduled":        1,
 		"task_scheduled_count.done.scheduled":        2,
 		"task_scheduled_count.in_progress.scheduled": 0,
-		"waiting":         1,
-		"finished":        2,
-		"executing_query": 0,
-		"failed":          1,
-		"processing":      0,
-		"checking_alerts": 0,
-		"other":           1,
+		"waiting":                                    1,
+		"finished":                                   2,
+		"executing_query":                            0,
+		"failed":                                     1,
+		"processing":                                 0,
+		"checking_alerts":                            0,
+		"other":                                      1,
 	}
 
 	for k, v := range expected {

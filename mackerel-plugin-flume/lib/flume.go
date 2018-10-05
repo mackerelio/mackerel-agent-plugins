@@ -15,9 +15,9 @@ const (
 	// Channel is Flume Channel Type
 	Channel = "CHANNEL"
 	// Sink is Flume Sink Type
-	Sink    = "SINK"
+	Sink = "SINK"
 	// Source is Flume Source Type
-	Source  = "SOURCE"
+	Source = "SOURCE"
 )
 
 // FlumePlugin mackerel plugin
@@ -177,42 +177,42 @@ func (p *FlumePlugin) convertFloat64(value string) float64 {
 }
 
 func (p *FlumePlugin) parseChannel(ret map[string]float64, componentName string, value map[string]interface{}) {
-	ret["channel.capacity." + componentName + ".ChannelCapacity"]             = p.convertFloat64(value["ChannelCapacity"].(string))
-	ret["channel.capacity." + componentName + ".ChannelSize"]                 = p.convertFloat64(value["ChannelSize"].(string))
-	ret["channel.use_rate." + componentName + ".ChannelFillPercentage"]       = p.convertFloat64(value["ChannelFillPercentage"].(string))
-	ret["channel.event_put_num." + componentName + ".EventPutAttemptCount"]   = p.convertFloat64(value["EventPutAttemptCount"].(string))
-	ret["channel.event_put_num." + componentName + ".EventPutSuccessCount"]   = p.convertFloat64(value["EventPutSuccessCount"].(string))
-	ret["channel.event_take_num." + componentName + ".EventTakeAttemptCount"] = p.convertFloat64(value["EventTakeAttemptCount"].(string))
-	ret["channel.event_take_num." + componentName + ".EventTakeSuccessCount"] = p.convertFloat64(value["EventTakeSuccessCount"].(string))
+	ret["channel.capacity."+componentName+".ChannelCapacity"] = p.convertFloat64(value["ChannelCapacity"].(string))
+	ret["channel.capacity."+componentName+".ChannelSize"] = p.convertFloat64(value["ChannelSize"].(string))
+	ret["channel.use_rate."+componentName+".ChannelFillPercentage"] = p.convertFloat64(value["ChannelFillPercentage"].(string))
+	ret["channel.event_put_num."+componentName+".EventPutAttemptCount"] = p.convertFloat64(value["EventPutAttemptCount"].(string))
+	ret["channel.event_put_num."+componentName+".EventPutSuccessCount"] = p.convertFloat64(value["EventPutSuccessCount"].(string))
+	ret["channel.event_take_num."+componentName+".EventTakeAttemptCount"] = p.convertFloat64(value["EventTakeAttemptCount"].(string))
+	ret["channel.event_take_num."+componentName+".EventTakeSuccessCount"] = p.convertFloat64(value["EventTakeSuccessCount"].(string))
 }
 
 func (p *FlumePlugin) parseSink(ret map[string]float64, componentName string, value map[string]interface{}) {
-	ret["sink.batch_num." + componentName + ".BatchCompleteCount"]           = p.convertFloat64(value["BatchCompleteCount"].(string))
-	ret["sink.batch_num." + componentName + ".BatchEmptyCount"]              = p.convertFloat64(value["BatchEmptyCount"].(string))
-	ret["sink.batch_num." + componentName + ".BatchUnderflowCount"]          = p.convertFloat64(value["BatchUnderflowCount"].(string))
-	ret["sink.connection." + componentName + ".ConnectionCreatedCount"]      = p.convertFloat64(value["ConnectionCreatedCount"].(string))
-	ret["sink.connection." + componentName + ".ConnectionClosedCount"]       = p.convertFloat64(value["ConnectionClosedCount"].(string))
-	ret["sink.connection." + componentName + ".ConnectionFailedCount"]       = p.convertFloat64(value["ConnectionFailedCount"].(string))
-	ret["sink.event_drain_num." + componentName + ".EventDrainAttemptCount"] = p.convertFloat64(value["EventDrainAttemptCount"].(string))
-	ret["sink.event_drain_num." + componentName + ".EventDrainSuccessCount"] = p.convertFloat64(value["EventDrainSuccessCount"].(string))
+	ret["sink.batch_num."+componentName+".BatchCompleteCount"] = p.convertFloat64(value["BatchCompleteCount"].(string))
+	ret["sink.batch_num."+componentName+".BatchEmptyCount"] = p.convertFloat64(value["BatchEmptyCount"].(string))
+	ret["sink.batch_num."+componentName+".BatchUnderflowCount"] = p.convertFloat64(value["BatchUnderflowCount"].(string))
+	ret["sink.connection."+componentName+".ConnectionCreatedCount"] = p.convertFloat64(value["ConnectionCreatedCount"].(string))
+	ret["sink.connection."+componentName+".ConnectionClosedCount"] = p.convertFloat64(value["ConnectionClosedCount"].(string))
+	ret["sink.connection."+componentName+".ConnectionFailedCount"] = p.convertFloat64(value["ConnectionFailedCount"].(string))
+	ret["sink.event_drain_num."+componentName+".EventDrainAttemptCount"] = p.convertFloat64(value["EventDrainAttemptCount"].(string))
+	ret["sink.event_drain_num."+componentName+".EventDrainSuccessCount"] = p.convertFloat64(value["EventDrainSuccessCount"].(string))
 }
 
 func (p *FlumePlugin) parseSource(ret map[string]float64, componentName string, value map[string]interface{}) {
-	ret["source.append_num." + componentName + ".AppendAcceptedCount"]            = p.convertFloat64(value["AppendAcceptedCount"].(string))
-	ret["source.append_num." + componentName + ".AppendReceivedCount"]            = p.convertFloat64(value["AppendReceivedCount"].(string))
-	ret["source.append_batch_num." + componentName + ".AppendBatchAcceptedCount"] = p.convertFloat64(value["AppendBatchAcceptedCount"].(string))
-	ret["source.append_batch_num." + componentName + ".AppendBatchReceivedCount"] = p.convertFloat64(value["AppendBatchReceivedCount"].(string))
-	ret["source.event_num." + componentName + ".EventAcceptedCount"]              = p.convertFloat64(value["EventAcceptedCount"].(string))
-	ret["source.event_num." + componentName + ".EventReceivedCount"]              = p.convertFloat64(value["EventReceivedCount"].(string))
-	ret["source.connection." + componentName + ".OpenConnectionCount"]            = p.convertFloat64(value["OpenConnectionCount"].(string))
+	ret["source.append_num."+componentName+".AppendAcceptedCount"] = p.convertFloat64(value["AppendAcceptedCount"].(string))
+	ret["source.append_num."+componentName+".AppendReceivedCount"] = p.convertFloat64(value["AppendReceivedCount"].(string))
+	ret["source.append_batch_num."+componentName+".AppendBatchAcceptedCount"] = p.convertFloat64(value["AppendBatchAcceptedCount"].(string))
+	ret["source.append_batch_num."+componentName+".AppendBatchReceivedCount"] = p.convertFloat64(value["AppendBatchReceivedCount"].(string))
+	ret["source.event_num."+componentName+".EventAcceptedCount"] = p.convertFloat64(value["EventAcceptedCount"].(string))
+	ret["source.event_num."+componentName+".EventReceivedCount"] = p.convertFloat64(value["EventReceivedCount"].(string))
+	ret["source.connection."+componentName+".OpenConnectionCount"] = p.convertFloat64(value["OpenConnectionCount"].(string))
 }
 
 // Do the plugin
 func Do() {
-	optHost     := flag.String("host", "localhost", "Host Name")
-	optPort     := flag.String("port", "41414", "Port")
-	optPrefix   := flag.String("metric-key-prefix", "", "Metric key prefix")
-	optTempfile := flag.String("tempfile", "" , "Temp file name")
+	optHost := flag.String("host", "localhost", "Host Name")
+	optPort := flag.String("port", "41414", "Port")
+	optPrefix := flag.String("metric-key-prefix", "", "Metric key prefix")
+	optTempfile := flag.String("tempfile", "", "Temp file name")
 	flag.Parse()
 	plugin := mp.NewMackerelPlugin(&FlumePlugin{
 		URI:    fmt.Sprintf("http://%s:%s/metrics", *optHost, *optPort),
