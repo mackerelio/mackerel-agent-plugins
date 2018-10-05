@@ -76,7 +76,13 @@ type PlackServerStatus struct {
 
 // FetchMetrics interface for mackerelplugin
 func (p PlackPlugin) FetchMetrics() (map[string]interface{}, error) {
-	resp, err := http.Get(p.URI)
+	req, err := http.NewRequest(http.MethodGet, p.URI, nil)
+	if err != nil {
+		return nil, err
+	}
+	req.Header.Set("User-Agent", "mackerel-plugin-plack")
+
+	resp, err := http.DefaultClient.Do(req)
 	if err != nil {
 		return nil, err
 	}

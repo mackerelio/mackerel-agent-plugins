@@ -137,7 +137,13 @@ func (p UWSGIVassalPlugin) FetchMetrics() (map[string]float64, error) {
 		defer conn.Close()
 		decoder = json.NewDecoder(conn)
 	} else if strings.HasPrefix(p.Socket, "http://") {
-		resp, err := http.Get(p.Socket)
+		req, err := http.NewRequest(http.MethodGet, p.Socket, nil)
+		if err != nil {
+			return nil, err
+		}
+		req.Header.Set("User-Agent", "mackerel-plugin-uwsgi-vessal")
+
+		resp, err := http.DefaultClient.Do(req)
 		if err != nil {
 			return nil, err
 		}

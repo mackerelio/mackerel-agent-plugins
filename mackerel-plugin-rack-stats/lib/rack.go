@@ -62,10 +62,11 @@ func parseBody(r io.Reader, index string) (stats map[string]interface{}, err err
 
 func parseBodyHTTP(uri, port string) (stats map[string]interface{}, err error) {
 	var req *http.Request
-	req, err = http.NewRequest("GET", uri, nil)
+	req, err = http.NewRequest(http.MethodGet, uri, nil)
 	if err != nil {
 		return stats, err
 	}
+	req.Header.Set("User-Agent", "mackerel-plugin-rack-status")
 	resp, err := http.DefaultClient.Do(req)
 	if err != nil {
 		return stats, err
@@ -87,7 +88,12 @@ func parseBodyUnix(path string) (stats map[string]interface{}, err error) {
 	}
 
 	client := &http.Client{Transport: tr}
-	resp, err := client.Get(fmt.Sprintf("http://dummy/%s", strings.TrimLeft(path, "/")))
+	req, err := http.NewRequest(http.MethodGet, fmt.Sprintf("http://dummy/%s", strings.TrimLeft(path, "/")), nil)
+	if err != nil {
+		return stats, err
+	}
+	req.Header.Set("User-Agent", "mackerel-plugin-rack-status")
+	resp, err := client.Do(req)
 
 	if err != nil {
 		return stats, err

@@ -36,7 +36,13 @@ func getUnsafeStats(p RedashPlugin) (*UnsafeRedashStats, error) {
 	client := http.Client{
 		Timeout: timeout,
 	}
-	resp, err := client.Get(p.URI)
+	req, err := http.NewRequest(http.MethodGet, p.URI, nil)
+	if err != nil {
+		return nil, err
+	}
+	req.Header.Set("User-Agent", "mackerel-plugin-redash")
+
+	resp, err := client.Do(req)
 	if err != nil {
 		return nil, err
 	}

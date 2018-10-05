@@ -120,7 +120,13 @@ func getStatus(p PhpFpmPlugin) (*PhpFpmStatus, error) {
 		Timeout: timeout,
 	}
 
-	res, err := client.Get(url)
+	req, err := http.NewRequest(http.MethodGet, url, nil)
+	if err != nil {
+		return nil, err
+	}
+	req.Header.Set("User-Agent", "mackerel-plugin-php-fpm")
+
+	res, err := client.Do(req)
 	if err != nil {
 		return nil, err
 	}
