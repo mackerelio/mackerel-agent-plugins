@@ -85,6 +85,12 @@ func (n NginxPlugin) FetchMetrics() (map[string]interface{}, error) {
 			req.Header.Set(k, v)
 		}
 	}
+
+	// set default User-Agent unless specified by n.Header
+	if _, ok := req.Header["User-Agent"]; !ok {
+		req.Header.Set("User-Agent", "mackerel-plugin-nginx")
+	}
+
 	resp, err := http.DefaultClient.Do(req)
 	if err != nil {
 		return nil, err

@@ -87,7 +87,13 @@ func (f *FluentdMetrics) nonTargetPlugin(plugin FluentdPluginMetrics) bool {
 
 // FetchMetrics interface for mackerelplugin
 func (f FluentdMetrics) FetchMetrics() (map[string]interface{}, error) {
-	resp, err := http.Get(f.Target)
+	req, err := http.NewRequest(http.MethodGet, f.Target, nil)
+	if err != nil {
+		return nil, err
+	}
+	req.Header.Set("User-Agent", "mackerel-plugin-fluentd")
+
+	resp, err := http.DefaultClient.Do(req)
 	if err != nil {
 		return nil, err
 	}

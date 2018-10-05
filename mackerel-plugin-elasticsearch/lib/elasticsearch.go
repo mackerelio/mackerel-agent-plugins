@@ -96,7 +96,13 @@ type ElasticsearchPlugin struct {
 
 // FetchMetrics interface for mackerelplugin
 func (p ElasticsearchPlugin) FetchMetrics() (map[string]float64, error) {
-	resp, err := http.Get(p.URI + "/_nodes/_local/stats")
+	req, err := http.NewRequest(http.MethodGet, p.URI+"/_nodes/_local/stats", nil)
+	if err != nil {
+		return nil, err
+	}
+	req.Header.Set("User-Agent", "mackerel-plugin-elasticsearch")
+
+	resp, err := http.DefaultClient.Do(req)
 	if err != nil {
 		return nil, err
 	}

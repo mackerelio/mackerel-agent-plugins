@@ -170,7 +170,13 @@ func printValue(w io.Writer, key string, value interface{}, now uint64, unit str
 
 // fetchData fetches metrics data from -15min
 func (p GraphitePlugin) fetchData() ([]metrics, error) {
-	res, err := http.Get(p.URL)
+	req, err := http.NewRequest(http.MethodGet, p.URL, nil)
+	if err != nil {
+		return nil, err
+	}
+	req.Header.Set("User-Agent", "mackerel-plugin-graphite")
+
+	res, err := http.DefaultClient.Do(req)
 	if err != nil {
 		return nil, err
 	}

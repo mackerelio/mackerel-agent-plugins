@@ -104,7 +104,13 @@ func (m GostatsPlugin) GraphDefinition() map[string]mp.Graphs {
 
 // FetchMetrics interface for mackerelplugin
 func (m GostatsPlugin) FetchMetrics() (map[string]float64, error) {
-	resp, err := http.Get(m.URI)
+	req, err := http.NewRequest(http.MethodGet, m.URI, nil)
+	if err != nil {
+		return nil, err
+	}
+	req.Header.Set("User-Agent", "mackerel-plugin-gostats")
+
+	resp, err := http.DefaultClient.Do(req)
 	if err != nil {
 		return nil, err
 	}

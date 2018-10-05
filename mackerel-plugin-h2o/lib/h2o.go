@@ -234,6 +234,11 @@ func (h2o H2OPlugin) FetchMetrics() (map[string]float64, error) {
 			req.Header.Set(k, v)
 		}
 	}
+	// set default User-Agent unless specified by h2o.Header
+	if _, ok := req.Header["User-Agent"]; !ok {
+		req.Header.Set("User-Agent", "mackerel-plugin-h2o")
+	}
+
 	resp, err := http.DefaultClient.Do(req)
 	if err != nil {
 		return nil, err
