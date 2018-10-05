@@ -39,7 +39,13 @@ type SolrPlugin struct {
 }
 
 func (s *SolrPlugin) getStats(url string) (map[string]interface{}, error) {
-	resp, err := http.Get(url)
+	req, err := http.NewRequest(http.MethodGet, url, nil)
+	if err != nil {
+		return nil, err
+	}
+	req.Header.Set("User-Agent", "mackerel-plugin-solr")
+
+	resp, err := http.DefaultClient.Do(req)
 	if err != nil {
 		logger.Errorf("Failed to %s", err)
 		return nil, err

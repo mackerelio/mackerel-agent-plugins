@@ -139,7 +139,13 @@ func (p *FlumePlugin) FetchMetrics() (map[string]float64, error) {
 }
 
 func (p *FlumePlugin) getMetrics() (map[string]interface{}, error) {
-	res, err := http.Get(p.URI)
+	req, err := http.NewRequest(http.MethodGet, p.URI, nil)
+	if err != nil {
+		return nil, err
+	}
+	req.Header.Set("User-Agent", "mackerel-plugin-flume")
+
+	res, err := http.DefaultClient.Do(req)
 	if err != nil {
 		return nil, err
 	}

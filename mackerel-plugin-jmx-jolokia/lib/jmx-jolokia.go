@@ -154,7 +154,13 @@ func (j JmxJolokiaPlugin) fetchOperatingSystem(stat map[string]interface{}) erro
 }
 
 func (j JmxJolokiaPlugin) executeGetRequest(mbean string) (*JmxJolokiaResponse, error) {
-	resp, err := http.Get(j.Target + mbean)
+	req, err := http.NewRequest(http.MethodGet, j.Target+mbean, nil)
+	if err != nil {
+		return nil, err
+	}
+	req.Header.Set("User-Agent", "mackerel-plugin-jmx-jolokia")
+
+	resp, err := http.DefaultClient.Do(req)
 	if err != nil {
 		return nil, err
 	}

@@ -74,6 +74,7 @@ func (p HAProxyPlugin) fetchMetricsFromTCP() (map[string]float64, error) {
 	if p.Username != "" {
 		req.SetBasicAuth(p.Username, p.Password)
 	}
+	req.Header.Set("User-Agent", "mackerel-plugin-haproxy")
 
 	resp, err := client.Do(req)
 	if err != nil {

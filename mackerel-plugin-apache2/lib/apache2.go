@@ -205,6 +205,12 @@ func getApache2Metrics(host string, port uint16, path string, header []string) (
 			req.Header.Set(k, v)
 		}
 	}
+
+	// set default User-Agent unless specified by header
+	if _, ok := req.Header["User-Agent"]; !ok {
+		req.Header.Set("User-Agent", "mackerel-plugin-apache2")
+	}
+
 	resp, err := http.DefaultClient.Do(req)
 	if err != nil {
 		return "", err

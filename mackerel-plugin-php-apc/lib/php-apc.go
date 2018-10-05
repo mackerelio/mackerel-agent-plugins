@@ -119,7 +119,13 @@ func parsePhpApcStatus(str string, p *map[string]float64) error {
 // Getting php-apc status from server-status module data.
 func getPhpApcMetrics(host string, port uint16, path string) (string, error) {
 	uri := "http://" + host + ":" + strconv.FormatUint(uint64(port), 10) + path
-	resp, err := http.Get(uri)
+	req, err := http.NewRequest(http.MethodGet, uri, nil)
+	if err != nil {
+		return "", err
+	}
+	req.Header.Set("User-Agent", "mackerel-plugin-php-apc")
+
+	resp, err := http.DefaultClient.Do(req)
 	if err != nil {
 		return "", err
 	}
