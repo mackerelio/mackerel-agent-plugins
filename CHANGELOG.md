@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.52.0 (2018-10-17)
+
+* Set (default) User-Agent header to HTTP requests #528 (astj)
+* Build with Go 1.11 #527 (astj)
+* Improve jvm error handling #526 (astj)
+
+
 ## 0.51.1 (2018-08-30)
 
 * [postgres]Ignore error to support Aurora #519 (matsuu)
