@@ -40,6 +40,11 @@ done
 %{__targetdir}/*
 
 %changelog
+* Wed Oct 17 2018 <mackerel-developers@hatena.ne.jp> - 0.52.0
+- Set (default) User-Agent header to HTTP requests (by astj)
+- Build with Go 1.11 (by astj)
+- Improve jvm error handling (by astj)
+
 * Thu Aug 30 2018 <mackerel-developers@hatena.ne.jp> - 0.51.1
 - [postgres]Ignore error to support Aurora (by matsuu)
 

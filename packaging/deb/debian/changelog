@@ -1,3 +1,14 @@
+mackerel-agent-plugins (0.52.0-1) stable; urgency=low
+
+  * Set (default) User-Agent header to HTTP requests (by astj)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/528>
+  * Build with Go 1.11 (by astj)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/527>
+  * Improve jvm error handling (by astj)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/526>
+
+ -- mackerel <mackerel-developers@hatena.ne.jp>  Wed, 17 Oct 2018 10:50:39 +0900
+
 mackerel-agent-plugins (0.51.1-1) stable; urgency=low
 
   * [postgres]Ignore error to support Aurora (by matsuu)
