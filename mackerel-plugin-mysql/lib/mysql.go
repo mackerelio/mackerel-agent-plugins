@@ -9,7 +9,7 @@ import (
 	"strconv"
 	"strings"
 
-	mp "github.com/mackerelio/go-mackerel-plugin-helper"
+	mp "github.com/mackerelio/go-mackerel-plugin"
 	"github.com/ziutek/mymysql/mysql"
 	// MySQL Driver
 	_ "github.com/ziutek/mymysql/native"
@@ -56,19 +56,19 @@ func (m *MySQLPlugin) defaultGraphdef() map[string]mp.Graphs {
 			Label: labelPrefix + " Command",
 			Unit:  "float",
 			Metrics: []mp.Metrics{
-				{Name: "Com_insert", Label: "Insert", Diff: true, Stacked: true, Type: "uint64"},
-				{Name: "Com_insert_select", Label: "Insert Select", Diff: true, Stacked: true, Type: "uint64"},
-				{Name: "Com_select", Label: "Select", Diff: true, Stacked: true, Type: "uint64"},
-				{Name: "Com_update", Label: "Update", Diff: true, Stacked: true, Type: "uint64"},
-				{Name: "Com_update_multi", Label: "Update Multi", Diff: true, Stacked: true, Type: "uint64"},
-				{Name: "Com_delete", Label: "Delete", Diff: true, Stacked: true, Type: "uint64"},
-				{Name: "Com_delete_multi", Label: "Delete Multi", Diff: true, Stacked: true, Type: "uint64"},
-				{Name: "Com_replace", Label: "Replace", Diff: true, Stacked: true, Type: "uint64"},
-				{Name: "Com_replace_select", Label: "Replace Select", Diff: true, Stacked: true, Type: "uint64"},
-				{Name: "Com_load", Label: "Load", Diff: true, Stacked: true, Type: "uint64"},
-				{Name: "Com_set_option", Label: "Set Option", Diff: true, Stacked: true, Type: "uint64"},
-				{Name: "Qcache_hits", Label: "Query Cache Hits", Diff: true, Stacked: false, Type: "uint64"},
-				{Name: "Questions", Label: "Questions", Diff: true, Stacked: false, Type: "uint64"},
+				{Name: "Com_insert", Label: "Insert", Diff: true, Stacked: true},
+				{Name: "Com_insert_select", Label: "Insert Select", Diff: true, Stacked: true},
+				{Name: "Com_select", Label: "Select", Diff: true, Stacked: true},
+				{Name: "Com_update", Label: "Update", Diff: true, Stacked: true},
+				{Name: "Com_update_multi", Label: "Update Multi", Diff: true, Stacked: true},
+				{Name: "Com_delete", Label: "Delete", Diff: true, Stacked: true},
+				{Name: "Com_delete_multi", Label: "Delete Multi", Diff: true, Stacked: true},
+				{Name: "Com_replace", Label: "Replace", Diff: true, Stacked: true},
+				{Name: "Com_replace_select", Label: "Replace Select", Diff: true, Stacked: true},
+				{Name: "Com_load", Label: "Load", Diff: true, Stacked: true},
+				{Name: "Com_set_option", Label: "Set Option", Diff: true, Stacked: true},
+				{Name: "Qcache_hits", Label: "Query Cache Hits", Diff: true, Stacked: false},
+				{Name: "Questions", Label: "Questions", Diff: true, Stacked: false},
 			},
 		},
 		"join": {
@@ -367,7 +367,7 @@ func (m *MySQLPlugin) calculateCapacity(stat map[string]float64) {
 }
 
 // FetchMetrics interface for mackerelplugin
-func (m *MySQLPlugin) FetchMetrics() (map[string]interface{}, error) {
+func (m *MySQLPlugin) FetchMetrics() (map[string]float64, error) {
 	proto := "tcp"
 	if m.isUnixSocket {
 		proto = "unix"
@@ -404,7 +404,7 @@ func (m *MySQLPlugin) FetchMetrics() (map[string]interface{}, error) {
 
 	m.calculateCapacity(stat)
 
-	statRet := make(map[string]interface{})
+	statRet := make(map[string]float64)
 	for key, value := range stat {
 		statRet[key] = value
 	}
@@ -621,117 +621,117 @@ func (m *MySQLPlugin) addExtendedGraphdef(graphdef map[string]mp.Graphs) map[str
 		Label: labelPrefix + " query Cache",
 		Unit:  "float",
 		Metrics: []mp.Metrics{
-			{Name: "Qcache_queries_in_cache", Label: "Qcache Queries In Cache", Diff: false, Stacked: false, Type: "uint64"},
-			{Name: "Qcache_hits", Label: "Qcache Hits", Diff: true, Stacked: false, Type: "uint64"},
-			{Name: "Qcache_inserts", Label: "Qcache Inserts", Diff: true, Stacked: false, Type: "uint64"},
-			{Name: "Qcache_not_cached", Label: "Qcache Not Cached", Diff: true, Stacked: false, Type: "uint64"},
-			{Name: "Qcache_lowmem_prunes", Label: "Qcache Lowmem Prunes", Diff: true, Stacked: false, Type: "uint64"},
+			{Name: "Qcache_queries_in_cache", Label: "Qcache Queries In Cache", Diff: false, Stacked: false},
+			{Name: "Qcache_hits", Label: "Qcache Hits", Diff: true, Stacked: false},
+			{Name: "Qcache_inserts", Label: "Qcache Inserts", Diff: true, Stacked: false},
+			{Name: "Qcache_not_cached", Label: "Qcache Not Cached", Diff: true, Stacked: false},
+			{Name: "Qcache_lowmem_prunes", Label: "Qcache Lowmem Prunes", Diff: true, Stacked: false},
 		},
 	}
 	graphdef["query_cache_memory"] = mp.Graphs{
 		Label: labelPrefix + " query Cache Memory",
 		Unit:  "float",
 		Metrics: []mp.Metrics{
-			{Name: "query_cache_size", Label: "Query Cache Size", Diff: false, Stacked: false, Type: "uint64"},
-			{Name: "Qcache_free_memory", Label: "Qcache Free Memory", Diff: false, Stacked: false, Type: "uint64"},
-			{Name: "Qcache_total_blocks", Label: "Qcache Total Blocks", Diff: false, Stacked: false, Type: "uint64"},
-			{Name: "Qcache_free_blocks", Label: "Qcache Free Blocks", Diff: false, Stacked: false, Type: "uint64"},
+			{Name: "query_cache_size", Label: "Query Cache Size", Diff: false, Stacked: false},
+			{Name: "Qcache_free_memory", Label: "Qcache Free Memory", Diff: false, Stacked: false},
+			{Name: "Qcache_total_blocks", Label: "Qcache Total Blocks", Diff: false, Stacked: false},
+			{Name: "Qcache_free_blocks", Label: "Qcache Free Blocks", Diff: false, Stacked: false},
 		},
 	}
 	graphdef["temporary_objects"] = mp.Graphs{
 		Label: labelPrefix + " temporary Objects",
 		Unit:  "float",
 		Metrics: []mp.Metrics{
-			{Name: "Created_tmp_tables", Label: "Created Tmp Tables", Diff: true, Stacked: false, Type: "uint64"},
-			{Name: "Created_tmp_disk_tables", Label: "Created Tmp Disk Tables", Diff: true, Stacked: false, Type: "uint64"},
-			{Name: "Created_tmp_files", Label: "Created Tmp Files", Diff: true, Stacked: false, Type: "uint64"},
+			{Name: "Created_tmp_tables", Label: "Created Tmp Tables", Diff: true, Stacked: false},
+			{Name: "Created_tmp_disk_tables", Label: "Created Tmp Disk Tables", Diff: true, Stacked: false},
+			{Name: "Created_tmp_files", Label: "Created Tmp Files", Diff: true, Stacked: false},
 		},
 	}
 	graphdef["files_and_tables"] = mp.Graphs{
 		Label: labelPrefix + " files and Tables",
 		Unit:  "float",
 		Metrics: []mp.Metrics{
-			{Name: "table_cache", Label: "Table Cache", Diff: false, Stacked: false, Type: "uint64"},
-			{Name: "Open_tables", Label: "Open Tables", Diff: false, Stacked: false, Type: "uint64"},
-			{Name: "Open_files", Label: "Open Files", Diff: false, Stacked: false, Type: "uint64"},
-			{Name: "Opened_tables", Label: "Opened Tables", Diff: true, Stacked: false, Type: "uint64"},
+			{Name: "table_cache", Label: "Table Cache", Diff: false, Stacked: false},
+			{Name: "Open_tables", Label: "Open Tables", Diff: false, Stacked: false},
+			{Name: "Open_files", Label: "Open Files", Diff: false, Stacked: false},
+			{Name: "Opened_tables", Label: "Opened Tables", Diff: true, Stacked: false},
 		},
 	}
 	graphdef["processlist"] = mp.Graphs{
 		Label: labelPrefix + " processlist",
 		Unit:  "float",
 		Metrics: []mp.Metrics{
-			{Name: "State_closing_tables", Label: "State Closing Tables", Diff: false, Stacked: true, Type: "uint64"},
-			{Name: "State_copying_to_tmp_table", Label: "State Copying To Tmp Table", Diff: false, Stacked: true, Type: "uint64"},
-			{Name: "State_end", Label: "State End", Diff: false, Stacked: true, Type: "uint64"},
-			{Name: "State_freeing_items", Label: "State Freeing Items", Diff: false, Stacked: true, Type: "uint64"},
-			{Name: "State_init", Label: "State Init", Diff: false, Stacked: true, Type: "uint64"},
-			{Name: "State_locked", Label: "State Locked", Diff: false, Stacked: true, Type: "uint64"},
-			{Name: "State_login", Label: "State Login", Diff: false, Stacked: true, Type: "uint64"},
-			{Name: "State_preparing", Label: "State Preparing", Diff: false, Stacked: true, Type: "uint64"},
-			{Name: "State_reading_from_net", Label: "State Reading From Net", Diff: false, Stacked: true, Type: "uint64"},
-			{Name: "State_sending_data", Label: "State Sending Data", Diff: false, Stacked: true, Type: "uint64"},
-			{Name: "State_sorting_result", Label: "State Sorting Result", Diff: false, Stacked: true, Type: "uint64"},
-			{Name: "State_statistics", Label: "State Statistics", Diff: false, Stacked: true, Type: "uint64"},
-			{Name: "State_updating", Label: "State Updating", Diff: false, Stacked: true, Type: "uint64"},
-			{Name: "State_writing_to_net", Label: "State Writing To Net", Diff: false, Stacked: true, Type: "uint64"},
-			{Name: "State_none", Label: "State None", Diff: false, Stacked: true, Type: "uint64"},
-			{Name: "State_other", Label: "State Other", Diff: false, Stacked: true, Type: "uint64"},
+			{Name: "State_closing_tables", Label: "State Closing Tables", Diff: false, Stacked: true},
+			{Name: "State_copying_to_tmp_table", Label: "State Copying To Tmp Table", Diff: false, Stacked: true},
+			{Name: "State_end", Label: "State End", Diff: false, Stacked: true},
+			{Name: "State_freeing_items", Label: "State Freeing Items", Diff: false, Stacked: true},
+			{Name: "State_init", Label: "State Init", Diff: false, Stacked: true},
+			{Name: "State_locked", Label: "State Locked", Diff: false, Stacked: true},
+			{Name: "State_login", Label: "State Login", Diff: false, Stacked: true},
+			{Name: "State_preparing", Label: "State Preparing", Diff: false, Stacked: true},
+			{Name: "State_reading_from_net", Label: "State Reading From Net", Diff: false, Stacked: true},
+			{Name: "State_sending_data", Label: "State Sending Data", Diff: false, Stacked: true},
+			{Name: "State_sorting_result", Label: "State Sorting Result", Diff: false, Stacked: true},
+			{Name: "State_statistics", Label: "State Statistics", Diff: false, Stacked: true},
+			{Name: "State_updating", Label: "State Updating", Diff: false, Stacked: true},
+			{Name: "State_writing_to_net", Label: "State Writing To Net", Diff: false, Stacked: true},
+			{Name: "State_none", Label: "State None", Diff: false, Stacked: true},
+			{Name: "State_other", Label: "State Other", Diff: false, Stacked: true},
 		},
 	}
 	graphdef["sorts"] = mp.Graphs{
 		Label: labelPrefix + " sorts",
 		Unit:  "float",
 		Metrics: []mp.Metrics{
-			{Name: "Sort_rows", Label: "Sort Rows", Diff: true, Stacked: false, Type: "uint64"},
-			{Name: "Sort_range", Label: "Sort Range", Diff: true, Stacked: false, Type: "uint64"},
-			{Name: "Sort_merge_passes", Label: "Sort Merge Passes", Diff: true, Stacked: false, Type: "uint64"},
-			{Name: "Sort_scan", Label: "Sort Scan", Diff: true, Stacked: false, Type: "uint64"},
+			{Name: "Sort_rows", Label: "Sort Rows", Diff: true, Stacked: false},
+			{Name: "Sort_range", Label: "Sort Range", Diff: true, Stacked: false},
+			{Name: "Sort_merge_passes", Label: "Sort Merge Passes", Diff: true, Stacked: false},
+			{Name: "Sort_scan", Label: "Sort Scan", Diff: true, Stacked: false},
 		},
 	}
 	graphdef["handlers"] = mp.Graphs{
 		Label: labelPrefix + " handlers",
 		Unit:  "float",
 		Metrics: []mp.Metrics{
-			{Name: "Handler_write", Label: "Handler Write", Diff: true, Stacked: true, Type: "uint64"},
-			{Name: "Handler_update", Label: "Handler Update", Diff: true, Stacked: true, Type: "uint64"},
-			{Name: "Handler_delete", Label: "Handler Delete", Diff: true, Stacked: true, Type: "uint64"},
-			{Name: "Handler_read_first", Label: "Handler Read First", Diff: true, Stacked: true, Type: "uint64"},
-			{Name: "Handler_read_key", Label: "Handler Read Key", Diff: true, Stacked: true, Type: "uint64"},
-			{Name: "Handler_read_last", Label: "Handler Read Last", Diff: true, Stacked: true, Type: "uint64"},
-			{Name: "Handler_read_next", Label: "Handler Read Next", Diff: true, Stacked: true, Type: "uint64"},
-			{Name: "Handler_read_prev", Label: "Handler Read Prev", Diff: true, Stacked: true, Type: "uint64"},
-			{Name: "Handler_read_rnd", Label: "Handler Read Rnd", Diff: true, Stacked: true, Type: "uint64"},
-			{Name: "Handler_read_rnd_next", Label: "Handler Read Rnd Next", Diff: true, Stacked: true, Type: "uint64"},
+			{Name: "Handler_write", Label: "Handler Write", Diff: true, Stacked: true},
+			{Name: "Handler_update", Label: "Handler Update", Diff: true, Stacked: true},
+			{Name: "Handler_delete", Label: "Handler Delete", Diff: true, Stacked: true},
+			{Name: "Handler_read_first", Label: "Handler Read First", Diff: true, Stacked: true},
+			{Name: "Handler_read_key", Label: "Handler Read Key", Diff: true, Stacked: true},
+			{Name: "Handler_read_last", Label: "Handler Read Last", Diff: true, Stacked: true},
+			{Name: "Handler_read_next", Label: "Handler Read Next", Diff: true, Stacked: true},
+			{Name: "Handler_read_prev", Label: "Handler Read Prev", Diff: true, Stacked: true},
+			{Name: "Handler_read_rnd", Label: "Handler Read Rnd", Diff: true, Stacked: true},
+			{Name: "Handler_read_rnd_next", Label: "Handler Read Rnd Next", Diff: true, Stacked: true},
 		},
 	}
 	graphdef["transaction_handler"] = mp.Graphs{
 		Label: labelPrefix + " transaction handler",
 		Unit:  "float",
 		Metrics: []mp.Metrics{
-			{Name: "Handler_commit", Label: "Handler Commit", Diff: true, Stacked: false, Type: "uint64"},
-			{Name: "Handler_rollback", Label: "Handler Rollback", Diff: true, Stacked: false, Type: "uint64"},
-			{Name: "Handler_savepoint", Label: "Handler Savepoint", Diff: true, Stacked: false, Type: "uint64"},
-			{Name: "Handler_savepoint_rollback", Label: "Handler Savepoint Rollback", Diff: true, Stacked: false, Type: "uint64"},
+			{Name: "Handler_commit", Label: "Handler Commit", Diff: true, Stacked: false},
+			{Name: "Handler_rollback", Label: "Handler Rollback", Diff: true, Stacked: false},
+			{Name: "Handler_savepoint", Label: "Handler Savepoint", Diff: true, Stacked: false},
+			{Name: "Handler_savepoint_rollback", Label: "Handler Savepoint Rollback", Diff: true, Stacked: false},
 		},
 	}
 	graphdef["myisam_indexes"] = mp.Graphs{
 		Label: labelPrefix + " MyISAM Indexes",
 		Unit:  "float",
 		Metrics: []mp.Metrics{
-			{Name: "Key_read_requests", Label: "Key Read Requests", Diff: true, Stacked: false, Type: "uint64"},
-			{Name: "Key_reads", Label: "Key Reads", Diff: true, Stacked: false, Type: "uint64"},
-			{Name: "Key_write_requests", Label: "Key Write Requests", Diff: true, Stacked: false, Type: "uint64"},
-			{Name: "Key_writes", Label: "Key Writes", Diff: true, Stacked: false, Type: "uint64"},
+			{Name: "Key_read_requests", Label: "Key Read Requests", Diff: true, Stacked: false},
+			{Name: "Key_reads", Label: "Key Reads", Diff: true, Stacked: false},
+			{Name: "Key_write_requests", Label: "Key Write Requests", Diff: true, Stacked: false},
+			{Name: "Key_writes", Label: "Key Writes", Diff: true, Stacked: false},
 		},
 	}
 	graphdef["myisam_key_cache"] = mp.Graphs{
 		Label: labelPrefix + " MyISAM Key Cache",
 		Unit:  "bytes",
 		Metrics: []mp.Metrics{
-			{Name: "key_buffer_size", Label: "Key Buffer Size", Diff: false, Stacked: false, Type: "uint64"},
-			{Name: "key_buf_bytes_used", Label: "Key Buf Bytes Used", Diff: false, Stacked: false, Type: "uint64"},
-			{Name: "key_buf_bytes_unflushed", Label: "Key Buf Bytes Unflushed", Diff: false, Stacked: false, Type: "uint64"},
+			{Name: "key_buffer_size", Label: "Key Buffer Size", Diff: false, Stacked: false},
+			{Name: "key_buf_bytes_used", Label: "Key Buf Bytes Used", Diff: false, Stacked: false},
+			{Name: "key_buf_bytes_unflushed", Label: "Key Buf Bytes Unflushed", Diff: false, Stacked: false},
 		},
 	}
 
