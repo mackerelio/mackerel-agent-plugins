@@ -1,3 +1,10 @@
+mackerel-agent-plugins (0.53.0-1) stable; urgency=low
+
+  * [mysql] Use go-mackerel-plugin instead of go-mackerel-plugin-helper (by shibayu36)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/531>
+
+ -- mackerel <mackerel-developers@hatena.ne.jp>  Mon, 12 Nov 2018 11:28:14 +0900
+
 mackerel-agent-plugins (0.52.0-1) stable; urgency=low
 
   * Set (default) User-Agent header to HTTP requests (by astj)

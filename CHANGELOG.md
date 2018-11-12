@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.53.0 (2018-11-12)
+
+* [mysql] Use go-mackerel-plugin instead of go-mackerel-plugin-helper #531 (shibayu36)
+
+
 ## 0.52.0 (2018-10-17)
 
 * Set (default) User-Agent header to HTTP requests #528 (astj)
