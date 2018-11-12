@@ -49,6 +49,9 @@ done
 %{__oldtargetdir}/*
 
 %changelog
+* Mon Nov 12 2018 <mackerel-developers@hatena.ne.jp> - 0.53.0
+- [mysql] Use go-mackerel-plugin instead of go-mackerel-plugin-helper (by shibayu36)
+
 * Wed Oct 17 2018 <mackerel-developers@hatena.ne.jp> - 0.52.0
 - Set (default) User-Agent header to HTTP requests (by astj)
 - Build with Go 1.11 (by astj)
