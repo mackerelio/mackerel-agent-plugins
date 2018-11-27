@@ -306,7 +306,12 @@ func (p PostgresPlugin) MetricKeyPrefix() string {
 // FetchMetrics interface for mackerelplugin
 func (p PostgresPlugin) FetchMetrics() (map[string]interface{}, error) {
 
-	db, err := sqlx.Connect("postgres", fmt.Sprintf("user=%s password=%s host=%s port=%s sslmode=%s connect_timeout=%d %s", p.Username, p.Password, p.Host, p.Port, p.SSLmode, p.Timeout, p.Option))
+	cmd := fmt.Sprintf("user=%s host=%s port=%s sslmode=%s connect_timeout=%d %s", p.Username, p.Host, p.Port, p.SSLmode, p.Timeout, p.Option)
+	if p.Password != "" {
+		cmd = fmt.Sprintf("password=%s %s", p.Password, cmd)
+	}
+	db, err := sqlx.Connect("postgres", cmd)
+
 	if err != nil {
 		logger.Errorf("FetchMetrics: %s", err)
 		return nil, err
@@ -446,11 +451,6 @@ func Do() {
 
 	if *optUser == "" {
 		logger.Warningf("user is required")
-		flag.PrintDefaults()
-		os.Exit(1)
-	}
-	if *optPass == "" {
-		logger.Warningf("password is required")
 		flag.PrintDefaults()
 		os.Exit(1)
 	}
