@@ -7,6 +7,7 @@ import (
 	"net"
 	"regexp"
 	"strconv"
+	"io"
 
 	mp "github.com/mackerelio/go-mackerel-plugin-helper"
 )
@@ -78,7 +79,12 @@ func (m SquidPlugin) FetchMetrics() (map[string]interface{}, error) {
 		return nil, err
 	}
 	fmt.Fprintln(conn, "GET cache_object://"+m.Target+"/info HTTP/1.0\n\n")
-	scanner := bufio.NewScanner(conn)
+	return m.ParseMgrInfo(conn)
+}
+
+// ParseMgrInfo parser for squid mgr:info
+func (m SquidPlugin) ParseMgrInfo(info io.Reader) (map[string]interface{}, error) {
+	scanner := bufio.NewScanner(info)
 
 	stat := make(map[string]interface{})
 	//regexpmap := make(map[string]*regexp.Regexp)
@@ -114,15 +120,17 @@ func (m SquidPlugin) FetchMetrics() (map[string]interface{}, error) {
 				continue
 			}
 
-			stat[key], err = strconv.ParseFloat(match[1], 64)
+			v, err := strconv.ParseFloat(match[1], 64)
 			if err != nil {
 				return nil, err
 			}
+			stat[key] = v
+
 			break
 		}
 	}
 
-	return stat, err
+	return stat, nil
 }
 
 // GraphDefinition interface for mackerelplugin
