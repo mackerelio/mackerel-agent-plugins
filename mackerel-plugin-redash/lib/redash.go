@@ -3,6 +3,8 @@ package mpredash
 import (
 	"flag"
 	"fmt"
+	"net/url"
+	"os"
 	"strings"
 
 	mp "github.com/mackerelio/go-mackerel-plugin-helper"
@@ -93,10 +95,20 @@ func (p RedashPlugin) FetchMetrics() (map[string]interface{}, error) {
 // Do the plugin
 func Do() {
 	optURI := flag.String("uri", "http://localhost/api/admin/queries/tasks?api_key=hoge", "stats URI")
+	apiKey := flag.String("api-key", os.Getenv("REDASH_API_KEY"), "API key")
 	optPrefix := flag.String("metric-key-prefix", "redash", "Metric key prefix")
 	optTimeout := flag.Uint("timeout", 5, "Timeout")
 	optTempfile := flag.String("tempfile", "", "Temp file name")
 	flag.Parse()
+
+	if *apiKey != "" {
+		u, _ := url.Parse(*optURI)
+		query := u.Query()
+		query.Set("api_key", *apiKey)
+		u.RawQuery = query.Encode()
+		newURIString := u.String()
+		optURI = &newURIString
+	}
 
 	p := RedashPlugin{
 		URI:     *optURI,
