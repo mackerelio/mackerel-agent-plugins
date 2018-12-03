@@ -84,6 +84,7 @@ func (m SquidPlugin) FetchMetrics() (map[string]interface{}, error) {
 
 // ParseMgrInfo parser for squid mgr:info
 func (m SquidPlugin) ParseMgrInfo(info io.Reader) (map[string]interface{}, error) {
+	// https://wiki.squid-cache.org/Features/CacheManager/Info?highlight=%28Feature..Squid.Cache.Manager%29
 	scanner := bufio.NewScanner(info)
 
 	stat := make(map[string]interface{})
