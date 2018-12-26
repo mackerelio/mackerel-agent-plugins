@@ -104,11 +104,8 @@ func Do() {
 	optTempfile := flag.String("tempfile", "", "Temp file name")
 	flag.Parse()
 
-	if *apiKey == "" {
-		logger.Errorf("api-key is required")
-		flag.PrintDefaults()
-		os.Exit(1)
-	} else {
+	// We recommend using -api-key option, but it's still possible specify ?api_key=XXX directly in -uri option.
+	if *apiKey != "" {
 		u, _ := url.Parse(*optURI)
 		query := u.Query()
 		query.Set("api_key", *apiKey)
