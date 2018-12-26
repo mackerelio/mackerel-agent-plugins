@@ -6,8 +6,10 @@ redash stats custom metrics plugin for [mackerel-agent](https://github.com/macke
 ## Synopsis
 
 ```shell
-mackerel-plugin-redash [-metric-key-prefix=redash] [-timeout=5] [-uri=http://localhost/api/admin/queries/tasks?api_key=hoge]
+mackerel-plugin-redash -api-key=YOUR_REDASH_API_KEY [-metric-key-prefix=redash] [-timeout=5] [-uri=http://localhost/api/admin/queries/tasks]
 ```
+
+`REDASH_API_KEY` environment variable is used as `api_key` query in uri if it is set.
 
 ## Example of mackerel-agent.conf
 
