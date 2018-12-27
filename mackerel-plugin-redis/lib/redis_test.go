@@ -10,7 +10,7 @@ import (
 
 var metrics = []string{
 	"instantaneous_ops_per_sec", "total_connections_received", "rejected_connections", "connected_clients",
-	"blocked_clients", "connected_slaves", "keys", "expires", "expired", "keyspace_hits", "keyspace_misses", "used_memory",
+	"blocked_clients", "connected_slaves", "keys", "expires", "expired", "evicted_keys", "keyspace_hits", "keyspace_misses", "used_memory",
 	"used_memory_rss", "used_memory_peak", "used_memory_lua", "uptime_in_seconds",
 }
 
