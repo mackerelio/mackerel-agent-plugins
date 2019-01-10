@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.54.0 (2019-01-10)
+
+* [redis] Change evicted_keys.Diff to true #539 (lufia)
+* [redis] Add evicted_keys metric #537 (lufia)
+* Add redash api-key option #535 (kyoshidajp)
+* [squid] Add metrics to squid #534 (nabeo)
+* [postgres] Enable connection without password #533 (kyoshidajp)
+
+
 ## 0.53.0 (2018-11-12)
 
 * [mysql] Use go-mackerel-plugin instead of go-mackerel-plugin-helper #531 (shibayu36)
