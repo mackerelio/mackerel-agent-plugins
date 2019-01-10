@@ -264,7 +264,7 @@ func (m RedisPlugin) GraphDefinition() map[string]mp.Graphs {
 				{Name: "keys", Label: "Keys", Diff: false},
 				{Name: "expires", Label: "Keys with expiration", Diff: false},
 				{Name: "expired", Label: "Expired Keys", Diff: true},
-				{Name: "evicted_keys", Label: "Evicted Keys", Diff: false},
+				{Name: "evicted_keys", Label: "Evicted Keys", Diff: true},
 			},
 		},
 		"keyspace": {
