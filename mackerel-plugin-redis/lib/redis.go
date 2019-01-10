@@ -209,13 +209,6 @@ func (m RedisPlugin) FetchMetrics() (map[string]interface{}, error) {
 	stat["keys"] = keysStat
 	stat["expires"] = expiresStat
 
-	if _, ok := stat["keys"]; !ok {
-		stat["keys"] = 0
-	}
-	if _, ok := stat["expires"]; !ok {
-		stat["expires"] = 0
-	}
-
 	if _, ok := stat["expired_keys"]; ok {
 		stat["expired"] = stat["expired_keys"]
 	} else {
