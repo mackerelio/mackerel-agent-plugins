@@ -1,3 +1,18 @@
+mackerel-agent-plugins (0.54.0-1) stable; urgency=low
+
+  * [redis] Change evicted_keys.Diff to true (by lufia)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/539>
+  * [redis] Add evicted_keys metric (by lufia)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/537>
+  * Add redash api-key option (by kyoshidajp)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/535>
+  * [squid] Add metrics to squid (by nabeo)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/534>
+  * [postgres] Enable connection without password (by kyoshidajp)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/533>
+
+ -- mackerel <mackerel-developers@hatena.ne.jp>  Thu, 10 Jan 2019 15:14:35 +0900
+
 mackerel-agent-plugins (0.53.0-1) stable; urgency=low
 
   * [mysql] Use go-mackerel-plugin instead of go-mackerel-plugin-helper (by shibayu36)

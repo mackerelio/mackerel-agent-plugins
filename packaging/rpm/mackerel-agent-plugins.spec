@@ -49,6 +49,13 @@ done
 %{__oldtargetdir}/*
 
 %changelog
+* Thu Jan 10 2019 <mackerel-developers@hatena.ne.jp> - 0.54.0
+- [redis] Change evicted_keys.Diff to true (by lufia)
+- [redis] Add evicted_keys metric (by lufia)
+- Add redash api-key option (by kyoshidajp)
+- [squid] Add metrics to squid (by nabeo)
+- [postgres] Enable connection without password (by kyoshidajp)
+
 * Mon Nov 12 2018 <mackerel-developers@hatena.ne.jp> - 0.53.0
 - [mysql] Use go-mackerel-plugin instead of go-mackerel-plugin-helper (by shibayu36)
 
