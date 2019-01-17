@@ -17,6 +17,7 @@ type PhpFpmPlugin struct {
 	Prefix      string
 	LabelPrefix string
 	Timeout     uint
+	FastCGI     bool
 }
 
 // PhpFpmStatus struct for PhpFpmPlugin mackerel plugin
@@ -119,6 +120,11 @@ func getStatus(p PhpFpmPlugin) (*PhpFpmStatus, error) {
 	client := http.Client{
 		Timeout: timeout,
 	}
+	if p.FastCGI {
+		client.Transport = &FastCGITransport{
+			Timeout: timeout,
+		}
+	}
 
 	req, err := http.NewRequest(http.MethodGet, url, nil)
 	if err != nil {
@@ -150,6 +156,7 @@ func Do() {
 	optLabelPrefix := flag.String("metric-label-prefix", "PHP-FPM", "Metric label prefix")
 	optTimeout := flag.Uint("timeout", 5, "Timeout")
 	optTempfile := flag.String("tempfile", "", "Temp file name")
+	optFastCGI := flag.Bool("fcgi", false, "FastCGI mode")
 	flag.Parse()
 
 	p := PhpFpmPlugin{
@@ -157,6 +164,7 @@ func Do() {
 		Prefix:      *optPrefix,
 		LabelPrefix: *optLabelPrefix,
 		Timeout:     *optTimeout,
+		FastCGI:     *optFastCGI,
 	}
 	helper := mp.NewMackerelPlugin(p)
 	helper.Tempfile = *optTempfile
