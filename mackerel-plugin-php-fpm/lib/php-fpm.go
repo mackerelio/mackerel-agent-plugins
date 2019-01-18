@@ -23,6 +23,7 @@ type PhpFpmPlugin struct {
 	Socket      SocketFlag
 }
 
+// SocketFlag represents -socket flag.
 type SocketFlag struct {
 	u       *url.URL
 	Network string
@@ -36,6 +37,7 @@ func (p *SocketFlag) String() string {
 	return p.u.String()
 }
 
+// Set implements flag.Value interface.
 func (p *SocketFlag) Set(s string) error {
 	*p = SocketFlag{}
 	u, err := parseSocketFlag(s)
@@ -92,6 +94,7 @@ func parseHostOrErr(s string, retErr error) (*url.URL, error) {
 	}, nil
 }
 
+// Transport returns http.RoundTripper corresponding to the flag.
 func (p *SocketFlag) Transport() http.RoundTripper {
 	switch p.Network {
 	case "tcp", "unix":

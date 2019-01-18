@@ -10,11 +10,12 @@ import (
 	"github.com/tomasen/fcgi_client"
 )
 
-// Transporter implements FastCGI protocol client.
+// FastCGITransport is an implementation of RoundTripper that supports FastCGI.
 type FastCGITransport struct {
 	Timeout time.Duration
 }
 
+// RoundTrip implements the RoundTripper interface.
 func (t *FastCGITransport) RoundTrip(req *http.Request) (*http.Response, error) {
 	c, err := fcgiclient.DialTimeout("tcp", "localhost:9000", t.Timeout)
 	if err != nil {
@@ -53,7 +54,7 @@ func (t *FastCGITransport) RoundTrip(req *http.Request) (*http.Response, error) 
 	body := resp.Body
 	defer body.Close()
 
-	// c can disconnect before end of reading of resp.Body.
+	// Var c can disconnect before end of reading of resp.Body.
 	// So contents of resp.Body should copy in memory.
 	var buf bytes.Buffer
 	if _, err := buf.ReadFrom(body); err != nil {
