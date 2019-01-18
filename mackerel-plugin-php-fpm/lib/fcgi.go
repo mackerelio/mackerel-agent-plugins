@@ -12,12 +12,21 @@ import (
 
 // FastCGITransport is an implementation of RoundTripper that supports FastCGI.
 type FastCGITransport struct {
-	Timeout time.Duration
+	Network string
+	Address string
+}
+
+func (*FastCGITransport) timeout(req *http.Request) time.Duration {
+	t, ok := req.Context().Deadline()
+	if !ok {
+		return 0 // no timeout
+	}
+	return t.Sub(time.Now())
 }
 
 // RoundTrip implements the RoundTripper interface.
 func (t *FastCGITransport) RoundTrip(req *http.Request) (*http.Response, error) {
-	c, err := fcgiclient.DialTimeout("tcp", "localhost:9000", t.Timeout)
+	c, err := fcgiclient.DialTimeout(t.Network, t.Address, t.timeout(req))
 	if err != nil {
 		return nil, err
 	}

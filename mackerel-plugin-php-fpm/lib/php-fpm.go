@@ -1,6 +1,7 @@
 package mpphpfpm
 
 import (
+	"context"
 	"encoding/json"
 	"flag"
 	"fmt"
@@ -214,6 +215,11 @@ func getStatus(p PhpFpmPlugin) (*PhpFpmStatus, error) {
 		return nil, err
 	}
 	req.Header.Set("User-Agent", "mackerel-plugin-php-fpm")
+	if timeout > 0 {
+		ctx, cancel := context.WithTimeout(context.Background(), timeout)
+		defer cancel()
+		req = req.WithContext(ctx)
+	}
 
 	res, err := client.Do(req)
 	if err != nil {
