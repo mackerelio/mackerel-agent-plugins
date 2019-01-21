@@ -14,11 +14,20 @@ run_plugin()
 }
 
 d=$(mktemp -d -t mackerel-plugin-php-fpm)
-trap 'rm -rf $d; exit 1' 1 2 3 15
+cleanup()
+{
+	local status=$?
+	rm -rf $d
+	pkill php-fpm
+	exit $status
+}
+trap cleanup HUP INT QUIT TERM EXIT
 
 #
 # tests
 #
+sock_tcp=tcp://localhost:9000
+sock_unix=unix:///tmp/php-fpm.sock
 protocols=(tcp unix)
 for proto in "${protocols[@]}"
 do
@@ -26,12 +35,11 @@ do
 	mkfifo $pidfile
 	php-fpm -y php-fpm.$proto.conf -g $pidfile -D
 	pid=$(cat $pidfile)
-	run_plugin -fcgi -url 'http://localhost:9000/status?json'
+	sock=sock_$proto
+	run_plugin -socket "${!sock}" -url 'http://localhost:9000/status?json'
 	kill $pid
 	while ps -p $pid >/dev/null
 	do
 		sleep 1
 	done
 done
-
-rm -rf $d
