@@ -1,11 +1,15 @@
 package mpphpfpm
 
 import (
+	"context"
 	"encoding/json"
 	"flag"
 	"fmt"
 	"io/ioutil"
+	"net"
 	"net/http"
+	"net/url"
+	"strings"
 	"time"
 
 	mp "github.com/mackerelio/go-mackerel-plugin-helper"
@@ -17,6 +21,95 @@ type PhpFpmPlugin struct {
 	Prefix      string
 	LabelPrefix string
 	Timeout     uint
+	Socket      SocketFlag
+}
+
+// SocketFlag represents -socket flag.
+type SocketFlag struct {
+	u       *url.URL
+	Network string
+	Address string
+}
+
+func (p *SocketFlag) String() string {
+	if p.u == nil {
+		return ""
+	}
+	return p.u.String()
+}
+
+// Set implements flag.Value interface.
+func (p *SocketFlag) Set(s string) error {
+	*p = SocketFlag{}
+	u, err := parseSocketFlag(s)
+	if err != nil {
+		return err
+	}
+	switch u.Scheme {
+	case "tcp":
+		p.Network = "tcp"
+		p.Address = u.Host
+	case "unix":
+		p.Network = "unix"
+		p.Address = u.Path
+	default:
+		return fmt.Errorf("unknown scheme: %s", u.Scheme)
+	}
+	p.u = u
+	return nil
+}
+
+const defaultFCGIPort = "9000"
+
+func parseSocketFlag(s string) (*url.URL, error) {
+	u, err := url.Parse(s)
+	if err != nil {
+		return parseHostOrErr(s, err)
+	}
+	switch {
+	case u.Scheme == "tcp" && u.Host != "":
+		if u.Port() == "" {
+			u.Host = net.JoinHostPort(u.Host, defaultFCGIPort)
+		}
+	case u.Scheme == "unix" && u.Path != "":
+		// do nothing
+	case u.Scheme == "" && u.Path != "":
+		u.Scheme = "unix"
+	case u.Scheme == "" && u.Host != "":
+		u.Scheme = "tcp"
+	default:
+		return parseHostOrErr(s, fmt.Errorf("can't parse socket url: %s", s))
+	}
+	return u, nil
+}
+
+func parseHostOrErr(s string, retErr error) (*url.URL, error) {
+	if _, _, err := net.SplitHostPort(s); err != nil {
+		return nil, retErr
+	}
+	// RFC 952 describes that hostname is composed of ASCII characters [0-9a-z-].
+	// net.SplitHostPort splits colon separated string, but it don't verify hostname and port is valid.
+	// Therefore we should return an error when either hostname or port contains invalid charcters.
+	if strings.ContainsAny(s, "/#") {
+		return nil, retErr
+	}
+	return &url.URL{
+		Scheme: "tcp",
+		Host:   s,
+	}, nil
+}
+
+// Transport returns http.RoundTripper corresponding to the flag.
+func (p *SocketFlag) Transport() http.RoundTripper {
+	switch p.Network {
+	case "tcp", "unix":
+		return &FastCGITransport{
+			Network: p.Network,
+			Address: p.Address,
+		}
+	default:
+		return nil // http.DefaultTransport
+	}
 }
 
 // PhpFpmStatus struct for PhpFpmPlugin mackerel plugin
@@ -117,7 +210,8 @@ func getStatus(p PhpFpmPlugin) (*PhpFpmStatus, error) {
 	url := p.URL
 	timeout := time.Duration(time.Duration(p.Timeout) * time.Second)
 	client := http.Client{
-		Timeout: timeout,
+		Timeout:   timeout,
+		Transport: p.Socket.Transport(),
 	}
 
 	req, err := http.NewRequest(http.MethodGet, url, nil)
@@ -125,6 +219,11 @@ func getStatus(p PhpFpmPlugin) (*PhpFpmStatus, error) {
 		return nil, err
 	}
 	req.Header.Set("User-Agent", "mackerel-plugin-php-fpm")
+	if timeout > 0 {
+		ctx, cancel := context.WithTimeout(context.Background(), timeout)
+		defer cancel()
+		req = req.WithContext(ctx)
+	}
 
 	res, err := client.Do(req)
 	if err != nil {
@@ -138,7 +237,9 @@ func getStatus(p PhpFpmPlugin) (*PhpFpmStatus, error) {
 	}
 
 	var status *PhpFpmStatus
-	json.Unmarshal(body, &status)
+	if err := json.Unmarshal(body, &status); err != nil {
+		return nil, err
+	}
 
 	return status, nil
 }
@@ -150,6 +251,8 @@ func Do() {
 	optLabelPrefix := flag.String("metric-label-prefix", "PHP-FPM", "Metric label prefix")
 	optTimeout := flag.Uint("timeout", 5, "Timeout")
 	optTempfile := flag.String("tempfile", "", "Temp file name")
+	var socketFlag SocketFlag
+	flag.Var(&socketFlag, "socket", "Unix domain socket `path or URL`")
 	flag.Parse()
 
 	p := PhpFpmPlugin{
@@ -157,6 +260,7 @@ func Do() {
 		Prefix:      *optPrefix,
 		LabelPrefix: *optLabelPrefix,
 		Timeout:     *optTimeout,
+		Socket:      socketFlag,
 	}
 	helper := mp.NewMackerelPlugin(p)
 	helper.Tempfile = *optTempfile

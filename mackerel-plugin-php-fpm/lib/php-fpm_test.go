@@ -48,3 +48,96 @@ func TestGetStatus(t *testing.T) {
 	assert.EqualValues(t, 3, status.MaxListenQueue)
 	assert.EqualValues(t, 1000, status.SlowRequests)
 }
+
+func TestSocketFlag_Set(t *testing.T) {
+	tests := []struct {
+		Name string
+		URL  string
+
+		Network string
+		Address string
+		Err     string
+	}{
+		{
+			Name:    "parse absolute filepath",
+			URL:     "/dev/null",
+			Network: "unix",
+			Address: "/dev/null",
+		},
+		{
+			Name:    "parse relative filepath",
+			URL:     "a/b/c",
+			Network: "unix",
+			Address: "a/b/c",
+		},
+		{
+			Name:    "parse filename",
+			URL:     "file",
+			Network: "unix",
+			Address: "file",
+		},
+		{
+			Name:    "parse Go's address style",
+			URL:     "localhost:9000",
+			Network: "tcp",
+			Address: "localhost:9000",
+		},
+		{
+			Name:    "parse ipv6 address",
+			URL:     "[::1]:1000",
+			Network: "tcp",
+			Address: "[::1]:1000",
+		},
+		{
+			Name:    "parse unix:// scheme",
+			URL:     "unix:///path/to",
+			Network: "unix",
+			Address: "/path/to",
+		},
+		{
+			Name:    "parse tcp:// scheme",
+			URL:     "tcp://localhost",
+			Network: "tcp",
+			Address: "localhost:9000",
+		},
+		{
+			Name:    "parse tcp:// scheme hostport",
+			URL:     "tcp://localhost:9000/",
+			Network: "tcp",
+			Address: "localhost:9000",
+		},
+		{
+			Name: "parse error: empty scheme",
+			URL:  "://test/",
+			Err:  "parse",
+		},
+		{
+			Name: "parse error: unknown scheme",
+			URL:  "aaa://test/",
+			Err:  "parse",
+		},
+		{
+			Name: "parse error: syntax",
+			URL:  ":@:",
+			Err:  "parse",
+		},
+		{
+			Name: "parse error: no host or port",
+			URL:  "?aaa",
+			Err:  "parse",
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.Name, func(t *testing.T) {
+			var p SocketFlag
+			err := p.Set(tt.URL)
+			assert.Equal(t, tt.Network, p.Network)
+			assert.Equal(t, tt.Address, p.Address)
+			if tt.Err == "" {
+				assert.NoError(t, err)
+			} else {
+				assert.Error(t, err, tt.Err)
+			}
+		})
+	}
+}
