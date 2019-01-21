@@ -98,7 +98,7 @@ func TestSocketFlag_Set(t *testing.T) {
 			Name:    "parse tcp:// scheme",
 			URL:     "tcp://localhost",
 			Network: "tcp",
-			Address: "localhost", // should we set default port?
+			Address: "localhost:9000",
 		},
 		{
 			Name:    "parse tcp:// scheme hostport",

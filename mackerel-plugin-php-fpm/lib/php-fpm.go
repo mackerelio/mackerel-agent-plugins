@@ -59,6 +59,8 @@ func (p *SocketFlag) Set(s string) error {
 	return nil
 }
 
+const defaultFCGIPort = "9000"
+
 func parseSocketFlag(s string) (*url.URL, error) {
 	u, err := url.Parse(s)
 	if err != nil {
@@ -66,7 +68,9 @@ func parseSocketFlag(s string) (*url.URL, error) {
 	}
 	switch {
 	case u.Scheme == "tcp" && u.Host != "":
-		// do nothing
+		if u.Port() == "" {
+			u.Host = net.JoinHostPort(u.Host, defaultFCGIPort)
+		}
 	case u.Scheme == "unix" && u.Path != "":
 		// do nothing
 	case u.Scheme == "" && u.Path != "":
