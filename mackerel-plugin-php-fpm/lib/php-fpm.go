@@ -53,7 +53,7 @@ func (p *SocketFlag) Set(s string) error {
 		p.Network = "unix"
 		p.Address = u.Path
 	default:
-		panic("unknown scheme: " + u.Scheme)
+		return fmt.Errorf("unknown scheme: %s", u.Scheme)
 	}
 	p.u = u
 	return nil
