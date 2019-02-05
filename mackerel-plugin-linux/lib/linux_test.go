@@ -117,6 +117,23 @@ u_str ESTAB      0      0                                    @/com/ubuntu/upstar
 	assert.EqualValues(t, stat["ESTAB"], 1)
 }
 
+func TestParseSs3(t *testing.T) {
+	stub := `NetidState      Recv-Q Send-Q                                      Local Address:Port                                        Peer Address:Port
+nl   UNCONN     0      0                                                      18:0                                                       *
+p_rawUNCONN     0      0                                                       *:em2                                                     *
+u_dgrUNCONN     0      0                                                /dev/log 10549                                                  * 0
+u_dgrLISTEN     0      0                                       /run/udev/control 8552                                                   * 0
+u_strLISTEN     0      10                                  /var/run/acpid.socket 9649                                                   * 0
+u_strESTAB      0      0                                    @/com/ubuntu/upstart 10582                                                  * 1887`
+	stat := make(map[string]interface{})
+
+	err := parseSs(bytes.NewBufferString(stub), &stat)
+	assert.Nil(t, err)
+	assert.EqualValues(t, stat["LISTEN"], 2)
+	assert.EqualValues(t, stat["UNCONN"], 3)
+	assert.EqualValues(t, stat["ESTAB"], 1)
+}
+
 func TestCollectProcVmstat(t *testing.T) {
 	path := "/proc/vmstat"
 	_, err := os.Stat(path)
