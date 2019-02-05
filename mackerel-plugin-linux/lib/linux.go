@@ -406,12 +406,12 @@ func parseSs(r io.Reader, p *map[string]interface{}) error {
 				status = 1
 				overstuffed = true
 			}
+			continue
 		}
 		key := record[status]
 		if overstuffed && len(record[0]) > 5 {
 			key = record[0][5:]
 		}
-
 		v, _ := (*p)[key].(float64)
 		(*p)[key] = v + 1
 	}
