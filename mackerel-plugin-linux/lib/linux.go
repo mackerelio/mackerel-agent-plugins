@@ -381,8 +381,11 @@ func collectNetworkStat(p *map[string]interface{}) error {
 
 // parsing metrics from ss
 func parseSs(r io.Reader, p *map[string]interface{}) error {
-	status := 0
-	first := true
+	var (
+		status      = 0
+		first       = true
+		overstuffed = false
+	)
 	scanner := bufio.NewScanner(r)
 
 	for scanner.Scan() {
@@ -399,10 +402,18 @@ func parseSs(r io.Reader, p *map[string]interface{}) error {
 			} else if record[1] == "State" {
 				// for RHEL7
 				status = 1
+			} else if record[0] == "NetidState" {
+				status = 1
+				overstuffed = true
 			}
+			continue
 		}
-		v, _ := (*p)[record[status]].(float64)
-		(*p)[record[status]] = v + 1
+		key := record[status]
+		if overstuffed && len(record[0]) > 5 {
+			key = record[0][5:]
+		}
+		v, _ := (*p)[key].(float64)
+		(*p)[key] = v + 1
 	}
 
 	return nil

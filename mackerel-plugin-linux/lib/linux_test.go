@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"fmt"
 	"os"
+	"reflect"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -86,37 +87,70 @@ func TestCollectNetworkStat(t *testing.T) {
 }
 
 func TestParseSs(t *testing.T) {
-	stub := `State      Recv-Q Send-Q                       Local Address:Port                         Peer Address:Port 
+	testCases := []struct {
+		name   string
+		input  string
+		expect map[string]interface{}
+	}{
+		{
+			name: "Cent6",
+			input: `State      Recv-Q Send-Q                       Local Address:Port                         Peer Address:Port 
 LISTEN     0      128                                     :::45103                                  :::*     
 LISTEN     0      128                                     :::111                                    :::* 
 TIME-WAIT  0      0                         ::ffff:127.0.0.1:80                       ::ffff:127.0.0.1:50082 
-ESTAB      0      0                              10.0.25.101:60826                         10.0.25.104:5672  `
-	stat := make(map[string]interface{})
-
-	err := parseSs(bytes.NewBufferString(stub), &stat)
-	assert.Nil(t, err)
-	assert.EqualValues(t, stat["LISTEN"], 2)
-	assert.EqualValues(t, stat["TIME-WAIT"], 1)
-	assert.EqualValues(t, stat["ESTAB"], 1)
-}
-
-func TestParseSs2(t *testing.T) {
-	stub := `Netid State      Recv-Q Send-Q                                      Local Address:Port                                        Peer Address:Port
+ESTAB      0      0                              10.0.25.101:60826                         10.0.25.104:5672  `,
+			expect: map[string]interface{}{
+				"LISTEN":    2.0,
+				"TIME-WAIT": 1.0,
+				"ESTAB":     1.0,
+			},
+		},
+		{
+			name: "Cent7",
+			input: `Netid State      Recv-Q Send-Q                                      Local Address:Port                                        Peer Address:Port
 nl    UNCONN     0      0                                                      18:0                                                       *
 p_raw UNCONN     0      0                                                       *:em2                                                     *
 u_dgr UNCONN     0      0                                                /dev/log 10549                                                  * 0
 u_dgr LISTEN     0      0                                       /run/udev/control 8552                                                   * 0
 u_str LISTEN     0      10                                  /var/run/acpid.socket 9649                                                   * 0
-u_str ESTAB      0      0                                    @/com/ubuntu/upstart 10582                                                  * 1887`
-	stat := make(map[string]interface{})
+u_str ESTAB      0      0                                    @/com/ubuntu/upstart 10582                                                  * 1887`,
 
-	err := parseSs(bytes.NewBufferString(stub), &stat)
-	assert.Nil(t, err)
-	assert.EqualValues(t, stat["LISTEN"], 2)
-	assert.EqualValues(t, stat["UNCONN"], 3)
-	assert.EqualValues(t, stat["ESTAB"], 1)
+			expect: map[string]interface{}{
+				"LISTEN": 2.0,
+				"UNCONN": 3.0,
+				"ESTAB":  1.0,
+			},
+		},
+		{
+			name: "Cent7 overstuffed",
+			input: `NetidState      Recv-Q Send-Q                                      Local Address:Port                                        Peer Address:Port
+nl   UNCONN     0      0                                                      18:0                                                       *
+p_rawUNCONN     0      0                                                       *:em2                                                     *
+u_dgrUNCONN     0      0                                                /dev/log 10549                                                  * 0
+u_dgrLISTEN     0      0                                       /run/udev/control 8552                                                   * 0
+u_strLISTEN     0      10                                  /var/run/acpid.socket 9649                                                   * 0
+u_strESTAB      0      0                                    @/com/ubuntu/upstart 10582                                                  * 1887`,
+			expect: map[string]interface{}{
+				"LISTEN": 2.0,
+				"UNCONN": 3.0,
+				"ESTAB":  1.0,
+			},
+		},
+	}
+
+	for _, tc := range testCases {
+		t.Run(tc.name, func(t *testing.T) {
+			out := make(map[string]interface{})
+			err := parseSs(bytes.NewBufferString(tc.input), &out)
+			if err != nil {
+				t.Errorf("error should be nil but: %s", err)
+			}
+			if !reflect.DeepEqual(out, tc.expect) {
+				t.Errorf("something went wrong:\n   out: %v\nexpect: %v", out, tc.expect)
+			}
+		})
+	}
 }
-
 func TestCollectProcVmstat(t *testing.T) {
 	path := "/proc/vmstat"
 	_, err := os.Stat(path)
