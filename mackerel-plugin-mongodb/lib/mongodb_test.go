@@ -3,12 +3,10 @@ package mpmongodb
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/globalsign/mgo/bson"
+	"github.com/stretchr/testify/assert"
 	"reflect"
 	"testing"
-
-	"github.com/globalsign/mgo/bson"
-
-	"github.com/stretchr/testify/assert"
 )
 
 func TestGraphDefinition(t *testing.T) {
@@ -164,6 +162,9 @@ func TestParse32(t *testing.T) {
 	assert.EqualValues(t, reflect.TypeOf(stat["opcounters_command"]).String(), "float64")
 	assert.EqualValues(t, stat["opcounters_command"], 175)
 }
+
+//Check in version 3.6.
+
 func TestParse36(t *testing.T) {
 	var mongodb MongoDBPlugin
 	stub3_6_4 := `
@@ -191,4 +192,3 @@ func TestParse36(t *testing.T) {
 	assert.EqualValues(t, reflect.TypeOf(stat["opcounters_command"]).String(), "float64")
 	assert.EqualValues(t, stat["opcounters_command"], 457766)
 }
-

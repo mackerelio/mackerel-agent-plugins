@@ -83,6 +83,8 @@ var graphdef30 = map[string]mp.Graphs{
 	},
 }
 
+//Adapt to version 3.2 or higher.
+//Check in version 3.6.
 var graphdef32 = map[string]mp.Graphs{
 	"mongodb.connections": {
 		Label: "MongoDB Connections",
@@ -104,29 +106,6 @@ var graphdef32 = map[string]mp.Graphs{
 		},
 	},
 }
-
-var graphdef36 = map[string]mp.Graphs{
-	"mongodb.connections": {
-		Label: "MongoDB Connections",
-		Unit:  "integer",
-		Metrics: []mp.Metrics{
-			{Name: "connections_current", Label: "current"},
-		},
-	},
-	"mongodb.opcounters": {
-		Label: "MongoDB opcounters",
-		Unit:  "integer",
-		Metrics: []mp.Metrics{
-			{Name: "opcounters_insert", Label: "Insert", Diff: true, Type: "uint64"},
-			{Name: "opcounters_query", Label: "Query", Diff: true, Type: "uint64"},
-			{Name: "opcounters_update", Label: "Update", Diff: true, Type: "uint64"},
-			{Name: "opcounters_delete", Label: "Delete", Diff: true, Type: "uint64"},
-			{Name: "opcounters_getmore", Label: "Getmore", Diff: true, Type: "uint64"},
-			{Name: "opcounters_command", Label: "Command", Diff: true, Type: "uint64"},
-		},
-	},
-}
-
 
 var metricPlace22 = map[string][]string{
 	"duration_ms":         {"backgroundFlushing", "total_ms"},
@@ -168,16 +147,11 @@ var metricPlace30 = map[string][]string{
 // backgroundFlushing information only appears for instances that use the MMAPv1 storage engine.
 // and the MMAPv1 is no longer the default storage engine in MongoDB 3.2
 // ref. https://docs.mongodb.org/manual/reference/command/serverStatus/#server-status-backgroundflushing
+
+//Adapt to version 3.2 or higher.
+//Check in version 3.6.
+
 var metricPlace32 = map[string][]string{
-	"connections_current": {"connections", "current"},
-	"opcounters_insert":   {"opcounters", "insert"},
-	"opcounters_query":    {"opcounters", "query"},
-	"opcounters_update":   {"opcounters", "update"},
-	"opcounters_delete":   {"opcounters", "delete"},
-	"opcounters_getmore":  {"opcounters", "getmore"},
-	"opcounters_command":  {"opcounters", "command"},
-}
-var metricPlace36 = map[string][]string{
 	"connections_current": {"connections", "current"},
 	"opcounters_insert":   {"opcounters", "insert"},
 	"opcounters_query":    {"opcounters", "query"},
@@ -215,7 +189,7 @@ type MongoDBPlugin struct {
 	URL      string
 	Username string
 	Password string
-	Source string
+	Source   string
 	Verbose  bool
 }
 
@@ -224,7 +198,7 @@ func (m MongoDBPlugin) fetchStatus() (bson.M, error) {
 		Addrs:    []string{m.URL},
 		Username: m.Username,
 		Password: m.Password,
-		Source: m.Source,
+		Source:   m.Source,
 		Direct:   true,
 		Timeout:  10 * time.Second,
 	}
@@ -275,7 +249,7 @@ func (m MongoDBPlugin) parseStatus(serverStatus bson.M) (map[string]interface{},
 		return stat, err
 	}
 	if v, _ := version.NewVersion("3.6"); cv.Equal(v) || cv.GreaterThan(v) {
-		metricPlace = &metricPlace36
+		metricPlace = &metricPlace32
 	} else if v, _ := version.NewVersion("3.2"); cv.Equal(v) || cv.GreaterThan(v) {
 		metricPlace = &metricPlace32
 	} else if v, _ := version.NewVersion("3.0"); cv.Equal(v) || cv.GreaterThan(v) {
@@ -308,7 +282,7 @@ func (m MongoDBPlugin) GraphDefinition() map[string]mp.Graphs {
 		return graphdef
 	}
 	if v, _ := version.NewVersion("3.6"); cv.Equal(v) || cv.GreaterThan(v) {
-		return graphdef36
+		return graphdef32
 	} else if v, _ := version.NewVersion("3.2"); cv.Equal(v) || cv.GreaterThan(v) {
 		return graphdef32
 	} else if v, _ := version.NewVersion("3.0"); cv.Equal(v) || cv.GreaterThan(v) {
@@ -324,7 +298,7 @@ func Do() {
 	optPort := flag.String("port", "27017", "Port")
 	optUser := flag.String("username", "", "Username")
 	optPass := flag.String("password", os.Getenv("MONGODB_PASSWORD"), "Password")
-	optSource := flag.String("source","admin","authenticationDatabase")
+	optSource := flag.String("source", "", "authenticationDatabase")
 	optVerbose := flag.Bool("v", false, "Verbose mode")
 	optTempfile := flag.String("tempfile", "", "Temp file name")
 	flag.Parse()
@@ -334,8 +308,8 @@ func Do() {
 	mongodb.URL = fmt.Sprintf("%s:%s", *optHost, *optPort)
 	mongodb.Username = fmt.Sprintf("%s", *optUser)
 	mongodb.Password = fmt.Sprintf("%s", *optPass)
-	mongodb.Source = fmt.Sprintf("%s",*optSource)
-	
+	mongodb.Source = fmt.Sprintf("%s", *optSource)
+
 	helper := mp.NewMackerelPlugin(mongodb)
 	if *optTempfile != "" {
 		helper.Tempfile = *optTempfile
