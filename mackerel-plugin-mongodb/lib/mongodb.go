@@ -248,9 +248,8 @@ func (m MongoDBPlugin) parseStatus(serverStatus bson.M) (map[string]interface{},
 	if err != nil {
 		return stat, err
 	}
-	if v, _ := version.NewVersion("3.6"); cv.Equal(v) || cv.GreaterThan(v) {
-		metricPlace = &metricPlace32
-	} else if v, _ := version.NewVersion("3.2"); cv.Equal(v) || cv.GreaterThan(v) {
+
+	if v, _ := version.NewVersion("3.2"); cv.Equal(v) || cv.GreaterThan(v) {
 		metricPlace = &metricPlace32
 	} else if v, _ := version.NewVersion("3.0"); cv.Equal(v) || cv.GreaterThan(v) {
 		metricPlace = &metricPlace30
@@ -281,9 +280,7 @@ func (m MongoDBPlugin) GraphDefinition() map[string]mp.Graphs {
 	if err != nil {
 		return graphdef
 	}
-	if v, _ := version.NewVersion("3.6"); cv.Equal(v) || cv.GreaterThan(v) {
-		return graphdef32
-	} else if v, _ := version.NewVersion("3.2"); cv.Equal(v) || cv.GreaterThan(v) {
+	if v, _ := version.NewVersion("3.2"); cv.Equal(v) || cv.GreaterThan(v) {
 		return graphdef32
 	} else if v, _ := version.NewVersion("3.0"); cv.Equal(v) || cv.GreaterThan(v) {
 		return graphdef30
