@@ -49,6 +49,11 @@ done
 %{__oldtargetdir}/*
 
 %changelog
+* Wed Feb 13 2019 <mackerel-developers@hatena.ne.jp> - 0.55.0
+- [mongodb] apply for mongodb authenticationDatabase (by shibacow)
+- [linux] consider the case where the width of the Netid column is only 5 in the output of ss (by Songmu)
+-  [php-fpm] add option to read status from unix domain socket (by lufia)
+
 * Thu Jan 10 2019 <mackerel-developers@hatena.ne.jp> - 0.54.0
 - [redis] Change evicted_keys.Diff to true (by lufia)
 - [redis] Add evicted_keys metric (by lufia)
