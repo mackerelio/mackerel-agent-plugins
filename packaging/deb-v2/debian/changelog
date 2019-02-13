@@ -1,3 +1,14 @@
+mackerel-agent-plugins (0.55.0-1.v2) stable; urgency=low
+
+  * [mongodb] apply for mongodb authenticationDatabase (by shibacow)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/542>
+  * [linux] consider the case where the width of the Netid column is only 5 in the output of ss (by Songmu)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/543>
+  *  [php-fpm] add option to read status from unix domain socket (by lufia)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/541>
+
+ -- mackerel <mackerel-developers@hatena.ne.jp>  Wed, 13 Feb 2019 07:57:22 +0000
+
 mackerel-agent-plugins (0.54.0-1.v2) stable; urgency=low
 
   * [redis] Change evicted_keys.Diff to true (by lufia)

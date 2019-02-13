@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.55.0 (2019-02-13)
+
+* [mongodb] apply for mongodb authenticationDatabase #542 (shibacow)
+* [linux] consider the case where the width of the Netid column is only 5 in the output of ss #543 (Songmu)
+*  [php-fpm] add option to read status from unix domain socket #541 (lufia)
+
+
 ## 0.54.0 (2019-01-10)
 
 * [redis] Change evicted_keys.Diff to true #539 (lufia)
