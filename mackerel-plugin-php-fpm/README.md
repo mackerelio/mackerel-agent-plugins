@@ -6,7 +6,7 @@ PHP-FPM status custom metrics plugin for [mackerel-agent](https://github.com/mac
 ## Synopsis
 
 ```shell
-mackerel-plugin-php-fpm [-metric-key-prefix=php-fpm] [-timeout=5] [-url=http://localhost/status?json] [-socket unix:///var/run/php-fpm.sock
+mackerel-plugin-php-fpm [-metric-key-prefix=php-fpm] [-timeout=5] [-url=http://localhost/status?json] [-socket unix:///var/run/php-fpm.sock]
 ```
 
 ### Socket option
