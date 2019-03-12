@@ -29,11 +29,11 @@ func TestGetStatus(t *testing.T) {
     "slow requests":1000
   }`
 
-	httpmock.RegisterResponder("GET", "http://httpmock/status?json",
+	httpmock.RegisterResponder("GET", "http://httpmock/status",
 		httpmock.NewStringResponder(200, jsonStr))
 
 	p := PhpFpmPlugin{
-		URL:     "http://httpmock/status?json",
+		URL:     "http://httpmock/status",
 		Prefix:  "php-fpm",
 		Timeout: 5,
 	}
