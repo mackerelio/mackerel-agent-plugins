@@ -5,6 +5,7 @@ import (
 
 	"github.com/jarcoal/httpmock"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func TestGetStatus(t *testing.T) {
@@ -28,16 +29,17 @@ func TestGetStatus(t *testing.T) {
     "slow requests":1000
   }`
 
-	httpmock.RegisterResponder("GET", "http://httpmock/status?json",
+	httpmock.RegisterResponder("GET", "http://httpmock/status",
 		httpmock.NewStringResponder(200, jsonStr))
 
 	p := PhpFpmPlugin{
-		URL:     "http://httpmock/status?json",
+		URL:     "http://httpmock/status",
 		Prefix:  "php-fpm",
 		Timeout: 5,
 	}
-	status, _ := getStatus(p)
+	status, err := getStatus(p)
 
+	require.NoError(t, err)
 	assert.EqualValues(t, 50, status.TotalProcesses)
 	assert.EqualValues(t, 10, status.ActiveProcesses)
 	assert.EqualValues(t, 40, status.IdleProcesses)
