@@ -5,6 +5,7 @@ import (
 
 	"github.com/jarcoal/httpmock"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func TestGetStatus(t *testing.T) {
@@ -36,8 +37,9 @@ func TestGetStatus(t *testing.T) {
 		Prefix:  "php-fpm",
 		Timeout: 5,
 	}
-	status, _ := getStatus(p)
+	status, err := getStatus(p)
 
+	require.NoError(t, err)
 	assert.EqualValues(t, 50, status.TotalProcesses)
 	assert.EqualValues(t, 10, status.ActiveProcesses)
 	assert.EqualValues(t, 40, status.IdleProcesses)
