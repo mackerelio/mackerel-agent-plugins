@@ -12,7 +12,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/lestrrat/go-tcptest"
+	"github.com/lestrrat-go/tcptest"
 )
 
 var (
