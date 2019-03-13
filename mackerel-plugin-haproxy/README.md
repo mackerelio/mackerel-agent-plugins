@@ -17,16 +17,17 @@ For Basic Auth, set username.
 
 ```
 [plugin.metrics.haproxy]
-command = "/path/to/mackerel-plugin-haproxy -port=8000"
+command = ["mackerel-plugin-haproxy", "-port=8088", "-path=/haproxy?hastats"]
 ```
 
-## Example of haproxy.conf
+## Example of haproxy.cfg
 
 This plugin requires to enable stats of haproxy.
 Example configuration is as follow.
 
 ```
-listen hastats *:8088
+listen hastats
+    bind *:8088
     mode http
     maxconn 64
     timeout connect 5000
@@ -39,5 +40,3 @@ listen hastats *:8088
     # basic auth
     stats auth admin:adminadmin
 ```
-
-See haproxy_test.go for example configuration.
