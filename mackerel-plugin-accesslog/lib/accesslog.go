@@ -172,9 +172,7 @@ func (p *AccesslogPlugin) FetchMetrics() (map[string]float64, error) {
 		}
 	}
 	if !takeCount {
-		for _, k := range countMetrics {
-			delete(ret, k)
-		}
+		return map[string]float64{}, nil
 	}
 	return ret, nil
 }
