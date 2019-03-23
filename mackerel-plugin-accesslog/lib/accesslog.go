@@ -6,6 +6,7 @@ import (
 	"flag"
 	"fmt"
 	"io"
+	"io/ioutil"
 	"log"
 	"os"
 	"path/filepath"
@@ -99,19 +100,25 @@ func (p *AccesslogPlugin) getReadCloser() (io.ReadCloser, bool, error) {
 	}
 	posfile := p.getPosPath()
 	fi, err := os.Stat(posfile)
-	// don't output count metrics when the pos file doesn't exist or is too old
-	takeCount := err == nil && fi.ModTime().After(time.Now().Add(-2*time.Minute))
+	// don't output any metrics when the pos file doesn't exist or is too old
+	takeMetrics := err == nil && fi.ModTime().After(time.Now().Add(-2*time.Minute))
 	rc, err := postailer.Open(p.file, posfile)
-	return rc, takeCount, err
+	return rc, takeMetrics, err
 }
 
 // FetchMetrics interface for mackerelplugin
 func (p *AccesslogPlugin) FetchMetrics() (map[string]float64, error) {
-	rc, takeCount, err := p.getReadCloser()
+	rc, takeMetrics, err := p.getReadCloser()
 	if err != nil {
 		return nil, err
 	}
 	defer rc.Close()
+
+	if !takeMetrics {
+		// discard existing contents to seek position
+		_, err := ioutil.ReadAll(rc)
+		return map[string]float64{}, err
+	}
 
 	countMetrics := []string{"total_count", "2xx_count", "3xx_count", "4xx_count", "5xx_count"}
 	ret := make(map[string]float64)
@@ -169,11 +176,6 @@ func (p *AccesslogPlugin) FetchMetrics() (map[string]float64, error) {
 		ret["average"], _ = stats.Mean(reqtimes)
 		for _, v := range []int{90, 95, 99} {
 			ret[fmt.Sprintf("%d", v)+"_percentile"], _ = stats.Percentile(reqtimes, float64(v))
-		}
-	}
-	if !takeCount {
-		for _, k := range countMetrics {
-			delete(ret, k)
 		}
 	}
 	return ret, nil
