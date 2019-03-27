@@ -40,6 +40,10 @@ done
 %{__targetdir}/*
 
 %changelog
+* Wed Mar 27 2019 <mackerel-developers@hatena.ne.jp> - 0.55.1
+- [accesslog] don't return any metrics on the first scan (by Songmu)
+- [haproxy] fix example of haproxy.cfg in README.md (by Songmu)
+
 * Wed Feb 13 2019 <mackerel-developers@hatena.ne.jp> - 0.55.0
 - [mongodb] apply for mongodb authenticationDatabase (by shibacow)
 - [linux] consider the case where the width of the Netid column is only 5 in the output of ss (by Songmu)

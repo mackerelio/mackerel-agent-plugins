@@ -1,3 +1,12 @@
+mackerel-agent-plugins (0.55.1-1) stable; urgency=low
+
+  * [accesslog] don't return any metrics on the first scan (by Songmu)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/549>
+  * [haproxy] fix example of haproxy.cfg in README.md (by Songmu)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/548>
+
+ -- mackerel <mackerel-developers@hatena.ne.jp>  Wed, 27 Mar 2019 06:45:32 +0000
+
 mackerel-agent-plugins (0.55.0-1) stable; urgency=low
 
   * [mongodb] apply for mongodb authenticationDatabase (by shibacow)

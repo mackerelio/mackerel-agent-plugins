@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.55.1 (2019-03-27)
+
+* [accesslog] don't return any metrics on the first scan #549 (Songmu)
+* [haproxy] fix example of haproxy.cfg in README.md #548 (Songmu)
+
+
 ## 0.55.0 (2019-02-13)
 
 * [mongodb] apply for mongodb authenticationDatabase #542 (shibacow)
