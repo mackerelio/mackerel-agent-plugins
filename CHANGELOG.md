@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.55.2 (2019-05-08)
+
+* [mysql] add -debug option for troubleshooting #551 (lufia)
+
+
 ## 0.55.1 (2019-03-27)
 
 * [accesslog] don't return any metrics on the first scan #549 (Songmu)
