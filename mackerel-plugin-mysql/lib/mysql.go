@@ -12,7 +12,7 @@ import (
 	mp "github.com/mackerelio/go-mackerel-plugin"
 	"github.com/ziutek/mymysql/mysql"
 	// MySQL Driver
-	_ "github.com/ziutek/mymysql/native"
+	"github.com/ziutek/mymysql/native"
 )
 
 var (
@@ -148,6 +148,7 @@ type MySQLPlugin struct {
 	isUnixSocket   bool
 	EnableExtended bool
 	isAuroraReader bool
+	Debug          bool
 }
 
 // MetricKeyPrefix returns the metrics key prefix
@@ -373,6 +374,10 @@ func (m *MySQLPlugin) FetchMetrics() (map[string]float64, error) {
 		proto = "unix"
 	}
 	db := mysql.New(proto, "", m.Target, m.Username, m.Password, "")
+	switch c := db.(type) {
+	case *native.Conn:
+		c.Debug = m.Debug
+	}
 	err := db.Connect()
 	if err != nil {
 		log.Fatalln("FetchMetrics (DB Connect): ", err)
@@ -1073,6 +1078,7 @@ func Do() {
 	optInnoDB := flag.Bool("disable_innodb", false, "Disable InnoDB metrics")
 	optMetricKeyPrefix := flag.String("metric-key-prefix", "mysql", "metric key prefix")
 	optEnableExtended := flag.Bool("enable_extended", false, "Enable Extended metrics")
+	optDebug := flag.Bool("debug", false, "Print debugging logs to stderr")
 	flag.Parse()
 
 	var mysql MySQLPlugin
@@ -1088,6 +1094,7 @@ func Do() {
 	mysql.DisableInnoDB = *optInnoDB
 	mysql.prefix = *optMetricKeyPrefix
 	mysql.EnableExtended = *optEnableExtended
+	mysql.Debug = *optDebug
 	helper := mp.NewMackerelPlugin(&mysql)
 	helper.Tempfile = *optTempfile
 	helper.Run()
