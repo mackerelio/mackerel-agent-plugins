@@ -40,6 +40,9 @@ done
 %{__targetdir}/*
 
 %changelog
+* Wed May 08 2019 <mackerel-developers@hatena.ne.jp> - 0.55.2
+- [mysql] add -debug option for troubleshooting (by lufia)
+
 * Wed Mar 27 2019 <mackerel-developers@hatena.ne.jp> - 0.55.1
 - [accesslog] don't return any metrics on the first scan (by Songmu)
 - [haproxy] fix example of haproxy.cfg in README.md (by Songmu)

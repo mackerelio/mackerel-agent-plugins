@@ -1,3 +1,10 @@
+mackerel-agent-plugins (0.55.2-1) stable; urgency=low
+
+  * [mysql] add -debug option for troubleshooting (by lufia)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/551>
+
+ -- mackerel <mackerel-developers@hatena.ne.jp>  Wed, 08 May 2019 07:36:39 +0000
+
 mackerel-agent-plugins (0.55.1-1) stable; urgency=low
 
   * [accesslog] don't return any metrics on the first scan (by Songmu)
