@@ -349,7 +349,7 @@ func Do() {
 	optHost := flag.String("host", "", "jps/jstat target hostname [deprecated]")
 	optPort := flag.Int("port", 0, "jps/jstat target port [deprecated]")
 	optRemote := flag.String("remote", "", "jps/jstat remote target. hostname[:port][/servername]")
-	optJstatPath := flag.String("jstatpath", pathBase+"/jstat", "jstat path ")
+	optJstatPath := flag.String("jstatpath", pathBase+"/jstat", "jstat path")
 	optJinfoPath := flag.String("jinfopath", pathBase+"/jinfo", "jinfo path")
 	optJpsPath := flag.String("jpspath", pathBase+"/jps", "jps path")
 	optJavaName := flag.String("javaname", "", "Java app name")
