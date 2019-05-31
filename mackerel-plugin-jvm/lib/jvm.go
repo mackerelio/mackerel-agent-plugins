@@ -341,12 +341,17 @@ func generateRemote(remote, host string, port int) string {
 
 // Do the plugin
 func Do() {
+	// Prefer ${JAVA_HOME}/bin if JAVA_HOME presents
+	pathBase := "/usr/bin"
+	if javaHome := os.Getenv("JAVA_HOME"); javaHome != "" {
+		pathBase = javaHome + "/bin"
+	}
 	optHost := flag.String("host", "", "jps/jstat target hostname [deprecated]")
 	optPort := flag.Int("port", 0, "jps/jstat target port [deprecated]")
 	optRemote := flag.String("remote", "", "jps/jstat remote target. hostname[:port][/servername]")
-	optJstatPath := flag.String("jstatpath", "/usr/bin/jstat", "jstat path")
-	optJinfoPath := flag.String("jinfopath", "/usr/bin/jinfo", "jinfo path")
-	optJpsPath := flag.String("jpspath", "/usr/bin/jps", "jps path")
+	optJstatPath := flag.String("jstatpath", pathBase+"/jstat", "jstat path")
+	optJinfoPath := flag.String("jinfopath", pathBase+"/jinfo", "jinfo path")
+	optJpsPath := flag.String("jpspath", pathBase+"/jps", "jps path")
 	optJavaName := flag.String("javaname", "", "Java app name")
 	optPidFile := flag.String("pidfile", "", "pidfile path")
 	optTempfile := flag.String("tempfile", "", "Temp file name")
