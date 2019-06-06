@@ -13,12 +13,12 @@ $(BINDIR)/mackerel-plugin-%: mackerel-plugin-%/main.go $$(wildcard mackerel-plug
 	@if [ ! -d $(BINDIR) ]; then mkdir -p $(BINDIR); fi
 	go build -ldflags="-s -w" -o $@ ./`basename $@`
 
-build: deps
+build:
 	for i in mackerel-plugin-*; do \
 	  $(MAKE) $(BINDIR)/$$i; \
 	done
 
-build/mackerel-plugin: deps
+build/mackerel-plugin:
 	mkdir -p build
 	go build -ldflags="-s -w -X main.gitcommit=$(CURRENT_REVISION)" \
 	  -o build/mackerel-plugin
@@ -33,12 +33,8 @@ testconvention:
 	go generate ./... && git diff --exit-code || \
 	  (echo 'please `go generate ./...` and commit them' && false)
 
-deps:
-	go get -d -v ./...
-
 testdeps:
-	go get -d -v -t ./...
-	go get golang.org/x/lint/golint  \
+	GO111MODULE=off go get golang.org/x/lint/golint  \
 	  golang.org/x/tools/cmd/cover   \
 	  github.com/pierrre/gotestcover \
 	  github.com/mattn/goveralls
@@ -102,4 +98,4 @@ release: check-release-deps
 clean:
 	@if [ -d build ]; then rm -rfv build; fi
 
-.PHONY: all build test testgo deps testdeps rpm rpm-v1 rpm-v2 deb deb-v1 deb-v2 clean release lint cover testconvention
+.PHONY: all build test testgo testdeps rpm rpm-v1 rpm-v2 deb deb-v1 deb-v2 clean release lint cover testconvention
