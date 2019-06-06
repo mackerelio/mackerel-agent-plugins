@@ -3,6 +3,7 @@ go:
 - 1.11.x
 env:
   global:
+  - GO111MODULE=on
   - PATH=~/gopath/bin:$PATH DEBIAN_FRONTEND=noninteractive
   - secure: "V0XY5XWhVQuGsE35J5QqIKa77tgfIYIa6z6k1qgRjW+Wy7DDFhIsPRdziayZZJOhwBqQBsVikIP4rXgkByEVhkUv8oIfL/V0BLkHsuNUjJVtloOqe9mpDlWzeMyi3KUfBTb9IW0nrwcEwZF8/dtQEmSW62RbupO3F/lpVEbrxXY="
 install:
