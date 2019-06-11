@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.56.0 (2019-06-11)
+
+* support go modules #554 (astj)
+* [plugin-jvm] prefer ${JAVA_HOME}/bin/j** if JAVA_HOME is set #553 (astj)
+
+
 ## 0.55.2 (2019-05-08)
 
 * [mysql] add -debug option for troubleshooting #551 (lufia)

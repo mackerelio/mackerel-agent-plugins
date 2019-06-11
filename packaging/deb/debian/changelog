@@ -1,3 +1,12 @@
+mackerel-agent-plugins (0.56.0-1) stable; urgency=low
+
+  * support go modules (by astj)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/554>
+  * [plugin-jvm] prefer ${JAVA_HOME}/bin/j** if JAVA_HOME is set (by astj)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/553>
+
+ -- mackerel <mackerel-developers@hatena.ne.jp>  Tue, 11 Jun 2019 03:13:11 +0000
+
 mackerel-agent-plugins (0.55.2-1) stable; urgency=low
 
   * [mysql] add -debug option for troubleshooting (by lufia)
