@@ -49,6 +49,10 @@ done
 %{__oldtargetdir}/*
 
 %changelog
+* Tue Jun 11 2019 <mackerel-developers@hatena.ne.jp> - 0.56.0
+- support go modules (by astj)
+- [plugin-jvm] prefer ${JAVA_HOME}/bin/j** if JAVA_HOME is set (by astj)
+
 * Wed May 08 2019 <mackerel-developers@hatena.ne.jp> - 0.55.2
 - [mysql] add -debug option for troubleshooting (by lufia)
 
