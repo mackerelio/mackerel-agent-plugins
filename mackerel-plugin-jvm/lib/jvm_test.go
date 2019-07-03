@@ -1,6 +1,8 @@
 package mpjvm
 
 import (
+	"reflect"
+	"runtime"
 	"testing"
 )
 
@@ -64,5 +66,44 @@ func TestGenerateRemote(t *testing.T) {
 	expected = ""
 	if r := generateRemote("", "", 0); r != expected {
 		t.Errorf("remote should be %s, but %s", expected, r)
+	}
+}
+
+func TestFetchMetrics(t *testing.T) {
+	switch runtime.GOOS {
+	case "windows", "plan9":
+		t.Skip()
+	}
+	m := JVMPlugin{
+		Lvmid:     "1",
+		JstatPath: "testdata/jstat_serialgc.sh",
+	}
+	actual, err := m.fetchJstatMetrics("-gc")
+	if err != nil {
+		t.Fatal(err)
+	}
+	expected := map[string]float64{
+		"S0C":  45184.0,
+		"S1C":  45184.0,
+		"S0U":  45184.0,
+		"S1U":  0.0,
+		"EC":   361728.0,
+		"EU":   132414.7,
+		"OC":   904068.0,
+		"OU":   679249.5,
+		"MC":   21248.0,
+		"MU":   20787.3,
+		"CCSC": 2304.0,
+		"CCSU": 2105.8,
+		"YGC":  22,
+		"YGCT": 8.584,
+		"FGC":  6,
+		"FGCT": 2.343,
+		//"CGC": no data
+		//"CGCT": no data
+		"GCT": 10.927,
+	}
+	if !reflect.DeepEqual(actual, expected) {
+		t.Errorf("fetchMetrics('-gc') = %v; want %v", actual, expected)
 	}
 }

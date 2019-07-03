@@ -85,6 +85,9 @@ func (m JVMPlugin) fetchJstatMetrics(option string) (map[string]float64, error) 
 
 	stat := make(map[string]float64)
 	for i, key := range keys {
+		if values[i] == "-" {
+			continue
+		}
 		value, err := strconv.ParseFloat(values[i], 64)
 		if err != nil {
 			logger.Warningf("Failed to parse value. %s", err)
@@ -161,6 +164,11 @@ func runTimeoutCommand(Path string, Args ...string) (string, string, *timeout.Ex
 	exitStatus, stdout, stderr, err := tio.Run()
 	return stdout, stderr, exitStatus, err
 }
+
+// <Java11>
+// # jstat -gc <vmid>
+//  S0C    S1C    S0U    S1U      EC       EU        OC         OU       MC     MU    CCSC   CCSU   YGC     YGCT    FGC    FGCT    CGC    CGCT     GCT
+// 45184.0 45184.0 45184.0  0.0   361728.0 132414.7  904068.0   679249.5  21248.0 20787.3 2304.0 2105.8     22    8.584   6      2.343   -          -   10.927
 
 // <Java8> https://docs.oracle.com/javase/8/docs/technotes/tools/unix/jstat.html
 // # jstat -gc <vmid>
