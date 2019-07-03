@@ -244,6 +244,7 @@ func (m JVMPlugin) GraphDefinition() map[string]mp.Graphs {
 			Metrics: []mp.Metrics{
 				{Name: "YGC", Label: "Young GC event", Diff: true},
 				{Name: "FGC", Label: "Full GC event", Diff: true},
+				{Name: "CGC", Label: "Concurrent GC event", Diff: true},
 			},
 		},
 		fmt.Sprintf("jvm.%s.gc_time", lowerJavaName): {
@@ -252,6 +253,7 @@ func (m JVMPlugin) GraphDefinition() map[string]mp.Graphs {
 			Metrics: []mp.Metrics{
 				{Name: "YGCT", Label: "Young GC time", Diff: true},
 				{Name: "FGCT", Label: "Full GC time", Diff: true},
+				{Name: "CGCT", Label: "Concurrent GC time", Diff: true},
 			},
 		},
 		fmt.Sprintf("jvm.%s.gc_time_percentage", lowerJavaName): {
@@ -261,6 +263,7 @@ func (m JVMPlugin) GraphDefinition() map[string]mp.Graphs {
 				// gc_time_percentage is the percentage of gc time to 60 sec.
 				{Name: "YGCT", Label: "Young GC time", Diff: true, Scale: (100.0 / 60)},
 				{Name: "FGCT", Label: "Full GC time", Diff: true, Scale: (100.0 / 60)},
+				{Name: "CGCT", Label: "Concurrent GC time", Diff: true, Scale: (100.0 / 60)},
 			},
 		},
 		fmt.Sprintf("jvm.%s.new_space", lowerJavaName): {
