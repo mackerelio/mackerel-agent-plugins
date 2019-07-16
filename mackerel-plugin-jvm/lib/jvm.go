@@ -102,32 +102,40 @@ func (m JVMPlugin) calculateMemorySpaceRate(gcStat map[string]float64) (map[stri
 	ret := make(map[string]float64)
 	ret["oldSpaceRate"] = gcStat["OU"] / gcStat["OC"] * 100
 	ret["newSpaceRate"] = (gcStat["S0U"] + gcStat["S1U"] + gcStat["EU"]) / (gcStat["S0C"] + gcStat["S1C"] + gcStat["EC"]) * 100
-	if m.checkCMSGC() {
-		ret["CMSInitiatingOccupancyFraction"] = fetchCMSInitiatingOccupancyFraction(m.Lvmid, m.JinfoPath)
+
+	checkCMSGC, err := m.checkCMSGC()
+	if err != nil {
+		return nil, err
+	}
+	if checkCMSGC {
+		fraction, err := fetchCMSInitiatingOccupancyFraction(m.Lvmid, m.JinfoPath)
+		if err != nil {
+			return nil, err
+		}
+		ret["CMSInitiatingOccupancyFraction"] = fraction
 	}
 
 	return ret, nil
 }
 
-func (m JVMPlugin) checkCMSGC() bool {
+func (m JVMPlugin) checkCMSGC() (bool, error) {
 	// jinfo does not work on remote
 	if m.Remote != "" {
-		return false
+		return false, nil
 	}
 	stdout, _, exitStatus, err := runTimeoutCommand(m.JinfoPath, "-flag", "UseConcMarkSweepGC", m.Lvmid)
 
 	if err == nil && exitStatus.IsTimedOut() {
 		err = fmt.Errorf("jinfo command timed out")
-		os.Exit(1)
 	}
 	if err != nil {
 		logger.Errorf("Failed to run exec jinfo. %s. Please run with the java process user.", err)
-		os.Exit(1)
+		return false, err
 	}
-	return strings.Index(string(stdout), "+UseConcMarkSweepGC") != -1
+	return strings.Index(string(stdout), "+UseConcMarkSweepGC") != -1, nil
 }
 
-func fetchCMSInitiatingOccupancyFraction(lvmid, JinfoPath string) float64 {
+func fetchCMSInitiatingOccupancyFraction(lvmid, JinfoPath string) (float64, error) {
 	var fraction float64
 
 	stdout, _, exitStatus, err := runTimeoutCommand(JinfoPath, "-flag", "CMSInitiatingOccupancyFraction", lvmid)
@@ -137,14 +145,14 @@ func fetchCMSInitiatingOccupancyFraction(lvmid, JinfoPath string) float64 {
 	}
 	if err != nil {
 		logger.Errorf("Failed to run exec jinfo. %s. Please run with the java process user.", err)
-		os.Exit(1)
+		return 0.0, err
 	}
 
 	out := strings.Trim(string(stdout), "\n")
 	tmp := strings.Split(out, "=")
 	fraction, _ = strconv.ParseFloat(tmp[1], 64)
 
-	return fraction
+	return fraction, nil
 }
 
 func mergeStat(dst, src map[string]float64) {
