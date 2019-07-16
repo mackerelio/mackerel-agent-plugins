@@ -118,7 +118,6 @@ func (m JVMPlugin) checkCMSGC() bool {
 
 	if err == nil && exitStatus.IsTimedOut() {
 		err = fmt.Errorf("jinfo command timed out")
-		os.Exit(1)
 	}
 	if err != nil {
 		logger.Errorf("Failed to run exec jinfo. %s. Please run with the java process user.", err)
