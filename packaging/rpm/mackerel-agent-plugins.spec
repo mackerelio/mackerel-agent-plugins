@@ -49,6 +49,11 @@ done
 %{__oldtargetdir}/*
 
 %changelog
+* Mon Jul 22 2019 <mackerel-developers@hatena.ne.jp> - 0.57.0
+- [jvm] fix jinfo command timed out error is not logged (by susisu)
+- Build with Go 1.12 (by astj)
+-  [plugin-jvm] added CGC and CGCT metrics and fixed parsing problem on them (by lufia)
+
 * Tue Jun 11 2019 <mackerel-developers@hatena.ne.jp> - 0.56.0
 - support go modules (by astj)
 - [plugin-jvm] prefer ${JAVA_HOME}/bin/j** if JAVA_HOME is set (by astj)

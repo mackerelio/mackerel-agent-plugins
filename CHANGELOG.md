@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.57.0 (2019-07-22)
+
+* [jvm] fix jinfo command timed out error is not logged #560 (susisu)
+* Build with Go 1.12 #558 (astj)
+*  [plugin-jvm] added CGC and CGCT metrics and fixed parsing problem on them #557 (lufia)
+
+
 ## 0.56.0 (2019-06-11)
 
 * support go modules #554 (astj)

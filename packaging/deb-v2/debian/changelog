@@ -1,3 +1,14 @@
+mackerel-agent-plugins (0.57.0-1.v2) stable; urgency=low
+
+  * [jvm] fix jinfo command timed out error is not logged (by susisu)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/560>
+  * Build with Go 1.12 (by astj)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/558>
+  *  [plugin-jvm] added CGC and CGCT metrics and fixed parsing problem on them (by lufia)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/557>
+
+ -- mackerel <mackerel-developers@hatena.ne.jp>  Mon, 22 Jul 2019 13:10:31 +0900
+
 mackerel-agent-plugins (0.56.0-1.v2) stable; urgency=low
 
   * support go modules (by astj)
