@@ -13,6 +13,7 @@ import (
 // SidekiqPlugin for fetching metrics
 type SidekiqPlugin struct {
 	Client *r.Client
+	Namespace string
 	Prefix string
 }
 
@@ -90,12 +91,21 @@ func (sp SidekiqPlugin) lLen(key string) uint64 {
 	return uint64(val)
 }
 
+func addNamespace(namespace string, key string) string {
+	if namespace == "" {
+		return key
+	}
+	return namespace + ":" + key
+}
+
 func (sp SidekiqPlugin) getProcessed() uint64 {
-	return sp.get("stat:processed")
+	key := addNamespace(sp.Namespace, "stat:processed")
+	return sp.get(key)
 }
 
 func (sp SidekiqPlugin) getFailed() uint64 {
-	return sp.get("stat:failed")
+	key := addNamespace(sp.Namespace, "stat:failed")
+	return sp.get(key)
 }
 
 func inject(slice []uint64, base uint64) uint64 {
@@ -107,9 +117,11 @@ func inject(slice []uint64, base uint64) uint64 {
 }
 
 func (sp SidekiqPlugin) getBusy() uint64 {
-	processes := sp.sMembers("processes")
+	key := addNamespace(sp.Namespace, "processes")
+	processes := sp.sMembers(key)
 	busies := make([]uint64, 10)
 	for _, e := range processes {
+		e := addNamespace(sp.Namespace, e)
 		busies = append(busies, sp.hGet(e, "busy"))
 	}
 
@@ -117,26 +129,31 @@ func (sp SidekiqPlugin) getBusy() uint64 {
 }
 
 func (sp SidekiqPlugin) getEnqueued() uint64 {
-	queues := sp.sMembers("queues")
+	key := addNamespace(sp.Namespace, "queues")
+	queues := sp.sMembers(key)
 	queuesLlens := make([]uint64, 10)
 
+	prefix := addNamespace(sp.Namespace, "queue:")
 	for _, e := range queues {
-		queuesLlens = append(queuesLlens, sp.lLen("queue:"+e))
+		queuesLlens = append(queuesLlens, sp.lLen(prefix+e))
 	}
 
 	return inject(queuesLlens, 0)
 }
 
 func (sp SidekiqPlugin) getSchedule() uint64 {
-	return sp.zCard("schedule")
+	key := addNamespace(sp.Namespace, "schedule")
+	return sp.zCard(key)
 }
 
 func (sp SidekiqPlugin) getRetry() uint64 {
-	return sp.zCard("retry")
+	key := addNamespace(sp.Namespace, "retry")
+	return sp.zCard(key)
 }
 
 func (sp SidekiqPlugin) getDead() uint64 {
-	return sp.zCard("dead")
+	key := addNamespace(sp.Namespace, "dead")
+	return sp.zCard(key)
 }
 
 func (sp SidekiqPlugin) getProcessedFailed() map[string]interface{} {
@@ -200,6 +217,7 @@ func Do() {
 	optPort := flag.String("port", "6379", "Port")
 	optPassword := flag.String("password", os.Getenv("SIDEKIQ_PASSWORD"), "Password")
 	optDB := flag.Int("db", 0, "DB")
+	optNamespace := flag.String("redis-namespace", "", "Redis namespace")
 	optPrefix := flag.String("metric-key-prefix", "sidekiq", "Metric key prefix")
 	optTempfile := flag.String("tempfile", "", "Temp file name")
 	flag.Parse()
@@ -212,6 +230,7 @@ func Do() {
 
 	sp := SidekiqPlugin{
 		Client: client,
+		Namespace: *optNamespace,
 		Prefix: *optPrefix,
 	}
 	helper := mp.NewMackerelPlugin(sp)
