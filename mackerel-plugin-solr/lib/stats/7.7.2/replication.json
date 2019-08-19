@@ -1,0 +1,36 @@
+{
+  "responseHeader": {
+    "status": 0,
+    "QTime": 5
+  },
+  "solr-mbeans": [
+    "REPLICATION",
+    {
+      "/replication": {
+        "class": "org.apache.solr.handler.ReplicationHandler",
+        "description": "ReplicationHandler provides replication of index and configuration files from Master to Slaves",
+        "stats": {
+          "REPLICATION./replication.handlerStart": 1565590017772,
+          "REPLICATION./replication.confFilesToReplicate": "",
+          "REPLICATION./replication.indexVersion": "generation=1,version=0",
+          "REPLICATION./replication.indexSize": "69 bytes",
+          "REPLICATION./replication.generation": 1,
+          "REPLICATION./replication.indexPath": "/opt/solr/server/solr/testcore/data/index/",
+          "REPLICATION./replication.replicateAfter": [
+            "commit"
+          ],
+          "REPLICATION./replication.isMaster": true,
+          "REPLICATION./replication.clientErrors.count": 54321,
+          "REPLICATION./replication.isSlave": false,
+          "REPLICATION./replication.requests": 11111,
+          "REPLICATION./replication.errors.count": 22222,
+          "REPLICATION./replication.requestTimes.meanRate": 0.12345,
+          "REPLICATION./replication.timeouts.count": 33333,
+          "REPLICATION./replication.serverErrors.count": 12345,
+          "REPLICATION./replication.replicationEnabled": true,
+          "REPLICATION./replication.totalTime": 0
+        }
+      }
+    }
+  ]
+}

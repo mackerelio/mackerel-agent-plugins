@@ -1,0 +1,8 @@
+{
+  "lucene": {
+    "solr-spec-version": "6.4.2",
+    "solr-impl-version": "6.4.2 68fa249034ba8b273955f20097700dc2fbb7a800 - ishan - 2019-03-29 09:13:13",
+    "lucene-spec-version": "6.4.2",
+    "lucene-impl-version": "6.4.2 68fa249034ba8b273955f20097700dc2fbb7a800 - ishan - 2019-03-29 09:07:55"
+  }
+}

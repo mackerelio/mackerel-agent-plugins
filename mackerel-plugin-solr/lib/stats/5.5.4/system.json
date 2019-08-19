@@ -1,0 +1,8 @@
+{
+  "lucene": {
+    "solr-spec-version": "5.5.4",
+    "solr-impl-version": "5.5.4 b3441673c21c83762035dc21d3827ad16aa17b68 - sarowe - 2017-10-20 09:02:42",
+    "lucene-spec-version": "5.5.4",
+    "lucene-impl-version": "5.5.4 b3441673c21c83762035dc21d3827ad16aa17b68 - sarowe - 2017-10-20 08:57:09"
+  }
+}

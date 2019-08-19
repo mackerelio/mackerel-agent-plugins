@@ -1,0 +1,67 @@
+{
+  "responseHeader": {
+    "status": 0,
+    "QTime": 0
+  },
+  "solr-mbeans": [
+    "UPDATE",
+    {
+      "/update/json": {
+        "class": "org.apache.solr.handler.UpdateRequestHandler",
+        "description": "Add documents using XML (with XSLT), CSV, JSON, or javabin",
+        "stats": {
+          "UPDATE./update/json.errors.count": 0,
+          "UPDATE./update/json.requestTimes.meanRate": 0,
+          "UPDATE./update/json.requests": 0,
+          "UPDATE./update/json.clientErrors.count": 0,
+          "UPDATE./update/json.serverErrors.count": 0,
+          "UPDATE./update/json.totalTime": 0,
+          "UPDATE./update/json.handlerStart": 1564990318545,
+          "UPDATE./update/json.timeouts.count": 0
+        }
+      },
+      "/update/json/docs": {
+        "class": "org.apache.solr.handler.UpdateRequestHandler",
+        "description": "Add documents using XML (with XSLT), CSV, JSON, or javabin",
+        "stats": {
+          "UPDATE./update/json/docs.serverErrors.count": 0,
+          "UPDATE./update/json/docs.requests": 0,
+          "UPDATE./update/json/docs.clientErrors.count": 0,
+          "UPDATE./update/json/docs.handlerStart": 1564990318547,
+          "UPDATE./update/json/docs.requestTimes.meanRate": 0,
+          "UPDATE./update/json/docs.timeouts.count": 0,
+          "UPDATE./update/json/docs.errors.count": 0,
+          "UPDATE./update/json/docs.totalTime": 0
+        }
+      },
+      "/update/csv": {
+        "class": "org.apache.solr.handler.UpdateRequestHandler",
+        "description": "Add documents using XML (with XSLT), CSV, JSON, or javabin",
+        "stats": {
+          "UPDATE./update/csv.requestTimes.meanRate": 0,
+          "UPDATE./update/csv.errors.count": 0,
+          "UPDATE./update/csv.serverErrors.count": 0,
+          "UPDATE./update/csv.clientErrors.count": 0,
+          "UPDATE./update/csv.timeouts.count": 0,
+          "UPDATE./update/csv.requests": 0,
+          "UPDATE./update/csv.totalTime": 0,
+          "UPDATE./update/csv.handlerStart": 1564990318546
+        }
+      },
+      "/update": {
+        "class": "org.apache.solr.handler.UpdateRequestHandler",
+        "description": "Add documents using XML (with XSLT), CSV, JSON, or javabin",
+        "stats": {
+          "UPDATE./update.clientErrors.count": 4321,
+          "UPDATE./update.serverErrors.count": 1234,
+          "UPDATE./update.requestTimes.meanRate": 0.1234,
+          "UPDATE./update.timeouts.count": 3333,
+          "UPDATE./update.errors.count": 2222,
+          "UPDATE./update.totalTime": 0,
+          "UPDATE./update.requests": 1111,
+          "UPDATE./update.handlerStart": 1564990318544
+        }
+      }
+    }
+  ]
+}
