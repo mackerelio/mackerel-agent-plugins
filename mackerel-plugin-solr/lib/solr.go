@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"net/http"
 	"net/url"
+	"strconv"
 	"strings"
 
 	mp "github.com/mackerelio/go-mackerel-plugin-helper"
@@ -46,6 +47,15 @@ type SolrPlugin struct {
 	Prefix   string
 	Stats    map[string](map[string]float64)
 	Tempfile string
+}
+
+func (s *SolrPlugin) greaterThanOrEqualToMajorVersion(minVer int) bool {
+	currentVer, err := strconv.Atoi(strings.Split(s.Version, ".")[0])
+	if err != nil {
+		logger.Errorf("Failed to parse major version %s", err)
+	}
+
+	return currentVer >= minVer
 }
 
 func fetchJSONData(url string) (map[string]interface{}, error) {
@@ -99,7 +109,7 @@ func (s *SolrPlugin) setStatsMbean(core string, stats map[string]interface{}, al
 						continue
 					}
 					statValues := v.(map[string]interface{})
-					if s.Version >= "7.0.0" {
+					if s.greaterThanOrEqualToMajorVersion(7) {
 						keyConvertedStatValues := make(map[string]interface{})
 						var keyParts []string
 						for k, v := range statValues {
@@ -133,7 +143,7 @@ func (s *SolrPlugin) loadStatsMbeanHandler(core string, cat string) error {
 		return err
 	}
 	var sKeys []string
-	if s.Version >= "7.0.0" {
+	if s.greaterThanOrEqualToMajorVersion(7) {
 		sKeys = handlerStatKeys
 	} else {
 		sKeys = legacyHandlerStatKeys
@@ -185,7 +195,7 @@ func (s *SolrPlugin) loadStats() error {
 		}
 
 		var mKeys []string
-		if s.Version >= "7.0.0" {
+		if s.greaterThanOrEqualToMajorVersion(7) {
 			mKeys = mbeanHandlerKeys
 		} else {
 			mKeys = legacyMbeanHandlerKeys
@@ -246,7 +256,7 @@ func (s SolrPlugin) GraphDefinition() map[string]mp.Graphs {
 		}
 
 		var sKeys []string
-		if s.Version >= "7.0.0" {
+		if s.greaterThanOrEqualToMajorVersion(7) {
 			sKeys = handlerStatKeys
 		} else {
 			sKeys = legacyHandlerStatKeys
