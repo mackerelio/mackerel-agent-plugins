@@ -104,7 +104,7 @@ func (s *SolrPlugin) setStatsMbean(core string, stats map[string]interface{}, al
 						var keyParts []string
 						for k, v := range statValues {
 							keyParts = strings.Split(k, ".")
-							if len(keyParts) >= 3 {
+							if len(keyParts) > keyIndex {
 								keyConvertedStatValues[keyParts[keyIndex]] = v
 							}
 						}
