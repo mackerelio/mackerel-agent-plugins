@@ -1,0 +1,101 @@
+{
+  "solr-mbeans": [
+    "CACHE",
+    {
+      "fieldValueCache": {
+        "class": "org.apache.solr.search.FastLRUCache",
+        "description": "Concurrent LRU Cache(maxSize=10000, initialSize=10, minSize=9000, acceptableSize=9500, cleanupThread=false)",
+        "stats": {
+          "CACHE.searcher.fieldValueCache.warmupTime": 0,
+          "CACHE.searcher.fieldValueCache.inserts": 0,
+          "CACHE.searcher.fieldValueCache.hits": 0,
+          "CACHE.searcher.fieldValueCache.lookups": 468,
+          "CACHE.searcher.fieldValueCache.cumulative_hitratio": 0,
+          "CACHE.searcher.fieldValueCache.hitratio": 0,
+          "CACHE.searcher.fieldValueCache.cumulative_hits": 0,
+          "CACHE.searcher.fieldValueCache.size": 0,
+          "CACHE.searcher.fieldValueCache.evictions": 0,
+          "CACHE.searcher.fieldValueCache.cumulative_lookups": 0,
+          "CACHE.searcher.fieldValueCache.cumulative_inserts": 0,
+          "CACHE.searcher.fieldValueCache.cumulative_evictions": 0
+        }
+      },
+      "documentCache": {
+        "class": "org.apache.solr.search.LRUCache",
+        "description": "LRU Cache(maxSize=512, initialSize=512)",
+        "stats": {
+          "CACHE.searcher.documentCache.evictions": 0,
+          "CACHE.searcher.documentCache.cumulative_lookups": 0,
+          "CACHE.searcher.documentCache.hitratio": 0,
+          "CACHE.searcher.documentCache.size": 0,
+          "CACHE.searcher.documentCache.cumulative_hitratio": 0,
+          "CACHE.searcher.documentCache.lookups": 246,
+          "CACHE.searcher.documentCache.warmupTime": 0,
+          "CACHE.searcher.documentCache.inserts": 0,
+          "CACHE.searcher.documentCache.hits": 0,
+          "CACHE.searcher.documentCache.cumulative_hits": 0,
+          "CACHE.searcher.documentCache.cumulative_inserts": 0,
+          "CACHE.searcher.documentCache.cumulative_evictions": 0
+        }
+      },
+      "queryResultCache": {
+        "class": "org.apache.solr.search.LRUCache",
+        "description": "LRU Cache(maxSize=512, initialSize=512)",
+        "stats": {
+          "CACHE.searcher.queryResultCache.cumulative_inserts": 1,
+          "CACHE.searcher.queryResultCache.evictions": 0,
+          "CACHE.searcher.queryResultCache.lookups": 579,
+          "CACHE.searcher.queryResultCache.cumulative_lookups": 3,
+          "CACHE.searcher.queryResultCache.cumulative_evictions": 0,
+          "CACHE.searcher.queryResultCache.warmupTime": 0,
+          "CACHE.searcher.queryResultCache.inserts": 1,
+          "CACHE.searcher.queryResultCache.hitratio": 0,
+          "CACHE.searcher.queryResultCache.size": 1,
+          "CACHE.searcher.queryResultCache.cumulative_hitratio": 0.67,
+          "CACHE.searcher.queryResultCache.cumulative_hits": 0,
+          "CACHE.searcher.queryResultCache.hits": 0
+        }
+      },
+      "perSegFilter": {
+        "class": "org.apache.solr.search.LRUCache",
+        "description": "LRU Cache(maxSize=10, initialSize=0, autowarmCount=10, regenerator=org.apache.solr.search.NoOpRegenerator@2d91e661)",
+        "stats": {
+          "CACHE.searcher.perSegFilter.lookups": 357,
+          "CACHE.searcher.perSegFilter.hits": 0,
+          "CACHE.searcher.perSegFilter.hitratio": 0,
+          "CACHE.searcher.perSegFilter.warmupTime": 0,
+          "CACHE.searcher.perSegFilter.cumulative_lookups": 0,
+          "CACHE.searcher.perSegFilter.cumulative_inserts": 0,
+          "CACHE.searcher.perSegFilter.cumulative_hitratio": 0,
+          "CACHE.searcher.perSegFilter.size": 0,
+          "CACHE.searcher.perSegFilter.evictions": 0,
+          "CACHE.searcher.perSegFilter.cumulative_hits": 0,
+          "CACHE.searcher.perSegFilter.cumulative_evictions": 0,
+          "CACHE.searcher.perSegFilter.inserts": 0
+        }
+      },
+      "filterCache": {
+        "class": "org.apache.solr.search.FastLRUCache",
+        "description": "Concurrent LRU Cache(maxSize=512, initialSize=512, minSize=460, acceptableSize=486, cleanupThread=false)",
+        "stats": {
+          "CACHE.searcher.filterCache.hits": 0,
+          "CACHE.searcher.filterCache.cumulative_evictions": 0,
+          "CACHE.searcher.filterCache.cumulative_inserts": 0,
+          "CACHE.searcher.filterCache.size": 0,
+          "CACHE.searcher.filterCache.hitratio": 0,
+          "CACHE.searcher.filterCache.warmupTime": 0,
+          "CACHE.searcher.filterCache.inserts": 0,
+          "CACHE.searcher.filterCache.evictions": 0,
+          "CACHE.searcher.filterCache.cumulative_hitratio": 0,
+          "CACHE.searcher.filterCache.lookups": 135,
+          "CACHE.searcher.filterCache.cumulative_lookups": 0,
+          "CACHE.searcher.filterCache.cumulative_hits": 0
+        }
+      }
+    }
+  ],
+  "responseHeader": {
+    "status": 0,
+    "QTime": 0
+  }
+}

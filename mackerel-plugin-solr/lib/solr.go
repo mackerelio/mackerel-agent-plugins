@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"net/http"
 	"net/url"
+	"strconv"
 	"strings"
 
 	mp "github.com/mackerelio/go-mackerel-plugin-helper"
@@ -15,15 +16,24 @@ import (
 
 var (
 	logger       = logging.GetLogger("metrics.plugin.solr")
-	coreStatKeys = []string{"numDocs", "deletedDocs", "indexHeapUsageBytes", "version", "segmentCount", "sizeInBytes"}
-	handlerPaths = []string{"/update/json", "/select", "/update/json/docs", "/get", "/update/csv", "/replication", "/update", "/dataimport"}
+	coreStatKeys = []string{"numDocs", "deletedDocs", "indexHeapUsageBytes", "version",
+		"segmentCount", "sizeInBytes"}
+	handlerPaths = []string{"/update/json", "/select", "/update/json/docs", "/get",
+		"/update/csv", "/replication", "/update", "/dataimport"}
 	// Solr5 ... "5minRateReqsPerSecond", "15minRateReqsPerSecond"
 	// Solr6 ... "5minRateRequestsPerSecond", "15minRateRequestsPerSecond"
-	handlerStatKeys = []string{"requests", "errors", "timeouts", "avgRequestsPerSecond", "5minRateReqsPerSecond", "5minRateRequestsPerSecond",
-		"15minRateReqsPerSecond", "15minRateRequestsPerSecond", "avgTimePerRequest", "medianRequestTime",
-		"75thPcRequestTime", "95thPcRequestTime", "99thPcRequestTime", "999thPcRequestTime"}
-	cacheTypes    = []string{"filterCache", "perSegFilter", "queryResultCache", "documentCache", "fieldValueCache"}
-	cacheStatKeys = []string{"lookups", "hits", "hitratio", "inserts", "evictions", "size", "warmupTime"}
+	legacyHandlerStatKeys = []string{"requests", "errors", "timeouts", "avgRequestsPerSecond",
+		"5minRateReqsPerSecond", "5minRateRequestsPerSecond", "15minRateReqsPerSecond",
+		"15minRateRequestsPerSecond", "avgTimePerRequest", "medianRequestTime", "75thPcRequestTime",
+		"95thPcRequestTime", "99thPcRequestTime", "999thPcRequestTime"}
+	handlerStatKeys = []string{"requests", "errors", "timeouts", "clientErrors",
+		"serverErrors", "requestTimes"}
+	cacheTypes = []string{"filterCache", "perSegFilter", "queryResultCache",
+		"documentCache", "fieldValueCache"}
+	cacheStatKeys = []string{"lookups", "hits", "hitratio", "inserts", "evictions",
+		"size", "warmupTime"}
+	legacyMbeanHandlerKeys = []string{"QUERYHANDLER", "UPDATEHANDLER", "REPLICATION"}
+	mbeanHandlerKeys       = []string{"QUERY", "UPDATE", "REPLICATION"}
 )
 
 // SolrPlugin mackerel plugin for Solr
@@ -32,13 +42,23 @@ type SolrPlugin struct {
 	Host     string
 	Port     string
 	BaseURL  string
+	Version  string
 	Cores    []string
 	Prefix   string
 	Stats    map[string](map[string]float64)
 	Tempfile string
 }
 
-func (s *SolrPlugin) getStats(url string) (map[string]interface{}, error) {
+func (s *SolrPlugin) greaterThanOrEqualToMajorVersion(minVer int) bool {
+	currentVer, err := strconv.Atoi(strings.Split(s.Version, ".")[0])
+	if err != nil {
+		logger.Errorf("Failed to parse major version %s", err)
+	}
+
+	return currentVer >= minVer
+}
+
+func fetchJSONData(url string) (map[string]interface{}, error) {
 	req, err := http.NewRequest(http.MethodGet, url, nil)
 	if err != nil {
 		return nil, err
@@ -74,7 +94,7 @@ func (s *SolrPlugin) loadStatsCore(core string, values interface{}) error {
 	return nil
 }
 
-func (s *SolrPlugin) setStatsMbean(core string, stats map[string]interface{}, allowKeys []string) {
+func (s *SolrPlugin) setStatsMbean(core string, stats map[string]interface{}, allowKeys []string, keyIndex int) {
 	for _, values := range stats["solr-mbeans"].([]interface{}) {
 		switch values.(type) {
 		case string:
@@ -88,12 +108,23 @@ func (s *SolrPlugin) setStatsMbean(core string, stats map[string]interface{}, al
 					if v == nil {
 						continue
 					}
-					v2 := v.(map[string]interface{})
+					statValues := v.(map[string]interface{})
+					if s.greaterThanOrEqualToMajorVersion(7) {
+						keyConvertedStatValues := make(map[string]interface{})
+						var keyParts []string
+						for k, v := range statValues {
+							keyParts = strings.Split(k, ".")
+							if len(keyParts) > keyIndex {
+								keyConvertedStatValues[keyParts[keyIndex]] = v
+							}
+						}
+						statValues = keyConvertedStatValues
+					}
 					for _, allowKey := range allowKeys {
-						if v2[allowKey] == nil {
+						if statValues[allowKey] == nil {
 							continue
 						}
-						s.Stats[core][allowKey+"_"+escapeSlash(key)] = v2[allowKey].(float64)
+						s.Stats[core][allowKey+"_"+escapeSlash(key)] = statValues[allowKey].(float64)
 					}
 				}
 			}
@@ -107,27 +138,50 @@ func (s *SolrPlugin) loadStatsMbeanHandler(core string, cat string) error {
 	for _, path := range handlerPaths {
 		uri += fmt.Sprintf("&key=%s", url.QueryEscape(path))
 	}
-	stats, err := s.getStats(uri)
+	stats, err := fetchJSONData(uri)
 	if err != nil {
 		return err
 	}
-	s.setStatsMbean(core, stats, handlerStatKeys)
+	var sKeys []string
+	if s.greaterThanOrEqualToMajorVersion(7) {
+		sKeys = handlerStatKeys
+	} else {
+		sKeys = legacyHandlerStatKeys
+	}
+	s.setStatsMbean(core, stats, sKeys, 2)
 	return nil
 }
 
 func (s *SolrPlugin) loadStatsMbeanCache(core string) error {
-	stats, err := s.getStats(s.BaseURL + "/" + core + "/admin/mbeans?stats=true&wt=json&cat=CACHE&key=filterCache&key=perSegFilter&key=queryResultCache&key=documentCache&key=fieldValueCache")
+	stats, err := fetchJSONData(s.BaseURL + "/" + core + "/admin/mbeans?stats=true&wt=json&cat=CACHE&key=filterCache&key=perSegFilter&key=queryResultCache&key=documentCache&key=fieldValueCache")
 	if err != nil {
 		return err
 	}
-	s.setStatsMbean(core, stats, cacheStatKeys)
+	s.setStatsMbean(core, stats, cacheStatKeys, 3)
+	return nil
+}
+
+func (s *SolrPlugin) loadVersion() error {
+	stats, err := fetchJSONData(s.BaseURL + "/admin/info/system?wt=json")
+	if err != nil {
+		return err
+	}
+	lucene, ok := stats["lucene"].(map[string]interface{})
+	if !ok {
+		return errors.New("type assersion error")
+	}
+	solrVersion, ok := lucene["solr-spec-version"].(string)
+	if !ok {
+		return errors.New("type assersion error")
+	}
+	s.Version = solrVersion
 	return nil
 }
 
 func (s *SolrPlugin) loadStats() error {
 	s.Stats = map[string](map[string]float64){}
 
-	stats, err := s.getStats(s.BaseURL + "/admin/cores?wt=json")
+	stats, err := fetchJSONData(s.BaseURL + "/admin/cores?wt=json")
 	if err != nil {
 		return err
 	}
@@ -139,17 +193,18 @@ func (s *SolrPlugin) loadStats() error {
 		if err != nil {
 			return err
 		}
-		err = s.loadStatsMbeanHandler(core, "QUERYHANDLER")
-		if err != nil {
-			return err
+
+		var mKeys []string
+		if s.greaterThanOrEqualToMajorVersion(7) {
+			mKeys = mbeanHandlerKeys
+		} else {
+			mKeys = legacyMbeanHandlerKeys
 		}
-		err = s.loadStatsMbeanHandler(core, "UPDATEHANDLER")
-		if err != nil {
-			return err
-		}
-		err = s.loadStatsMbeanHandler(core, "REPLICATION")
-		if err != nil {
-			return err
+		for _, mKey := range mKeys {
+			err = s.loadStatsMbeanHandler(core, mKey)
+			if err != nil {
+				return err
+			}
 		}
 		err = s.loadStatsMbeanCache(core)
 		if err != nil {
@@ -200,7 +255,13 @@ func (s SolrPlugin) GraphDefinition() map[string]mp.Graphs {
 			}
 		}
 
-		for _, key := range handlerStatKeys {
+		var sKeys []string
+		if s.greaterThanOrEqualToMajorVersion(7) {
+			sKeys = handlerStatKeys
+		} else {
+			sKeys = legacyHandlerStatKeys
+		}
+		for _, key := range sKeys {
 			var metrics []mp.Metrics
 			for _, path := range handlerPaths {
 				path = escapeSlash(path)
@@ -263,6 +324,7 @@ func Do() {
 	}
 
 	solr.BaseURL = fmt.Sprintf("%s://%s:%s/solr", solr.Protocol, solr.Host, solr.Port)
+	solr.loadVersion()
 	solr.loadStats()
 
 	helper := mp.NewMackerelPlugin(solr)

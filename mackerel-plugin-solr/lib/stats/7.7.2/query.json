@@ -1,0 +1,39 @@
+{
+  "responseHeader": {
+    "status": 0,
+    "QTime": 8
+  },
+  "solr-mbeans": [
+    "QUERY",
+    {
+      "/select": {
+        "class": "org.apache.solr.handler.component.SearchHandler",
+        "description": "Search using components: ",
+        "stats": {
+          "QUERY./select.errors.count": 222,
+          "QUERY./select.handlerStart": 1565590018289,
+          "QUERY./select.clientErrors.count": 432,
+          "QUERY./select.requestTimes.meanRate": 0.123,
+          "QUERY./select.serverErrors.count": 234,
+          "QUERY./select.timeouts.count": 333,
+          "QUERY./select.totalTime": 0,
+          "QUERY./select.requests": 111
+        }
+      },
+      "/get": {
+        "class": "org.apache.solr.handler.RealTimeGetHandler",
+        "description": "The realtime get handler",
+        "stats": {
+          "QUERY./get.handlerStart": 1565590017803,
+          "QUERY./get.errors.count": 0,
+          "QUERY./get.requests": 0,
+          "QUERY./get.totalTime": 0,
+          "QUERY./get.requestTimes.meanRate": 0,
+          "QUERY./get.clientErrors.count": 0,
+          "QUERY./get.serverErrors.count": 0,
+          "QUERY./get.timeouts.count": 0
+        }
+      }
+    }
+  ]
+}
