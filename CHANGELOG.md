@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.58.0 (2019-08-29)
+
+* [solr] Add version 7.x and 8.x support #562 (supercaracal)
+* [sidekiq] add option for redis-namespace #563 (y-imaida)
+* add fakeroot to build dependencies #564 (susisu)
+
+
 ## 0.57.0 (2019-07-22)
 
 * [jvm] fix jinfo command timed out error is not logged #560 (susisu)
