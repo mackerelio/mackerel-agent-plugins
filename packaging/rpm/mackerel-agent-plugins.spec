@@ -49,6 +49,11 @@ done
 %{__oldtargetdir}/*
 
 %changelog
+* Thu Aug 29 2019 <mackerel-developers@hatena.ne.jp> - 0.58.0
+- [solr] Add version 7.x and 8.x support (by supercaracal)
+- [sidekiq] add option for redis-namespace (by y-imaida)
+- add fakeroot to build dependencies (by susisu)
+
 * Mon Jul 22 2019 <mackerel-developers@hatena.ne.jp> - 0.57.0
 - [jvm] fix jinfo command timed out error is not logged (by susisu)
 - Build with Go 1.12 (by astj)

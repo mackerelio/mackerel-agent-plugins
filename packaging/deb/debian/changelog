@@ -1,3 +1,14 @@
+mackerel-agent-plugins (0.58.0-1) stable; urgency=low
+
+  * [solr] Add version 7.x and 8.x support (by supercaracal)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/562>
+  * [sidekiq] add option for redis-namespace (by y-imaida)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/563>
+  * add fakeroot to build dependencies (by susisu)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/564>
+
+ -- mackerel <mackerel-developers@hatena.ne.jp>  Thu, 29 Aug 2019 01:53:36 +0000
+
 mackerel-agent-plugins (0.57.0-1) stable; urgency=low
 
   * [jvm] fix jinfo command timed out error is not logged (by susisu)
