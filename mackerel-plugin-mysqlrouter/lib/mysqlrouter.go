@@ -95,6 +95,7 @@ func (mr MRPlugin) Prepare() {
 	graphdef = g
 }
 
+// Do the plugin
 func Do() {
 	if url == "" || user == "" || pass == "" {
 		panic("The environment missing.\n" +
