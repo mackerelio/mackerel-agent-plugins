@@ -46,6 +46,11 @@ It is just used as a prefix of graph label.
 This plugin (as well as the jps command explained above) must be executed by the user who executes the target Java application process, while mackerel-agent usually runs under root privilege.
 Since the executing user may not be root, you are required to specify the user in `mackerel-agent-conf` as shown above.
 
+## About the `PerfDisableSharedMem` JVM option issue
+
+Since there is a performance issue called [the four month bug](https://www.evanjones.ca/jvm-mmap-pause.html), several middlewares specify the `-XX:+PerfDisableSharedMem` JVM option as default.
+When the JVM option is enabled, this plugin is no longer able to work because which depends `jps` and `jstat` JDK tools.
+
 ## References
 
 - https://github.com/sensu/sensu-community-plugins/blob/master/plugins/java/jstat-metrics.py
