@@ -267,7 +267,8 @@ func (s SolrPlugin) GraphDefinition() map[string]mp.Graphs {
 				path = escapeSlash(path)
 				metricLabel := strings.Title(path)
 				diff := false
-				if key == "requests" {
+				if key == "requests" || key == "errors" || key == "timeouts" ||
+					key == "clientErrors" || key == "serverErrors" || key == "requestTimes" {
 					diff = true
 				}
 				metrics = append(metrics,
