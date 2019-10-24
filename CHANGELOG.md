@@ -2,6 +2,7 @@
 
 ## 0.59.0 (2019-10-24)
 
+* Build with Go 1.12.12
 * Update dependencies #572 (astj)
 * [solr] Fix several graph definitions #571 (supercaracal)
 * [doc]add repository policy #570 (lufia)
