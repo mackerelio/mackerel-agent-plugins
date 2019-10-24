@@ -1,3 +1,17 @@
+mackerel-agent-plugins (0.59.0-1) stable; urgency=low
+
+  * Build with Go 1.12.12
+  * Update dependencies (by astj)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/572>
+  * [solr] Fix several graph definitions (by supercaracal)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/571>
+  * [doc]add repository policy (by lufia)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/570>
+  * [jvm] Add the PerfDisableSharedMem JVM option issue to README (by supercaracal)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/569>
+
+ -- mackerel <mackerel-developers@hatena.ne.jp>  Thu, 24 Oct 2019 07:30:43 +0000
+
 mackerel-agent-plugins (0.58.0-1) stable; urgency=low
 
   * [solr] Add version 7.x and 8.x support (by supercaracal)

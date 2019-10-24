@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.59.0 (2019-10-24)
+
+* Build with Go 1.12.12
+* Update dependencies #572 (astj)
+* [solr] Fix several graph definitions #571 (supercaracal)
+* [doc]add repository policy #570 (lufia)
+* [jvm] Add the PerfDisableSharedMem JVM option issue to README #569 (supercaracal)
+
+
 ## 0.58.0 (2019-08-29)
 
 * [solr] Add version 7.x and 8.x support #562 (supercaracal)

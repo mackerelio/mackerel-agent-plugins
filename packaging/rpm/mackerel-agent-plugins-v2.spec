@@ -40,6 +40,13 @@ done
 %{__targetdir}/*
 
 %changelog
+* Thu Oct 24 2019 <mackerel-developers@hatena.ne.jp> - 0.59.0
+- Build with Go 1.12.12
+- Update dependencies (by astj)
+- [solr] Fix several graph definitions (by supercaracal)
+- [doc]add repository policy (by lufia)
+- [jvm] Add the PerfDisableSharedMem JVM option issue to README (by supercaracal)
+
 * Thu Aug 29 2019 <mackerel-developers@hatena.ne.jp> - 0.58.0
 - [solr] Add version 7.x and 8.x support (by supercaracal)
 - [sidekiq] add option for redis-namespace (by y-imaida)
