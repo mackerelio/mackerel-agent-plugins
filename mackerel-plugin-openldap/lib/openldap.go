@@ -12,9 +12,9 @@ import (
 	"strings"
 	"time"
 
+	ldap "github.com/go-ldap/ldap/v3"
 	mp "github.com/mackerelio/go-mackerel-plugin-helper"
 	"github.com/mackerelio/golib/logging"
-	ldap "gopkg.in/ldap.v2"
 )
 
 var (
