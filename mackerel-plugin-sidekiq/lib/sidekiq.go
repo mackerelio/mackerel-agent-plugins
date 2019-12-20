@@ -12,9 +12,9 @@ import (
 
 // SidekiqPlugin for fetching metrics
 type SidekiqPlugin struct {
-	Client *r.Client
+	Client    *r.Client
 	Namespace string
-	Prefix string
+	Prefix    string
 }
 
 var graphdef = map[string]mp.Graphs{
@@ -229,9 +229,9 @@ func Do() {
 	})
 
 	sp := SidekiqPlugin{
-		Client: client,
+		Client:    client,
 		Namespace: *optNamespace,
-		Prefix: *optPrefix,
+		Prefix:    *optPrefix,
 	}
 	helper := mp.NewMackerelPlugin(sp)
 	helper.Tempfile = *optTempfile

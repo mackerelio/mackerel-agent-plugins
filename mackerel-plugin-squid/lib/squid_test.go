@@ -1,24 +1,24 @@
 package mpsquid
 
 import (
-  "strings"
-  "testing"
+	"strings"
+	"testing"
 
-  "github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/assert"
 )
 
 func TestGraphDefinition(t *testing.T) {
-  var squid SquidPlugin
+	var squid SquidPlugin
 
-  graphdef := squid.GraphDefinition()
-  if len(graphdef) != 6 {
-    t.Errorf("GetTempfilename: %d should be 6", len(graphdef))
-  }
+	graphdef := squid.GraphDefinition()
+	if len(graphdef) != 6 {
+		t.Errorf("GetTempfilename: %d should be 6", len(graphdef))
+	}
 }
 
 func TestParse(t *testing.T) {
-  var squid SquidPlugin
-  stubMgrCacheInfo := `Squid Object Cache: Version 3.5.19
+	var squid SquidPlugin
+	stubMgrCacheInfo := `Squid Object Cache: Version 3.5.19
 Build Info: Debian linux
 Service Name: squid
 Start Time:	Wed, 28 Nov 2018 09:33:14 GMT
@@ -81,23 +81,23 @@ Internal Data Structures:
 	     1 on-disk objects
 `
 
-  squidStats := strings.NewReader(stubMgrCacheInfo)
-  
-  stat, err := squid.ParseMgrInfo(squidStats)
-  assert.Nil(t, err)
-  assert.EqualValues(t, 1663, stat["requests"])
-  assert.EqualValues(t, 0, stat["request_ratio"])
-  assert.EqualValues(t, 100, stat["byte_ratio"])
-  assert.EqualValues(t, 0.41, stat["cpu_usage"])
-  assert.EqualValues(t, 0, stat["swap_used_ratio"])
-  assert.EqualValues(t, 0, stat["memory_used_ratio"])
-  assert.EqualValues(t, 4096, stat["total_fd"])
-  assert.EqualValues(t, 27, stat["max_fd"])
-  assert.EqualValues(t, 16, stat["current_fd"])
-  assert.EqualValues(t, 4080, stat["avail_fd"])
-  assert.EqualValues(t, 100, stat["reserved_fd"])
-  assert.EqualValues(t, 0, stat["open_files"])
-  assert.EqualValues(t, 0, stat["queued_files"])
-  assert.EqualValues(t, 387958, stat["memory_poll_alloc"])
-  assert.EqualValues(t, 388241, stat["memory_poll_free"])
+	squidStats := strings.NewReader(stubMgrCacheInfo)
+
+	stat, err := squid.ParseMgrInfo(squidStats)
+	assert.Nil(t, err)
+	assert.EqualValues(t, 1663, stat["requests"])
+	assert.EqualValues(t, 0, stat["request_ratio"])
+	assert.EqualValues(t, 100, stat["byte_ratio"])
+	assert.EqualValues(t, 0.41, stat["cpu_usage"])
+	assert.EqualValues(t, 0, stat["swap_used_ratio"])
+	assert.EqualValues(t, 0, stat["memory_used_ratio"])
+	assert.EqualValues(t, 4096, stat["total_fd"])
+	assert.EqualValues(t, 27, stat["max_fd"])
+	assert.EqualValues(t, 16, stat["current_fd"])
+	assert.EqualValues(t, 4080, stat["avail_fd"])
+	assert.EqualValues(t, 100, stat["reserved_fd"])
+	assert.EqualValues(t, 0, stat["open_files"])
+	assert.EqualValues(t, 0, stat["queued_files"])
+	assert.EqualValues(t, 387958, stat["memory_poll_alloc"])
+	assert.EqualValues(t, 388241, stat["memory_poll_free"])
 }
