@@ -4,7 +4,7 @@ import (
 	"testing"
 	"time"
 
-	ldap "gopkg.in/ldap.v2"
+	ldap "github.com/go-ldap/ldap/v3"
 )
 
 func TestTransformKeyName(t *testing.T) {
