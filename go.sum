@@ -41,6 +41,8 @@ github.com/alouca/gosnmp v0.0.0-20170620005048-04d83944c9ab h1:pfx9N/EMDxIwVzGu9
 github.com/alouca/gosnmp v0.0.0-20170620005048-04d83944c9ab/go.mod h1:kEcj+iUROrUCr7AIrul5NutI2kWv0ns9BL0ezVp1h/Y=
 github.com/aws/aws-sdk-go v1.26.6 h1:LinjO5+t9K/TyrZbSU1BaVJ5wIG3DlX5SffZ32Eg+kU=
 github.com/aws/aws-sdk-go v1.26.6/go.mod h1:KmX6BPdI08NWTb3/sm4ZGu5ShLoqVDhKgpiN924inxo=
+github.com/aws/aws-sdk-go v1.26.8 h1:W+MPuCFLSO/itZkZ5GFOui0YC1j3lZ507/m5DFPtzE4=
+github.com/aws/aws-sdk-go v1.26.8/go.mod h1:KmX6BPdI08NWTb3/sm4ZGu5ShLoqVDhKgpiN924inxo=
 github.com/blang/semver v3.1.0+incompatible/go.mod h1:kRBLl5iJ+tD4TcOOxsy/0fnwebNt5EWlYSAyrTnjyyk=
 github.com/bmizerany/assert v0.0.0-20160611221934-b7ed37b82869/go.mod h1:Ekp36dRnpXw/yCqJaO+ZrUyxD+3VXMFFr56k5XYrpB4=
 github.com/census-instrumentation/opencensus-proto v0.2.1/go.mod h1:f6KPmirojxKA12rnyqOA5BBL4O983OfeGPqjHWSTneU=
