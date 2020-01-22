@@ -40,6 +40,12 @@ done
 %{__targetdir}/*
 
 %changelog
+* Wed Jan 22 2020 <mackerel-developers@hatena.ne.jp> - 0.59.1
+- Bump github.com/aws/aws-sdk-go from 1.27.0 to 1.28.5 (by dependabot-preview[bot])
+- Bump github.com/aws/aws-sdk-go from 1.26.6 to 1.27.0 (by dependabot-preview[bot])
+- add .dependabot/config.yml (by lufia)
+- refactor Makefile and update dependencies (by lufia)
+
 * Thu Oct 24 2019 <mackerel-developers@hatena.ne.jp> - 0.59.0
 - Build with Go 1.12.12
 - Update dependencies (by astj)

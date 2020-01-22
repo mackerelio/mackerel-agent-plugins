@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.59.1 (2020-01-22)
+
+* Bump github.com/aws/aws-sdk-go from 1.27.0 to 1.28.5 #579 (dependabot-preview[bot])
+* Bump github.com/aws/aws-sdk-go from 1.26.6 to 1.27.0 #577 (dependabot-preview[bot])
+* add .dependabot/config.yml #575 (lufia)
+* refactor Makefile and update dependencies #574 (lufia)
+
+
 ## 0.59.0 (2019-10-24)
 
 * Build with Go 1.12.12

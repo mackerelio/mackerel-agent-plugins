@@ -1,3 +1,16 @@
+mackerel-agent-plugins (0.59.1-1) stable; urgency=low
+
+  * Bump github.com/aws/aws-sdk-go from 1.27.0 to 1.28.5 (by dependabot-preview[bot])
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/579>
+  * Bump github.com/aws/aws-sdk-go from 1.26.6 to 1.27.0 (by dependabot-preview[bot])
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/577>
+  * add .dependabot/config.yml (by lufia)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/575>
+  * refactor Makefile and update dependencies (by lufia)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/574>
+
+ -- mackerel <mackerel-developers@hatena.ne.jp>  Wed, 22 Jan 2020 07:15:44 +0000
+
 mackerel-agent-plugins (0.59.0-1) stable; urgency=low
 
   * Build with Go 1.12.12
