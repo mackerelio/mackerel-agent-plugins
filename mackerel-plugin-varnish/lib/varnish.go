@@ -27,6 +27,8 @@ var graphdef = map[string]mp.Graphs{
 			{Name: "backend_req", Label: "Requests", Diff: true},
 			{Name: "backend_conn", Label: "Conn success", Diff: true},
 			{Name: "backend_fail", Label: "Conn fail", Diff: true},
+			{Name: "backend_reuse", Label: "Conn reuse", Diff: true},
+			{Name: "backend_recycle", Label: "Conn recycle", Diff: true},
 		},
 	},
 	"varnish.objects": {
@@ -124,6 +126,10 @@ func (m VarnishPlugin) FetchMetrics() (map[string]interface{}, error) {
 			stat["backend_conn"] = tmpv
 		case "MAIN.backend_fail":
 			stat["backend_fail"] = tmpv
+		case "MAIN.backend_reuse":
+			stat["backend_reuse"] = tmpv
+		case "MAIN.backend_recycle":
+			stat["backend_recycle"] = tmpv
 		case "MAIN.n_object":
 			stat["n_object"] = tmpv
 		case "MAIN.n_objectcore":
