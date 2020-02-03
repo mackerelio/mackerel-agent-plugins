@@ -144,7 +144,7 @@ func (m VarnishPlugin) FetchMetrics() (map[string]interface{}, error) {
 			stat["busy_wakeup"] = tmpv
 		default:
 			smamatch := smaexp.FindStringSubmatch(match[1])
-			if smamatch == nil || smamatch[1] == "Transient" {
+			if smamatch == nil {
 				continue
 			}
 			if smamatch[2] == "g_alloc" {
