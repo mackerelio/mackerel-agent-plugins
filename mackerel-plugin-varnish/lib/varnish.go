@@ -148,7 +148,6 @@ func (m VarnishPlugin) FetchMetrics() (map[string]interface{}, error) {
 				continue
 			}
 			if smamatch[2] == "g_alloc" {
-				fmt.Printf("%+v\n", smamatch)
 				stat["varnish.sma.g_alloc."+smamatch[1]+".g_alloc"] = tmpv
 			} else if smamatch[2] == "g_bytes" {
 				stat["varnish.sma.memory."+smamatch[1]+".allocated"] = tmpv
