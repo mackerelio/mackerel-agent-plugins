@@ -1,3 +1,16 @@
+mackerel-agent-plugins (0.60.0-1) stable; urgency=low
+
+  * [varnish] remove unnecessary printf (by lufia)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/586>
+  * [varnish] Added metrics for Transient storage (by cohalz)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/584>
+  * [varnish] Added backend_reuse and backend_recycle metrics (by cohalz)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/583>
+  * rename: github.com/motemen/gobump -> github.com/x-motemen/gobump (by lufia)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/582>
+
+ -- mackerel <mackerel-developers@hatena.ne.jp>  Wed, 05 Feb 2020 07:59:22 +0000
+
 mackerel-agent-plugins (0.59.1-1) stable; urgency=low
 
   * Bump github.com/aws/aws-sdk-go from 1.27.0 to 1.28.5 (by dependabot-preview[bot])

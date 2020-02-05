@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.60.0 (2020-02-05)
+
+* [varnish] remove unnecessary printf #586 (lufia)
+* [varnish] Added metrics for Transient storage #584 (cohalz)
+* [varnish] Added backend_reuse and backend_recycle metrics #583 (cohalz)
+* rename: github.com/motemen/gobump -> github.com/x-motemen/gobump #582 (lufia)
+
+
 ## 0.59.1 (2020-01-22)
 
 * Bump github.com/aws/aws-sdk-go from 1.27.0 to 1.28.5 #579 (dependabot-preview[bot])
