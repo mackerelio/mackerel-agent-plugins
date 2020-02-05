@@ -49,6 +49,12 @@ done
 %{__oldtargetdir}/*
 
 %changelog
+* Wed Feb 05 2020 <mackerel-developers@hatena.ne.jp> - 0.60.0
+- [varnish] remove unnecessary printf (by lufia)
+- [varnish] Added metrics for Transient storage (by cohalz)
+- [varnish] Added backend_reuse and backend_recycle metrics (by cohalz)
+- rename: github.com/motemen/gobump -> github.com/x-motemen/gobump (by lufia)
+
 * Wed Jan 22 2020 <mackerel-developers@hatena.ne.jp> - 0.59.1
 - Bump github.com/aws/aws-sdk-go from 1.27.0 to 1.28.5 (by dependabot-preview[bot])
 - Bump github.com/aws/aws-sdk-go from 1.26.6 to 1.27.0 (by dependabot-preview[bot])
