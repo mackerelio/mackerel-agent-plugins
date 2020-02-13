@@ -22,7 +22,7 @@ require (
 	github.com/fzzy/radix v0.5.6
 	github.com/garyburd/redigo v1.6.0
 	github.com/globalsign/mgo v0.0.0-20181015135952-eeefdecb41b8
-	github.com/go-ldap/ldap/v3 v3.1.5
+	github.com/go-ldap/ldap/v3 v3.1.7
 	github.com/go-ole/go-ole v1.2.4 // indirect
 	github.com/go-redis/redis v6.15.7+incompatible
 	github.com/go-sql-driver/mysql v1.4.1 // indirect
