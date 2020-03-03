@@ -11,7 +11,7 @@ require (
 	github.com/StackExchange/wmi v0.0.0-20190523213315-cbe66965904d
 	github.com/alouca/gologger v0.0.0-20120904114645-7d4b7291de9c // indirect
 	github.com/alouca/gosnmp v0.0.0-20170620005048-04d83944c9ab
-	github.com/aws/aws-sdk-go v1.28.13
+	github.com/aws/aws-sdk-go v1.29.14
 	github.com/containerd/containerd v1.3.2 // indirect
 	github.com/containerd/continuity v0.0.0-20191214063359-1097c8bae83b // indirect
 	github.com/cpuguy83/go-md2man/v2 v2.0.0 // indirect
@@ -25,7 +25,6 @@ require (
 	github.com/go-ldap/ldap/v3 v3.1.7
 	github.com/go-ole/go-ole v1.2.4 // indirect
 	github.com/go-redis/redis v6.15.7+incompatible
-	github.com/go-sql-driver/mysql v1.4.1 // indirect
 	github.com/gogo/protobuf v1.3.1 // indirect
 	github.com/golang/groupcache v0.0.0-20191027212112-611e8accdfc9 // indirect
 	github.com/hashicorp/go-version v1.2.0
@@ -63,7 +62,6 @@ require (
 	github.com/urfave/cli v1.22.2
 	github.com/ziutek/mymysql v1.5.4
 	go.opencensus.io v0.22.2 // indirect
-	golang.org/x/net v0.0.0-20191209160850-c0dbc17a3553 // indirect
 	golang.org/x/oauth2 v0.0.0-20191202225959-858c2ad4c8b6 // indirect
 	golang.org/x/sync v0.0.0-20190911185100-cd5d95a43a6e
 	golang.org/x/sys v0.0.0-20191219235734-af0d71d358ab // indirect
