@@ -49,6 +49,17 @@ done
 %{__oldtargetdir}/*
 
 %changelog
+* Fri Apr 03 2020 <mackerel-developers@hatena.ne.jp> - 0.60.1
+- Bump github.com/jarcoal/httpmock from 1.0.4 to 1.0.5 (by dependabot-preview[bot])
+- Bump github.com/aws/aws-sdk-go from 1.29.14 to 1.29.24 (by dependabot-preview[bot])
+- Bump github.com/aws/aws-sdk-go from 1.28.13 to 1.29.14 (by dependabot-preview[bot])
+- Bump github.com/montanaflynn/stats from 0.5.0 to 0.6.3 (by dependabot-preview[bot])
+- Bump github.com/fsouza/go-dockerclient from 1.6.0 to 1.6.3 (by dependabot-preview[bot])
+- Bump github.com/stretchr/testify from 1.4.0 to 1.5.1 (by dependabot-preview[bot])
+- Bump github.com/go-ldap/ldap/v3 from 3.1.5 to 3.1.7 (by dependabot-preview[bot])
+- Bump github.com/go-redis/redis from 6.15.6+incompatible to 6.15.7+incompatible (by dependabot-preview[bot])
+- Bump github.com/aws/aws-sdk-go from 1.28.5 to 1.28.13 (by dependabot-preview[bot])
+
 * Wed Feb 05 2020 <mackerel-developers@hatena.ne.jp> - 0.60.0
 - [varnish] remove unnecessary printf (by lufia)
 - [varnish] Added metrics for Transient storage (by cohalz)

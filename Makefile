@@ -1,4 +1,4 @@
-VERSION = 0.60.0
+VERSION = 0.60.1
 VERBOSE_FLAG = $(if $(VERBOSE),-verbose)
 CURRENT_REVISION = $(shell git rev-parse --short HEAD)
 
