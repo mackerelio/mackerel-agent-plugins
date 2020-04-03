@@ -1,5 +1,18 @@
 # Changelog
 
+## 0.60.1 (2020-04-03)
+
+* Bump github.com/jarcoal/httpmock from 1.0.4 to 1.0.5 #603 (dependabot-preview[bot])
+* Bump github.com/aws/aws-sdk-go from 1.29.14 to 1.29.24 #601 (dependabot-preview[bot])
+* Bump github.com/aws/aws-sdk-go from 1.28.13 to 1.29.14 #598 (dependabot-preview[bot])
+* Bump github.com/montanaflynn/stats from 0.5.0 to 0.6.3 #596 (dependabot-preview[bot])
+* Bump github.com/fsouza/go-dockerclient from 1.6.0 to 1.6.3 #595 (dependabot-preview[bot])
+* Bump github.com/stretchr/testify from 1.4.0 to 1.5.1 #594 (dependabot-preview[bot])
+* Bump github.com/go-ldap/ldap/v3 from 3.1.5 to 3.1.7 #591 (dependabot-preview[bot])
+* Bump github.com/go-redis/redis from 6.15.6+incompatible to 6.15.7+incompatible #585 (dependabot-preview[bot])
+* Bump github.com/aws/aws-sdk-go from 1.28.5 to 1.28.13 #588 (dependabot-preview[bot])
+
+
 ## 0.60.0 (2020-02-05)
 
 * [varnish] remove unnecessary printf #586 (lufia)
