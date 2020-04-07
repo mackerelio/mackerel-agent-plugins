@@ -1,0 +1,7 @@
+dn: cn=monitor,{{ LDAP_BASE_DN }}
+objectClass: simpleSecurityObject
+objectClass: organizationalRole
+cn: monitor
+description: LDAP monitor
+userPassword: {SSHA}pwokdQvwXE4qAnV5TRQ4/UZU8gBLOUF1
+#password: passpass
