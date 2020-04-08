@@ -1,0 +1,7 @@
+dn: olcDatabase=monitor,cn=config
+objectClass: olcDatabaseConfig
+objectClass: olcMonitorConfig
+olcDatabase: monitor
+olcAccess: to dn.subtree="cn=monitor"
+  by dn.base="cn=monitor,{{ LDAP_BASE_DN }}" read
+  by * none
