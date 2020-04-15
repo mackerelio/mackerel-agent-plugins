@@ -213,12 +213,16 @@ github.com/mackerelio/go-mackerel-plugin v0.0.0-20190712052230-7d51210247a3 h1:r
 github.com/mackerelio/go-mackerel-plugin v0.0.0-20190712052230-7d51210247a3/go.mod h1:hV+0M18+q787IEDQhLficGPJoEfx0JbPuhqmU1z7l/M=
 github.com/mackerelio/go-mackerel-plugin-helper v0.0.0-20190712052147-cc61b45daff1 h1:z45QUam4orEu22i55p0HzQ+e67u28uFlL3PU9GHleEw=
 github.com/mackerelio/go-mackerel-plugin-helper v0.0.0-20190712052147-cc61b45daff1/go.mod h1:48LMM2vGACCD2ADEUAT+Ya5jnKh71lNoCNSdGmeUKf8=
+github.com/mackerelio/go-mackerel-plugin-helper v0.0.0-20200415080737-d1160cb3123e h1:m248rwTfkJKMp0uhlWs+v8ceV/5JAUz4u8nXoQ7RHgU=
+github.com/mackerelio/go-mackerel-plugin-helper v0.0.0-20200415080737-d1160cb3123e/go.mod h1:48LMM2vGACCD2ADEUAT+Ya5jnKh71lNoCNSdGmeUKf8=
 github.com/mackerelio/go-osstat v0.1.0 h1:e57QHeHob8kKJ5FhcXGdzx5O6Ktuc5RHMDIkeqhgkFA=
 github.com/mackerelio/go-osstat v0.1.0/go.mod h1:1K3NeYLhMHPvzUu+ePYXtoB58wkaRpxZsGClZBJyIFw=
 github.com/mackerelio/golib v0.0.0-20190411032134-c87047ca454e h1:MwWzFCq2tENDy2YPU01FDOSkt0At4mpLyvAFsFdB66A=
 github.com/mackerelio/golib v0.0.0-20190411032134-c87047ca454e/go.mod h1:kbqYA8VcFqcMt07v+GPSZQwqtwc7Wr0V0vzxUNMrk7E=
 github.com/mackerelio/golib v0.0.0-20191002020229-a65782d392ca h1:yKZK7Zhsaa9oE96//J0xnSJdUfGWRbb9rIv2/VCr/sA=
 github.com/mackerelio/golib v0.0.0-20191002020229-a65782d392ca/go.mod h1:dzfX/B7IJm2KhmEWnLLNYjSjT1TroLxXJjrBLhKPiws=
+github.com/mackerelio/golib v1.0.0 h1:wiJv4l8xU9jmMn/JZV6gfpJeLUQxVFG0kVFWnsoF9wA=
+github.com/mackerelio/golib v1.0.0/go.mod h1:Udb4zyFG2ui7TNTMOX8In0U8AT4woLu53/46ncRwNzE=
 github.com/mackerelio/mackerel-plugin-aws-ec2 v1.0.1 h1:YLTTM6NO/MZD+T29kFFKuwh6Khde+TFcc9lIPx8KUes=
 github.com/mackerelio/mackerel-plugin-aws-ec2 v1.0.1/go.mod h1:Hw/mRzxK6cW2gCXZd6Cg+GlpB59ik8b4ir7sVDCz160=
 github.com/mackerelio/mackerel-plugin-aws-kinesis-firehose v1.0.1 h1:6m53sdXzG8JpaJ2z2cAYUPAz7JnGIg+HC/DBRU0tfZQ=

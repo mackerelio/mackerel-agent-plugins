@@ -35,9 +35,9 @@ require (
 	github.com/lestrrat-go/tcputil v0.0.0-20180223003554-d3c7f98154fb // indirect
 	github.com/lib/pq v1.3.0
 	github.com/mackerelio/go-mackerel-plugin v0.0.0-20190712052230-7d51210247a3
-	github.com/mackerelio/go-mackerel-plugin-helper v0.0.0-20190712052147-cc61b45daff1
+	github.com/mackerelio/go-mackerel-plugin-helper v0.0.0-20200415080737-d1160cb3123e
 	github.com/mackerelio/go-osstat v0.1.0
-	github.com/mackerelio/golib v0.0.0-20191002020229-a65782d392ca
+	github.com/mackerelio/golib v1.0.0
 	github.com/mackerelio/mackerel-plugin-aws-ec2 v1.0.1
 	github.com/mackerelio/mackerel-plugin-aws-kinesis-firehose v1.0.1
 	github.com/mackerelio/mackerel-plugin-aws-rekognition v1.0.1
