@@ -17,7 +17,7 @@ require (
 	github.com/cpuguy83/go-md2man/v2 v2.0.0 // indirect
 	github.com/crowdmob/goamz v0.0.0-20150128194925-3a06871fe9fc
 	github.com/erikstmartin/go-testdb v0.0.0-20160219214506-8d10e4a1bae5
-	github.com/fsouza/go-dockerclient v1.6.3
+	github.com/fsouza/go-dockerclient v1.6.4
 	github.com/fukata/golang-stats-api-handler v1.0.0
 	github.com/fzzy/radix v0.5.6
 	github.com/garyburd/redigo v1.6.0
