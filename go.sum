@@ -24,6 +24,8 @@ github.com/Microsoft/hcsshim v0.8.7 h1:ptnOoufxGSzauVTsdE+wMYnCWA301PdoN4xg5oRdZ
 github.com/Microsoft/hcsshim v0.8.7/go.mod h1:OHd7sQqRFrYd3RmSgbgji+ctCwkbq2wbEYNSzOYtcBQ=
 github.com/Songmu/axslogparser v1.2.0 h1:ZKdWlx3Ap2Kc6oYgL2ats3bxH8iYbzCWR9EwCtA/wRs=
 github.com/Songmu/axslogparser v1.2.0/go.mod h1:tAOlIWRn5Y5tLfZ4zlAdbkvrx21Jmu7SaK0vtlYmaic=
+github.com/Songmu/axslogparser v1.3.0 h1:GiCN0LHijcwQ7ea17kWMsuyNadKcCJItMTt8I35L3bc=
+github.com/Songmu/axslogparser v1.3.0/go.mod h1:tAOlIWRn5Y5tLfZ4zlAdbkvrx21Jmu7SaK0vtlYmaic=
 github.com/Songmu/go-ltsv v0.0.0-20181014062614-c30af2b7b171 h1:nwdeQV2pNjaTv3os4N4/bKDqv0PxW/9DoEAdtW6sY9o=
 github.com/Songmu/go-ltsv v0.0.0-20181014062614-c30af2b7b171/go.mod h1:LBP+tS9C2iiUoR7AGPaZYY+kjXgB5eZxZKbSEBL9UFw=
 github.com/Songmu/postailer v0.0.0-20181014062912-daaa1ba9cc39 h1:4BIHAY9tJ5KqVvhQK+2uQMOCDP6UkdBDyoxVVOOMT/M=
