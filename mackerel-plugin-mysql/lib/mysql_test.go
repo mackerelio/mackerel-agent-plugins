@@ -1250,3 +1250,40 @@ func TestParseProcesslist2(t *testing.T) {
 	assert.EqualValues(t, 1, stat["State_none"])
 	assert.EqualValues(t, 58, stat["State_other"])
 }
+
+func TestMySQLPluginDSN(t *testing.T) {
+	tests := []struct {
+		mp  MySQLPlugin
+		dsn string
+	}{
+		{
+			mp: MySQLPlugin{
+				Username: "test",
+				Password: "xxx",
+				Target:   "localhost:3306",
+			},
+			dsn: "test:xxx@tcp(localhost:3306)",
+		},
+		{
+			mp: MySQLPlugin{
+				Username: "test",
+				Target:   "localhost:3306",
+			},
+			dsn: "test@tcp(localhost:3306)",
+		},
+		{
+			mp: MySQLPlugin{
+				isUnixSocket: true,
+				Username:     "root",
+				Password:     "pw",
+				Target:       "/var/lib/mysql/mysql.sock",
+			},
+			dsn: "root:pw@unix(/var/lib/mysql/mysql.sock)",
+		},
+	}
+	for _, tt := range tests {
+		if dsn := tt.mp.dsn(); dsn != tt.dsn {
+			t.Errorf("%+v.dsn() = %s; want %s", tt.mp, dsn, tt.dsn)
+		}
+	}
+}
