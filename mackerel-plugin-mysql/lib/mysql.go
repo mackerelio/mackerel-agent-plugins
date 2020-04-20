@@ -367,6 +367,20 @@ func (m *MySQLPlugin) calculateCapacity(stat map[string]float64) {
 	}
 }
 
+func (m *MySQLPlugin) dsn() string {
+	var ai string
+	if m.Password == "" {
+		ai = m.Username
+	} else {
+		ai = m.Username + ":" + m.Password
+	}
+	proto := "tcp"
+	if m.isUnixSocket {
+		proto = "unix"
+	}
+	return fmt.Sprintf("%s@%s(%s)", ai, proto, m.Target)
+}
+
 // FetchMetrics interface for mackerelplugin
 func (m *MySQLPlugin) FetchMetrics() (map[string]float64, error) {
 	proto := "tcp"
