@@ -37,7 +37,7 @@ testgo: testdeps
 .PHONY: testconvention
 testconvention:
 	prove -r t/
-	go generate ./... && git diff --exit-code || \
+	go generate ./... && git diff --exit-code -- . ':(exclude)go.*' || \
 	  (echo 'please `go generate ./...` and commit them' && false)
 
 .PHONY: testdeps
