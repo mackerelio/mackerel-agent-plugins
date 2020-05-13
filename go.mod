@@ -4,7 +4,6 @@ go 1.12
 
 require (
 	cloud.google.com/go v0.50.0 // indirect
-	github.com/Microsoft/hcsshim v0.8.7 // indirect
 	github.com/Songmu/axslogparser v1.3.0
 	github.com/Songmu/postailer v0.0.0-20181014062912-daaa1ba9cc39
 	github.com/Songmu/timeout v0.4.0
@@ -13,11 +12,10 @@ require (
 	github.com/alouca/gosnmp v0.0.0-20170620005048-04d83944c9ab
 	github.com/aws/aws-sdk-go v1.30.7
 	github.com/containerd/containerd v1.3.2 // indirect
-	github.com/containerd/continuity v0.0.0-20191214063359-1097c8bae83b // indirect
 	github.com/cpuguy83/go-md2man/v2 v2.0.0 // indirect
 	github.com/crowdmob/goamz v0.0.0-20150128194925-3a06871fe9fc
 	github.com/erikstmartin/go-testdb v0.0.0-20160219214506-8d10e4a1bae5
-	github.com/fsouza/go-dockerclient v1.6.3
+	github.com/fsouza/go-dockerclient v1.6.5
 	github.com/fukata/golang-stats-api-handler v1.0.0
 	github.com/fzzy/radix v0.5.6
 	github.com/garyburd/redigo v1.6.0
@@ -25,7 +23,6 @@ require (
 	github.com/go-ldap/ldap/v3 v3.1.8
 	github.com/go-ole/go-ole v1.2.4 // indirect
 	github.com/go-redis/redis v6.15.7+incompatible
-	github.com/gogo/protobuf v1.3.1 // indirect
 	github.com/golang/groupcache v0.0.0-20191027212112-611e8accdfc9 // indirect
 	github.com/hashicorp/go-version v1.2.0
 	github.com/jarcoal/httpmock v1.0.5
@@ -50,7 +47,6 @@ require (
 	github.com/mattn/go-treasuredata v0.0.0-20170920030233-31758907cfc4
 	github.com/michaelklishin/rabbit-hole v1.5.0
 	github.com/montanaflynn/stats v0.6.3
-	github.com/morikuni/aec v1.0.0 // indirect
 	github.com/naokibtn/go-ses v0.0.0-20150122091825-74908b78cc76
 	github.com/onsi/ginkgo v1.10.2 // indirect
 	github.com/sirupsen/logrus v1.4.2 // indirect
@@ -68,6 +64,5 @@ require (
 	google.golang.org/api v0.15.0 // indirect
 	google.golang.org/appengine v1.6.5 // indirect
 	google.golang.org/genproto v0.0.0-20191216205247-b31c10ee225f // indirect
-	google.golang.org/grpc v1.26.0 // indirect
 	layeh.com/gumble v0.0.0-20190524033244-046859aa1d90
 )
