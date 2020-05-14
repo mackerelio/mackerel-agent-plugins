@@ -40,6 +40,18 @@ done
 %{__targetdir}/*
 
 %changelog
+* Thu May 14 2020 <mackerel-developers@hatena.ne.jp> - 0.60.2
+- Bump github.com/fsouza/go-dockerclient from 1.6.3 to 1.6.5 (by dependabot-preview[bot])
+- Bump github.com/lib/pq from 1.3.0 to 1.5.2 (by dependabot-preview[bot])
+- Bump github.com/go-ldap/ldap/v3 from 3.1.8 to 3.1.10 (by dependabot-preview[bot])
+- Bump github.com/Songmu/axslogparser from 1.2.0 to 1.3.0 (by dependabot-preview[bot])
+- ignore diffs of go.mod and go.sum (by lufia)
+- Bump go-mackerel-plugin{,-helper} (by astj)
+- Bump github.com/aws/aws-sdk-go from 1.29.24 to 1.30.7 (by dependabot-preview[bot])
+- Bump github.com/urfave/cli from 1.22.2 to 1.22.4 (by dependabot-preview[bot])
+- Bump github.com/go-ldap/ldap/v3 from 3.1.7 to 3.1.8 (by dependabot-preview[bot])
+- Add documents for testing (by lufia)
+
 * Fri Apr 03 2020 <mackerel-developers@hatena.ne.jp> - 0.60.1
 - Bump github.com/jarcoal/httpmock from 1.0.4 to 1.0.5 (by dependabot-preview[bot])
 - Bump github.com/aws/aws-sdk-go from 1.29.14 to 1.29.24 (by dependabot-preview[bot])

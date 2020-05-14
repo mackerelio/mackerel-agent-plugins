@@ -1,5 +1,19 @@
 # Changelog
 
+## 0.60.2 (2020-05-14)
+
+* Bump github.com/fsouza/go-dockerclient from 1.6.3 to 1.6.5 #619 (dependabot-preview[bot])
+* Bump github.com/lib/pq from 1.3.0 to 1.5.2 #624 (dependabot-preview[bot])
+* Bump github.com/go-ldap/ldap/v3 from 3.1.8 to 3.1.10 #623 (dependabot-preview[bot])
+* Bump github.com/Songmu/axslogparser from 1.2.0 to 1.3.0 #615 (dependabot-preview[bot])
+* ignore diffs of go.mod and go.sum #626 (lufia)
+* Bump go-mackerel-plugin{,-helper} #613 (astj)
+* Bump github.com/aws/aws-sdk-go from 1.29.24 to 1.30.7 #612 (dependabot-preview[bot])
+* Bump github.com/urfave/cli from 1.22.2 to 1.22.4 #609 (dependabot-preview[bot])
+* Bump github.com/go-ldap/ldap/v3 from 3.1.7 to 3.1.8 #608 (dependabot-preview[bot])
+* Add documents for testing #610 (lufia)
+
+
 ## 0.60.1 (2020-04-03)
 
 * Bump github.com/jarcoal/httpmock from 1.0.4 to 1.0.5 #603 (dependabot-preview[bot])
