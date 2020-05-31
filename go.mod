@@ -53,7 +53,7 @@ require (
 	github.com/soh335/go-test-redisserver v0.0.0-20170912004345-f716f0901533
 	github.com/sourcegraph/go-ses v0.0.0-20160405160939-6bd8d17cf7c1 // indirect
 	github.com/streadway/amqp v0.0.0-20190827072141-edfb9018d271 // indirect
-	github.com/stretchr/testify v1.5.1
+	github.com/stretchr/testify v1.6.0
 	github.com/tomasen/fcgi_client v0.0.0-20180423082037-2bb3d819fd19
 	github.com/urfave/cli v1.22.4
 	github.com/ziutek/mymysql v1.5.4
