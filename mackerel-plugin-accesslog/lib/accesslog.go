@@ -21,6 +21,11 @@ import (
 	"github.com/montanaflynn/stats"
 )
 
+var parsers = axslogparser.Parsers{
+	Apache: &axslogparser.Apache{},
+	LTSV:   &axslogparser.LTSV{},
+}
+
 // AccesslogPlugin mackerel plugin
 type AccesslogPlugin struct {
 	prefix    string
@@ -150,7 +155,7 @@ func (p *AccesslogPlugin) FetchMetrics() (map[string]float64, error) {
 		}
 		line := bb.String()
 		if p.parser == nil {
-			p.parser, l, err = axslogparser.GuessParser(line)
+			p.parser, l, err = parsers.GuessParser(line)
 		} else {
 			l, err = p.parser.Parse(line)
 		}
@@ -204,9 +209,9 @@ func Do() {
 	case "":
 		parser = nil // guess format by log (default)
 	case "ltsv":
-		parser = &axslogparser.LTSV{}
+		parser = parsers.LTSV
 	case "apache":
-		parser = &axslogparser.Apache{}
+		parser = parsers.Apache
 	default:
 		fmt.Fprintf(os.Stderr, "Error: '%s' is invalid format name\n", *optFormat)
 		flag.Usage()
