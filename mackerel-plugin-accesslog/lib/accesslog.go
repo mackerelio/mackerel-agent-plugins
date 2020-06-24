@@ -22,8 +22,8 @@ import (
 )
 
 var parsers = axslogparser.Parsers{
-	Apache: &axslogparser.Apache{},
-	LTSV:   &axslogparser.LTSV{},
+	Apache: &axslogparser.Apache{Loose: true},
+	LTSV:   &axslogparser.LTSV{Loose: true},
 }
 
 // AccesslogPlugin mackerel plugin
@@ -163,6 +163,17 @@ func (p *AccesslogPlugin) FetchMetrics() (map[string]float64, error) {
 			log.Println(err)
 			continue
 		}
+
+		// ignore invalid logs
+		if s := strings.Fields(l.Request); len(s) != 3 {
+			log.Printf("invalid log ignored (invalid request: %s)\n", l.Request)
+			continue
+		}
+		if l.Status < 100 || 600 <= l.Status {
+			log.Printf("invalid log ignored (invalid status: %d)\n", l.Status)
+			continue
+		}
+
 		ret[string(fmt.Sprintf("%d", l.Status)[0])+"xx_count"]++
 		ret["total_count"]++
 
