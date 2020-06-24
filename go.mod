@@ -20,7 +20,7 @@ require (
 	github.com/fzzy/radix v0.5.6
 	github.com/garyburd/redigo v1.6.0
 	github.com/globalsign/mgo v0.0.0-20181015135952-eeefdecb41b8
-	github.com/go-ldap/ldap/v3 v3.1.10
+	github.com/go-ldap/ldap/v3 v3.2.1
 	github.com/go-ole/go-ole v1.2.4 // indirect
 	github.com/go-redis/redis v6.15.8+incompatible
 	github.com/golang/groupcache v0.0.0-20191027212112-611e8accdfc9 // indirect
