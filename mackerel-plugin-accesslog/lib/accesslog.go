@@ -165,10 +165,6 @@ func (p *AccesslogPlugin) FetchMetrics() (map[string]float64, error) {
 		}
 
 		// ignore invalid logs
-		if s := strings.Fields(l.Request); len(s) != 3 {
-			log.Printf("invalid log ignored (invalid request: %s)\n", l.Request)
-			continue
-		}
 		if l.Status < 100 || 600 <= l.Status {
 			log.Printf("invalid log ignored (invalid status: %d)\n", l.Status)
 			continue
