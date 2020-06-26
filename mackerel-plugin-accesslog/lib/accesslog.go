@@ -21,6 +21,11 @@ import (
 	"github.com/montanaflynn/stats"
 )
 
+var parsers = axslogparser.Parsers{
+	Apache: &axslogparser.Apache{Loose: true},
+	LTSV:   &axslogparser.LTSV{Loose: true},
+}
+
 // AccesslogPlugin mackerel plugin
 type AccesslogPlugin struct {
 	prefix    string
@@ -150,7 +155,7 @@ func (p *AccesslogPlugin) FetchMetrics() (map[string]float64, error) {
 		}
 		line := bb.String()
 		if p.parser == nil {
-			p.parser, l, err = axslogparser.GuessParser(line)
+			p.parser, l, err = parsers.GuessParser(line)
 		} else {
 			l, err = p.parser.Parse(line)
 		}
@@ -158,6 +163,13 @@ func (p *AccesslogPlugin) FetchMetrics() (map[string]float64, error) {
 			log.Println(err)
 			continue
 		}
+
+		// ignore invalid logs
+		if l.Status < 100 || 600 <= l.Status {
+			log.Printf("invalid log ignored (invalid status: %d)\n", l.Status)
+			continue
+		}
+
 		ret[string(fmt.Sprintf("%d", l.Status)[0])+"xx_count"]++
 		ret["total_count"]++
 
@@ -204,9 +216,9 @@ func Do() {
 	case "":
 		parser = nil // guess format by log (default)
 	case "ltsv":
-		parser = &axslogparser.LTSV{}
+		parser = parsers.LTSV
 	case "apache":
-		parser = &axslogparser.Apache{}
+		parser = parsers.Apache
 	default:
 		fmt.Fprintf(os.Stderr, "Error: '%s' is invalid format name\n", *optFormat)
 		flag.Usage()

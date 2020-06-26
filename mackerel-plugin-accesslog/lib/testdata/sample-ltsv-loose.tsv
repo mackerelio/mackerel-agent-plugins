@@ -1,0 +1,4 @@
+time:08/Mar/2017:14:12:40 +0900	host:192.0.2.17	req:GET / HTTP/1.0	status:200	size:142	referer:-	ua:sample-ua	reqtime:0.010
+time:08/Mar/2017:14:12:40 +0900	host:192.0.2.17	req:invalid	status:200	size:242	referer:-	ua:sample-ua	reqtime:0.020
+time:08/Mar/2017:14:12:40 +0900	host:192.0.2.17	req:GET / HTTP/1.0	status:600	size:342	referer:-	ua:sample-ua	reqtime:0.030
+time:08/Mar/2017:14:12:40 +0900	host:192.0.2.17	req:GET / HTTP/1.0	status:200	size:442	referer:-	ua:sample-ua	reqtime:0.030	apptime:0.000, 1.111

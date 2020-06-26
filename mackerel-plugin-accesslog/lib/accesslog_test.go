@@ -28,6 +28,21 @@ var fetchMetricsTests = []struct {
 		},
 	},
 	{
+		Name:   "Apache log (loose)",
+		InFile: "testdata/sample-apache-loose.log",
+		Output: map[string]float64{
+			"total_count":    2,
+			"2xx_count":      2,
+			"3xx_count":      0,
+			"4xx_count":      0,
+			"5xx_count":      0,
+			"2xx_percentage": 100,
+			"3xx_percentage": 0,
+			"4xx_percentage": 0,
+			"5xx_percentage": 0,
+		},
+	},
+	{
 		Name:   "LTSV log",
 		InFile: "testdata/sample-ltsv.tsv",
 		Output: map[string]float64{
@@ -63,6 +78,25 @@ var fetchMetricsTests = []struct {
 			"90_percentile":  0.015,
 			"95_percentile":  0.015,
 			"99_percentile":  0.015,
+		},
+	},
+	{
+		Name:   "LTSV log (loose)",
+		InFile: "testdata/sample-ltsv-loose.tsv",
+		Output: map[string]float64{
+			"2xx_count":      3,
+			"3xx_count":      0,
+			"4xx_count":      0,
+			"5xx_count":      0,
+			"total_count":    3,
+			"2xx_percentage": 100,
+			"3xx_percentage": 0,
+			"4xx_percentage": 0,
+			"5xx_percentage": 0,
+			"average":        0.020,
+			"90_percentile":  0.025,
+			"95_percentile":  0.025,
+			"99_percentile":  0.025,
 		},
 	},
 }

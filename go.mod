@@ -4,7 +4,7 @@ go 1.12
 
 require (
 	cloud.google.com/go v0.50.0 // indirect
-	github.com/Songmu/axslogparser v1.3.0
+	github.com/Songmu/axslogparser v1.4.0
 	github.com/Songmu/postailer v0.0.0-20181014062912-daaa1ba9cc39
 	github.com/Songmu/timeout v0.4.0
 	github.com/StackExchange/wmi v0.0.0-20190523213315-cbe66965904d
