@@ -11,6 +11,7 @@ import (
 
 	mp "github.com/mackerelio/go-mackerel-plugin"
 	"github.com/ziutek/mymysql/mysql"
+
 	// MySQL Driver
 	"github.com/ziutek/mymysql/native"
 )
@@ -125,8 +126,8 @@ func (m *MySQLPlugin) defaultGraphdef() map[string]mp.Graphs {
 			Label: labelPrefix + " Traffic",
 			Unit:  "bytes/sec",
 			Metrics: []mp.Metrics{
-				{Name: "Bytes_sent", Label: "Sent Bytes", Diff: true, Stacked: false},
-				{Name: "Bytes_received", Label: "Received Bytes", Diff: true, Stacked: false},
+				{Name: "Bytes_sent", Label: "Sent Bytes", Diff: true, Stacked: false, Scale: (1.0 / 60.0)},
+				{Name: "Bytes_received", Label: "Received Bytes", Diff: true, Stacked: false, Scale: (1.0 / 60.0)},
 			},
 		},
 		"capacity": {
