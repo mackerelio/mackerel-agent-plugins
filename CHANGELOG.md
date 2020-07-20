@@ -1,5 +1,21 @@
 # Changelog
 
+## 0.61.0 (2020-07-20)
+
+* [plugin-mysql] Fix to send Bytes_sent and Bytes_received correctly #649 (shibayu36)
+* Bump github.com/lib/pq from 1.6.0 to 1.7.0 #641 (dependabot-preview[bot])
+* Bump github.com/hashicorp/go-version from 1.2.0 to 1.2.1 #642 (dependabot-preview[bot])
+* [plugin-accesslog] allow fields that cannot be parsed but unused by the plugin #645 (susisu)
+* Bump github.com/go-redis/redis from 6.15.7+incompatible to 6.15.8+incompatible #631 (dependabot-preview[bot])
+* Bump github.com/stretchr/testify from 1.6.0 to 1.6.1 #638 (dependabot-preview[bot])
+* Update aws-sdk-go to 1.31.11 #636 (astj)
+* Bump github.com/aws/aws-sdk-go from 1.30.27 to 1.31.7 #634 (dependabot-preview[bot])
+* Bump github.com/lib/pq from 1.5.2 to 1.6.0 #633 (dependabot-preview[bot])
+* Bump github.com/stretchr/testify from 1.5.1 to 1.6.0 #635 (dependabot-preview[bot])
+* [plugin-postgres] add test.sh #629 (lufia)
+* Bump github.com/aws/aws-sdk-go from 1.30.7 to 1.30.27 #627 (dependabot-preview[bot])
+
+
 ## 0.60.2 (2020-05-14)
 
 * Bump github.com/fsouza/go-dockerclient from 1.6.3 to 1.6.5 #619 (dependabot-preview[bot])
