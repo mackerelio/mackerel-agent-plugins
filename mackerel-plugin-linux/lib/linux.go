@@ -331,7 +331,7 @@ func collectDiskStats(path string, p *map[string]interface{}) error {
 
 func parseDiskStat(name, stat string, p *map[string]interface{}) error {
 	fields := strings.Fields(stat)
-	if len(fields) != 11 {
+	if len(fields) < 11 {
 		return nil
 	}
 

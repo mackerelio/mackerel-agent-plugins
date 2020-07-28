@@ -202,6 +202,19 @@ func TestParseDiskStat(t *testing.T) {
 	assert.EqualValues(t, stat[fmt.Sprintf("tswriting_%s", name)], 1648460)
 }
 
+func TestParseDiskStat_Kernel4_18(t *testing.T) {
+	name := "testdevice"
+	stub := `   28994        0   304494    16115    10063    42070  1546600    41730        0     3434    55235        0        0        0        0`
+	stat := make(map[string]interface{})
+
+	err := parseDiskStat(name, stub, &stat)
+	assert.Nil(t, err)
+	assert.EqualValues(t, stat[fmt.Sprintf("iotime_%s", name)], 3434)
+	assert.EqualValues(t, stat[fmt.Sprintf("iotime_weighted_%s", name)], 55235)
+	assert.EqualValues(t, stat[fmt.Sprintf("tsreading_%s", name)], 16115)
+	assert.EqualValues(t, stat[fmt.Sprintf("tswriting_%s", name)], 41730)
+}
+
 func TestCollectVirtualDevice(t *testing.T) {
 	cases := []struct {
 		name     string
