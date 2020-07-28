@@ -202,7 +202,7 @@ func TestParseDiskStat(t *testing.T) {
 	assert.EqualValues(t, stat[fmt.Sprintf("tswriting_%s", name)], 1648460)
 }
 
-func TestParseDiskStat_NewerKernel(t *testing.T) {
+func TestParseDiskStat_Kernel4_18(t *testing.T) {
 	name := "testdevice"
 	stub := `   28994        0   304494    16115    10063    42070  1546600    41730        0     3434    55235        0        0        0        0`
 	stat := make(map[string]interface{})
