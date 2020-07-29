@@ -8,6 +8,7 @@ then
 fi
 
 cd $(dirname $0)
+PATH=$(pwd):$PATH
 plugin=$(basename $(pwd))
 if ! which -s $plugin
 then
@@ -15,7 +16,7 @@ then
 	exit 2
 fi
 
-if $plugin >/dev/null 2>&1; then
+if $plugin; then
 	echo OK
 else
 	echo FAIL

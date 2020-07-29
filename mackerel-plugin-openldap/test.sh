@@ -8,6 +8,7 @@ then
 fi
 
 cd $(dirname $0)
+PATH=$(pwd):$PATH
 plugin=$(basename $(pwd))
 if ! which -s $plugin
 then
@@ -24,7 +25,7 @@ trap 'docker stop test-$plugin; docker rm test-$plugin; exit' EXIT
 sleep 10
 
 base_dn='dc=example,dc=org'
-if $plugin -bind "cn=monitor,$base_dn" -pw passpass >/dev/null 2>&1
+if $plugin -bind "cn=monitor,$base_dn" -pw passpass
 then
 	echo OK
 else

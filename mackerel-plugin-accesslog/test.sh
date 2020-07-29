@@ -2,6 +2,7 @@
 
 prog=$(basename $0)
 cd $(dirname $0)
+PATH=$(pwd):$PATH
 plugin=$(basename $(pwd))
 if ! which -s $plugin
 then
@@ -11,7 +12,7 @@ fi
 
 for i in lib/testdata/*.*
 do
-	if $plugin -no-posfile $i >/dev/null 2>&1; then
+	if $plugin -no-posfile $i; then
 		echo OK: $i
 	else
 		echo FAIL: $i
