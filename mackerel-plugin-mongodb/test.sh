@@ -16,16 +16,19 @@ then
 	exit 2
 fi
 
-user=postgres
+user=root
 password=passpass
+port=27017
 docker run -d \
 	--name test-$plugin \
-	-p 15432:5432 \
-	-e POSTGRES_PASSWORD=$password postgres:11
+	-p $port:$port \
+	-e MONGO_INITDB_ROOT_USERNAME=$user \
+	-e MONGO_INITDB_ROOT_PASSWORD=$password \
+	mongo:3-xenial
 trap 'docker stop test-$plugin; docker rm test-$plugin; exit' EXIT
 sleep 10
 
-if $plugin -port 15432 -user=$user -password $password
+if $plugin -port $port -username=$user -password $password
 then
 	echo OK
 else
