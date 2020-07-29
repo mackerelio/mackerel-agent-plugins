@@ -49,6 +49,11 @@ done
 %{__oldtargetdir}/*
 
 %changelog
+* Wed Jul 29 2020 <mackerel-developers@hatena.ne.jp> - 0.62.0
+- [plugin-linux] Do not skip diskstat metrics with Linux kernel 4.18+ (by astj)
+- Bump github.com/aws/aws-sdk-go from 1.31.11 to 1.33.12 (by dependabot-preview[bot])
+- Bump github.com/lib/pq from 1.7.0 to 1.7.1 (by dependabot-preview[bot])
+
 * Mon Jul 20 2020 <mackerel-developers@hatena.ne.jp> - 0.61.0
 - [plugin-mysql] Fix to send Bytes_sent and Bytes_received correctly (by shibayu36)
 - Bump github.com/lib/pq from 1.6.0 to 1.7.0 (by dependabot-preview[bot])
