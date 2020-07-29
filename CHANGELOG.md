@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.62.0 (2020-07-29)
+
+* [plugin-linux] Do not skip diskstat metrics with Linux kernel 4.18+ #658 (astj)
+* Bump github.com/aws/aws-sdk-go from 1.31.11 to 1.33.12 #656 (dependabot-preview[bot])
+* Bump github.com/lib/pq from 1.7.0 to 1.7.1 #657 (dependabot-preview[bot])
+
+
 ## 0.61.0 (2020-07-20)
 
 * [plugin-mysql] Fix to send Bytes_sent and Bytes_received correctly #649 (shibayu36)
