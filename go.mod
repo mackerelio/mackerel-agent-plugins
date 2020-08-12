@@ -1,6 +1,6 @@
 module github.com/mackerelio/mackerel-agent-plugins
 
-go 1.12
+go 1.14
 
 require (
 	cloud.google.com/go v0.50.0 // indirect
