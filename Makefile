@@ -24,7 +24,6 @@ build:
 
 build/mackerel-plugin: $(patsubst %,depends_on,$(GOOS)$(GOARCH))
 	mkdir -p build
-	rm -f build/mackerel-plugin
 	go build -ldflags="-s -w -X main.gitcommit=$(CURRENT_REVISION)" \
 	  -o build/mackerel-plugin
 
