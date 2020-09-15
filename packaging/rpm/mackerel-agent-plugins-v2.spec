@@ -13,7 +13,6 @@ URL: https://mackerel.io/
 
 Source0: README.md
 Packager:  Hatena
-BuildArch: %{buildarch}
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root
 
 %description

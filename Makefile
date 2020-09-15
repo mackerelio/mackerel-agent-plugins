@@ -22,10 +22,14 @@ build:
 	  $(MAKE) $(BINDIR)/$$i; \
 	done
 
-build/mackerel-plugin:
+build/mackerel-plugin: $(patsubst %,depends_on,$(GOOS)$(GOARCH))
 	mkdir -p build
 	go build -ldflags="-s -w -X main.gitcommit=$(CURRENT_REVISION)" \
 	  -o build/mackerel-plugin
+
+.PHONY: depends_on
+depends_on:
+	@:
 
 .PHONY: test
 test: testgo lint testconvention
@@ -75,21 +79,34 @@ rpm-v1:
 	$(MAKE) build GOOS=linux GOARCH=386
 	rpmbuild --define "_sourcedir `pwd`" --define "_bindir build/linux/386" \
 	  --define "_version ${VERSION}" --define "buildarch noarch" \
-	  -bb packaging/rpm/mackerel-agent-plugins.spec
+	  --target noarch -bb packaging/rpm/mackerel-agent-plugins.spec
 	$(MAKE) build GOOS=linux GOARCH=amd64
 	rpmbuild --define "_sourcedir `pwd`" --define "_bindir build/linux/amd64" \
 	  --define "_version ${VERSION}" --define "buildarch x86_64" \
-	  -bb packaging/rpm/mackerel-agent-plugins.spec
+	  --target x86_64 -bb packaging/rpm/mackerel-agent-plugins.spec
 
 .PHONY: rpm-v2
-rpm-v2:
+rpm-v2: rpm-v2-x86 rpm-v2-arm
+
+.PHONY: rpm-v2-x86
+rpm-v2-x86:
 	$(MAKE) build/mackerel-plugin GOOS=linux GOARCH=amd64
 	rpmbuild --define "_sourcedir `pwd`"  --define "_version ${VERSION}" \
 	  --define "buildarch x86_64" --define "dist .el7.centos" \
-	  -bb packaging/rpm/mackerel-agent-plugins-v2.spec
+	  --target x86_64 -bb packaging/rpm/mackerel-agent-plugins-v2.spec
 	rpmbuild --define "_sourcedir `pwd`"  --define "_version ${VERSION}" \
 	  --define "buildarch x86_64" --define "dist .amzn2" \
-	  -bb packaging/rpm/mackerel-agent-plugins-v2.spec
+	  --target x86_64 -bb packaging/rpm/mackerel-agent-plugins-v2.spec
+
+.PHONY: rpm-v2-arm
+rpm-v2-arm:
+	$(MAKE) build/mackerel-plugin GOOS=linux GOARCH=amd64
+	rpmbuild --define "_sourcedir `pwd`"  --define "_version ${VERSION}" \
+	  --define "buildarch aarch64" --define "dist .el7.centos" \
+	  --target aarch64 -bb packaging/rpm/mackerel-agent-plugins-v2.spec
+	rpmbuild --define "_sourcedir `pwd`"  --define "_version ${VERSION}" \
+	  --define "buildarch aarch64" --define "dist .amzn2" \
+	  --target aarch64 -bb packaging/rpm/mackerel-agent-plugins-v2.spec
 
 .PHONY: deb
 deb: deb-v1 deb-v2
@@ -103,10 +120,19 @@ deb-v1:
 	cd packaging/deb && debuild --no-tgz-check -rfakeroot -uc -us
 
 .PHONY: deb-v2
-deb-v2:
+deb-v2: deb-v2-x86 deb-v2-arm
+
+.PHONY: deb-v2-x86
+deb-v2-x86:
 	$(MAKE) build/mackerel-plugin GOOS=linux GOARCH=amd64
 	cp build/mackerel-plugin packaging/deb-v2/debian/
 	cd packaging/deb-v2 && debuild --no-tgz-check -rfakeroot -uc -us
+
+.PHONY: deb-v2-arm
+deb-v2-arm:
+	$(MAKE) build/mackerel-plugin GOOS=linux GOARCH=arm64
+	cp build/mackerel-plugin packaging/deb-v2/debian/
+	cd packaging/deb-v2 && debuild --no-tgz-check -rfakeroot -uc -us -aarm64
 
 .PHONY: release
 release: check-release-deps

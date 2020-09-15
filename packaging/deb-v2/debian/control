@@ -7,6 +7,6 @@ Standards-Version: 3.9.3
 
 Package: mackerel-agent-plugins
 Depends: ${shlibs:Depends}, ${misc:Depends}
-Architecture: amd64
+Architecture: any
 Description: metric plugins for mackerel-agent
  metric plugins for https://mackerel.io (Monitoring SaaS)
