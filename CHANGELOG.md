@@ -1,5 +1,19 @@
 # Changelog
 
+## 0.63.0 (2020-09-15)
+
+* add arm64 architecture packages, and fix Architecture field of deb #673 (lufia)
+* Bump github.com/aws/aws-sdk-go from 1.33.17 to 1.34.22 #672 (dependabot-preview[bot])
+* Bump github.com/jarcoal/httpmock from 1.0.5 to 1.0.6 #668 (dependabot-preview[bot])
+* Bump github.com/go-redis/redis from 6.15.8+incompatible to 6.15.9+incompatible #664 (dependabot-preview[bot])
+* Build with Go 1.14 #665 (lufia)
+* Bump github.com/aws/aws-sdk-go from 1.33.12 to 1.33.17 #661 (dependabot-preview[bot])
+* Bump github.com/garyburd/redigo from 1.6.0 to 1.6.2 #660 (dependabot-preview[bot])
+* Bump github.com/lib/pq from 1.7.1 to 1.8.0 #662 (dependabot-preview[bot])
+* Bump github.com/go-ldap/ldap/v3 from 3.1.10 to 3.2.3 #652 (dependabot-preview[bot])
+* [plugin-mongodb] add test.sh #654 (lufia)
+
+
 ## 0.62.0 (2020-07-29)
 
 * [plugin-linux] Do not skip diskstat metrics with Linux kernel 4.18+ #658 (astj)

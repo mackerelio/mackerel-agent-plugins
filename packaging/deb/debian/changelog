@@ -1,3 +1,28 @@
+mackerel-agent-plugins (0.63.0-1) stable; urgency=low
+
+  * add arm64 architecture packages, and fix Architecture field of deb (by lufia)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/673>
+  * Bump github.com/aws/aws-sdk-go from 1.33.17 to 1.34.22 (by dependabot-preview[bot])
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/672>
+  * Bump github.com/jarcoal/httpmock from 1.0.5 to 1.0.6 (by dependabot-preview[bot])
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/668>
+  * Bump github.com/go-redis/redis from 6.15.8+incompatible to 6.15.9+incompatible (by dependabot-preview[bot])
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/664>
+  * Build with Go 1.14 (by lufia)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/665>
+  * Bump github.com/aws/aws-sdk-go from 1.33.12 to 1.33.17 (by dependabot-preview[bot])
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/661>
+  * Bump github.com/garyburd/redigo from 1.6.0 to 1.6.2 (by dependabot-preview[bot])
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/660>
+  * Bump github.com/lib/pq from 1.7.1 to 1.8.0 (by dependabot-preview[bot])
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/662>
+  * Bump github.com/go-ldap/ldap/v3 from 3.1.10 to 3.2.3 (by dependabot-preview[bot])
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/652>
+  * [plugin-mongodb] add test.sh (by lufia)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/654>
+
+ -- mackerel <mackerel-developers@hatena.ne.jp>  Tue, 15 Sep 2020 05:48:24 +0000
+
 mackerel-agent-plugins (0.62.0-1) stable; urgency=low
 
   * [plugin-linux] Do not skip diskstat metrics with Linux kernel 4.18+ (by astj)

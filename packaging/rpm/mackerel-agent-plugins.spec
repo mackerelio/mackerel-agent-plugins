@@ -48,6 +48,18 @@ done
 %{__oldtargetdir}/*
 
 %changelog
+* Tue Sep 15 2020 <mackerel-developers@hatena.ne.jp> - 0.63.0
+- add arm64 architecture packages, and fix Architecture field of deb (by lufia)
+- Bump github.com/aws/aws-sdk-go from 1.33.17 to 1.34.22 (by dependabot-preview[bot])
+- Bump github.com/jarcoal/httpmock from 1.0.5 to 1.0.6 (by dependabot-preview[bot])
+- Bump github.com/go-redis/redis from 6.15.8+incompatible to 6.15.9+incompatible (by dependabot-preview[bot])
+- Build with Go 1.14 (by lufia)
+- Bump github.com/aws/aws-sdk-go from 1.33.12 to 1.33.17 (by dependabot-preview[bot])
+- Bump github.com/garyburd/redigo from 1.6.0 to 1.6.2 (by dependabot-preview[bot])
+- Bump github.com/lib/pq from 1.7.1 to 1.8.0 (by dependabot-preview[bot])
+- Bump github.com/go-ldap/ldap/v3 from 3.1.10 to 3.2.3 (by dependabot-preview[bot])
+- [plugin-mongodb] add test.sh (by lufia)
+
 * Wed Jul 29 2020 <mackerel-developers@hatena.ne.jp> - 0.62.0
 - [plugin-linux] Do not skip diskstat metrics with Linux kernel 4.18+ (by astj)
 - Bump github.com/aws/aws-sdk-go from 1.31.11 to 1.33.12 (by dependabot-preview[bot])
