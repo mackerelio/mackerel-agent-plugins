@@ -100,7 +100,7 @@ rpm-v2-x86:
 
 .PHONY: rpm-v2-arm
 rpm-v2-arm:
-	$(MAKE) build/mackerel-plugin GOOS=linux GOARCH=amd64
+	$(MAKE) build/mackerel-plugin GOOS=linux GOARCH=arm64
 	rpmbuild --define "_sourcedir `pwd`"  --define "_version ${VERSION}" \
 	  --define "buildarch aarch64" --define "dist .el7.centos" \
 	  --target aarch64 -bb packaging/rpm/mackerel-agent-plugins-v2.spec
