@@ -48,6 +48,10 @@ done
 %{__oldtargetdir}/*
 
 %changelog
+* Thu Oct 01 2020 <mackerel-developers@hatena.ne.jp> - 0.63.1
+- Bump github.com/aws/aws-sdk-go from 1.34.22 to 1.34.32 (by dependabot-preview[bot])
+- fix build arch for make rpm-v2-arm (by astj)
+
 * Tue Sep 15 2020 <mackerel-developers@hatena.ne.jp> - 0.63.0
 - add arm64 architecture packages, and fix Architecture field of deb (by lufia)
 - Bump github.com/aws/aws-sdk-go from 1.33.17 to 1.34.22 (by dependabot-preview[bot])
