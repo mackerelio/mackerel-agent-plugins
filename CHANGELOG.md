@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.63.1 (2020-10-01)
+
+* Bump github.com/aws/aws-sdk-go from 1.34.22 to 1.34.32 #677 (dependabot-preview[bot])
+* fix build arch for make rpm-v2-arm #675 (astj)
+
+
 ## 0.63.0 (2020-09-15)
 
 * add arm64 architecture packages, and fix Architecture field of deb #673 (lufia)
