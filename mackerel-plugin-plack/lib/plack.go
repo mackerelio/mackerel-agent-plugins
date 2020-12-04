@@ -67,10 +67,10 @@ type PlackRequest struct{}
 // PlackServerStatus sturct for server-status's json
 type PlackServerStatus struct {
 	Uptime        interface{}    `json:"Uptime"` // Plack::Middleware::ServerStatus::Lite 0.35 outputs Uptime as a JSON number, though pre-0.35 outputs it as a JSON string.
-	TotalAccesses string         `json:"TotalAccesses"`
-	TotalKbytes   string         `json:"TotalKbytes"`
-	BusyWorkers   string         `json:"BusyWorkers"`
-	IdleWorkers   string         `json:"IdleWorkers"`
+	TotalAccesses interface{}    `json:"TotalAccesses"`
+	TotalKbytes   interface{}    `json:"TotalKbytes"`
+	BusyWorkers   interface{}    `json:"BusyWorkers"`
+	IdleWorkers   interface{}    `json:"IdleWorkers"`
 	Stats         []PlackRequest `json:"stats"`
 }
 
@@ -91,6 +91,18 @@ func (p PlackPlugin) FetchMetrics() (map[string]interface{}, error) {
 	return p.parseStats(resp.Body)
 }
 
+func parseNumber(s interface{}) (float64, error) {
+	switch v := s.(type) {
+	case string:
+		if f, err := strconv.ParseFloat(v, 64); err == nil {
+			return f, nil
+		}
+	case float64:
+		return v, nil
+	}
+	return 0, fmt.Errorf("failed to parse %v as Number", s)
+}
+
 func (p PlackPlugin) parseStats(body io.Reader) (map[string]interface{}, error) {
 	stat := make(map[string]interface{})
 	decoder := json.NewDecoder(body)
@@ -101,20 +113,20 @@ func (p PlackPlugin) parseStats(body io.Reader) (map[string]interface{}, error) 
 		return nil, err
 	}
 
-	if s, err := strconv.ParseFloat(s.BusyWorkers, 64); err == nil {
+	if s, err := parseNumber(s.BusyWorkers); err == nil {
 		stat["busy_workers"] = s
 	}
 
-	if s, err := strconv.ParseFloat(s.IdleWorkers, 64); err == nil {
+	if s, err := parseNumber(s.IdleWorkers); err == nil {
 		stat["idle_workers"] = s
 	}
 
-	if s, err := strconv.ParseUint(s.TotalAccesses, 10, 64); err == nil {
-		stat["requests"] = s
+	if s, err := parseNumber(s.TotalAccesses); err == nil {
+		stat["requests"] = uint64(s)
 	}
 
-	if s, err := strconv.ParseUint(s.TotalKbytes, 10, 64); err == nil {
-		stat["bytes_sent"] = s
+	if s, err := parseNumber(s.TotalKbytes); err == nil {
+		stat["bytes_sent"] = uint64(s)
 	}
 
 	return stat, nil
