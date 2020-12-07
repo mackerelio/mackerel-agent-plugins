@@ -41,7 +41,7 @@ require (
 	github.com/mackerelio/mackerel-plugin-aws-waf v1.1.0
 	github.com/mackerelio/mackerel-plugin-gcp-compute-engine v1.0.2
 	github.com/mackerelio/mackerel-plugin-gearmand v1.0.1
-	github.com/mackerelio/mackerel-plugin-json v1.1.0
+	github.com/mackerelio/mackerel-plugin-json v1.2.0
 	github.com/mattn/go-pipeline v0.0.0-20190323144519-32d779b32768
 	github.com/mattn/go-sqlite3 v1.10.0 // indirect
 	github.com/mattn/go-treasuredata v0.0.0-20170920030233-31758907cfc4
