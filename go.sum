@@ -195,8 +195,8 @@ github.com/lestrrat-go/tcptest v0.0.0-20180223004312-f0345789c593/go.mod h1:0ywa
 github.com/lestrrat-go/tcputil v0.0.0-20180223003554-d3c7f98154fb h1:sb9NxqWoS17VT3aZd4mlBm48bsaHB1Fvwro3H/uiuZM=
 github.com/lestrrat-go/tcputil v0.0.0-20180223003554-d3c7f98154fb/go.mod h1:bBamYL9/WjNn0b2CS4v4F8cHmWRpClSxrpEoAY+maJo=
 github.com/lib/pq v1.0.0/go.mod h1:5WUZQaWbwv1U+lTReE5YruASi9Al49XbQIvNi/34Woo=
-github.com/lib/pq v1.8.0 h1:9xohqzkUwzR4Ga4ivdTcawVS89YSDVxXMa3xJX3cGzg=
-github.com/lib/pq v1.8.0/go.mod h1:AlVN5x4E4T544tWzH6hKfbfQvm3HdbOxrmggDNAPY9o=
+github.com/lib/pq v1.9.0 h1:L8nSXQQzAYByakOFMTwpjRoHsMJklur4Gi59b6VivR8=
+github.com/lib/pq v1.9.0/go.mod h1:AlVN5x4E4T544tWzH6hKfbfQvm3HdbOxrmggDNAPY9o=
 github.com/mackerelio/go-mackerel-plugin v0.0.0-20200416053722-b68096c191d0 h1:leArxbMXSYfmdnoCg/9tmFa0uIeaa+K7vjF+hRjc4FY=
 github.com/mackerelio/go-mackerel-plugin v0.0.0-20200416053722-b68096c191d0/go.mod h1:hV+0M18+q787IEDQhLficGPJoEfx0JbPuhqmU1z7l/M=
 github.com/mackerelio/go-mackerel-plugin-helper v0.0.0-20200416053706-9aba6664c25d h1:PSunsAhVzer4mAjkuABcrA7S0y4iC8ymtvAjJeASXCU=
