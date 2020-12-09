@@ -1,5 +1,16 @@
 # Changelog
 
+## 0.63.2 (2020-12-09)
+
+* Bump github.com/lib/pq from 1.8.0 to 1.9.0 #697 (dependabot[bot])
+* Bump github.com/mackerelio/mackerel-plugin-json from 1.1.0 to 1.2.0 #692 (dependabot[bot])
+* Enables to parse responses which include string and number from Plack. #694 (fujiwara)
+* Bump github.com/aws/aws-sdk-go from 1.34.32 to 1.35.33 #691 (dependabot[bot])
+* Bump github.com/urfave/cli from 1.22.4 to 1.22.5 #686 (dependabot-preview[bot])
+* Bump github.com/go-ldap/ldap/v3 from 3.2.3 to 3.2.4 #682 (dependabot-preview[bot])
+* Update Dependabot config file #689 (dependabot-preview[bot])
+
+
 ## 0.63.1 (2020-10-01)
 
 * Bump github.com/aws/aws-sdk-go from 1.34.22 to 1.34.32 #677 (dependabot-preview[bot])

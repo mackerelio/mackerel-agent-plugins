@@ -39,6 +39,15 @@ done
 %{__targetdir}/*
 
 %changelog
+* Wed Dec 09 2020 <mackerel-developers@hatena.ne.jp> - 0.63.2
+- Bump github.com/lib/pq from 1.8.0 to 1.9.0 (by dependabot[bot])
+- Bump github.com/mackerelio/mackerel-plugin-json from 1.1.0 to 1.2.0 (by dependabot[bot])
+- Enables to parse responses which include string and number from Plack. (by fujiwara)
+- Bump github.com/aws/aws-sdk-go from 1.34.32 to 1.35.33 (by dependabot[bot])
+- Bump github.com/urfave/cli from 1.22.4 to 1.22.5 (by dependabot-preview[bot])
+- Bump github.com/go-ldap/ldap/v3 from 3.2.3 to 3.2.4 (by dependabot-preview[bot])
+- Update Dependabot config file (by dependabot-preview[bot])
+
 * Thu Oct 01 2020 <mackerel-developers@hatena.ne.jp> - 0.63.1
 - Bump github.com/aws/aws-sdk-go from 1.34.22 to 1.34.32 (by dependabot-preview[bot])
 - fix build arch for make rpm-v2-arm (by astj)

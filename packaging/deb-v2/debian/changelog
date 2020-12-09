@@ -1,3 +1,22 @@
+mackerel-agent-plugins (0.63.2-1.v2) stable; urgency=low
+
+  * Bump github.com/lib/pq from 1.8.0 to 1.9.0 (by dependabot[bot])
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/697>
+  * Bump github.com/mackerelio/mackerel-plugin-json from 1.1.0 to 1.2.0 (by dependabot[bot])
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/692>
+  * Enables to parse responses which include string and number from Plack. (by fujiwara)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/694>
+  * Bump github.com/aws/aws-sdk-go from 1.34.32 to 1.35.33 (by dependabot[bot])
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/691>
+  * Bump github.com/urfave/cli from 1.22.4 to 1.22.5 (by dependabot-preview[bot])
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/686>
+  * Bump github.com/go-ldap/ldap/v3 from 3.2.3 to 3.2.4 (by dependabot-preview[bot])
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/682>
+  * Update Dependabot config file (by dependabot-preview[bot])
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/689>
+
+ -- mackerel <mackerel-developers@hatena.ne.jp>  Wed, 09 Dec 2020 02:08:47 +0000
+
 mackerel-agent-plugins (0.63.1-1.v2) stable; urgency=low
 
   * Bump github.com/aws/aws-sdk-go from 1.34.22 to 1.34.32 (by dependabot-preview[bot])
