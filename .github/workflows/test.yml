@@ -1,0 +1,73 @@
+---
+name: test
+
+on:
+  push:
+    branches:
+    - master
+  pull_request:
+env:
+  GO111MODULE: on
+  DEBIAN_FRONTEND: noninteractive
+jobs:
+  test:
+    strategy:
+      matrix:
+        go: ["1.14.x"]
+        os: [ubuntu-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+    - uses: actions/setup-go@v2
+      with:
+        go-version: ${{ matrix.go }}
+    - uses: actions/checkout@v2
+    - uses: actions/cache@v2
+      with:
+        path: ~/go/pkg/mod
+        key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
+        restore-keys: |
+          ${{ runner.os }}-go-
+    - run: |
+        make cover test
+    - uses: shogo82148/actions-goveralls@v1
+      with:
+        github-token: ${{ secrets.GITHUB_TOKEN }}
+        path-to-profile: .profile.cov
+        parallel: true
+        job-number: ${{ strategy.job-index }}
+  release:
+    needs: [test]
+    runs-on: ubuntu-latest
+    # TODO: uncomment
+    #if: github.ref == 'refs/heads/master'
+    steps:
+    - run: |
+        sudo apt-get update
+        sudo apt-get install -y rpm devscripts debhelper fakeroot crossbuild-essential-arm64
+        mkdir -p ~/rpmbuild/{BUILD,BUILDROOT,RPMS,SOURCES,SPECS,SRPMS}
+    - uses: actions/cache@v2
+      with:
+        path: ~/go/pkg/mod
+        key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
+        restore-keys: |
+          ${{ runner.os }}-go-
+    - uses: actions/setup-go@v2
+      with:
+        go-version: 1.14.x
+    - uses: actions/checkout@v2
+    - run: |
+        go get github.com/x-motemen/gobump/cmd/gobump
+        go get github.com/mackerelio/golib/cmd/mackerel-github-release
+        make clean build rpm deb
+        # TODO: uncomment
+        #mackerel-github-release && mackerel-github-release -staging
+        mackerel-github-release -dry-run && mackerel-github-release -staging -dry-run
+      env:
+        GITHUB_TOKEN: ${{ secrets.MACKERELBOT_GITHUB_TOKEN }}
+    - uses: 8398a7/action-slack@v3
+      with:
+        status: ${{ job.status }}
+        fields: repo,message,commit,action,eventName,ref,workflow,job,took
+        username: mackerel-agent-plugins-release
+      env:
+        SLACK_WEBHOOK_URL: ${{ secrets.MACKEREL_SLACK_WEBHOOK_URL }}

@@ -1,4 +1,4 @@
-mackerel-agent-plugins  [![Build Status](https://travis-ci.org/mackerelio/mackerel-agent-plugins.svg?branch=master)](https://travis-ci.org/mackerelio/mackerel-agent-plugins)
+mackerel-agent-plugins  [![Build Status](https://github.com/mackerelio/mackerel-agent-plugins/workflows/test/badge.svg)](https://github.com/mackerelio/mackerel-agent-plugins/actions?workflow=test)
 ======================
 
 This is the official plugin pack for [mackerel-agent](https://github.com/mackerelio/mackerel-agent), a piece of software which is installed on your hosts to collect metrics and events and send them to [Mackerel](https://mackerel.io).
