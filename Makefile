@@ -63,7 +63,6 @@ check-release-deps:
 
 .PHONY: lint
 lint: testdeps
-	go vet ./...
 	golint -set_exit_status ./...
 
 .PHONY: cover
