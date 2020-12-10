@@ -56,7 +56,8 @@ lint: testdeps
 
 .PHONY: cover
 cover: testdeps
-	go test -race -covermode=atomic -coverprofile=.profile.cov ./...
+	#go test -race -covermode=atomic -coverprofile=.profile.cov ./...
+	go test -covermode=atomic -coverprofile=.profile.cov ./...
 
 .PHONY: rpm
 rpm: rpm-v1 rpm-v2
