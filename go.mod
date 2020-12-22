@@ -18,12 +18,12 @@ require (
 	github.com/fsouza/go-dockerclient v1.6.5
 	github.com/fukata/golang-stats-api-handler v1.0.0
 	github.com/fzzy/radix v0.5.6
-	github.com/garyburd/redigo v1.6.2
 	github.com/globalsign/mgo v0.0.0-20181015135952-eeefdecb41b8
 	github.com/go-ldap/ldap/v3 v3.2.4
 	github.com/go-ole/go-ole v1.2.4 // indirect
 	github.com/go-redis/redis v6.15.9+incompatible
 	github.com/golang/groupcache v0.0.0-20191027212112-611e8accdfc9 // indirect
+	github.com/gomodule/redigo v1.8.3
 	github.com/hashicorp/go-version v1.2.1
 	github.com/jarcoal/httpmock v1.0.6
 	github.com/jmoiron/sqlx v1.2.0
@@ -50,7 +50,7 @@ require (
 	github.com/naokibtn/go-ses v0.0.0-20150122091825-74908b78cc76
 	github.com/onsi/ginkgo v1.10.2 // indirect
 	github.com/sirupsen/logrus v1.4.2 // indirect
-	github.com/soh335/go-test-redisserver v0.0.0-20170912004345-f716f0901533
+	github.com/soh335/go-test-redisserver v0.1.0
 	github.com/sourcegraph/go-ses v0.0.0-20160405160939-6bd8d17cf7c1 // indirect
 	github.com/streadway/amqp v0.0.0-20190827072141-edfb9018d271 // indirect
 	github.com/stretchr/testify v1.6.1
