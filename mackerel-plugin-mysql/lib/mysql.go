@@ -595,8 +595,8 @@ func (m *MySQLPlugin) addGraphdefWithInnoDBMetrics(graphdef map[string]mp.Graphs
 		Label: labelPrefix + " innodb Tables In Use",
 		Unit:  "integer",
 		Metrics: []mp.Metrics{
-			{Name: "innodb_locked_tables", Label: "Table in Use", Diff: false, Stacked: false},
-			{Name: "innodb_tables_in_use", Label: "Locked Tables", Diff: false, Stacked: false},
+			{Name: "innodb_locked_tables", Label: "Locked Tables", Diff: false, Stacked: false},
+			{Name: "innodb_tables_in_use", Label: "Table in Use", Diff: false, Stacked: false},
 		},
 	}
 	graphdef["innodb_transactions_active_locked"] = mp.Graphs{
