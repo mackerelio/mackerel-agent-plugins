@@ -45,7 +45,7 @@ require (
 	github.com/mattn/go-sqlite3 v1.10.0 // indirect
 	github.com/mattn/go-treasuredata v0.0.0-20170920030233-31758907cfc4
 	github.com/michaelklishin/rabbit-hole v1.5.0
-	github.com/montanaflynn/stats v0.6.3
+	github.com/montanaflynn/stats v0.6.4
 	github.com/naokibtn/go-ses v0.0.0-20150122091825-74908b78cc76
 	github.com/onsi/ginkgo v1.10.2 // indirect
 	github.com/soh335/go-test-redisserver v0.1.0
