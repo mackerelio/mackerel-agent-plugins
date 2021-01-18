@@ -226,8 +226,8 @@ github.com/mackerelio/mackerel-plugin-gcp-compute-engine v1.0.2 h1:/5rBl5gXbiGyZ
 github.com/mackerelio/mackerel-plugin-gcp-compute-engine v1.0.2/go.mod h1:PkCIfJScVSZXKCjkNaVYVEKl8TtdHJymZBnycODPUW8=
 github.com/mackerelio/mackerel-plugin-gearmand v1.0.1 h1:hf5TsBE5SqBXMp4D+xOOFiyNZkcsW4FLWIlN48MOQQ0=
 github.com/mackerelio/mackerel-plugin-gearmand v1.0.1/go.mod h1:TtI8u3rNYiqotv7/uH/LErRMULbKl6iK4fFYou7JoV0=
-github.com/mackerelio/mackerel-plugin-json v1.2.0 h1:ROBwcLG2EA4Q3Udf6sYUxlTYkZ8yGpbiK7jpPzuzj5k=
-github.com/mackerelio/mackerel-plugin-json v1.2.0/go.mod h1:n/gmonrBkMOUHXjd871XDMZBtAqBGUyd+BkdZckwd88=
+github.com/mackerelio/mackerel-plugin-json v1.2.2 h1:oxVgLBo68JPoKXYtnXW/W+nBWpz4taxno7IcNyjygE4=
+github.com/mackerelio/mackerel-plugin-json v1.2.2/go.mod h1:n/gmonrBkMOUHXjd871XDMZBtAqBGUyd+BkdZckwd88=
 github.com/mattn/go-colorable v0.1.1/go.mod h1:FuOcm+DKB9mbwrcAfNl7/TZVBZ6rcnceauSikq3lYCQ=
 github.com/mattn/go-colorable v0.1.6/go.mod h1:u6P/XSegPjTcexA+o6vUJrdnUu04hMope9wVRipJSqc=
 github.com/mattn/go-isatty v0.0.5/go.mod h1:Iq45c/XA43vh69/j3iqttzPXn0bhXyGjM0Hdxcsrc5s=
@@ -313,6 +313,7 @@ github.com/stretchr/testify v1.3.0/go.mod h1:M5WIy9Dh21IEIfnGCwXGc5bZfKNJtfHm1UV
 github.com/stretchr/testify v1.4.0 h1:2E4SXV/wtOkTonXsotYi4li6zVWxYlZuYNCXe9XRJyk=
 github.com/stretchr/testify v1.4.0/go.mod h1:j7eGeouHqKxXV5pUuKE4zz7dFj8WfuZ+81PSLYec5m4=
 github.com/stretchr/testify v1.5.1/go.mod h1:5W2xD1RspED5o8YsWQXVCued0rvSQ+mT+I5cxcmMvtA=
+github.com/stretchr/testify v1.6.1/go.mod h1:6Fq8oRcR53rry900zMqJjRRixrwX3KX962/h/Wwjteg=
 github.com/stretchr/testify v1.7.0 h1:nwc3DEeHmmLAfoZucVR881uASk0Mfjw8xYJ99tb5CcY=
 github.com/stretchr/testify v1.7.0/go.mod h1:6Fq8oRcR53rry900zMqJjRRixrwX3KX962/h/Wwjteg=
 github.com/tcnksm/ghr v0.13.0/go.mod h1:tcp6tzbRYE0LqFSG7ykXP/BVG1/2BkX6aIn9FFV1mIQ=
