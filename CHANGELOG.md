@@ -1,5 +1,22 @@
 # Changelog
 
+## 0.63.3 (2021-01-21)
+
+* Revert "delete unused Makefile tasks" #716 (lufia)
+* Bump github.com/aws/aws-sdk-go from 1.35.33 to 1.36.28 #712 (dependabot[bot])
+* Bump github.com/fsouza/go-dockerclient from 1.6.6 to 1.7.0 #711 (dependabot[bot])
+* Bump github.com/mackerelio/mackerel-plugin-json from 1.2.0 to 1.2.2 #706 (dependabot[bot])
+* Bump github.com/montanaflynn/stats from 0.6.3 to 0.6.4 #713 (dependabot[bot])
+* Bump github.com/jarcoal/httpmock from 1.0.6 to 1.0.7 #709 (dependabot[bot])
+* Bump github.com/stretchr/testify from 1.6.1 to 1.7.0 #714 (dependabot[bot])
+* Bump github.com/mackerelio/golib from 1.0.0 to 1.1.0 #715 (dependabot[bot])
+* Fix labels of innodb_tables_in_use and innodb_locked_tables #708 (syou6162)
+* Bump github.com/fsouza/go-dockerclient from 1.6.5 to 1.6.6 #696 (dependabot[bot])
+* migrate garyburd/redigo -> gomodule/redigo #704 (lufia)
+* migrate CI to GitHub Actions #701 (lufia)
+* [plugin-apache2] add test.sh #700 (lufia)
+
+
 ## 0.63.2 (2020-12-09)
 
 * Bump github.com/lib/pq from 1.8.0 to 1.9.0 #697 (dependabot[bot])
