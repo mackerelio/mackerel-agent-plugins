@@ -48,6 +48,21 @@ done
 %{__oldtargetdir}/*
 
 %changelog
+* Thu Jan 21 2021 <mackerel-developers@hatena.ne.jp> - 0.63.3
+- Revert "delete unused Makefile tasks" (by lufia)
+- Bump github.com/aws/aws-sdk-go from 1.35.33 to 1.36.28 (by dependabot[bot])
+- Bump github.com/fsouza/go-dockerclient from 1.6.6 to 1.7.0 (by dependabot[bot])
+- Bump github.com/mackerelio/mackerel-plugin-json from 1.2.0 to 1.2.2 (by dependabot[bot])
+- Bump github.com/montanaflynn/stats from 0.6.3 to 0.6.4 (by dependabot[bot])
+- Bump github.com/jarcoal/httpmock from 1.0.6 to 1.0.7 (by dependabot[bot])
+- Bump github.com/stretchr/testify from 1.6.1 to 1.7.0 (by dependabot[bot])
+- Bump github.com/mackerelio/golib from 1.0.0 to 1.1.0 (by dependabot[bot])
+- Fix labels of innodb_tables_in_use and innodb_locked_tables (by syou6162)
+- Bump github.com/fsouza/go-dockerclient from 1.6.5 to 1.6.6 (by dependabot[bot])
+- migrate garyburd/redigo -> gomodule/redigo (by lufia)
+- migrate CI to GitHub Actions (by lufia)
+- [plugin-apache2] add test.sh (by lufia)
+
 * Wed Dec 09 2020 <mackerel-developers@hatena.ne.jp> - 0.63.2
 - Bump github.com/lib/pq from 1.8.0 to 1.9.0 (by dependabot[bot])
 - Bump github.com/mackerelio/mackerel-plugin-json from 1.1.0 to 1.2.0 (by dependabot[bot])
