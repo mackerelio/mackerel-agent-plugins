@@ -50,6 +50,17 @@ testdeps:
 	  golang.org/x/tools/cmd/cover \
 	  github.com/mattn/goveralls
 
+.PHONY: check-release-deps
+check-release-deps:
+	@have_error=0; \
+	for command in cpanm hub ghch gobump; do \
+	  if ! command -v $$command > /dev/null; then \
+	    have_error=1; \
+	    echo "\`$$command\` command is required for releasing"; \
+	  fi; \
+	done; \
+	test $$have_error = 0
+
 .PHONY: lint
 lint: testdeps
 	golint -set_exit_status ./...
@@ -122,6 +133,16 @@ deb-v2-arm:
 	cp build/mackerel-plugin packaging/deb-v2/debian/
 	cd packaging/deb-v2 && debuild --no-tgz-check -rfakeroot -uc -us -aarm64
 
+.PHONY: release
+release: check-release-deps
+	(cd tool && cpanm -qn --installdeps .)
+	perl tool/create-release-pullrequest
+
 .PHONY: clean
 clean:
 	@if [ -d build ]; then rm -rfv build; fi
+
+.PHONY: update
+update:
+	go get -u ./...
+	go mod tidy
