@@ -17,7 +17,7 @@ then
 fi
 
 export REDIS_PASSWORD=passpass
-docker run --name test-$plugin -p 16379:6379 -d redis:5 --requirepass $REDIS_PASSWORD
+docker run --name test-$plugin -p 16379:6379 -d redis:6 --requirepass $REDIS_PASSWORD
 trap 'docker stop test-$plugin; docker rm test-$plugin; exit' EXIT
 sleep 10
 
