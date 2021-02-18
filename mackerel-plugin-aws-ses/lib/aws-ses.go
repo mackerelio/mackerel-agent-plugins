@@ -1,13 +1,14 @@
 package mpawsses
 
 import (
-	"errors"
 	"flag"
 	"time"
 
-	"github.com/crowdmob/goamz/aws"
+	"github.com/aws/aws-sdk-go/aws"
+	"github.com/aws/aws-sdk-go/aws/credentials"
+	"github.com/aws/aws-sdk-go/aws/session"
+	"github.com/aws/aws-sdk-go/service/ses"
 	mp "github.com/mackerelio/go-mackerel-plugin"
-	ses "github.com/naokibtn/go-ses"
 )
 
 var graphdef = map[string]mp.Graphs{
@@ -40,53 +41,66 @@ var graphdef = map[string]mp.Graphs{
 
 // SESPlugin mackerel plugin for Amazon SES
 type SESPlugin struct {
-	Endpoint        string
+	Region          string
 	AccessKeyID     string
 	SecretAccessKey string
 }
 
 // FetchMetrics interface for mackerel plugin
 func (p SESPlugin) FetchMetrics() (map[string]float64, error) {
-	if p.Endpoint == "" {
-		return nil, errors.New("no endpoint")
-	}
-
-	auth, err := aws.GetAuth(p.AccessKeyID, p.SecretAccessKey, "", time.Now())
+	sess, err := session.NewSession()
 	if err != nil {
 		return nil, err
 	}
 
-	sescfg := ses.Config{
-		AccessKeyID:     auth.AccessKey,
-		SecretAccessKey: auth.SecretKey,
-		SecurityToken:   auth.Token(),
-		Endpoint:        p.Endpoint,
+	config := aws.NewConfig()
+
+	if p.AccessKeyID != "" && p.SecretAccessKey != "" {
+		config = config.WithCredentials(credentials.NewStaticCredentials(p.AccessKeyID, p.SecretAccessKey, ""))
 	}
+	if p.Region != "" {
+		config = config.WithRegion(p.Region)
+	}
+
+	svc := ses.New(sess, config)
 
 	stat := make(map[string]float64)
-	quota, err := sescfg.GetSendQuota()
-	if err == nil {
-		stat["SentLast24Hours"] = quota.SentLast24Hours
-		stat["Max24HourSend"] = quota.Max24HourSend
-		stat["MaxSendRate"] = quota.MaxSendRate
+	quota, err := svc.GetSendQuota(&ses.GetSendQuotaInput{})
+	if err != nil {
+		return nil, err
 	}
 
-	datapoints, err := sescfg.GetSendStatistics()
+	if quota.SentLast24Hours != nil {
+		stat["SentLast24Hours"] = *quota.SentLast24Hours
+	}
+
+	if quota.Max24HourSend != nil {
+		stat["Max24HourSend"] = *quota.Max24HourSend
+	}
+
+	if quota.MaxSendRate != nil {
+		stat["MaxSendRate"] = *quota.MaxSendRate
+	}
+
+	result, err := svc.GetSendStatistics(nil)
 	if err == nil {
-		latest := ses.SendDataPoint{
-			Timestamp: time.Unix(0, 0),
+		t := time.Unix(0, 0)
+		latest := &ses.SendDataPoint{
+			Timestamp: &t,
 		}
 
+		datapoints := result.SendDataPoints
+
 		for _, dp := range datapoints {
-			if latest.Timestamp.Before(dp.Timestamp) {
+			if latest.Timestamp.Before(*dp.Timestamp) {
 				latest = dp
 			}
 		}
 
-		stat["Complaints"] = float64(latest.Complaints)
-		stat["DeliveryAttempts"] = float64(latest.DeliveryAttempts)
-		stat["Bounces"] = float64(latest.Bounces)
-		stat["Rejects"] = float64(latest.Rejects)
+		stat["Complaints"] = float64(*latest.Complaints)
+		stat["DeliveryAttempts"] = float64(*latest.DeliveryAttempts)
+		stat["Bounces"] = float64(*latest.Bounces)
+		stat["Rejects"] = float64(*latest.Rejects)
 	}
 
 	return stat, nil
@@ -99,7 +113,7 @@ func (p SESPlugin) GraphDefinition() map[string]mp.Graphs {
 
 // Do the plugin
 func Do() {
-	optEndpoint := flag.String("endpoint", "", "AWS Endpoint")
+	optRegion := flag.String("region", "", "AWS Region")
 	optAccessKeyID := flag.String("access-key-id", "", "AWS Access Key ID")
 	optSecretAccessKey := flag.String("secret-access-key", "", "AWS Secret Access Key")
 	optTempfile := flag.String("tempfile", "", "Temp file name")
@@ -107,7 +121,7 @@ func Do() {
 
 	var ses SESPlugin
 
-	ses.Endpoint = *optEndpoint
+	ses.Region = *optRegion
 	ses.AccessKeyID = *optAccessKeyID
 	ses.SecretAccessKey = *optSecretAccessKey
 
