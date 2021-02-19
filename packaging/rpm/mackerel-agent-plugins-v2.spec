@@ -39,6 +39,9 @@ done
 %{__targetdir}/*
 
 %changelog
+* Fri Feb 19 2021 <mackerel-developers@hatena.ne.jp> - 0.63.5
+- fix incorrect endpoint inspect condition (by yseto)
+
 * Fri Feb 19 2021 <mackerel-developers@hatena.ne.jp> - 0.63.4
 - migrate from goamz,go-ses to aws-sdk-go (by yseto)
 - replace mackerel-github-release (by yseto)

@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.63.5 (2021-02-19)
+
+* fix incorrect endpoint inspect condition #730 (yseto)
+
+
 ## 0.63.4 (2021-02-19)
 
 * migrate from goamz,go-ses to aws-sdk-go #726 (yseto)
