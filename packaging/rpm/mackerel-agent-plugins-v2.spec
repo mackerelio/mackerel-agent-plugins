@@ -39,6 +39,11 @@ done
 %{__targetdir}/*
 
 %changelog
+* Fri Feb 19 2021 <mackerel-developers@hatena.ne.jp> - 0.63.4
+- migrate from goamz,go-ses to aws-sdk-go (by yseto)
+- replace mackerel-github-release (by yseto)
+- [plugin-redis] add test.sh (by lufia)
+
 * Thu Jan 21 2021 <mackerel-developers@hatena.ne.jp> - 0.63.3
 - Revert "delete unused Makefile tasks" (by lufia)
 - Bump github.com/aws/aws-sdk-go from 1.35.33 to 1.36.28 (by dependabot[bot])
