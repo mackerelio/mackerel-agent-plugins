@@ -1,3 +1,14 @@
+mackerel-agent-plugins (0.63.4-1) stable; urgency=low
+
+  * migrate from goamz,go-ses to aws-sdk-go (by yseto)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/726>
+  * replace mackerel-github-release (by yseto)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/724>
+  * [plugin-redis] add test.sh (by lufia)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/718>
+
+ -- mackerel <mackerel-developers@hatena.ne.jp>  Fri, 19 Feb 2021 08:00:44 +0000
+
 mackerel-agent-plugins (0.63.3-1) stable; urgency=low
 
   * Revert "delete unused Makefile tasks" (by lufia)

@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.63.4 (2021-02-19)
+
+* migrate from goamz,go-ses to aws-sdk-go #726 (yseto)
+* replace mackerel-github-release #724 (yseto)
+* [plugin-redis] add test.sh #718 (lufia)
+
+
 ## 0.63.3 (2021-01-21)
 
 * Revert "delete unused Makefile tasks" #716 (lufia)
