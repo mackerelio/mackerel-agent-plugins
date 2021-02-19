@@ -3,6 +3,7 @@ package mpawsses
 import (
 	"errors"
 	"flag"
+	"log"
 	"net/url"
 	"strings"
 	"time"
@@ -48,13 +49,15 @@ type SESPlugin struct {
 	Endpoint        string
 	AccessKeyID     string
 	SecretAccessKey string
+
+	Svc *ses.SES
 }
 
-// FetchMetrics interface for mackerel plugin
-func (p SESPlugin) FetchMetrics() (map[string]float64, error) {
+// prepare creates SES instance
+func (p *SESPlugin) prepare() error {
 	sess, err := session.NewSession()
 	if err != nil {
-		return nil, err
+		return err
 	}
 
 	config := aws.NewConfig()
@@ -63,7 +66,7 @@ func (p SESPlugin) FetchMetrics() (map[string]float64, error) {
 		config = config.WithCredentials(credentials.NewStaticCredentials(p.AccessKeyID, p.SecretAccessKey, ""))
 	}
 	if p.Region != "" && p.Endpoint != "" {
-		return nil, errors.New("--region and --endpoint are exclusive")
+		return errors.New("--region and --endpoint are exclusive")
 	}
 	if p.Region != "" {
 		config = config.WithRegion(p.Region)
@@ -72,19 +75,25 @@ func (p SESPlugin) FetchMetrics() (map[string]float64, error) {
 	if p.Endpoint != "" {
 		u, err := url.Parse(p.Endpoint)
 		if err != nil {
-			return nil, err
+			return err
 		}
 		hosts := strings.Split(u.Host, ".")
 		if len(hosts) != 4 && hosts[2] == "amazonaws" {
-			return nil, errors.New("--endpoint is invalid")
+			return errors.New("--endpoint is invalid")
 		}
 		config = config.WithRegion(hosts[1])
 	}
 
-	svc := ses.New(sess, config)
+	p.Svc = ses.New(sess, config)
+
+	return nil
+}
+
+// FetchMetrics interface for mackerel plugin
+func (p SESPlugin) FetchMetrics() (map[string]float64, error) {
 
 	stat := make(map[string]float64)
-	quota, err := svc.GetSendQuota(&ses.GetSendQuotaInput{})
+	quota, err := p.Svc.GetSendQuota(&ses.GetSendQuotaInput{})
 	if err != nil {
 		return nil, err
 	}
@@ -101,7 +110,7 @@ func (p SESPlugin) FetchMetrics() (map[string]float64, error) {
 		stat["MaxSendRate"] = *quota.MaxSendRate
 	}
 
-	result, err := svc.GetSendStatistics(nil)
+	result, err := p.Svc.GetSendStatistics(nil)
 	if err == nil {
 		t := time.Unix(0, 0)
 		latest := &ses.SendDataPoint{
@@ -147,6 +156,11 @@ func Do() {
 	ses.Endpoint = *optEndpoint
 	ses.AccessKeyID = *optAccessKeyID
 	ses.SecretAccessKey = *optSecretAccessKey
+
+	err := ses.prepare()
+	if err != nil {
+		log.Fatalln(err)
+	}
 
 	helper := mp.NewMackerelPlugin(ses)
 	helper.Tempfile = *optTempfile
