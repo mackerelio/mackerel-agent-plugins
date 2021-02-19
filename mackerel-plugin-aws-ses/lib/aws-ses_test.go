@@ -19,3 +19,14 @@ func TestPrepare_Endpoint(t *testing.T) {
 	p.prepare()
 	assert.Equal(t, "us-west-2", *p.Svc.Config.Region, "Convert from Endpoint to Specified Region")
 }
+
+func TestPrepare_InvalidEndpoint(t *testing.T) {
+	var p SESPlugin
+	p.Endpoint = "https://email.us-west-2.foobar.com"
+	actual := p.prepare()
+	expected := "--endpoint is invalid"
+
+	if actual.Error() != expected {
+		t.Errorf("Error actual = %v, and Expected = %v.", actual, expected)
+	}
+}
