@@ -3,11 +3,16 @@ package mpawsses
 import (
 	"errors"
 	"flag"
+	"log"
+	"net/url"
+	"strings"
 	"time"
 
-	"github.com/crowdmob/goamz/aws"
+	"github.com/aws/aws-sdk-go/aws"
+	"github.com/aws/aws-sdk-go/aws/credentials"
+	"github.com/aws/aws-sdk-go/aws/session"
+	"github.com/aws/aws-sdk-go/service/ses"
 	mp "github.com/mackerelio/go-mackerel-plugin"
-	ses "github.com/naokibtn/go-ses"
 )
 
 var graphdef = map[string]mp.Graphs{
@@ -40,53 +45,92 @@ var graphdef = map[string]mp.Graphs{
 
 // SESPlugin mackerel plugin for Amazon SES
 type SESPlugin struct {
+	Region          string
 	Endpoint        string
 	AccessKeyID     string
 	SecretAccessKey string
+
+	Svc *ses.SES
+}
+
+// prepare creates SES instance
+func (p *SESPlugin) prepare() error {
+	sess, err := session.NewSession()
+	if err != nil {
+		return err
+	}
+
+	config := aws.NewConfig()
+
+	if p.AccessKeyID != "" && p.SecretAccessKey != "" {
+		config = config.WithCredentials(credentials.NewStaticCredentials(p.AccessKeyID, p.SecretAccessKey, ""))
+	}
+	if p.Region != "" && p.Endpoint != "" {
+		return errors.New("--region and --endpoint are exclusive")
+	}
+	if p.Region != "" {
+		config = config.WithRegion(p.Region)
+	}
+	// for backward compatibility
+	if p.Endpoint != "" {
+		u, err := url.Parse(p.Endpoint)
+		if err != nil {
+			return err
+		}
+		hosts := strings.Split(u.Host, ".")
+		if len(hosts) != 4 && hosts[2] == "amazonaws" {
+			return errors.New("--endpoint is invalid")
+		}
+		config = config.WithRegion(hosts[1])
+	}
+
+	p.Svc = ses.New(sess, config)
+
+	return nil
 }
 
 // FetchMetrics interface for mackerel plugin
 func (p SESPlugin) FetchMetrics() (map[string]float64, error) {
-	if p.Endpoint == "" {
-		return nil, errors.New("no endpoint")
-	}
 
-	auth, err := aws.GetAuth(p.AccessKeyID, p.SecretAccessKey, "", time.Now())
+	stat := make(map[string]float64)
+	quota, err := p.Svc.GetSendQuota(&ses.GetSendQuotaInput{})
 	if err != nil {
 		return nil, err
 	}
 
-	sescfg := ses.Config{
-		AccessKeyID:     auth.AccessKey,
-		SecretAccessKey: auth.SecretKey,
-		SecurityToken:   auth.Token(),
-		Endpoint:        p.Endpoint,
+	if quota.SentLast24Hours != nil {
+		stat["SentLast24Hours"] = *quota.SentLast24Hours
 	}
 
-	stat := make(map[string]float64)
-	quota, err := sescfg.GetSendQuota()
-	if err == nil {
-		stat["SentLast24Hours"] = quota.SentLast24Hours
-		stat["Max24HourSend"] = quota.Max24HourSend
-		stat["MaxSendRate"] = quota.MaxSendRate
+	if quota.Max24HourSend != nil {
+		stat["Max24HourSend"] = *quota.Max24HourSend
 	}
 
-	datapoints, err := sescfg.GetSendStatistics()
+	if quota.MaxSendRate != nil {
+		stat["MaxSendRate"] = *quota.MaxSendRate
+	}
+
+	result, err := p.Svc.GetSendStatistics(nil)
 	if err == nil {
-		latest := ses.SendDataPoint{
-			Timestamp: time.Unix(0, 0),
+		t := time.Unix(0, 0)
+		latest := &ses.SendDataPoint{
+			Timestamp: &t,
 		}
 
-		for _, dp := range datapoints {
-			if latest.Timestamp.Before(dp.Timestamp) {
-				latest = dp
+		datapoints := result.SendDataPoints
+
+		if len(datapoints) > 0 {
+			for _, dp := range datapoints {
+				if latest.Timestamp.Before(*dp.Timestamp) {
+					latest = dp
+				}
 			}
-		}
 
-		stat["Complaints"] = float64(latest.Complaints)
-		stat["DeliveryAttempts"] = float64(latest.DeliveryAttempts)
-		stat["Bounces"] = float64(latest.Bounces)
-		stat["Rejects"] = float64(latest.Rejects)
+			stat["Complaints"] = float64(*latest.Complaints)
+			stat["DeliveryAttempts"] = float64(*latest.DeliveryAttempts)
+			stat["Bounces"] = float64(*latest.Bounces)
+			stat["Rejects"] = float64(*latest.Rejects)
+		}
 	}
 
 	return stat, nil
@@ -99,7 +143,8 @@ func (p SESPlugin) GraphDefinition() map[string]mp.Graphs {
 
 // Do the plugin
 func Do() {
-	optEndpoint := flag.String("endpoint", "", "AWS Endpoint")
+	optRegion := flag.String("region", "", "AWS Region")
+	optEndpoint := flag.String("endpoint", "", "AWS Endpoint (deprecated)")
 	optAccessKeyID := flag.String("access-key-id", "", "AWS Access Key ID")
 	optSecretAccessKey := flag.String("secret-access-key", "", "AWS Secret Access Key")
 	optTempfile := flag.String("tempfile", "", "Temp file name")
@@ -107,9 +152,15 @@ func Do() {
 
 	var ses SESPlugin
 
+	ses.Region = *optRegion
 	ses.Endpoint = *optEndpoint
 	ses.AccessKeyID = *optAccessKeyID
 	ses.SecretAccessKey = *optSecretAccessKey
+
+	err := ses.prepare()
+	if err != nil {
+		log.Fatalln(err)
+	}
 
 	helper := mp.NewMackerelPlugin(ses)
 	helper.Tempfile = *optTempfile
