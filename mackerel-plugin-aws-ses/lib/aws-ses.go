@@ -68,7 +68,7 @@ func (p SESPlugin) FetchMetrics() (map[string]float64, error) {
 	if p.Region != "" {
 		config = config.WithRegion(p.Region)
 	}
-    // for backward compatibility
+	// for backward compatibility
 	if p.Endpoint != "" {
 		u, err := url.Parse(p.Endpoint)
 		if err != nil {
