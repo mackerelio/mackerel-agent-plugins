@@ -63,7 +63,7 @@ func (p SESPlugin) FetchMetrics() (map[string]float64, error) {
 		config = config.WithCredentials(credentials.NewStaticCredentials(p.AccessKeyID, p.SecretAccessKey, ""))
 	}
 	if p.Region != "" && p.Endpoint != "" {
-		return nil, errors.New("--region and --endpoint are exclusive.")
+		return nil, errors.New("--region and --endpoint are exclusive")
 	}
 	if p.Region != "" {
 		config = config.WithRegion(p.Region)
@@ -76,7 +76,7 @@ func (p SESPlugin) FetchMetrics() (map[string]float64, error) {
 		}
 		hosts := strings.Split(u.Host, ".")
 		if len(hosts) != 4 && hosts[2] == "amazonaws" {
-			return nil, errors.New("--endpoint is invalid.")
+			return nil, errors.New("--endpoint is invalid")
 		}
 		config = config.WithRegion(hosts[1])
 	}
