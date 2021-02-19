@@ -1,7 +1,10 @@
 package mpawsses
 
 import (
+	"errors"
 	"flag"
+	"net/url"
+	"strings"
 	"time"
 
 	"github.com/aws/aws-sdk-go/aws"
@@ -42,6 +45,7 @@ var graphdef = map[string]mp.Graphs{
 // SESPlugin mackerel plugin for Amazon SES
 type SESPlugin struct {
 	Region          string
+	Endpoint        string
 	AccessKeyID     string
 	SecretAccessKey string
 }
@@ -58,8 +62,22 @@ func (p SESPlugin) FetchMetrics() (map[string]float64, error) {
 	if p.AccessKeyID != "" && p.SecretAccessKey != "" {
 		config = config.WithCredentials(credentials.NewStaticCredentials(p.AccessKeyID, p.SecretAccessKey, ""))
 	}
+	if p.Region != "" && p.Endpoint != "" {
+		return nil, errors.New("--region and --endpoint are exclusive.")
+	}
 	if p.Region != "" {
 		config = config.WithRegion(p.Region)
+	}
+	if p.Endpoint != "" {
+		u, err := url.Parse(p.Endpoint)
+		if err != nil {
+			return nil, err
+		}
+		hosts := strings.Split(u.Host, ".")
+		if len(hosts) != 4 && hosts[2] == "amazonaws" {
+			return nil, errors.New("--endpoint is invalid.")
+		}
+		config = config.WithRegion(hosts[1])
 	}
 
 	svc := ses.New(sess, config)
@@ -116,6 +134,7 @@ func (p SESPlugin) GraphDefinition() map[string]mp.Graphs {
 // Do the plugin
 func Do() {
 	optRegion := flag.String("region", "", "AWS Region")
+	optEndpoint := flag.String("endpoint", "", "AWS Endpoint (deprecated)")
 	optAccessKeyID := flag.String("access-key-id", "", "AWS Access Key ID")
 	optSecretAccessKey := flag.String("secret-access-key", "", "AWS Secret Access Key")
 	optTempfile := flag.String("tempfile", "", "Temp file name")
@@ -124,6 +143,7 @@ func Do() {
 	var ses SESPlugin
 
 	ses.Region = *optRegion
+	ses.Endpoint = *optEndpoint
 	ses.AccessKeyID = *optAccessKeyID
 	ses.SecretAccessKey = *optSecretAccessKey
 
