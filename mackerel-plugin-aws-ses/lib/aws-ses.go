@@ -91,16 +91,18 @@ func (p SESPlugin) FetchMetrics() (map[string]float64, error) {
 
 		datapoints := result.SendDataPoints
 
-		for _, dp := range datapoints {
-			if latest.Timestamp.Before(*dp.Timestamp) {
-				latest = dp
+		if len(datapoints) > 0 {
+			for _, dp := range datapoints {
+				if latest.Timestamp.Before(*dp.Timestamp) {
+					latest = dp
+				}
 			}
-		}
 
-		stat["Complaints"] = float64(*latest.Complaints)
-		stat["DeliveryAttempts"] = float64(*latest.DeliveryAttempts)
-		stat["Bounces"] = float64(*latest.Bounces)
-		stat["Rejects"] = float64(*latest.Rejects)
+			stat["Complaints"] = float64(*latest.Complaints)
+			stat["DeliveryAttempts"] = float64(*latest.DeliveryAttempts)
+			stat["Bounces"] = float64(*latest.Bounces)
+			stat["Rejects"] = float64(*latest.Rejects)
+		}
 	}
 
 	return stat, nil
