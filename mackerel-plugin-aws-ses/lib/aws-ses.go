@@ -78,7 +78,7 @@ func (p *SESPlugin) prepare() error {
 			return err
 		}
 		hosts := strings.Split(u.Host, ".")
-		if len(hosts) != 4 && hosts[2] == "amazonaws" {
+		if len(hosts) != 4 || hosts[2] != "amazonaws" {
 			return errors.New("--endpoint is invalid")
 		}
 		config = config.WithRegion(hosts[1])
