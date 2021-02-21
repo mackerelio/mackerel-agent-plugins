@@ -30,7 +30,7 @@ require (
 	github.com/mackerelio/go-mackerel-plugin v0.0.0-20200416053722-b68096c191d0
 	github.com/mackerelio/go-mackerel-plugin-helper v0.0.0-20200416053706-9aba6664c25d
 	github.com/mackerelio/go-osstat v0.1.0
-	github.com/mackerelio/golib v1.1.0
+	github.com/mackerelio/golib v1.2.0
 	github.com/mackerelio/mackerel-plugin-aws-ec2 v1.0.1
 	github.com/mackerelio/mackerel-plugin-aws-kinesis-firehose v1.0.1
 	github.com/mackerelio/mackerel-plugin-aws-rekognition v1.0.1
