@@ -53,7 +53,7 @@ type FluentdPluginMetrics struct {
 	BufferAvailableBufferSpaceRatios float64 `json:"buffer_available_buffer_space_ratios"`
 }
 
-func (f FluentdPluginMetrics) getExtended(name string) float64 {
+func (fpm FluentdPluginMetrics) getExtended(name string) float64 {
 	switch name {
 	case "emit_records":
 		return float64(f.EmitRecords)
