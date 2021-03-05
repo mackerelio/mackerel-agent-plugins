@@ -56,25 +56,25 @@ type FluentdPluginMetrics struct {
 func (fpm FluentdPluginMetrics) getExtended(name string) float64 {
 	switch name {
 	case "emit_records":
-		return float64(f.EmitRecords)
+		return float64(fpm.EmitRecords)
 	case "emit_count":
-		return float64(f.EmitCount)
+		return float64(fpm.EmitCount)
 	case "write_count":
-		return float64(f.WriteCount)
+		return float64(fpm.WriteCount)
 	case "rollback_count":
-		return float64(f.RollbackCount)
+		return float64(fpm.RollbackCount)
 	case "slow_flush_count":
-		return float64(f.SlowFlushCount)
+		return float64(fpm.SlowFlushCount)
 	case "flush_time_count":
-		return float64(f.FlushTimeCount)
+		return float64(fpm.FlushTimeCount)
 	case "buffer_stage_length":
-		return float64(f.BufferStageLength)
+		return float64(fpm.BufferStageLength)
 	case "buffer_stage_byte_size":
-		return float64(f.BufferStageByteSize)
+		return float64(fpm.BufferStageByteSize)
 	case "buffer_queue_byte_size":
-		return float64(f.BufferQueueByteSize)
+		return float64(fpm.BufferQueueByteSize)
 	case "buffer_available_buffer_space_ratios":
-		return f.BufferAvailableBufferSpaceRatios
+		return fpm.BufferAvailableBufferSpaceRatios
 	default:
 		logger.Warningf("extended-metrics %s not defined", name)
 	}
