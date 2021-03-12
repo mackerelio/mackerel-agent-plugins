@@ -17,6 +17,12 @@ import (
 
 var logger = logging.GetLogger("metrics.plugin.fluentd")
 
+var prefix = "fluentd"
+
+func metricName(names ...string) string {
+	return prefix + "." + strings.Join(names, ".")
+}
+
 // FluentdMetrics plugin for fluentd
 type FluentdMetrics struct {
 	Target          string
@@ -75,8 +81,6 @@ func (fpm FluentdPluginMetrics) getExtended(name string) float64 {
 		return float64(fpm.BufferQueueByteSize)
 	case "buffer_available_buffer_space_ratios":
 		return fpm.BufferAvailableBufferSpaceRatios
-	default:
-		logger.Warningf("extended-metrics %s not defined", name)
 	}
 	return 0
 }
@@ -110,9 +114,9 @@ func (f *FluentdMetrics) parseStats(body []byte) (map[string]interface{}, error)
 			continue
 		}
 		pid := p.getNormalizedPluginID()
-		metrics["fluentd.retry_count."+pid] = float64(p.RetryCount)
-		metrics["fluentd.buffer_queue_length."+pid] = float64(p.BufferQueueLength)
-		metrics["fluentd.buffer_total_queued_size."+pid] = float64(p.BufferTotalQueuedSize)
+		metrics[metricName("retry_count", pid)] = float64(p.RetryCount)
+		metrics[metricName("buffer_queue_length", pid)] = float64(p.BufferQueueLength)
+		metrics[metricName("buffer_total_queued_size", pid)] = float64(p.BufferTotalQueuedSize)
 		for _, name := range f.extendedMetrics {
 			key := strings.Join([]string{"fluentd", name, pid}, ".")
 			metrics[key] = p.getExtended(name)
@@ -260,8 +264,9 @@ func (f FluentdMetrics) GraphDefinition() map[string]mp.Graphs {
 		graphs[key] = g
 	}
 	for _, name := range f.extendedMetrics {
-		if g, ok := extendedGraphs["fluentd."+name]; ok {
-			graphs["fluentd."+name] = g
+		fullName := metricName(name)
+		if g, ok := extendedGraphs[fullName]; ok {
+			graphs[fullName] = g
 		}
 	}
 	return graphs
@@ -291,11 +296,18 @@ func Do() {
 	switch *extendedMetricNames {
 	case "all":
 		for key := range extendedGraphs {
-			extendedMetrics = append(extendedMetrics, strings.TrimPrefix(key, "fluentd."))
+			extendedMetrics = append(extendedMetrics, strings.TrimPrefix(key, prefix+"."))
 		}
 	case "":
 	default:
-		extendedMetrics = strings.Split(*extendedMetricNames, ",")
+		for _, name := range strings.Split(*extendedMetricNames, ",") {
+			fullName := metricName(name)
+			if _, exists := extendedGraphs[fullName]; !exists {
+				fmt.Fprintf(os.Stderr, "extended_metrics %s is not supported. See also https://www.fluentd.org/blog/fluentd-v1.6.0-has-been-released\n", name)
+				os.Exit(1)
+			}
+			extendedMetrics = append(extendedMetrics, name)
+		}
 	}
 	f := FluentdMetrics{
 		Target:          fmt.Sprintf("http://%s:%s/api/plugins.json", *host, *port),
