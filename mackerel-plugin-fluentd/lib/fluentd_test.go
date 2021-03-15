@@ -17,6 +17,16 @@ func TestGraphDefinition(t *testing.T) {
 	}
 }
 
+func TestGraphDefinitionExtended(t *testing.T) {
+	var fluentd FluentdMetrics
+	fluentd.extendedMetrics = []string{"emit_records", "emit_count", "xxx"}
+
+	graphdef := fluentd.GraphDefinition()
+	if len(graphdef) != 5 { // default 3 + emit_records + emit_count, xxx is ignored
+		t.Errorf("GetTempfilename: %d should be 5", len(graphdef))
+	}
+}
+
 func TestNormalizePluginID(t *testing.T) {
 	testSets := [][]string{
 		{"foo/bar", "foo_bar"},
@@ -42,6 +52,49 @@ func TestParse(t *testing.T) {
 	assert.EqualValues(t, reflect.TypeOf(stat["fluentd.buffer_total_queued_size.object_3feb368cfad0"]).String(), "float64")
 	assert.EqualValues(t, stat["fluentd.buffer_total_queued_size.object_3feb368cfad0"].(float64), 53)
 	if _, ok := stat["fluentd.buffer_total_queued_size.object_155633c"]; ok {
+		t.Errorf("parseStats: stats of other than the output plugin should not exist")
+	}
+}
+
+func TestParseExtended(t *testing.T) {
+	var fluentd FluentdMetrics
+	fluentd.extendedMetrics = []string{"emit_records"}
+	stub := `{
+	  "plugins": [
+		{
+			"plugin_id": "object:3feb368cfad0",
+			"plugin_category": "output",
+			"type": "mackerel",
+			"config": {"type":"mackerel","api_key":"aaa","service":"foo","metrics_name":"${[1]}-bar.${out_key}","remove_prefix":"","out_keys":"Latency","localtime":true},
+			"output_plugin": true,
+			"buffer_queue_length": 0,
+			"buffer_total_queued_size": 53,
+			"retry_count": 0,
+			"emit_records": 10,
+			"emit_count": 7
+		},
+		{
+			"plugin_id": "object:155633c",
+			"plugin_category": "input",
+			"type": "monitor_agent",
+			"config":{"type":"monitor_agent","bind":"0.0.0.0","port":"24220"},
+			"output_plugin": false,
+			"retry_count": null
+		}
+	]}`
+
+	fluentdStats := []byte(stub)
+
+	stat, err := fluentd.parseStats(fluentdStats)
+	assert.Nil(t, err)
+	// Fluentd Stats
+	assert.EqualValues(t, reflect.TypeOf(stat["fluentd.buffer_total_queued_size.object_3feb368cfad0"]).String(), "float64")
+	assert.EqualValues(t, stat["fluentd.buffer_total_queued_size.object_3feb368cfad0"].(float64), 53)
+	if _, ok := stat["fluentd.buffer_total_queued_size.object_155633c"]; ok {
+		t.Errorf("parseStats: stats of other than the output plugin should not exist")
+	}
+	assert.EqualValues(t, stat["fluentd.emit_records.object_3feb368cfad0"].(float64), 10)
+	if _, ok := stat["fluentd.emit_count.object_3feb368cfad0"]; ok {
 		t.Errorf("parseStats: stats of other than the output plugin should not exist")
 	}
 }
