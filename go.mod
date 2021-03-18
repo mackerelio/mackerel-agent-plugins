@@ -22,7 +22,7 @@ require (
 	github.com/golang/groupcache v0.0.0-20191027212112-611e8accdfc9 // indirect
 	github.com/gomodule/redigo v1.8.3
 	github.com/hashicorp/go-version v1.2.1
-	github.com/jarcoal/httpmock v1.0.7
+	github.com/jarcoal/httpmock v1.0.8
 	github.com/jmoiron/sqlx v1.2.0
 	github.com/lestrrat-go/tcptest v0.0.0-20180223004312-f0345789c593
 	github.com/lestrrat-go/tcputil v0.0.0-20180223003554-d3c7f98154fb // indirect
