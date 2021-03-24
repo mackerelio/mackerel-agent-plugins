@@ -48,6 +48,18 @@ done
 %{__oldtargetdir}/*
 
 %changelog
+* Wed Mar 24 2021 <mackerel-developers@hatena.ne.jp> - 0.64.0
+- Bump github.com/jmoiron/sqlx from 1.2.0 to 1.3.1 (by dependabot[bot])
+- Bump github.com/aws/aws-sdk-go from 1.37.33 to 1.38.1 (by dependabot[bot])
+- Bump github.com/aws/aws-sdk-go from 1.36.28 to 1.37.33 (by dependabot[bot])
+- Bump github.com/gomodule/redigo from 1.8.3 to 1.8.4 (by dependabot[bot])
+- Bump github.com/fsouza/go-dockerclient from 1.7.0 to 1.7.2 (by dependabot[bot])
+- Bump github.com/lib/pq from 1.9.0 to 1.10.0 (by dependabot[bot])
+- Bump github.com/montanaflynn/stats from 0.6.4 to 0.6.5 (by dependabot[bot])
+- Bump github.com/mackerelio/golib from 1.1.0 to 1.2.0 (by dependabot[bot])
+- Bump github.com/jarcoal/httpmock from 1.0.7 to 1.0.8 (by dependabot[bot])
+- Support to extended metrics for fluentd 1.6. (by fujiwara)
+
 * Fri Feb 19 2021 <mackerel-developers@hatena.ne.jp> - 0.63.5
 - fix incorrect endpoint inspect condition (by yseto)
 

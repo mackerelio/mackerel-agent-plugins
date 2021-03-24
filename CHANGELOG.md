@@ -1,5 +1,19 @@
 # Changelog
 
+## 0.64.0 (2021-03-24)
+
+* Bump github.com/jmoiron/sqlx from 1.2.0 to 1.3.1 #722 (dependabot[bot])
+* Bump github.com/aws/aws-sdk-go from 1.37.33 to 1.38.1 #744 (dependabot[bot])
+* Bump github.com/aws/aws-sdk-go from 1.36.28 to 1.37.33 #743 (dependabot[bot])
+* Bump github.com/gomodule/redigo from 1.8.3 to 1.8.4 #732 (dependabot[bot])
+* Bump github.com/fsouza/go-dockerclient from 1.7.0 to 1.7.2 #739 (dependabot[bot])
+* Bump github.com/lib/pq from 1.9.0 to 1.10.0 #742 (dependabot[bot])
+* Bump github.com/montanaflynn/stats from 0.6.4 to 0.6.5 #734 (dependabot[bot])
+* Bump github.com/mackerelio/golib from 1.1.0 to 1.2.0 #735 (dependabot[bot])
+* Bump github.com/jarcoal/httpmock from 1.0.7 to 1.0.8 #721 (dependabot[bot])
+* Support to extended metrics for fluentd 1.6. #738 (fujiwara)
+
+
 ## 0.63.5 (2021-02-19)
 
 * fix incorrect endpoint inspect condition #730 (yseto)
