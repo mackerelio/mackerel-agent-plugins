@@ -29,7 +29,7 @@ require (
 	github.com/lib/pq v1.10.0
 	github.com/mackerelio/go-mackerel-plugin v0.1.1
 	github.com/mackerelio/go-mackerel-plugin-helper v0.1.0
-	github.com/mackerelio/go-osstat v0.1.0
+	github.com/mackerelio/go-osstat v0.2.0
 	github.com/mackerelio/golib v1.2.0
 	github.com/mackerelio/mackerel-plugin-aws-ec2 v1.0.1
 	github.com/mackerelio/mackerel-plugin-aws-kinesis-firehose v1.0.1
