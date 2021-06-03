@@ -39,6 +39,16 @@ done
 %{__targetdir}/*
 
 %changelog
+* Thu Jun 03 2021 <mackerel-developers@hatena.ne.jp> - 0.64.1
+- Bump github.com/montanaflynn/stats from 0.6.5 to 0.6.6 (by dependabot[bot])
+- Bump github.com/lib/pq from 1.10.0 to 1.10.2 (by dependabot[bot])
+- Bump github.com/aws/aws-sdk-go from 1.38.1 to 1.38.40 (by dependabot[bot])
+- Bump github.com/mackerelio/go-osstat from 0.1.0 to 0.2.0 (by dependabot[bot])
+- Bump github.com/go-ldap/ldap/v3 from 3.2.4 to 3.3.0 (by dependabot[bot])
+- Use latest go-mackerel-plugin(-helper) (by astj)
+- Bump github.com/hashicorp/go-version from 1.2.1 to 1.3.0 (by dependabot[bot])
+- upgrade Go 1.14 -> 1.16 (by lufia)
+
 * Wed Mar 24 2021 <mackerel-developers@hatena.ne.jp> - 0.64.0
 - Bump github.com/jmoiron/sqlx from 1.2.0 to 1.3.1 (by dependabot[bot])
 - Bump github.com/aws/aws-sdk-go from 1.37.33 to 1.38.1 (by dependabot[bot])

@@ -1,5 +1,17 @@
 # Changelog
 
+## 0.64.1 (2021-06-03)
+
+* Bump github.com/montanaflynn/stats from 0.6.5 to 0.6.6 #758 (dependabot[bot])
+* Bump github.com/lib/pq from 1.10.0 to 1.10.2 #762 (dependabot[bot])
+* Bump github.com/aws/aws-sdk-go from 1.38.1 to 1.38.40 #760 (dependabot[bot])
+* Bump github.com/mackerelio/go-osstat from 0.1.0 to 0.2.0 #759 (dependabot[bot])
+* Bump github.com/go-ldap/ldap/v3 from 3.2.4 to 3.3.0 #750 (dependabot[bot])
+* Use latest go-mackerel-plugin(-helper) #756 (astj)
+* Bump github.com/hashicorp/go-version from 1.2.1 to 1.3.0 #748 (dependabot[bot])
+* upgrade Go 1.14 -> 1.16 #753 (lufia)
+
+
 ## 0.64.0 (2021-03-24)
 
 * Bump github.com/jmoiron/sqlx from 1.2.0 to 1.3.1 #722 (dependabot[bot])
