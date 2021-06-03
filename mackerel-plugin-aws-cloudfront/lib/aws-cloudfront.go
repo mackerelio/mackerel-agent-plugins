@@ -136,6 +136,8 @@ func (p CloudFrontPlugin) FetchMetrics() (map[string]float64, error) {
 func (p CloudFrontPlugin) GraphDefinition() map[string]mp.Graphs {
 	labelPrefix := strings.Title(p.Prefix)
 	labelPrefix = strings.Replace(labelPrefix, "-", " ", -1)
+	labelPrefix = strings.Replace(labelPrefix, "Aws", "AWS", -1)
+	labelPrefix = strings.Replace(labelPrefix, "Cloudfront", "CloudFront", -1)
 
 	return map[string]mp.Graphs{
 		"Requests": {
