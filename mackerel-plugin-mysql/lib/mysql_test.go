@@ -1,6 +1,7 @@
 package mpmysql
 
 import (
+	"strings"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -1249,4 +1250,38 @@ func TestParseProcesslist2(t *testing.T) {
 	assert.EqualValues(t, 1, stat["State_writing_to_net"])
 	assert.EqualValues(t, 1, stat["State_none"])
 	assert.EqualValues(t, 58, stat["State_other"])
+}
+
+func TestMetricNamesShouldUniqueAndConst(t *testing.T) {
+	m := MySQLPlugin{
+		DisableInnoDB:  false,
+		EnableExtended: true,
+	}
+	defs := m.GraphDefinition()
+	keys := make(map[string]string) // metricName: graphDefName
+	for name, g := range defs {
+		for _, v := range g.Metrics {
+			// TODO(lufia): bug?
+			if v.Name == "Threads_connected" {
+				if name != "connections" && name != "threads" {
+					t.Errorf(`%q are duplicated in "connections", "threads" and %q`, v.Name, name)
+				}
+				continue
+			}
+			if v.Name == "Qcache_hits" {
+				if name != "cmd" && name != "query_cache" {
+					t.Errorf(`%q are duplicated in "cmd", "query_cache" and %q`, v.Name, name)
+				}
+				continue
+			}
+
+			if strings.ContainsAny(v.Name, "#*") {
+				t.Errorf("%q should not contains wildcards", v.Name)
+			}
+			if s, ok := keys[v.Name]; ok {
+				t.Errorf("%q are defined in both %q and %q", v.Name, s, name)
+			}
+			keys[v.Name] = name
+		}
+	}
 }

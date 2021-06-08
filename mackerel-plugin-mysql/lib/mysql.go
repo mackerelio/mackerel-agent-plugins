@@ -418,6 +418,16 @@ func (m *MySQLPlugin) FetchMetrics() (map[string]float64, error) {
 	return statRet, err
 }
 
+func (m *MySQLPlugin) metricNames() map[string]struct{} {
+	a := make(map[string]struct{})
+	for _, g := range m.GraphDefinition() {
+		for _, metric := range g.Metrics {
+			a[metric.Name] = struct{}{}
+		}
+	}
+	return a
+}
+
 // GraphDefinition interface for mackerelplugin
 func (m *MySQLPlugin) GraphDefinition() map[string]mp.Graphs {
 	graphdef := m.defaultGraphdef()
