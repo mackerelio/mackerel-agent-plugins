@@ -418,8 +418,12 @@ func (m *MySQLPlugin) FetchMetrics() (map[string]float64, error) {
 
 	m.calculateCapacity(stat)
 
+	explicitMetricNames := m.metricNames()
 	statRet := make(map[string]float64)
 	for key, value := range stat {
+		if _, ok := explicitMetricNames[key]; !ok {
+			continue
+		}
 		statRet[key] = value
 	}
 
