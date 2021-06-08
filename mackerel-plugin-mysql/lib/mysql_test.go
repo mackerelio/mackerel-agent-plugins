@@ -155,7 +155,7 @@ Number of rows inserted 3089, updated 220, deleted 212, read 2099881
 END OF INNODB MONITOR OUTPUT`
 	stat := make(map[string]float64)
 
-	parseInnodbStatus(stub, false, &stat)
+	parseInnodbStatus(stub, false, stat)
 	// Innodb Semaphores
 	assert.EqualValues(t, stat["spin_waits"], 947)
 	assert.EqualValues(t, stat["spin_rounds"], 9442)
@@ -325,7 +325,7 @@ END OF INNODB MONITOR OUTPUT
 ============================`
 	stat := make(map[string]float64)
 
-	parseInnodbStatus(stub, true, &stat)
+	parseInnodbStatus(stub, true, stat)
 	// Innodb Semaphores
 	assert.EqualValues(t, stat["spin_waits"], 5020565400)
 	assert.EqualValues(t, stat["spin_rounds"], 3687067031)
@@ -498,7 +498,7 @@ END OF INNODB MONITOR OUTPUT
 ============================`
 	stat := make(map[string]float64)
 
-	parseInnodbStatus(stub, true, &stat)
+	parseInnodbStatus(stub, true, stat)
 	// Innodb Semaphores
 	assert.EqualValues(t, stat["spin_waits"], 180466733)
 	assert.EqualValues(t, stat["spin_rounds"], 142931556)
@@ -633,7 +633,7 @@ END OF INNODB MONITOR OUTPUT
 ============================`
 	stat := make(map[string]float64)
 
-	parseInnodbStatus(stub, true, &stat)
+	parseInnodbStatus(stub, true, stat)
 	// Innodb Semaphores
 	assert.EqualValues(t, stat["spin_waits"], 1762)
 	assert.EqualValues(t, stat["spin_rounds"], 30300)
@@ -865,7 +865,7 @@ END OF INNODB MONITOR OUTPUT
 ============================
 `
 	stat := make(map[string]float64)
-	parseInnodbStatus(stub, false, &stat)
+	parseInnodbStatus(stub, false, stat)
 	// Innodb Semaphores
 	assert.EqualValues(t, stat["spin_waits"], 0)
 	assert.EqualValues(t, stat["spin_rounds"], 0) // empty
@@ -1055,7 +1055,7 @@ MySQL thread id 2, OS thread handle 0x7efe7cba4700, query id 35 localhost root
 END OF INNODB MONITOR OUTPUT
 ============================`
 	stat := make(map[string]float64)
-	parseInnodbStatus(stub, false, &stat)
+	parseInnodbStatus(stub, false, stat)
 	// Innodb Semaphores
 	assert.EqualValues(t, stat["spin_waits"], 12)
 	assert.EqualValues(t, stat["spin_rounds"], 180)
@@ -1120,7 +1120,7 @@ func TestParseProcesslist1(t *testing.T) {
 	pattern := []string{"NULL"}
 
 	for _, val := range pattern {
-		parseProcesslist(val, &stat)
+		parseProcesslist(val, stat)
 	}
 	assert.EqualValues(t, 0, stat["State_closing_tables"])
 	assert.EqualValues(t, 0, stat["State_copying_to_tmp_table"])
@@ -1232,7 +1232,7 @@ func TestParseProcesslist2(t *testing.T) {
 	}
 
 	for _, val := range pattern {
-		parseProcesslist(val, &stat)
+		parseProcesslist(val, stat)
 	}
 	assert.EqualValues(t, 1, stat["State_closing_tables"])
 	assert.EqualValues(t, 1, stat["State_copying_to_tmp_table"])

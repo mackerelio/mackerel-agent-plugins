@@ -204,7 +204,11 @@ func (m *MySQLPlugin) fetchShowStatus(db mysql.Conn, stat map[string]float64) er
 				log.Fatalln("FetchMetrics (Status Fetch): ", err)
 				return err
 			}
-			stat[variableName], _ = atof(string(row[1].([]byte)))
+			v, err := atof(string(row[1].([]byte)))
+			if err != nil {
+				continue
+			}
+			stat[variableName] = v
 		} else {
 			log.Fatalln("FetchMetrics (Status): row length is too small: ", len(row))
 		}
@@ -235,7 +239,7 @@ func (m *MySQLPlugin) fetchShowInnodbStatus(db mysql.Conn, stat map[string]float
 	}
 
 	if len(row) > 0 {
-		parseInnodbStatus(string(row[len(row)-1].([]byte)), trxIDHexFormat, &stat)
+		parseInnodbStatus(string(row[len(row)-1].([]byte)), trxIDHexFormat, stat)
 	} else {
 		return fmt.Errorf("row length is too small: %d", len(row))
 	}
@@ -257,7 +261,11 @@ func (m *MySQLPlugin) fetchShowVariables(db mysql.Conn, stat map[string]float64)
 			}
 			value := string(row[1].([]byte))
 			rawStat[variableName] = value
-			stat[variableName], _ = atof(value)
+			v, err := atof(value)
+			if err != nil {
+				continue
+			}
+			stat[variableName] = v
 		} else {
 			log.Fatalln("FetchMetrics (Variables): row length is too small: ", len(row))
 		}
@@ -329,7 +337,7 @@ func (m *MySQLPlugin) fetchProcesslist(db mysql.Conn, stat map[string]float64) e
 			} else {
 				state = string(row[6].([]byte))
 			}
-			parseProcesslist(state, &stat)
+			parseProcesslist(state, stat)
 		} else {
 			log.Fatalln("FetchMetrics (Processlist): row length is too small: ", len(row))
 		}
@@ -356,7 +364,7 @@ func (m *MySQLPlugin) convertInnodbStats(stat map[string]float64) {
 		"read_random_ahead": "Innodb_buffer_pool_read_ahead_rnd",
 	} {
 		if v, found := stat[src]; found {
-			setIfEmpty(&stat, dst, v)
+			setIfEmpty(stat, dst, v)
 		}
 	}
 }
@@ -754,14 +762,14 @@ func (m *MySQLPlugin) addExtendedGraphdef(graphdef map[string]mp.Graphs) map[str
 	return graphdef
 }
 
-func setIfEmpty(p *map[string]float64, key string, val float64) {
-	_, ok := (*p)[key]
+func setIfEmpty(p map[string]float64, key string, val float64) {
+	_, ok := p[key]
 	if !ok {
-		(*p)[key] = val
+		p[key] = val
 	}
 }
 
-func parseInnodbStatus(str string, trxIDHexFormat bool, p *map[string]float64) {
+func parseInnodbStatus(str string, trxIDHexFormat bool, p map[string]float64) {
 	isTransaction := false
 	prevLine := ""
 
@@ -798,7 +806,10 @@ func parseInnodbStatus(str string, trxIDHexFormat bool, p *map[string]float64) {
 		}
 		if strings.Contains(line, "seconds the semaphore:") {
 			increaseMap(p, "innodb_sem_waits", "1")
-			wait, _ := atof(record[9])
+			wait, err := atof(record[9])
+			if err != nil {
+				continue
+			}
 			wait = wait * 1000
 			increaseMap(p, "innodb_sem_wait_time_ms", fmt.Sprintf("%.f", wait))
 			continue
@@ -820,7 +831,7 @@ func parseInnodbStatus(str string, trxIDHexFormat bool, p *map[string]float64) {
 				record[7] = ""
 			}
 			val := makeBigint(record[6], record[7], trxIDHexFormat)
-			trx := (*p)["innodb_transactions"] - float64(val)
+			trx := p["innodb_transactions"] - float64(val)
 			increaseMap(p, "unpurged_txns", fmt.Sprintf("%.f", trx))
 			continue
 		}
@@ -840,7 +851,7 @@ func parseInnodbStatus(str string, trxIDHexFormat bool, p *map[string]float64) {
 			continue
 		}
 		if strings.Contains(line, "read views open inside InnoDB") {
-			(*p)["read_views"], _ = atof(record[0])
+			setMap(p, "read_views", record[0])
 			continue
 		}
 		if isTransaction && strings.HasPrefix(line, "mysql tables in use") {
@@ -860,148 +871,151 @@ func parseInnodbStatus(str string, trxIDHexFormat bool, p *map[string]float64) {
 
 		// File I/O
 		if strings.HasPrefix(line, "Pending normal aio reads:") {
-			(*p)["pending_normal_aio_reads"], _ = atof(record[4])
-			(*p)["pending_normal_aio_writes"], _ = atof(record[7])
+			setMap(p, "pending_normal_aio_reads", record[4])
+			setMap(p, "pending_normal_aio_writes", record[7])
 			continue
 		}
 		if strings.HasPrefix(line, "ibuf aio reads") && len(record) >= 10 {
-			(*p)["pending_ibuf_aio_reads"], _ = atof(record[3])
-			(*p)["pending_aio_log_ios"], _ = atof(record[6])
-			(*p)["pending_aio_sync_ios"], _ = atof(record[9])
+			setMap(p, "pending_ibuf_aio_reads", record[3])
+			setMap(p, "pending_aio_log_ios", record[6])
+			setMap(p, "pending_aio_sync_ios", record[9])
 			continue
 		}
 		if strings.Index(line, "Pending flushes (fsync)") == 0 {
-			(*p)["pending_log_flushes"], _ = atof(record[4])
-			(*p)["pending_buf_pool_flushes"], _ = atof(record[7])
+			setMap(p, "pending_log_flushes", record[4])
+			setMap(p, "pending_buf_pool_flushes", record[7])
 			continue
 		}
 
 		// Insert Buffer and Adaptive Hash Index
 		if strings.HasPrefix(line, "Ibuf for space 0: size ") {
-			(*p)["ibuf_used_cells"], _ = atof(record[5])
-			(*p)["ibuf_free_cells"], _ = atof(record[9])
-			(*p)["ibuf_cell_count"], _ = atof(record[12])
+			setMap(p, "ibuf_used_cells", record[5])
+			setMap(p, "ibuf_free_cells", record[9])
+			setMap(p, "ibuf_cell_count", record[12])
 			continue
 		}
 		if strings.HasPrefix(line, "Ibuf: size ") {
-			(*p)["ibuf_used_cells"], _ = atof(record[2])
-			(*p)["ibuf_free_cells"], _ = atof(record[6])
-			(*p)["ibuf_cell_count"], _ = atof(record[9])
+			setMap(p, "ibuf_used_cells", record[2])
+			setMap(p, "ibuf_free_cells", record[6])
+			setMap(p, "ibuf_cell_count", record[9])
 			if strings.Contains(line, "merges") {
-				(*p)["ibuf_merges"], _ = atof(record[10])
+				setMap(p, "ibuf_merges", record[10])
 			}
 			continue
 		}
 		if strings.Contains(line, ", delete mark ") && strings.HasPrefix(prevLine, "merged operations:") {
-			(*p)["ibuf_inserts"], _ = atof(record[1])
-			v1, _ := atof(record[1])
-			v2, _ := atof(record[4])
-			v3, _ := atof(record[6])
-			(*p)["ibuf_merged"] = v1 + v2 + v3
+			setMap(p, "ibuf_inserts", record[1])
+			v1, e1 := atof(record[1])
+			v2, e2 := atof(record[4])
+			v3, e3 := atof(record[6])
+			if e1 == nil && e2 == nil && e3 == nil {
+				p["ibuf_merged"] = v1 + v2 + v3
+			}
 			continue
 		}
 		if strings.Contains(line, " merged recs, ") {
-			(*p)["ibuf_inserts"], _ = atof(record[0])
-			(*p)["ibuf_merged"], _ = atof(record[2])
-			(*p)["ibuf_merges"], _ = atof(record[5])
+			setMap(p, "ibuf_inserts", record[0])
+			setMap(p, "ibuf_merged", record[2])
+			setMap(p, "ibuf_merges", record[5])
 			continue
 		}
 		if strings.HasPrefix(line, "Hash table size ") {
-			(*p)["hash_index_cells_total"], _ = atof(record[3])
+			setMap(p, "hash_index_cells_total", record[3])
 			if strings.Contains(line, "used cells") {
-				(*p)["hash_index_cells_used"], _ = atof(record[6])
+				setMap(p, "hash_index_cells_used", record[6])
 			} else {
-				(*p)["hash_index_cells_used"] = 0
+				p["hash_index_cells_used"] = 0
 			}
 			continue
 		}
 
 		// Log
 		if strings.Contains(line, " log i/o's done, ") {
-			(*p)["log_writes"], _ = atof(record[0])
+			setMap(p, "log_writes", record[0])
 			continue
 		}
 		if strings.Contains(line, " pending log writes, ") {
-			(*p)["pending_log_writes"], _ = atof(record[0])
-			(*p)["pending_chkp_writes"], _ = atof(record[4])
+			setMap(p, "pending_log_writes", record[0])
+			setMap(p, "pending_chkp_writes", record[4])
 			continue
 		}
 		if strings.HasPrefix(line, "Log sequence number") {
-			val, _ := atof(record[3])
+			val, err := atof(record[3])
+			if err != nil {
+				continue
+			}
 			if len(record) >= 5 {
 				val = float64(makeBigint(record[3], record[4], false))
 			}
-			(*p)["log_bytes_written"] = val
+			p["log_bytes_written"] = val
 			continue
 		}
 		if strings.HasPrefix(line, "Log flushed up to") {
-			val, _ := atof(record[4])
+			val, err := atof(record[4])
+			if err != nil {
+				continue
+			}
 			if len(record) >= 6 {
 				val = float64(makeBigint(record[4], record[5], false))
 			}
-			(*p)["log_bytes_flushed"] = val
+			p["log_bytes_flushed"] = val
 			continue
 		}
 		if strings.HasPrefix(line, "Last checkpoint at") {
-			val, _ := atof(record[3])
+			val, err := atof(record[3])
+			if err != nil {
+				continue
+			}
 			if len(record) >= 5 {
 				val = float64(makeBigint(record[3], record[4], false))
 			}
-			(*p)["last_checkpoint"] = val
+			p["last_checkpoint"] = val
 			continue
 		}
 
 		// Buffer Pool and Memory
 		// 5.6 or before
 		if strings.HasPrefix(line, "Total memory allocated") && strings.Contains(line, "in additional pool allocated") {
-			(*p)["total_mem_alloc"], _ = atof(record[3])
-			(*p)["additional_pool_alloc"], _ = atof(record[8])
+			setMap(p, "total_mem_alloc", record[3])
+			setMap(p, "additional_pool_alloc", record[8])
 			continue
 		}
 		// 5.7
 		if strings.HasPrefix(line, "Total large memory allocated") {
-			(*p)["total_mem_alloc"], _ = atof(record[4])
+			setMap(p, "total_mem_alloc", record[4])
 			continue
 		}
 
 		if strings.HasPrefix(line, "Adaptive hash index ") {
-			v, _ := atof(record[3])
-			setIfEmpty(p, "adaptive_hash_memory", v)
+			setMapIfEmpty(p, "adaptive_hash_memory", record[3])
 			continue
 		}
 		if strings.HasPrefix(line, "Page hash           ") {
-			v, _ := atof(record[2])
-			setIfEmpty(p, "page_hash_memory", v)
+			setMapIfEmpty(p, "page_hash_memory", record[2])
 			continue
 		}
 		if strings.HasPrefix(line, "Dictionary cache    ") {
-			v, _ := atof(record[2])
-			setIfEmpty(p, "dictionary_cache_memory", v)
+			setMapIfEmpty(p, "dictionary_cache_memory", record[2])
 			continue
 		}
 		if strings.HasPrefix(line, "File system         ") {
-			v, _ := atof(record[2])
-			setIfEmpty(p, "file_system_memory", v)
+			setMapIfEmpty(p, "file_system_memory", record[2])
 			continue
 		}
 		if strings.HasPrefix(line, "Lock system         ") {
-			v, _ := atof(record[2])
-			setIfEmpty(p, "lock_system_memory", v)
+			setMapIfEmpty(p, "lock_system_memory", record[2])
 			continue
 		}
 		if strings.HasPrefix(line, "Recovery system     ") {
-			v, _ := atof(record[2])
-			setIfEmpty(p, "recovery_system_memory", v)
+			setMapIfEmpty(p, "recovery_system_memory", record[2])
 			continue
 		}
 		if strings.HasPrefix(line, "Threads             ") {
-			v, _ := atof(record[1])
-			setIfEmpty(p, "thread_hash_memory", v)
+			setMapIfEmpty(p, "thread_hash_memory", record[1])
 			continue
 		}
 		if strings.HasPrefix(line, "innodb_io_pattern   ") {
-			v, _ := atof(record[1])
-			setIfEmpty(p, "innodb_io_pattern_memory", v)
+			setMapIfEmpty(p, "innodb_io_pattern_memory", record[1])
 			continue
 		}
 
@@ -1010,11 +1024,11 @@ func parseInnodbStatus(str string, trxIDHexFormat bool, p *map[string]float64) {
 	}
 
 	// finalize
-	(*p)["unflushed_log"] = (*p)["log_bytes_written"] - (*p)["log_bytes_flushed"]
-	(*p)["uncheckpointed_bytes"] = (*p)["log_bytes_written"] - (*p)["last_checkpoint"]
+	p["unflushed_log"] = p["log_bytes_written"] - p["log_bytes_flushed"]
+	p["uncheckpointed_bytes"] = p["log_bytes_written"] - p["last_checkpoint"]
 }
 
-func parseProcesslist(state string, p *map[string]float64) {
+func parseProcesslist(state string, p map[string]float64) {
 
 	if state == "" {
 		state = "none"
@@ -1041,17 +1055,32 @@ func atof(str string) (float64, error) {
 	return strconv.ParseFloat(str, 64)
 }
 
-func increaseMap(p *map[string]float64, key string, src string) {
+func setMap(p map[string]float64, key, src string) {
+	v, err := atof(src)
+	if err != nil {
+		return
+	}
+	p[key] = v
+}
+
+func setMapIfEmpty(p map[string]float64, key, src string) {
+	if _, ok := p[key]; ok {
+		return
+	}
+	setMap(p, key, src)
+}
+
+func increaseMap(p map[string]float64, key string, src string) {
 	val, err := atof(src)
 	if err != nil {
 		val = 0
 	}
-	_, exists := (*p)[key]
+	_, exists := p[key]
 	if !exists {
-		(*p)[key] = val
+		p[key] = val
 		return
 	}
-	(*p)[key] = (*p)[key] + val
+	p[key] = p[key] + val
 }
 
 func makeBigint(hi string, lo string, hexFormat bool) int64 {
