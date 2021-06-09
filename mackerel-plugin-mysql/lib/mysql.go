@@ -875,6 +875,15 @@ func parseInnodbStatus(str string, trxIDHexFormat bool, p map[string]float64) {
 
 		// File I/O
 		if strings.HasPrefix(line, "Pending normal aio reads:") {
+			// TODO: We perhaps need to fix this.
+			//
+			// There are many 'Pending normal aio' lines.
+			//
+			//   Pending normal aio reads: 0 [0, 0, 0, 0] , aio writes: 0 [0, 0, 0, 0] ,
+			//   Pending normal aio reads: [0, 0, 0, 0] , aio writes: [0, 0, 0, 0] ,
+			//   ...etc
+			//
+			// Therefore record[7] don't refer the correct field.
 			setMap(p, "pending_normal_aio_reads", record[4])
 			setMap(p, "pending_normal_aio_writes", record[7])
 			continue

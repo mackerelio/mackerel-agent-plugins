@@ -26,9 +26,11 @@ docker run -d \
 trap 'docker stop test-$plugin; docker rm test-$plugin; exit' 1 2 3 15 EXIT
 sleep 10
 
+# wait until bootstrap mysqld..
 while (( i++ < 3 )) && ! $plugin -port $port -password $password -enable_extended
 do
 	sleep 3
 done
 sleep 1
+#export MACKEREL_PLUGIN_WORKDIR=tmp
 $plugin -port $port -password $password -enable_extended
