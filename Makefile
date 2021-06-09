@@ -33,6 +33,7 @@ depends_on:
 
 .PHONY: test
 test: testgo lint testconvention
+	./test.bash
 
 .PHONY: testgo
 testgo: testdeps
