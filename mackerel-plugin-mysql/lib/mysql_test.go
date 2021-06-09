@@ -1,6 +1,7 @@
 package mpmysql
 
 import (
+	"strings"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -154,7 +155,7 @@ Number of rows inserted 3089, updated 220, deleted 212, read 2099881
 END OF INNODB MONITOR OUTPUT`
 	stat := make(map[string]float64)
 
-	parseInnodbStatus(stub, false, &stat)
+	parseInnodbStatus(stub, false, stat)
 	// Innodb Semaphores
 	assert.EqualValues(t, stat["spin_waits"], 947)
 	assert.EqualValues(t, stat["spin_rounds"], 9442)
@@ -324,7 +325,7 @@ END OF INNODB MONITOR OUTPUT
 ============================`
 	stat := make(map[string]float64)
 
-	parseInnodbStatus(stub, true, &stat)
+	parseInnodbStatus(stub, true, stat)
 	// Innodb Semaphores
 	assert.EqualValues(t, stat["spin_waits"], 5020565400)
 	assert.EqualValues(t, stat["spin_rounds"], 3687067031)
@@ -497,7 +498,7 @@ END OF INNODB MONITOR OUTPUT
 ============================`
 	stat := make(map[string]float64)
 
-	parseInnodbStatus(stub, true, &stat)
+	parseInnodbStatus(stub, true, stat)
 	// Innodb Semaphores
 	assert.EqualValues(t, stat["spin_waits"], 180466733)
 	assert.EqualValues(t, stat["spin_rounds"], 142931556)
@@ -632,7 +633,7 @@ END OF INNODB MONITOR OUTPUT
 ============================`
 	stat := make(map[string]float64)
 
-	parseInnodbStatus(stub, true, &stat)
+	parseInnodbStatus(stub, true, stat)
 	// Innodb Semaphores
 	assert.EqualValues(t, stat["spin_waits"], 1762)
 	assert.EqualValues(t, stat["spin_rounds"], 30300)
@@ -864,7 +865,7 @@ END OF INNODB MONITOR OUTPUT
 ============================
 `
 	stat := make(map[string]float64)
-	parseInnodbStatus(stub, false, &stat)
+	parseInnodbStatus(stub, false, stat)
 	// Innodb Semaphores
 	assert.EqualValues(t, stat["spin_waits"], 0)
 	assert.EqualValues(t, stat["spin_rounds"], 0) // empty
@@ -1054,7 +1055,7 @@ MySQL thread id 2, OS thread handle 0x7efe7cba4700, query id 35 localhost root
 END OF INNODB MONITOR OUTPUT
 ============================`
 	stat := make(map[string]float64)
-	parseInnodbStatus(stub, false, &stat)
+	parseInnodbStatus(stub, false, stat)
 	// Innodb Semaphores
 	assert.EqualValues(t, stat["spin_waits"], 12)
 	assert.EqualValues(t, stat["spin_rounds"], 180)
@@ -1119,7 +1120,7 @@ func TestParseProcesslist1(t *testing.T) {
 	pattern := []string{"NULL"}
 
 	for _, val := range pattern {
-		parseProcesslist(val, &stat)
+		parseProcesslist(val, stat)
 	}
 	assert.EqualValues(t, 0, stat["State_closing_tables"])
 	assert.EqualValues(t, 0, stat["State_copying_to_tmp_table"])
@@ -1231,7 +1232,7 @@ func TestParseProcesslist2(t *testing.T) {
 	}
 
 	for _, val := range pattern {
-		parseProcesslist(val, &stat)
+		parseProcesslist(val, stat)
 	}
 	assert.EqualValues(t, 1, stat["State_closing_tables"])
 	assert.EqualValues(t, 1, stat["State_copying_to_tmp_table"])
@@ -1249,4 +1250,38 @@ func TestParseProcesslist2(t *testing.T) {
 	assert.EqualValues(t, 1, stat["State_writing_to_net"])
 	assert.EqualValues(t, 1, stat["State_none"])
 	assert.EqualValues(t, 58, stat["State_other"])
+}
+
+func TestMetricNamesShouldUniqueAndConst(t *testing.T) {
+	m := MySQLPlugin{
+		DisableInnoDB:  false,
+		EnableExtended: true,
+	}
+	defs := m.GraphDefinition()
+	keys := make(map[string]string) // metricName: graphDefName
+	for name, g := range defs {
+		for _, v := range g.Metrics {
+			// TODO(lufia): bug?
+			if v.Name == "Threads_connected" {
+				if name != "connections" && name != "threads" {
+					t.Errorf(`%q are duplicated in "connections", "threads" and %q`, v.Name, name)
+				}
+				continue
+			}
+			if v.Name == "Qcache_hits" {
+				if name != "cmd" && name != "query_cache" {
+					t.Errorf(`%q are duplicated in "cmd", "query_cache" and %q`, v.Name, name)
+				}
+				continue
+			}
+
+			if strings.ContainsAny(v.Name, "#*") {
+				t.Errorf("%q should not contains wildcards", v.Name)
+			}
+			if s, ok := keys[v.Name]; ok {
+				t.Errorf("%q are defined in both %q and %q", v.Name, s, name)
+			}
+			keys[v.Name] = name
+		}
+	}
 }
