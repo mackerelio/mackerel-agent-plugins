@@ -39,6 +39,9 @@ done
 %{__targetdir}/*
 
 %changelog
+* Thu Jun 10 2021 <mackerel-developers@hatena.ne.jp> - 0.64.2
+- [plugin-mysql] Fix plugin-mysql to be able to collect metrics by ignoring non-numerical values (by lufia)
+
 * Thu Jun 03 2021 <mackerel-developers@hatena.ne.jp> - 0.64.1
 - Bump github.com/montanaflynn/stats from 0.6.5 to 0.6.6 (by dependabot[bot])
 - Bump github.com/lib/pq from 1.10.0 to 1.10.2 (by dependabot[bot])
