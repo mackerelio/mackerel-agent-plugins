@@ -31,7 +31,7 @@ do
 		status=1
 	fi
 done
-echo '======'
+echo '======' >&2
 for s in "${results[@]}"
 do
 	echo "$s" >&2
