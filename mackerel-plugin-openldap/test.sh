@@ -1,7 +1,7 @@
 #!/bin/sh
 
 prog=$(basename $0)
-if ! [[ -S /var/run/docker.sock ]]
+if ! [ -S /var/run/docker.sock ]
 then
 	echo "$prog: there are no running docker" >&2
 	exit 2
@@ -10,7 +10,7 @@ fi
 cd $(dirname $0)
 PATH=$(pwd):$PATH
 plugin=$(basename $(pwd))
-if ! which -s $plugin
+if ! which $plugin >/dev/null
 then
 	echo "$prog: $plugin is not installed" >&2
 	exit 2
@@ -25,9 +25,4 @@ trap 'docker stop test-$plugin; docker rm test-$plugin; exit' EXIT
 sleep 10
 
 base_dn='dc=example,dc=org'
-if $plugin -bind "cn=monitor,$base_dn" -pw passpass
-then
-	echo OK
-else
-	echo FAIL
-fi
+exec $plugin -bind "cn=monitor,$base_dn" -pw passpass
