@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.64.2 (2021-06-10)
+
+* [plugin-mysql] Fix plugin-mysql to be able to collect metrics by ignoring non-numerical values #770 (lufia)
+
+
 ## 0.64.1 (2021-06-03)
 
 * Bump github.com/montanaflynn/stats from 0.6.5 to 0.6.6 #758 (dependabot[bot])

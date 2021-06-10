@@ -1,3 +1,10 @@
+mackerel-agent-plugins (0.64.2-1) stable; urgency=low
+
+  * [plugin-mysql] Fix plugin-mysql to be able to collect metrics by ignoring non-numerical values (by lufia)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/770>
+
+ -- mackerel <mackerel-developers@hatena.ne.jp>  Thu, 10 Jun 2021 01:44:31 +0000
+
 mackerel-agent-plugins (0.64.1-1) stable; urgency=low
 
   * Bump github.com/montanaflynn/stats from 0.6.5 to 0.6.6 (by dependabot[bot])
