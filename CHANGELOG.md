@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.64.3 (2021-06-23)
+
+* [ci][plugin-redis] check metrics #775 (lufia)
+* [ci] run tests on the workflow #771 (lufia)
+
+
 ## 0.64.2 (2021-06-10)
 
 * [plugin-mysql] Fix plugin-mysql to be able to collect metrics by ignoring non-numerical values #770 (lufia)
