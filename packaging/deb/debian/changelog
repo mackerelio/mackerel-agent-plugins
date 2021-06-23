@@ -1,3 +1,12 @@
+mackerel-agent-plugins (0.64.3-1) stable; urgency=low
+
+  * [ci][plugin-redis] check metrics (by lufia)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/775>
+  * [ci] run tests on the workflow (by lufia)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/771>
+
+ -- mackerel <mackerel-developers@hatena.ne.jp>  Wed, 23 Jun 2021 06:42:00 +0000
+
 mackerel-agent-plugins (0.64.2-1) stable; urgency=low
 
   * [plugin-mysql] Fix plugin-mysql to be able to collect metrics by ignoring non-numerical values (by lufia)

@@ -39,6 +39,10 @@ done
 %{__targetdir}/*
 
 %changelog
+* Wed Jun 23 2021 <mackerel-developers@hatena.ne.jp> - 0.64.3
+- [ci][plugin-redis] check metrics (by lufia)
+- [ci] run tests on the workflow (by lufia)
+
 * Thu Jun 10 2021 <mackerel-developers@hatena.ne.jp> - 0.64.2
 - [plugin-mysql] Fix plugin-mysql to be able to collect metrics by ignoring non-numerical values (by lufia)
 
