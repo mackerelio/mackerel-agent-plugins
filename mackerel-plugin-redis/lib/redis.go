@@ -165,8 +165,9 @@ func (m RedisPlugin) FetchMetrics() (map[string]interface{}, error) {
 				lagFv, err := strconv.ParseFloat(lagKv[1], 64)
 				if err != nil {
 					logger.Warningf("Failed to parse slaves. %s", err)
+				} else {
+					stat[fmt.Sprintf("%s_lag", key)] = lagFv
 				}
-				stat[fmt.Sprintf("%s_lag", key)] = lagFv
 			} else {
 				_, _, _, offset = kv[0], kv[1], kv[2], kv[3]
 			}
@@ -174,6 +175,7 @@ func (m RedisPlugin) FetchMetrics() (map[string]interface{}, error) {
 			offsetFv, err := strconv.ParseFloat(offsetKv[1], 64)
 			if err != nil {
 				logger.Warningf("Failed to parse slaves. %s", err)
+				continue
 			}
 			stat[fmt.Sprintf("%s_offset_delay", key)] = offsetFv
 			continue
@@ -187,23 +189,26 @@ func (m RedisPlugin) FetchMetrics() (map[string]interface{}, error) {
 			keysFv, err := strconv.ParseFloat(keysKv[1], 64)
 			if err != nil {
 				logger.Warningf("Failed to parse db keys. %s", err)
+			} else {
+				keysStat += keysFv
 			}
-			keysStat += keysFv
 
 			expiresKv := strings.SplitN(expires, "=", 2)
 			expiresFv, err := strconv.ParseFloat(expiresKv[1], 64)
 			if err != nil {
 				logger.Warningf("Failed to parse db expires. %s", err)
+			} else {
+				expiresStat += expiresFv
 			}
-			expiresStat += expiresFv
 
 			continue
 		}
 
-		stat[key], err = strconv.ParseFloat(value, 64)
+		v, err := strconv.ParseFloat(value, 64)
 		if err != nil {
 			continue
 		}
+		stat[key] = v
 	}
 
 	stat["keys"] = keysStat
