@@ -1,5 +1,16 @@
 # Changelog
 
+## 0.65.0 (2021-07-01)
+
+* Bump github.com/aws/aws-sdk-go from 1.38.40 to 1.38.70 #781 (dependabot[bot])
+* Bump github.com/gomodule/redigo from 1.8.4 to 1.8.5 #773 (dependabot[bot])
+* Bump github.com/fsouza/go-dockerclient from 1.7.2 to 1.7.3 #767 (dependabot[bot])
+* Bump github.com/jmoiron/sqlx from 1.3.1 to 1.3.4 #761 (dependabot[bot])
+* [ci][plugin-mysql] check metrics #778 (lufia)
+* [plugin-aws-cloudfront]Replace label name of graph #766 (wafuwafu13)
+* [plugin-redis] avoid to store +Inf #779 (lufia)
+
+
 ## 0.64.3 (2021-06-23)
 
 * [ci][plugin-redis] check metrics #775 (lufia)

@@ -39,6 +39,15 @@ done
 %{__targetdir}/*
 
 %changelog
+* Thu Jul 01 2021 <mackerel-developers@hatena.ne.jp> - 0.65.0
+- Bump github.com/aws/aws-sdk-go from 1.38.40 to 1.38.70 (by dependabot[bot])
+- Bump github.com/gomodule/redigo from 1.8.4 to 1.8.5 (by dependabot[bot])
+- Bump github.com/fsouza/go-dockerclient from 1.7.2 to 1.7.3 (by dependabot[bot])
+- Bump github.com/jmoiron/sqlx from 1.3.1 to 1.3.4 (by dependabot[bot])
+- [ci][plugin-mysql] check metrics (by lufia)
+- [plugin-aws-cloudfront]Replace label name of graph (by wafuwafu13)
+- [plugin-redis] avoid to store +Inf (by lufia)
+
 * Wed Jun 23 2021 <mackerel-developers@hatena.ne.jp> - 0.64.3
 - [ci][plugin-redis] check metrics (by lufia)
 - [ci] run tests on the workflow (by lufia)
