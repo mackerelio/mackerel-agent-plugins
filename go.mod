@@ -12,7 +12,7 @@ require (
 	github.com/alouca/gosnmp v0.0.0-20170620005048-04d83944c9ab
 	github.com/aws/aws-sdk-go v1.38.40
 	github.com/erikstmartin/go-testdb v0.0.0-20160219214506-8d10e4a1bae5
-	github.com/fsouza/go-dockerclient v1.7.2
+	github.com/fsouza/go-dockerclient v1.7.3
 	github.com/fukata/golang-stats-api-handler v1.0.0
 	github.com/fzzy/radix v0.5.6
 	github.com/globalsign/mgo v0.0.0-20181015135952-eeefdecb41b8
