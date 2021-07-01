@@ -27,8 +27,8 @@ require (
 	github.com/lestrrat-go/tcptest v0.0.0-20180223004312-f0345789c593
 	github.com/lestrrat-go/tcputil v0.0.0-20180223003554-d3c7f98154fb // indirect
 	github.com/lib/pq v1.10.2
-	github.com/mackerelio/go-mackerel-plugin v0.1.1
-	github.com/mackerelio/go-mackerel-plugin-helper v0.1.0
+	github.com/mackerelio/go-mackerel-plugin v0.1.2
+	github.com/mackerelio/go-mackerel-plugin-helper v0.1.1
 	github.com/mackerelio/go-osstat v0.2.0
 	github.com/mackerelio/golib v1.2.0
 	github.com/mackerelio/mackerel-plugin-aws-ec2 v1.0.1
