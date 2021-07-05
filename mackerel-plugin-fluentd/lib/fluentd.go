@@ -17,11 +17,20 @@ import (
 // FluentdMetrics plugin for fluentd
 type FluentdMetrics struct {
 	Target          string
+	Prefix          string
 	Tempfile        string
 	pluginType      string
 	pluginIDPattern *regexp.Regexp
 
 	plugins []FluentdPluginMetrics
+}
+
+// MetricKeyPrefix interface for PluginWithPrefix
+func (f FluentdMetrics) MetricKeyPrefix() string {
+	if f.Prefix == "" {
+		f.Prefix = "fluentd"
+	}
+	return f.Prefix
 }
 
 // FluentdPluginMetrics metrics
@@ -65,9 +74,9 @@ func (f *FluentdMetrics) parseStats(body []byte) (map[string]interface{}, error)
 			continue
 		}
 		pid := p.getNormalizedPluginID()
-		metrics["fluentd.retry_count."+pid] = float64(p.RetryCount)
-		metrics["fluentd.buffer_queue_length."+pid] = float64(p.BufferQueueLength)
-		metrics["fluentd.buffer_total_queued_size."+pid] = float64(p.BufferTotalQueuedSize)
+		metrics["retry_count."+pid] = float64(p.RetryCount)
+		metrics["buffer_queue_length."+pid] = float64(p.BufferQueueLength)
+		metrics["buffer_total_queued_size."+pid] = float64(p.BufferTotalQueuedSize)
 	}
 	return metrics, err
 }
@@ -108,23 +117,25 @@ func (f FluentdMetrics) FetchMetrics() (map[string]interface{}, error) {
 
 // GraphDefinition interface for mackerelplugin
 func (f FluentdMetrics) GraphDefinition() map[string]mp.Graphs {
+	labelPrefix := strings.Title(f.Prefix)
+
 	return map[string]mp.Graphs{
-		"fluentd.retry_count": {
-			Label: "Fluentd retry count",
+		"retry_count": {
+			Label: (labelPrefix + " retry count"),
 			Unit:  "integer",
 			Metrics: []mp.Metrics{
 				{Name: "*", Label: "%1", Diff: false},
 			},
 		},
-		"fluentd.buffer_queue_length": {
-			Label: "Fluentd queue length",
+		"buffer_queue_length": {
+			Label: (labelPrefix + " queue length"),
 			Unit:  "integer",
 			Metrics: []mp.Metrics{
 				{Name: "*", Label: "%1", Diff: false},
 			},
 		},
-		"fluentd.buffer_total_queued_size": {
-			Label: "Fluentd buffer total queued size",
+		"buffer_total_queued_size": {
+			Label: (labelPrefix + " buffer total queued size"),
 			Unit:  "integer",
 			Metrics: []mp.Metrics{
 				{Name: "*", Label: "%1", Diff: false},
@@ -139,6 +150,7 @@ func Do() {
 	port := flag.String("port", "24220", "fluentd monitor_agent port")
 	pluginType := flag.String("plugin-type", "", "Gets the metric that matches this plugin type")
 	pluginIDPatternString := flag.String("plugin-id-pattern", "", "Gets the metric that matches this plugin id pattern")
+	prefix := flag.String("metric-key-prefix", "fluentd", "Metric key prefix")
 	tempFile := flag.String("tempfile", "", "Temp file name")
 	flag.Parse()
 
@@ -154,6 +166,7 @@ func Do() {
 
 	f := FluentdMetrics{
 		Target:          fmt.Sprintf("http://%s:%s/api/plugins.json", *host, *port),
+		Prefix:          *prefix,
 		Tempfile:        *tempFile,
 		pluginType:      *pluginType,
 		pluginIDPattern: pluginIDPattern,
