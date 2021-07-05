@@ -14,8 +14,8 @@ import (
 	mp "github.com/mackerelio/go-mackerel-plugin-helper"
 )
 
-// FluentdMetrics plugin for fluentd
-type FluentdMetrics struct {
+// FluentdPlugin mackerel plugin
+type FluentdPlugin struct {
 	Target          string
 	Prefix          string
 	Tempfile        string
@@ -26,7 +26,7 @@ type FluentdMetrics struct {
 }
 
 // MetricKeyPrefix interface for PluginWithPrefix
-func (f FluentdMetrics) MetricKeyPrefix() string {
+func (f FluentdPlugin) MetricKeyPrefix() string {
 	if f.Prefix == "" {
 		f.Prefix = "fluentd"
 	}
@@ -63,7 +63,7 @@ func (fpm FluentdPluginMetrics) getNormalizedPluginID() string {
 	return fpm.normalizedPluginID
 }
 
-func (f *FluentdMetrics) parseStats(body []byte) (map[string]interface{}, error) {
+func (f *FluentdPlugin) parseStats(body []byte) (map[string]interface{}, error) {
 	var j FluentMonitorJSON
 	err := json.Unmarshal(body, &j)
 	f.plugins = j.Plugins
@@ -81,7 +81,7 @@ func (f *FluentdMetrics) parseStats(body []byte) (map[string]interface{}, error)
 	return metrics, err
 }
 
-func (f *FluentdMetrics) nonTargetPlugin(plugin FluentdPluginMetrics) bool {
+func (f *FluentdPlugin) nonTargetPlugin(plugin FluentdPluginMetrics) bool {
 	if plugin.PluginCategory != "output" {
 		return true
 	}
@@ -95,7 +95,7 @@ func (f *FluentdMetrics) nonTargetPlugin(plugin FluentdPluginMetrics) bool {
 }
 
 // FetchMetrics interface for mackerelplugin
-func (f FluentdMetrics) FetchMetrics() (map[string]interface{}, error) {
+func (f FluentdPlugin) FetchMetrics() (map[string]interface{}, error) {
 	req, err := http.NewRequest(http.MethodGet, f.Target, nil)
 	if err != nil {
 		return nil, err
@@ -116,7 +116,7 @@ func (f FluentdMetrics) FetchMetrics() (map[string]interface{}, error) {
 }
 
 // GraphDefinition interface for mackerelplugin
-func (f FluentdMetrics) GraphDefinition() map[string]mp.Graphs {
+func (f FluentdPlugin) GraphDefinition() map[string]mp.Graphs {
 	labelPrefix := strings.Title(f.Prefix)
 
 	return map[string]mp.Graphs{
@@ -164,7 +164,7 @@ func Do() {
 		}
 	}
 
-	f := FluentdMetrics{
+	f := FluentdPlugin{
 		Target:          fmt.Sprintf("http://%s:%s/api/plugins.json", *host, *port),
 		Prefix:          *prefix,
 		Tempfile:        *tempFile,
