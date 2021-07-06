@@ -21,8 +21,8 @@ func metricName(names ...string) string {
 	return strings.Join(names, ".")
 }
 
-// FluentdMetrics plugin for fluentd
-type FluentdMetrics struct {
+// FluentdPlugin mackerel plugin for Fluentd
+type FluentdPlugin struct {
 	Target          string
 	Prefix          string
 	Tempfile        string
@@ -34,7 +34,7 @@ type FluentdMetrics struct {
 }
 
 // MetricKeyPrefix interface for PluginWithPrefix
-func (f FluentdMetrics) MetricKeyPrefix() string {
+func (f FluentdPlugin) MetricKeyPrefix() string {
 	if f.Prefix == "" {
 		f.Prefix = "fluentd"
 	}
@@ -110,7 +110,7 @@ func (fpm FluentdPluginMetrics) getNormalizedPluginID() string {
 	return fpm.normalizedPluginID
 }
 
-func (f *FluentdMetrics) parseStats(body []byte) (map[string]interface{}, error) {
+func (f *FluentdPlugin) parseStats(body []byte) (map[string]interface{}, error) {
 	var j FluentMonitorJSON
 	err := json.Unmarshal(body, &j)
 	f.plugins = j.Plugins
@@ -131,7 +131,7 @@ func (f *FluentdMetrics) parseStats(body []byte) (map[string]interface{}, error)
 	return metrics, err
 }
 
-func (f *FluentdMetrics) nonTargetPlugin(plugin FluentdPluginMetrics) bool {
+func (f *FluentdPlugin) nonTargetPlugin(plugin FluentdPluginMetrics) bool {
 	if plugin.PluginCategory != "output" {
 		return true
 	}
@@ -145,7 +145,7 @@ func (f *FluentdMetrics) nonTargetPlugin(plugin FluentdPluginMetrics) bool {
 }
 
 // FetchMetrics interface for mackerelplugin
-func (f FluentdMetrics) FetchMetrics() (map[string]interface{}, error) {
+func (f FluentdPlugin) FetchMetrics() (map[string]interface{}, error) {
 	req, err := http.NewRequest(http.MethodGet, f.Target, nil)
 	if err != nil {
 		return nil, err
@@ -263,7 +263,7 @@ var extendedGraphs = map[string]mp.Graphs{
 }
 
 // GraphDefinition interface for mackerelplugin
-func (f FluentdMetrics) GraphDefinition() map[string]mp.Graphs {
+func (f FluentdPlugin) GraphDefinition() map[string]mp.Graphs {
 	labelPrefix := strings.Title(f.Prefix)
 	graphs := make(map[string]mp.Graphs, len(defaultGraphs))
 	for key, g := range defaultGraphs {
@@ -324,7 +324,7 @@ func Do() {
 			extendedMetrics = append(extendedMetrics, name)
 		}
 	}
-	f := FluentdMetrics{
+	f := FluentdPlugin{
 		Target:          fmt.Sprintf("http://%s:%s/api/plugins.json", *host, *port),
 		Prefix:          *prefix,
 		Tempfile:        *tempFile,

@@ -9,7 +9,7 @@ import (
 )
 
 func TestGraphDefinition(t *testing.T) {
-	var fluentd FluentdMetrics
+	var fluentd FluentdPlugin
 
 	graphdef := fluentd.GraphDefinition()
 	if len(graphdef) != 3 {
@@ -18,7 +18,7 @@ func TestGraphDefinition(t *testing.T) {
 }
 
 func TestGraphDefinitionExtended(t *testing.T) {
-	var fluentd FluentdMetrics
+	var fluentd FluentdPlugin
 	fluentd.extendedMetrics = []string{"emit_records", "emit_count", "xxx"}
 
 	graphdef := fluentd.GraphDefinition()
@@ -41,7 +41,7 @@ func TestNormalizePluginID(t *testing.T) {
 }
 
 func TestParse(t *testing.T) {
-	var fluentd FluentdMetrics
+	var fluentd FluentdPlugin
 	stub := `{"plugins":[{"plugin_id":"object:3feb368cfad0","plugin_category":"output","type":"mackerel","config":{"type":"mackerel","api_key":"aaa","service":"foo","metrics_name":"${[1]}-bar.${out_key}","remove_prefix":"","out_keys":"Latency","localtime":true},"output_plugin":true,"buffer_queue_length":0,"buffer_total_queued_size":53,"retry_count":0},{"plugin_id":"object:155633c","plugin_category":"input","type":"monitor_agent","config":{"type":"monitor_agent","bind":"0.0.0.0","port":"24220"},"output_plugin":false,"retry_count":null}]}`
 
 	fluentdStats := []byte(stub)
@@ -57,7 +57,7 @@ func TestParse(t *testing.T) {
 }
 
 func TestParseExtended(t *testing.T) {
-	var fluentd FluentdMetrics
+	var fluentd FluentdPlugin
 	fluentd.extendedMetrics = []string{"emit_records"}
 	stub := `{
 	  "plugins": [
@@ -105,7 +105,7 @@ func TestPluginTypeOption(t *testing.T) {
 	fluentdStats := []byte(stub)
 
 	// Specify type option
-	var fluentd = FluentdMetrics{pluginType: "mackerel"}
+	var fluentd = FluentdPlugin{pluginType: "mackerel"}
 	stat, err := fluentd.parseStats(fluentdStats)
 
 	assert.Nil(t, err)
@@ -116,7 +116,7 @@ func TestPluginTypeOption(t *testing.T) {
 	}
 
 	// Not specify type option
-	fluentd = FluentdMetrics{}
+	fluentd = FluentdPlugin{}
 	stat, err = fluentd.parseStats(fluentdStats)
 
 	assert.Nil(t, err)
@@ -132,7 +132,7 @@ func TestPluginIDPatternOption(t *testing.T) {
 	fluentdStats := []byte(stub)
 
 	// Specify type option
-	var fluentd = FluentdMetrics{
+	var fluentd = FluentdPlugin{
 		pluginIDPattern: regexp.MustCompile("^match"),
 	}
 	stat, err := fluentd.parseStats(fluentdStats)
@@ -145,7 +145,7 @@ func TestPluginIDPatternOption(t *testing.T) {
 	}
 
 	// Not specify type option
-	fluentd = FluentdMetrics{}
+	fluentd = FluentdPlugin{}
 	stat, err = fluentd.parseStats(fluentdStats)
 
 	assert.Nil(t, err)
