@@ -33,6 +33,8 @@ type FluentdPlugin struct {
 	plugins []FluentdPluginMetrics
 }
 
+type FluentdMetrics = FluentdPlugin
+
 // MetricKeyPrefix interface for PluginWithPrefix
 func (f FluentdPlugin) MetricKeyPrefix() string {
 	if f.Prefix == "" {
