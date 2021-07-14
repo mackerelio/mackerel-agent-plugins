@@ -49,9 +49,9 @@ func TestParse(t *testing.T) {
 	stat, err := fluentd.parseStats(fluentdStats)
 	assert.Nil(t, err)
 	// Fluentd Stats
-	assert.EqualValues(t, reflect.TypeOf(stat["fluentd.buffer_total_queued_size.object_3feb368cfad0"]).String(), "float64")
-	assert.EqualValues(t, stat["fluentd.buffer_total_queued_size.object_3feb368cfad0"].(float64), 53)
-	if _, ok := stat["fluentd.buffer_total_queued_size.object_155633c"]; ok {
+	assert.EqualValues(t, reflect.TypeOf(stat["buffer_total_queued_size.object_3feb368cfad0"]).String(), "float64")
+	assert.EqualValues(t, stat["buffer_total_queued_size.object_3feb368cfad0"].(float64), 53)
+	if _, ok := stat["buffer_total_queued_size.object_155633c"]; ok {
 		t.Errorf("parseStats: stats of other than the output plugin should not exist")
 	}
 }
@@ -88,13 +88,13 @@ func TestParseExtended(t *testing.T) {
 	stat, err := fluentd.parseStats(fluentdStats)
 	assert.Nil(t, err)
 	// Fluentd Stats
-	assert.EqualValues(t, reflect.TypeOf(stat["fluentd.buffer_total_queued_size.object_3feb368cfad0"]).String(), "float64")
-	assert.EqualValues(t, stat["fluentd.buffer_total_queued_size.object_3feb368cfad0"].(float64), 53)
-	if _, ok := stat["fluentd.buffer_total_queued_size.object_155633c"]; ok {
+	assert.EqualValues(t, reflect.TypeOf(stat["buffer_total_queued_size.object_3feb368cfad0"]).String(), "float64")
+	assert.EqualValues(t, stat["buffer_total_queued_size.object_3feb368cfad0"].(float64), 53)
+	if _, ok := stat["buffer_total_queued_size.object_155633c"]; ok {
 		t.Errorf("parseStats: stats of other than the output plugin should not exist")
 	}
-	assert.EqualValues(t, stat["fluentd.emit_records.object_3feb368cfad0"].(float64), 10)
-	if _, ok := stat["fluentd.emit_count.object_3feb368cfad0"]; ok {
+	assert.EqualValues(t, stat["emit_records.object_3feb368cfad0"].(float64), 10)
+	if _, ok := stat["emit_count.object_3feb368cfad0"]; ok {
 		t.Errorf("parseStats: stats of other than the output plugin should not exist")
 	}
 }
@@ -109,9 +109,9 @@ func TestPluginTypeOption(t *testing.T) {
 	stat, err := fluentd.parseStats(fluentdStats)
 
 	assert.Nil(t, err)
-	assert.EqualValues(t, reflect.TypeOf(stat["fluentd.buffer_total_queued_size.out_mackerel"]).String(), "float64")
-	assert.EqualValues(t, stat["fluentd.buffer_total_queued_size.out_mackerel"].(float64), 53)
-	if _, ok := stat["fluentd.buffer_total_queued_size.out_file"]; ok {
+	assert.EqualValues(t, reflect.TypeOf(stat["buffer_total_queued_size.out_mackerel"]).String(), "float64")
+	assert.EqualValues(t, stat["buffer_total_queued_size.out_mackerel"].(float64), 53)
+	if _, ok := stat["buffer_total_queued_size.out_file"]; ok {
 		t.Errorf("parseStats: stats of plugin that do not match the specified type should not exist")
 	}
 
@@ -120,10 +120,10 @@ func TestPluginTypeOption(t *testing.T) {
 	stat, err = fluentd.parseStats(fluentdStats)
 
 	assert.Nil(t, err)
-	assert.EqualValues(t, reflect.TypeOf(stat["fluentd.buffer_total_queued_size.out_mackerel"]).String(), "float64")
-	assert.EqualValues(t, stat["fluentd.buffer_total_queued_size.out_mackerel"].(float64), 53)
-	assert.EqualValues(t, reflect.TypeOf(stat["fluentd.buffer_total_queued_size.out_file"]).String(), "float64")
-	assert.EqualValues(t, stat["fluentd.buffer_total_queued_size.out_file"].(float64), 10940)
+	assert.EqualValues(t, reflect.TypeOf(stat["buffer_total_queued_size.out_mackerel"]).String(), "float64")
+	assert.EqualValues(t, stat["buffer_total_queued_size.out_mackerel"].(float64), 53)
+	assert.EqualValues(t, reflect.TypeOf(stat["buffer_total_queued_size.out_file"]).String(), "float64")
+	assert.EqualValues(t, stat["buffer_total_queued_size.out_file"].(float64), 10940)
 }
 
 func TestPluginIDPatternOption(t *testing.T) {
@@ -138,9 +138,9 @@ func TestPluginIDPatternOption(t *testing.T) {
 	stat, err := fluentd.parseStats(fluentdStats)
 
 	assert.Nil(t, err)
-	assert.EqualValues(t, reflect.TypeOf(stat["fluentd.buffer_total_queued_size.match_plugin_id"]).String(), "float64")
-	assert.EqualValues(t, stat["fluentd.buffer_total_queued_size.match_plugin_id"].(float64), 10940)
-	if _, ok := stat["fluentd.buffer_total_queued_size.do_not_match_plugin_id"]; ok {
+	assert.EqualValues(t, reflect.TypeOf(stat["buffer_total_queued_size.match_plugin_id"]).String(), "float64")
+	assert.EqualValues(t, stat["buffer_total_queued_size.match_plugin_id"].(float64), 10940)
+	if _, ok := stat["buffer_total_queued_size.do_not_match_plugin_id"]; ok {
 		t.Errorf("parseStats: stats of plugin that do not match the specified id pattern should not exist")
 	}
 
@@ -149,8 +149,8 @@ func TestPluginIDPatternOption(t *testing.T) {
 	stat, err = fluentd.parseStats(fluentdStats)
 
 	assert.Nil(t, err)
-	assert.EqualValues(t, reflect.TypeOf(stat["fluentd.buffer_total_queued_size.match_plugin_id"]).String(), "float64")
-	assert.EqualValues(t, stat["fluentd.buffer_total_queued_size.match_plugin_id"].(float64), 10940)
-	assert.EqualValues(t, reflect.TypeOf(stat["fluentd.buffer_total_queued_size.do_not_match_plugin_id"]).String(), "float64")
-	assert.EqualValues(t, stat["fluentd.buffer_total_queued_size.do_not_match_plugin_id"].(float64), 53)
+	assert.EqualValues(t, reflect.TypeOf(stat["buffer_total_queued_size.match_plugin_id"]).String(), "float64")
+	assert.EqualValues(t, stat["buffer_total_queued_size.match_plugin_id"].(float64), 10940)
+	assert.EqualValues(t, reflect.TypeOf(stat["buffer_total_queued_size.do_not_match_plugin_id"]).String(), "float64")
+	assert.EqualValues(t, stat["buffer_total_queued_size.do_not_match_plugin_id"].(float64), 53)
 }
