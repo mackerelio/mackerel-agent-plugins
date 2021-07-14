@@ -33,6 +33,7 @@ type FluentdPlugin struct {
 	plugins []FluentdPluginMetrics
 }
 
+// FluentdMetrics is alias for backward compatibility.
 type FluentdMetrics = FluentdPlugin
 
 // MetricKeyPrefix interface for PluginWithPrefix
