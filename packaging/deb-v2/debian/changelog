@@ -1,3 +1,10 @@
+mackerel-agent-plugins (0.66.0-1.v2) stable; urgency=low
+
+  * [fluentd] add metric-key-prefix option. (by sugy)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/788>
+
+ -- mackerel <mackerel-developers@hatena.ne.jp>  Thu, 15 Jul 2021 02:35:23 +0000
+
 mackerel-agent-plugins (0.65.0-1.v2) stable; urgency=low
 
   * bump go-mackerel-plugin and go-mackerel-plugin-helper (by astj)
