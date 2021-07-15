@@ -9,7 +9,7 @@ import (
 )
 
 func TestGraphDefinition(t *testing.T) {
-	var fluentd FluentdMetrics
+	var fluentd FluentdPlugin
 
 	graphdef := fluentd.GraphDefinition()
 	if len(graphdef) != 3 {
@@ -18,7 +18,7 @@ func TestGraphDefinition(t *testing.T) {
 }
 
 func TestGraphDefinitionExtended(t *testing.T) {
-	var fluentd FluentdMetrics
+	var fluentd FluentdPlugin
 	fluentd.extendedMetrics = []string{"emit_records", "emit_count", "xxx"}
 
 	graphdef := fluentd.GraphDefinition()
@@ -41,7 +41,7 @@ func TestNormalizePluginID(t *testing.T) {
 }
 
 func TestParse(t *testing.T) {
-	var fluentd FluentdMetrics
+	var fluentd FluentdPlugin
 	stub := `{"plugins":[{"plugin_id":"object:3feb368cfad0","plugin_category":"output","type":"mackerel","config":{"type":"mackerel","api_key":"aaa","service":"foo","metrics_name":"${[1]}-bar.${out_key}","remove_prefix":"","out_keys":"Latency","localtime":true},"output_plugin":true,"buffer_queue_length":0,"buffer_total_queued_size":53,"retry_count":0},{"plugin_id":"object:155633c","plugin_category":"input","type":"monitor_agent","config":{"type":"monitor_agent","bind":"0.0.0.0","port":"24220"},"output_plugin":false,"retry_count":null}]}`
 
 	fluentdStats := []byte(stub)
@@ -49,15 +49,15 @@ func TestParse(t *testing.T) {
 	stat, err := fluentd.parseStats(fluentdStats)
 	assert.Nil(t, err)
 	// Fluentd Stats
-	assert.EqualValues(t, reflect.TypeOf(stat["fluentd.buffer_total_queued_size.object_3feb368cfad0"]).String(), "float64")
-	assert.EqualValues(t, stat["fluentd.buffer_total_queued_size.object_3feb368cfad0"].(float64), 53)
-	if _, ok := stat["fluentd.buffer_total_queued_size.object_155633c"]; ok {
+	assert.EqualValues(t, reflect.TypeOf(stat["buffer_total_queued_size.object_3feb368cfad0"]).String(), "float64")
+	assert.EqualValues(t, stat["buffer_total_queued_size.object_3feb368cfad0"].(float64), 53)
+	if _, ok := stat["buffer_total_queued_size.object_155633c"]; ok {
 		t.Errorf("parseStats: stats of other than the output plugin should not exist")
 	}
 }
 
 func TestParseExtended(t *testing.T) {
-	var fluentd FluentdMetrics
+	var fluentd FluentdPlugin
 	fluentd.extendedMetrics = []string{"emit_records"}
 	stub := `{
 	  "plugins": [
@@ -88,13 +88,13 @@ func TestParseExtended(t *testing.T) {
 	stat, err := fluentd.parseStats(fluentdStats)
 	assert.Nil(t, err)
 	// Fluentd Stats
-	assert.EqualValues(t, reflect.TypeOf(stat["fluentd.buffer_total_queued_size.object_3feb368cfad0"]).String(), "float64")
-	assert.EqualValues(t, stat["fluentd.buffer_total_queued_size.object_3feb368cfad0"].(float64), 53)
-	if _, ok := stat["fluentd.buffer_total_queued_size.object_155633c"]; ok {
+	assert.EqualValues(t, reflect.TypeOf(stat["buffer_total_queued_size.object_3feb368cfad0"]).String(), "float64")
+	assert.EqualValues(t, stat["buffer_total_queued_size.object_3feb368cfad0"].(float64), 53)
+	if _, ok := stat["buffer_total_queued_size.object_155633c"]; ok {
 		t.Errorf("parseStats: stats of other than the output plugin should not exist")
 	}
-	assert.EqualValues(t, stat["fluentd.emit_records.object_3feb368cfad0"].(float64), 10)
-	if _, ok := stat["fluentd.emit_count.object_3feb368cfad0"]; ok {
+	assert.EqualValues(t, stat["emit_records.object_3feb368cfad0"].(float64), 10)
+	if _, ok := stat["emit_count.object_3feb368cfad0"]; ok {
 		t.Errorf("parseStats: stats of other than the output plugin should not exist")
 	}
 }
@@ -105,25 +105,25 @@ func TestPluginTypeOption(t *testing.T) {
 	fluentdStats := []byte(stub)
 
 	// Specify type option
-	var fluentd = FluentdMetrics{pluginType: "mackerel"}
+	var fluentd = FluentdPlugin{pluginType: "mackerel"}
 	stat, err := fluentd.parseStats(fluentdStats)
 
 	assert.Nil(t, err)
-	assert.EqualValues(t, reflect.TypeOf(stat["fluentd.buffer_total_queued_size.out_mackerel"]).String(), "float64")
-	assert.EqualValues(t, stat["fluentd.buffer_total_queued_size.out_mackerel"].(float64), 53)
-	if _, ok := stat["fluentd.buffer_total_queued_size.out_file"]; ok {
+	assert.EqualValues(t, reflect.TypeOf(stat["buffer_total_queued_size.out_mackerel"]).String(), "float64")
+	assert.EqualValues(t, stat["buffer_total_queued_size.out_mackerel"].(float64), 53)
+	if _, ok := stat["buffer_total_queued_size.out_file"]; ok {
 		t.Errorf("parseStats: stats of plugin that do not match the specified type should not exist")
 	}
 
 	// Not specify type option
-	fluentd = FluentdMetrics{}
+	fluentd = FluentdPlugin{}
 	stat, err = fluentd.parseStats(fluentdStats)
 
 	assert.Nil(t, err)
-	assert.EqualValues(t, reflect.TypeOf(stat["fluentd.buffer_total_queued_size.out_mackerel"]).String(), "float64")
-	assert.EqualValues(t, stat["fluentd.buffer_total_queued_size.out_mackerel"].(float64), 53)
-	assert.EqualValues(t, reflect.TypeOf(stat["fluentd.buffer_total_queued_size.out_file"]).String(), "float64")
-	assert.EqualValues(t, stat["fluentd.buffer_total_queued_size.out_file"].(float64), 10940)
+	assert.EqualValues(t, reflect.TypeOf(stat["buffer_total_queued_size.out_mackerel"]).String(), "float64")
+	assert.EqualValues(t, stat["buffer_total_queued_size.out_mackerel"].(float64), 53)
+	assert.EqualValues(t, reflect.TypeOf(stat["buffer_total_queued_size.out_file"]).String(), "float64")
+	assert.EqualValues(t, stat["buffer_total_queued_size.out_file"].(float64), 10940)
 }
 
 func TestPluginIDPatternOption(t *testing.T) {
@@ -132,25 +132,25 @@ func TestPluginIDPatternOption(t *testing.T) {
 	fluentdStats := []byte(stub)
 
 	// Specify type option
-	var fluentd = FluentdMetrics{
+	var fluentd = FluentdPlugin{
 		pluginIDPattern: regexp.MustCompile("^match"),
 	}
 	stat, err := fluentd.parseStats(fluentdStats)
 
 	assert.Nil(t, err)
-	assert.EqualValues(t, reflect.TypeOf(stat["fluentd.buffer_total_queued_size.match_plugin_id"]).String(), "float64")
-	assert.EqualValues(t, stat["fluentd.buffer_total_queued_size.match_plugin_id"].(float64), 10940)
-	if _, ok := stat["fluentd.buffer_total_queued_size.do_not_match_plugin_id"]; ok {
+	assert.EqualValues(t, reflect.TypeOf(stat["buffer_total_queued_size.match_plugin_id"]).String(), "float64")
+	assert.EqualValues(t, stat["buffer_total_queued_size.match_plugin_id"].(float64), 10940)
+	if _, ok := stat["buffer_total_queued_size.do_not_match_plugin_id"]; ok {
 		t.Errorf("parseStats: stats of plugin that do not match the specified id pattern should not exist")
 	}
 
 	// Not specify type option
-	fluentd = FluentdMetrics{}
+	fluentd = FluentdPlugin{}
 	stat, err = fluentd.parseStats(fluentdStats)
 
 	assert.Nil(t, err)
-	assert.EqualValues(t, reflect.TypeOf(stat["fluentd.buffer_total_queued_size.match_plugin_id"]).String(), "float64")
-	assert.EqualValues(t, stat["fluentd.buffer_total_queued_size.match_plugin_id"].(float64), 10940)
-	assert.EqualValues(t, reflect.TypeOf(stat["fluentd.buffer_total_queued_size.do_not_match_plugin_id"]).String(), "float64")
-	assert.EqualValues(t, stat["fluentd.buffer_total_queued_size.do_not_match_plugin_id"].(float64), 53)
+	assert.EqualValues(t, reflect.TypeOf(stat["buffer_total_queued_size.match_plugin_id"]).String(), "float64")
+	assert.EqualValues(t, stat["buffer_total_queued_size.match_plugin_id"].(float64), 10940)
+	assert.EqualValues(t, reflect.TypeOf(stat["buffer_total_queued_size.do_not_match_plugin_id"]).String(), "float64")
+	assert.EqualValues(t, stat["buffer_total_queued_size.do_not_match_plugin_id"].(float64), 53)
 }
