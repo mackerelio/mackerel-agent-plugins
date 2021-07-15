@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.66.0 (2021-07-15)
+
+* [fluentd] add metric-key-prefix option. #788 (sugy)
+
+
 ## 0.65.0 (2021-07-06)
 
 * bump go-mackerel-plugin and go-mackerel-plugin-helper #783 (astj)

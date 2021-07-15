@@ -39,6 +39,9 @@ done
 %{__targetdir}/*
 
 %changelog
+* Thu Jul 15 2021 <mackerel-developers@hatena.ne.jp> - 0.66.0
+- [fluentd] add metric-key-prefix option. (by sugy)
+
 * Tue Jul 06 2021 <mackerel-developers@hatena.ne.jp> - 0.65.0
 - bump go-mackerel-plugin and go-mackerel-plugin-helper (by astj)
 - Bump github.com/aws/aws-sdk-go from 1.38.40 to 1.38.70 (by dependabot[bot])
