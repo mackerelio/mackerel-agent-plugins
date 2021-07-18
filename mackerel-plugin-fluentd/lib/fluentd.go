@@ -302,6 +302,9 @@ func (f FluentdPlugin) GraphDefinition() map[string]mp.Graphs {
 	labelPrefix := strings.Title(f.Prefix)
 	graphs := make(map[string]mp.Graphs, len(defaultGraphs))
 	for key, g := range defaultGraphs {
+		if f.Workers > 1 {
+			key = metricName(key, "#")
+		}
 		graphs[key] = mp.Graphs{
 			Label:   (labelPrefix + " " + g.Label),
 			Unit:    g.Unit,
@@ -309,9 +312,11 @@ func (f FluentdPlugin) GraphDefinition() map[string]mp.Graphs {
 		}
 	}
 	for _, name := range f.extendedMetrics {
-		fullName := metricName(name)
-		if g, ok := extendedGraphs[fullName]; ok {
-			graphs[fullName] = mp.Graphs{
+		if g, ok := extendedGraphs[name]; ok {
+			if f.Workers > 1 {
+				name = metricName(name, "#")
+			}
+			graphs[name] = mp.Graphs{
 				Label:   (labelPrefix + " " + g.Label),
 				Unit:    g.Unit,
 				Metrics: g.Metrics,
