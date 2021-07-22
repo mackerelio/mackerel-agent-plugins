@@ -31,6 +31,21 @@ port 24220
 
 See https://docs.fluentd.org/input/monitor_agent in details.
 
+If you have specified the `workers` parameter in fluentd's `<system>` directive, you can use the `-workers` option.
+
+```
+<system>
+  workers 3
+</system>
+
+<source>
+  @type monitor_agent
+  port 24230 # worker0: 24230, worker1: 24231, worker2: 24232
+</source>
+```
+
+See https://docs.fluentd.org/input/monitor_agent#multi-process-environment in details.
+
 ## License
 
 Released under the MIT license
