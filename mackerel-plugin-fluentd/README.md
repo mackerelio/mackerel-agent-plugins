@@ -29,7 +29,7 @@ port 24220
 </source>
 ```
 
-See http://docs.fluentd.org/articles/monitoring in details.
+See https://docs.fluentd.org/input/monitor_agent in details.
 
 ## License
 
