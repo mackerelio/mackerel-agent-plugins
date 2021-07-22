@@ -173,7 +173,10 @@ func (f *FluentdPlugin) fetchFluentdMetrics(host string, port int) (map[string]i
 
 // FetchMetrics interface for mackerelplugin
 func (f FluentdPlugin) FetchMetrics() (map[string]interface{}, error) {
-	port, _ := strconv.Atoi(f.Port)
+	port, err := strconv.Atoi(f.Port)
+	if err != nil {
+		return nil, err
+	}
 	if f.Workers > 1 {
 		metrics := make(map[string]interface{})
 		for workerNumber := 0; workerNumber < int(f.Workers); workerNumber++ {
