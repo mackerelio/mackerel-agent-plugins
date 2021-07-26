@@ -27,6 +27,17 @@ func TestGraphDefinitionExtended(t *testing.T) {
 	}
 }
 
+func TestGraphDefinitionMultiWorkers(t *testing.T) {
+	var fluentd FluentdPlugin
+	fluentd.Workers = 2
+
+	graphdef := fluentd.GraphDefinition()
+	for key := range graphdef {
+		last := key[len(key)-1]
+		assert.EqualValues(t, last, "#")
+	}
+}
+
 func TestNormalizePluginID(t *testing.T) {
 	testSets := [][]string{
 		{"foo/bar", "foo_bar"},

@@ -9,6 +9,7 @@ import (
 	"net/http"
 	"os"
 	"regexp"
+	"strconv"
 	"strings"
 
 	mp "github.com/mackerelio/go-mackerel-plugin-helper"
@@ -23,12 +24,14 @@ func metricName(names ...string) string {
 
 // FluentdPlugin mackerel plugin for Fluentd
 type FluentdPlugin struct {
-	Target          string
+	Host            string
+	Port            string
 	Prefix          string
 	Tempfile        string
 	pluginType      string
 	pluginIDPattern *regexp.Regexp
 	extendedMetrics []string
+	Workers         uint
 
 	plugins []FluentdPluginMetrics
 }
@@ -147,9 +150,9 @@ func (f *FluentdPlugin) nonTargetPlugin(plugin FluentdPluginMetrics) bool {
 	return false
 }
 
-// FetchMetrics interface for mackerelplugin
-func (f FluentdPlugin) FetchMetrics() (map[string]interface{}, error) {
-	req, err := http.NewRequest(http.MethodGet, f.Target, nil)
+func (f *FluentdPlugin) fetchFluentdMetrics(host string, port int) (map[string]interface{}, error) {
+	target := fmt.Sprintf("http://%s:%d/api/plugins.json", host, port)
+	req, err := http.NewRequest(http.MethodGet, target, nil)
 	if err != nil {
 		return nil, err
 	}
@@ -166,6 +169,38 @@ func (f FluentdPlugin) FetchMetrics() (map[string]interface{}, error) {
 	}
 
 	return f.parseStats(body)
+}
+
+// FetchMetrics interface for mackerelplugin
+func (f FluentdPlugin) FetchMetrics() (map[string]interface{}, error) {
+	port, err := strconv.Atoi(f.Port)
+	if err != nil {
+		return nil, err
+	}
+	if f.Workers > 1 {
+		metrics := make(map[string]interface{})
+		for workerNumber := 0; workerNumber < int(f.Workers); workerNumber++ {
+			m, e := f.fetchFluentdMetrics(f.Host, port+workerNumber)
+			if e != nil {
+				continue
+			}
+
+			workerName := fmt.Sprintf("worker%d", workerNumber)
+			for k, v := range m {
+				ks := strings.Split(k, ".")
+				ks, last := ks[:len(ks)-1], ks[len(ks)-1]
+				ks = append(ks, workerName)
+				ks = append(ks, last)
+				metrics[strings.Join(ks, ".")] = v
+			}
+		}
+		if len(metrics) == 0 {
+			err := fmt.Errorf("failed to connect to fluentd's monitor_agent")
+			return metrics, err
+		}
+		return metrics, nil
+	}
+	return f.fetchFluentdMetrics(f.Host, port)
 }
 
 var defaultGraphs = map[string]mp.Graphs{
@@ -270,6 +305,9 @@ func (f FluentdPlugin) GraphDefinition() map[string]mp.Graphs {
 	labelPrefix := strings.Title(f.Prefix)
 	graphs := make(map[string]mp.Graphs, len(defaultGraphs))
 	for key, g := range defaultGraphs {
+		if f.Workers > 1 {
+			key = metricName(key, "#")
+		}
 		graphs[key] = mp.Graphs{
 			Label:   (labelPrefix + " " + g.Label),
 			Unit:    g.Unit,
@@ -277,9 +315,11 @@ func (f FluentdPlugin) GraphDefinition() map[string]mp.Graphs {
 		}
 	}
 	for _, name := range f.extendedMetrics {
-		fullName := metricName(name)
-		if g, ok := extendedGraphs[fullName]; ok {
-			graphs[fullName] = mp.Graphs{
+		if g, ok := extendedGraphs[name]; ok {
+			if f.Workers > 1 {
+				name = metricName(name, "#")
+			}
+			graphs[name] = mp.Graphs{
 				Label:   (labelPrefix + " " + g.Label),
 				Unit:    g.Unit,
 				Metrics: g.Metrics,
@@ -298,6 +338,7 @@ func Do() {
 	prefix := flag.String("metric-key-prefix", "fluentd", "Metric key prefix")
 	tempFile := flag.String("tempfile", "", "Temp file name")
 	extendedMetricNames := flag.String("extended_metrics", "", "extended metric names joind with ',' or 'all' (fluentd >= v1.6.0)")
+	workers := flag.Uint("workers", 1, "specifying the number of Fluentd's multi-process workers")
 	flag.Parse()
 
 	var pluginIDPattern *regexp.Regexp
@@ -328,12 +369,14 @@ func Do() {
 		}
 	}
 	f := FluentdPlugin{
-		Target:          fmt.Sprintf("http://%s:%s/api/plugins.json", *host, *port),
+		Host:            *host,
+		Port:            *port,
 		Prefix:          *prefix,
 		Tempfile:        *tempFile,
 		pluginType:      *pluginType,
 		pluginIDPattern: pluginIDPattern,
 		extendedMetrics: extendedMetrics,
+		Workers:         *workers,
 	}
 
 	helper := mp.NewMackerelPlugin(f)

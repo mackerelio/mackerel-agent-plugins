@@ -6,7 +6,7 @@ Fluentd (http://www.fluentd.org/) custom metrics plugin for mackerel.io agent.
 ## Synopsis
 
 ```shell
-mackerel-plugin-fluentd [-host=<host>] [-port=<port>] [-tempfile=<tempfile>] [-plugin-type=<plugin-type>] [-plugin-id-pattern=<plugin-id-pattern>]
+mackerel-plugin-fluentd [-host=<host>] [-port=<port>] [-tempfile=<tempfile>] [-plugin-type=<plugin-type>] [-plugin-id-pattern=<plugin-id-pattern>] [-workers=<workers>]
 ```
 
 ## Example of mackerel-agent.conf
@@ -29,7 +29,22 @@ port 24220
 </source>
 ```
 
-See http://docs.fluentd.org/articles/monitoring in details.
+See https://docs.fluentd.org/input/monitor_agent in details.
+
+If you have specified the `workers` parameter in fluentd's `<system>` directive, you can use the `-workers` option.
+
+```
+<system>
+  workers 3
+</system>
+
+<source>
+  @type monitor_agent
+  port 24230 # worker0: 24230, worker1: 24231, worker2: 24232
+</source>
+```
+
+See https://docs.fluentd.org/input/monitor_agent#multi-process-environment in details.
 
 ## License
 
