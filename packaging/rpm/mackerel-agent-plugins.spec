@@ -48,6 +48,10 @@ done
 %{__oldtargetdir}/*
 
 %changelog
+* Wed Jul 28 2021 <mackerel-developers@hatena.ne.jp> - 0.67.0
+- [fluentd] add workers option. (by sugy)
+- Bump github.com/aws/aws-sdk-go from 1.38.70 to 1.39.4 (by dependabot[bot])
+
 * Thu Jul 15 2021 <mackerel-developers@hatena.ne.jp> - 0.66.0
 - [fluentd] add metric-key-prefix option. (by sugy)
 

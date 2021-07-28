@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.67.0 (2021-07-28)
+
+* [fluentd] add workers option. #791 (sugy)
+* Bump github.com/aws/aws-sdk-go from 1.38.70 to 1.39.4 #789 (dependabot[bot])
+
+
 ## 0.66.0 (2021-07-15)
 
 * [fluentd] add metric-key-prefix option. #788 (sugy)
