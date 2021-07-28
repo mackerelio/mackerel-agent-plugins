@@ -1,0 +1,11 @@
+// TODO: add -extended_metrics
+// default graphs
+fluentd.buffer_total_queued_size.worker0.stdout_output	>=0
+fluentd.buffer_total_queued_size.worker1.stdout_output	>=0
+fluentd.buffer_total_queued_size.worker2.stdout_output	>=0
+fluentd.retry_count.worker0.stdout_output	>=0
+fluentd.retry_count.worker1.stdout_output	>=0
+fluentd.retry_count.worker2.stdout_output	>=0
+fluentd.buffer_queue_length.worker0.stdout_output	>=0
+fluentd.buffer_queue_length.worker1.stdout_output	>=0
+fluentd.buffer_queue_length.worker2.stdout_output	>=0
