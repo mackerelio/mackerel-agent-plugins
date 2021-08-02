@@ -100,6 +100,14 @@ yum install mackerel-agent-plugins
 apt-get install mackerel-agent-plugins
 ```
 
+### Go
+
+**mackerel-agent-plugins** supports two newer versions of Go.
+
+```shell
+go install github.com/mackerelio/mackerel-agent-plugins/...
+```
+
 Caution
 =======
 
