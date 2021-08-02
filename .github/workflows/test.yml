@@ -15,7 +15,7 @@ jobs:
   test:
     strategy:
       matrix:
-        go: ["1.16.x"]
+        go: ["1.16.x", "1.15.x"]
         os: [ubuntu-latest]
     runs-on: ${{ matrix.os }}
     steps:

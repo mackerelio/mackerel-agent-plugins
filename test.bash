@@ -1,7 +1,8 @@
 #!/bin/bash
 
 # install dependencies
-go install github.com/lufia/graphitemetrictest/cmd/graphite-metric-test@latest || exit
+#go install github.com/lufia/graphitemetrictest/cmd/graphite-metric-test@latest || exit
+go get github.com/lufia/graphitemetrictest/cmd/graphite-metric-test || exit
 
 # prepare tests
 for f in mackerel-plugin-*/test.sh

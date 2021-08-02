@@ -97,7 +97,14 @@ func (p *AccesslogPlugin) getPosPath() string {
 	)
 }
 
-func (p *AccesslogPlugin) getReadSeekCloser() (io.ReadSeekCloser, bool, error) {
+// We'd like to better to use io.ReadSeekCloser interface if we can drop support for Go 1.15.
+type readSeekCloser interface {
+	io.Reader
+	io.Seeker
+	io.Closer
+}
+
+func (p *AccesslogPlugin) getReadSeekCloser() (readSeekCloser, bool, error) {
 	if p.noPosFile {
 		f, err := os.Open(p.file)
 		return f, true, err
