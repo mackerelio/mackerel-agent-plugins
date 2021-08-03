@@ -6,7 +6,6 @@ import (
 	"flag"
 	"fmt"
 	"io"
-	"io/ioutil"
 	"log"
 	"os"
 	"path/filepath"
@@ -98,30 +97,37 @@ func (p *AccesslogPlugin) getPosPath() string {
 	)
 }
 
-func (p *AccesslogPlugin) getReadCloser() (io.ReadCloser, bool, error) {
+// We'd like to better to use io.ReadSeekCloser interface if we can drop support for Go 1.15.
+type readSeekCloser interface {
+	io.Reader
+	io.Seeker
+	io.Closer
+}
+
+func (p *AccesslogPlugin) getReadSeekCloser() (readSeekCloser, bool, error) {
 	if p.noPosFile {
-		rc, err := os.Open(p.file)
-		return rc, true, err
+		f, err := os.Open(p.file)
+		return f, true, err
 	}
 	posfile := p.getPosPath()
 	fi, err := os.Stat(posfile)
 	// don't output any metrics when the pos file doesn't exist or is too old
 	takeMetrics := err == nil && fi.ModTime().After(time.Now().Add(-2*time.Minute))
-	rc, err := postailer.Open(p.file, posfile)
-	return rc, takeMetrics, err
+	f, err := postailer.Open(p.file, posfile)
+	return f, takeMetrics, err
 }
 
 // FetchMetrics interface for mackerelplugin
 func (p *AccesslogPlugin) FetchMetrics() (map[string]float64, error) {
-	rc, takeMetrics, err := p.getReadCloser()
+	f, takeMetrics, err := p.getReadSeekCloser()
 	if err != nil {
 		return nil, err
 	}
-	defer rc.Close()
+	defer f.Close()
 
 	if !takeMetrics {
 		// discard existing contents to seek position
-		_, err := ioutil.ReadAll(rc)
+		_, err := f.Seek(0, io.SeekEnd)
 		return map[string]float64{}, err
 	}
 
@@ -131,7 +137,7 @@ func (p *AccesslogPlugin) FetchMetrics() (map[string]float64, error) {
 		ret[k] = 0
 	}
 	var reqtimes []float64
-	r := bufio.NewReader(rc)
+	r := bufio.NewReader(f)
 	for {
 		var (
 			l   *axslogparser.Log
