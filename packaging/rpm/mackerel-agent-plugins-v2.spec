@@ -39,6 +39,10 @@ done
 %{__targetdir}/*
 
 %changelog
+* Thu Aug 5 2021 <mackerel-developers@hatena.ne.jp> - 0.67.1
+- [accesslog] use Seek to skip the log (by lufia)
+- [ci][fluentd] add test.sh (by lufia)
+
 * Wed Jul 28 2021 <mackerel-developers@hatena.ne.jp> - 0.67.0
 - [fluentd] add workers option. (by sugy)
 - Bump github.com/aws/aws-sdk-go from 1.38.70 to 1.39.4 (by dependabot[bot])
