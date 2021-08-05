@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.67.1 (2021-08-05)
+
+* [accesslog] use Seek to skip the log #795 (lufia)
+* [ci][fluentd] add test.sh #794 (lufia)
+
+
 ## 0.67.0 (2021-07-28)
 
 * [fluentd] add workers option. #791 (sugy)
