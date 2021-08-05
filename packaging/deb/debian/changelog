@@ -1,3 +1,14 @@
+mackerel-agent-plugins (0.67.1-1) stable; urgency=low
+
+  * replace token. (by yseto)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/798>
+  * [accesslog] use Seek to skip the log (by lufia)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/795>
+  * [ci][fluentd] add test.sh (by lufia)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/794>
+
+ -- mackerel <mackerel-developers@hatena.ne.jp>  Thu, 5 Aug 2021 02:56:37 +0000
+
 mackerel-agent-plugins (0.67.0-1) stable; urgency=low
 
   * [fluentd] add workers option. (by sugy)
