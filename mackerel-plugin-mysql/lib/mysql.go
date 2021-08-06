@@ -773,6 +773,29 @@ func setIfEmpty(p map[string]float64, key string, val float64) {
 	}
 }
 
+func calcurateAio(s string) (int, error) {
+	v := strings.TrimSpace(s)
+	i := strings.Index(v, "[")
+	j := strings.Index(v, "]")
+
+	if i >= 0 && j >= i {
+		counts := strings.Split(v[i+1:j], ",")
+		total := 0
+		for _, c := range counts {
+			p, err := strconv.Atoi(strings.TrimSpace(c))
+			if err != nil {
+				return 0, err
+			}
+			total += p
+		}
+		return total, nil
+	}
+	if n := len(v); v[n-1] == ',' {
+		v = v[:n-1]
+	}
+	return strconv.Atoi(v)
+}
+
 func parseInnodbStatus(str string, trxIDHexFormat bool, p map[string]float64) {
 	isTransaction := false
 	prevLine := ""
@@ -875,17 +898,36 @@ func parseInnodbStatus(str string, trxIDHexFormat bool, p map[string]float64) {
 
 		// File I/O
 		if strings.HasPrefix(line, "Pending normal aio reads:") {
-			// TODO: We perhaps need to fix this.
-			//
 			// There are many 'Pending normal aio' lines.
 			//
+			//   Pending normal aio reads: 0, aio writes: 0,
 			//   Pending normal aio reads: 0 [0, 0, 0, 0] , aio writes: 0 [0, 0, 0, 0] ,
 			//   Pending normal aio reads: [0, 0, 0, 0] , aio writes: [0, 0, 0, 0] ,
 			//   ...etc
-			//
-			// Therefore record[7] don't refer the correct field.
-			setMap(p, "pending_normal_aio_reads", record[4])
-			setMap(p, "pending_normal_aio_writes", record[7])
+
+			reads := 0
+			writes := 0
+			idx := strings.Index(line, "reads:")
+			writeSep := ", aio writes:"
+			var err error
+			if strings.Contains(line[idx+6:], writeSep) {
+				values := strings.Split(line[idx+6:], writeSep)
+				reads, err = calcurateAio(values[0])
+				if err != nil {
+					log.Println(err)
+				}
+				writes, err = calcurateAio(values[1])
+				if err != nil {
+					log.Println(err)
+				}
+			} else {
+				reads, err = calcurateAio(line[idx+6:])
+				if err != nil {
+					log.Println(err)
+				}
+			}
+			p["pending_normal_aio_reads"] = float64(reads)
+			p["pending_normal_aio_writes"] = float64(writes)
 			continue
 		}
 		if strings.HasPrefix(line, "ibuf aio reads") && len(record) >= 10 {
