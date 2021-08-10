@@ -1252,6 +1252,30 @@ func TestParseProcesslist2(t *testing.T) {
 	assert.EqualValues(t, 58, stat["State_other"])
 }
 
+type TestCaseAio struct {
+	stub   string
+	reads  int
+	writes int
+}
+
+func TestParseAio(t *testing.T) {
+	pattern := []TestCaseAio{
+		{"Pending normal aio reads: [1, 3, 5, 7] , aio writes: [3, 5, 7, 9] ,", 16, 24},
+		{"Pending normal aio reads: [1, 3, 5, 7] ", 16, 0},
+		{"Pending normal aio reads: 10 [4, 6] , aio writes: 20 [2, 4, 6, 8] ,", 10, 20},
+		{"Pending normal aio reads: 10 [4, 6] ", 10, 0},
+		{"Pending normal aio reads: 10, aio writes: 20,", 10, 20},
+		{"Pending normal aio reads: 10", 10, 0},
+	}
+
+	for _, tt := range pattern {
+		stat := make(map[string]float64)
+		parseInnodbStatus(tt.stub, false, stat)
+		assert.EqualValues(t, stat["pending_normal_aio_reads"], tt.reads)
+		assert.EqualValues(t, stat["pending_normal_aio_writes"], tt.writes)
+	}
+}
+
 func TestMetricNamesShouldUniqueAndConst(t *testing.T) {
 	m := MySQLPlugin{
 		DisableInnoDB:  false,
