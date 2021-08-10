@@ -773,7 +773,7 @@ func setIfEmpty(p map[string]float64, key string, val float64) {
 	}
 }
 
-func calcurateAio(s string) (int, error) {
+func calculateAio(s string) (int, error) {
 	v := strings.TrimSpace(s)
 	i := strings.Index(v, "[")
 	j := strings.Index(v, "]")
