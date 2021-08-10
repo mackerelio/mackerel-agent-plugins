@@ -121,7 +121,7 @@ Log sequence number 53339891261
 Log flushed up to   53339891261
 Pages flushed up to 53339891261
 Last checkpoint at  53339891261
-0 pending log writes, 0 pending chkp writes
+10 pending log writes, 20 pending chkp writes
 3395 log i/o's done, 0.00 log i/o's/second
 ----------------------
 BUFFER POOL AND MEMORY
@@ -193,11 +193,12 @@ END OF INNODB MONITOR OUTPUT`
 	assert.EqualValues(t, stat["hash_index_cells_used"], 0) // empty
 	// Log
 	assert.EqualValues(t, stat["log_writes"], 3395)
-	assert.EqualValues(t, stat["pending_log_writes"], 0)
-	assert.EqualValues(t, stat["pending_chkp_writes"], 0)
+	assert.EqualValues(t, stat["pending_log_writes"], 10)
+	assert.EqualValues(t, stat["pending_chkp_writes"], 20)
 	assert.EqualValues(t, stat["log_bytes_written"], 53339891261)
 	assert.EqualValues(t, stat["log_bytes_flushed"], 53339891261)
 	assert.EqualValues(t, stat["last_checkpoint"], 53339891261)
+	assert.EqualValues(t, stat["log_pending_log_flushes"], 0)
 	// Buffer Pool and Memory
 	assert.EqualValues(t, stat["total_mem_alloc"], 17170432)
 	assert.EqualValues(t, stat["additional_pool_alloc"], 0)
@@ -290,7 +291,7 @@ LOG
 Log sequence number 1737766297992
 Log flushed up to   1737766297992
 Last checkpoint at  1737766159992
-0 pending log writes, 0 pending chkp writes
+10 pending log writes, 20 pending chkp writes
 532375066 log i/o's done, 7.79 log i/o's/second
 ----------------------
 BUFFER POOL AND MEMORY
@@ -363,11 +364,12 @@ END OF INNODB MONITOR OUTPUT
 	assert.EqualValues(t, stat["hash_index_cells_used"], 0)
 	// Log
 	assert.EqualValues(t, stat["log_writes"], 532375066)
-	assert.EqualValues(t, stat["pending_log_writes"], 0)
-	assert.EqualValues(t, stat["pending_chkp_writes"], 0)
+	assert.EqualValues(t, stat["pending_log_writes"], 10)
+	assert.EqualValues(t, stat["pending_chkp_writes"], 20)
 	assert.EqualValues(t, stat["log_bytes_written"], 1737766297992)
 	assert.EqualValues(t, stat["log_bytes_flushed"], 1737766297992)
 	assert.EqualValues(t, stat["last_checkpoint"], 1737766159992)
+	assert.EqualValues(t, stat["log_pending_log_flushes"], 0)
 	// Buffer Pool and Memory
 	assert.EqualValues(t, stat["total_mem_alloc"], 21978152960)
 	assert.EqualValues(t, stat["additional_pool_alloc"], 0)
@@ -463,7 +465,7 @@ LOG
 Log sequence number 7220257512009
 Log flushed up to   7220257512009
 Last checkpoint at  7220257512009
-0 pending log writes, 0 pending chkp writes
+10 pending log writes, 20 pending chkp writes
 78358216 log i/o's done, 1.81 log i/o's/second
 ----------------------
 BUFFER POOL AND MEMORY
@@ -536,11 +538,12 @@ END OF INNODB MONITOR OUTPUT
 	assert.EqualValues(t, stat["hash_index_cells_used"], 0)
 	// Log
 	assert.EqualValues(t, stat["log_writes"], 78358216)
-	assert.EqualValues(t, stat["pending_log_writes"], 0)
-	assert.EqualValues(t, stat["pending_chkp_writes"], 0)
+	assert.EqualValues(t, stat["pending_log_writes"], 10)
+	assert.EqualValues(t, stat["pending_chkp_writes"], 20)
 	assert.EqualValues(t, stat["log_bytes_written"], 7220257512009)
 	assert.EqualValues(t, stat["log_bytes_flushed"], 7220257512009)
 	assert.EqualValues(t, stat["last_checkpoint"], 7220257512009)
+	assert.EqualValues(t, stat["log_pending_log_flushes"], 0)
 	// Buffer Pool and Memory
 	assert.EqualValues(t, stat["total_mem_alloc"], 7685013504)
 	assert.EqualValues(t, stat["additional_pool_alloc"], 0)
@@ -605,7 +608,7 @@ LOG
 Log sequence number 0 51296721
 Log flushed up to   0 51296721
 Last checkpoint at  0 51296721
-0 pending log writes, 0 pending chkp writes
+10 pending log writes, 20 pending chkp writes
 2158 log i/o's done, 0.00 log i/o's/second
 ----------------------
 BUFFER POOL AND MEMORY
@@ -671,11 +674,12 @@ END OF INNODB MONITOR OUTPUT
 	assert.EqualValues(t, stat["hash_index_cells_used"], 23275)
 	// Log
 	assert.EqualValues(t, stat["log_writes"], 2158)
-	assert.EqualValues(t, stat["pending_log_writes"], 0)
-	assert.EqualValues(t, stat["pending_chkp_writes"], 0)
+	assert.EqualValues(t, stat["pending_log_writes"], 10)
+	assert.EqualValues(t, stat["pending_chkp_writes"], 20)
 	assert.EqualValues(t, stat["log_bytes_written"], 51296721)
 	assert.EqualValues(t, stat["log_bytes_flushed"], 51296721)
 	assert.EqualValues(t, stat["last_checkpoint"], 51296721)
+	assert.EqualValues(t, stat["log_pending_log_flushes"], 0)
 	// Buffer Pool and Memory
 	assert.EqualValues(t, stat["total_mem_alloc"], 17874468)
 	assert.EqualValues(t, stat["additional_pool_alloc"], 1048576)
@@ -763,7 +767,7 @@ Log sequence number 379575319
 Log flushed up to   379575319
 Pages flushed up to 379575319
 Last checkpoint at  379575310
-0 pending log flushes, 0 pending chkp writes
+10 pending log flushes, 20 pending chkp writes
 12 log i/o's done, 3.00 log i/o's/second
 ----------------------
 BUFFER POOL AND MEMORY
@@ -904,10 +908,11 @@ END OF INNODB MONITOR OUTPUT
 	// Log
 	assert.EqualValues(t, stat["log_writes"], 12)
 	assert.EqualValues(t, stat["pending_log_writes"], 0)
-	assert.EqualValues(t, stat["pending_chkp_writes"], 0)
+	assert.EqualValues(t, stat["pending_chkp_writes"], 20)
 	assert.EqualValues(t, stat["log_bytes_written"], 379575319)
 	assert.EqualValues(t, stat["log_bytes_flushed"], 379575319)
 	assert.EqualValues(t, stat["last_checkpoint"], 379575310)
+	assert.EqualValues(t, stat["log_pending_log_flushes"], 10)
 	// Buffer Pool and Memory
 	assert.EqualValues(t, stat["total_mem_alloc"], 1099431936)
 	assert.EqualValues(t, stat["additional_pool_alloc"], 0)
@@ -982,7 +987,7 @@ Max checkpoint age    7782360
 Checkpoint age target 7539162
 Modified age          0
 Checkpoint age        0
-0 pending log writes, 0 pending chkp writes
+10 pending log writes, 20 pending chkp writes
 40 log i/o's done, 0.00 log i/o's/second
 ----------------------
 BUFFER POOL AND MEMORY
@@ -1093,11 +1098,12 @@ END OF INNODB MONITOR OUTPUT
 	assert.EqualValues(t, stat["hash_index_cells_used"], 0)
 	// Log
 	assert.EqualValues(t, stat["log_writes"], 40)
-	assert.EqualValues(t, stat["pending_log_writes"], 0)
-	assert.EqualValues(t, stat["pending_chkp_writes"], 0)
+	assert.EqualValues(t, stat["pending_log_writes"], 10)
+	assert.EqualValues(t, stat["pending_chkp_writes"], 20)
 	assert.EqualValues(t, stat["log_bytes_written"], 1602283)
 	assert.EqualValues(t, stat["log_bytes_flushed"], 1602283)
 	assert.EqualValues(t, stat["last_checkpoint"], 1602283)
+	assert.EqualValues(t, stat["log_pending_log_flushes"], 0)
 	// Buffer Pool and Memory
 	assert.EqualValues(t, stat["total_mem_alloc"], 137756672)
 	assert.EqualValues(t, stat["additional_pool_alloc"], 0)
