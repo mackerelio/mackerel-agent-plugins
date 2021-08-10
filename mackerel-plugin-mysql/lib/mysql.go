@@ -555,10 +555,11 @@ func (m *MySQLPlugin) addGraphdefWithInnoDBMetrics(graphdef map[string]mp.Graphs
 			{Name: "pending_ibuf_aio_reads", Label: "InnoDB Buffer AIO Reads", Diff: false, Stacked: false},
 			{Name: "pending_aio_log_ios", Label: "AIO Log IOs", Diff: false, Stacked: false},
 			{Name: "pending_aio_sync_ios", Label: "AIO Sync IOs", Diff: false, Stacked: false},
-			{Name: "pending_log_flushes", Label: "Log Flushes", Diff: false, Stacked: false},
+			{Name: "pending_log_flushes", Label: "Log Flushes (fsync)", Diff: false, Stacked: false},
 			{Name: "pending_buf_pool_flushes", Label: "Buffer Pool Flushes", Diff: false, Stacked: false},
 			{Name: "pending_log_writes", Label: "Log Writes", Diff: false, Stacked: false},
 			{Name: "pending_chkp_writes", Label: "Checkpoint Writes", Diff: false, Stacked: false},
+			{Name: "log_pending_log_flushes", Label: "Log Flushes (log)", Diff: false, Stacked: false},
 		},
 	}
 	graphdef["innodb_insert_buffer"] = mp.Graphs{
@@ -1013,6 +1014,18 @@ func parseInnodbStatus(str string, trxIDHexFormat bool, p map[string]float64) {
 			//	Last checkpoint at           28622392
 			//	25 log i/o's done, 0.00 log i/o's/second
 			setMap(p, "pending_log_writes", record[0])
+			setMap(p, "pending_chkp_writes", record[4])
+			continue
+		}
+		if strings.Contains(line, " pending log flushes, ") {
+			// mysql 5.7
+			//  Log sequence number 12665751
+			//  Log flushed up to   12665751
+			//  Pages flushed up to 12665751
+			//  Last checkpoint at  12665742
+			//  0 pending log flushes, 0 pending chkp writes
+			// 10 log i/o's done, 0.00 log i/o's/second
+			setMap(p, "log_pending_log_flushes", record[0])
 			setMap(p, "pending_chkp_writes", record[4])
 			continue
 		}
