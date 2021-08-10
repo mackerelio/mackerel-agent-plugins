@@ -793,7 +793,7 @@ func calculateAio(s string) (int, error) {
 	if n := len(v); v[n-1] == ',' {
 		v = v[:n-1]
 	}
-	return strconv.Atoi(v)
+	return strconv.Atoi(strings.TrimSpace(v))
 }
 
 func parseInnodbStatus(str string, trxIDHexFormat bool, p map[string]float64) {
