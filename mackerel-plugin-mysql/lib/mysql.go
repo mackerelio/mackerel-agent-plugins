@@ -912,16 +912,16 @@ func parseInnodbStatus(str string, trxIDHexFormat bool, p map[string]float64) {
 			var err error
 			if strings.Contains(line[idx+6:], writeSep) {
 				values := strings.Split(line[idx+6:], writeSep)
-				reads, err = calcurateAio(values[0])
+				reads, err = calculateAio(values[0])
 				if err != nil {
 					log.Println(err)
 				}
-				writes, err = calcurateAio(values[1])
+				writes, err = calculateAio(values[1])
 				if err != nil {
 					log.Println(err)
 				}
 			} else {
-				reads, err = calcurateAio(line[idx+6:])
+				reads, err = calculateAio(line[idx+6:])
 				if err != nil {
 					log.Println(err)
 				}
