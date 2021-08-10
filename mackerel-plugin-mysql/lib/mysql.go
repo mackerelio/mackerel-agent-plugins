@@ -778,7 +778,7 @@ func calculateAio(s string) (int, error) {
 	i := strings.Index(v, "[")
 	j := strings.Index(v, "]")
 
-	if i >= 0 && j >= i {
+	if i >= 0 && j > i {
 		counts := strings.Split(v[i+1:j], ",")
 		total := 0
 		for _, c := range counts {
