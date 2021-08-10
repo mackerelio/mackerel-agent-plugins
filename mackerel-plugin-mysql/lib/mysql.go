@@ -68,6 +68,7 @@ func (m *MySQLPlugin) defaultGraphdef() map[string]mp.Graphs {
 				{Name: "Com_replace_select", Label: "Replace Select", Diff: true, Stacked: true},
 				{Name: "Com_load", Label: "Load", Diff: true, Stacked: true},
 				{Name: "Com_set_option", Label: "Set Option", Diff: true, Stacked: true},
+				// Duplicate definitions in the past.
 				{Name: "Qcache_hits", Label: "Query Cache Hits", Diff: true, Stacked: false},
 				{Name: "Questions", Label: "Questions", Diff: true, Stacked: false},
 			},
@@ -88,6 +89,7 @@ func (m *MySQLPlugin) defaultGraphdef() map[string]mp.Graphs {
 			Unit:  "integer",
 			Metrics: []mp.Metrics{
 				{Name: "thread_cache_size", Label: "Cache Size", Diff: false, Stacked: false},
+				// Duplicate definitions in the past.
 				{Name: "Threads_connected", Label: "Connected", Diff: false, Stacked: false},
 				{Name: "Threads_running", Label: "Running", Diff: false, Stacked: false},
 				{Name: "Threads_created", Label: "Created", Diff: true, Stacked: false},
