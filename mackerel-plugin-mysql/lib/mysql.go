@@ -907,11 +907,11 @@ func parseInnodbStatus(str string, trxIDHexFormat bool, p map[string]float64) {
 
 			reads := 0
 			writes := 0
-			idx := strings.Index(line, "reads:")
+			s := strings.TrimPrefix(line, "Pending normal aio reads:")
 			writeSep := ", aio writes:"
 			var err error
-			if strings.Contains(line[idx+6:], writeSep) {
-				values := strings.Split(line[idx+6:], writeSep)
+			if strings.Contains(s, writeSep) {
+				values := strings.Split(s, writeSep)
 				reads, err = calculateAio(values[0])
 				if err != nil {
 					log.Println(err)
@@ -921,7 +921,7 @@ func parseInnodbStatus(str string, trxIDHexFormat bool, p map[string]float64) {
 					log.Println(err)
 				}
 			} else {
-				reads, err = calculateAio(line[idx+6:])
+				reads, err = calculateAio(s)
 				if err != nil {
 					log.Println(err)
 				}
