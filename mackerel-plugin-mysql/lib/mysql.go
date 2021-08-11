@@ -1011,7 +1011,8 @@ func parseInnodbStatus(str string, trxIDHexFormat bool, p map[string]float64) {
 			//	Pages flushed up to          28622392
 			//	Last checkpoint at           28622392
 			//	25 log i/o's done, 0.00 log i/o's/second
-
+			//
+			// on MySQL 5.7
 			//  Log sequence number 12665751
 			//  Log flushed up to   12665751
 			//  Pages flushed up to 12665751
