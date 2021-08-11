@@ -992,19 +992,16 @@ func parseInnodbStatus(str string, trxIDHexFormat bool, p map[string]float64) {
 		}
 		// MySQL < 5.7
 		if strings.Contains(line, " pending log writes, ") {
+			setMap(p, "pending_log_writes", record[0])
+			setMap(p, "pending_chkp_writes", record[4])
+			continue
+		}
+		// MySQL >= 5.7 < 8
+		if strings.Contains(line, " pending log flushes, ") {
 			// TODO: We perhaps need to fix this.
 			//
 			// In MySQL 8, LOG section format was changed.
-			//
-			// before:
-			//	Log sequence number 3091027710
-			//	Log flushed up to   3090240098
-			//	Pages flushed up to 3074432960
-			//	Last checkpoint at  3050856266
-			//	0 pending log writes, 0 pending chkp writes
-			//	1187 log i/o's done, 14.67 log i/o's/second
-			//
-			// after:
+			// on MySQL 8
 			//	Log sequence number          28622392
 			//	Log buffer assigned up to    28622392
 			//	Log buffer completed up to   28622392
@@ -1014,12 +1011,7 @@ func parseInnodbStatus(str string, trxIDHexFormat bool, p map[string]float64) {
 			//	Pages flushed up to          28622392
 			//	Last checkpoint at           28622392
 			//	25 log i/o's done, 0.00 log i/o's/second
-			setMap(p, "pending_log_writes", record[0])
-			setMap(p, "pending_chkp_writes", record[4])
-			continue
-		}
-		// MySQL >= 5.7 < 8
-		if strings.Contains(line, " pending log flushes, ") {
+
 			//  Log sequence number 12665751
 			//  Log flushed up to   12665751
 			//  Pages flushed up to 12665751
