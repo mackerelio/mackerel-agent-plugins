@@ -990,6 +990,7 @@ func parseInnodbStatus(str string, trxIDHexFormat bool, p map[string]float64) {
 			setMap(p, "log_writes", record[0])
 			continue
 		}
+		// MySQL < 5.7
 		if strings.Contains(line, " pending log writes, ") {
 			// TODO: We perhaps need to fix this.
 			//
@@ -1017,8 +1018,8 @@ func parseInnodbStatus(str string, trxIDHexFormat bool, p map[string]float64) {
 			setMap(p, "pending_chkp_writes", record[4])
 			continue
 		}
+		// MySQL >= 5.7 < 8
 		if strings.Contains(line, " pending log flushes, ") {
-			// mysql 5.7
 			//  Log sequence number 12665751
 			//  Log flushed up to   12665751
 			//  Pages flushed up to 12665751
