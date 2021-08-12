@@ -1285,8 +1285,6 @@ func TestMetricNamesShouldUniqueAndConst(t *testing.T) {
 	keys := make(map[string]string) // metricName: graphDefName
 	for name, g := range defs {
 		for _, v := range g.Metrics {
-			// The following two definitions have been added in duplicate in the past.
-			// They cannot be removed to ensure compatibility.
 			if v.Name == "Threads_connected" {
 				if name != "connections" && name != "threads" {
 					t.Errorf(`%q are duplicated in "connections", "threads" and %q`, v.Name, name)
