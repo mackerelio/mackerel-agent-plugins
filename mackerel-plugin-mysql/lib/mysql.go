@@ -555,10 +555,11 @@ func (m *MySQLPlugin) addGraphdefWithInnoDBMetrics(graphdef map[string]mp.Graphs
 			{Name: "pending_ibuf_aio_reads", Label: "InnoDB Buffer AIO Reads", Diff: false, Stacked: false},
 			{Name: "pending_aio_log_ios", Label: "AIO Log IOs", Diff: false, Stacked: false},
 			{Name: "pending_aio_sync_ios", Label: "AIO Sync IOs", Diff: false, Stacked: false},
-			{Name: "pending_log_flushes", Label: "Log Flushes", Diff: false, Stacked: false},
+			{Name: "pending_log_flushes", Label: "Log Flushes (fsync)", Diff: false, Stacked: false},
 			{Name: "pending_buf_pool_flushes", Label: "Buffer Pool Flushes", Diff: false, Stacked: false},
 			{Name: "pending_log_writes", Label: "Log Writes", Diff: false, Stacked: false},
 			{Name: "pending_chkp_writes", Label: "Checkpoint Writes", Diff: false, Stacked: false},
+			{Name: "log_pending_log_flushes", Label: "Log Flushes (log)", Diff: false, Stacked: false},
 		},
 	}
 	graphdef["innodb_insert_buffer"] = mp.Graphs{
@@ -989,33 +990,41 @@ func parseInnodbStatus(str string, trxIDHexFormat bool, p map[string]float64) {
 			setMap(p, "log_writes", record[0])
 			continue
 		}
+		// MySQL < 5.7
 		if strings.Contains(line, " pending log writes, ") {
-			// TODO: We perhaps need to fix this.
-			//
-			// In MySQL 8, LOG section format was changed.
-			//
-			// before:
-			//	Log sequence number 3091027710
-			//	Log flushed up to   3090240098
-			//	Pages flushed up to 3074432960
-			//	Last checkpoint at  3050856266
-			//	0 pending log writes, 0 pending chkp writes
-			//	1187 log i/o's done, 14.67 log i/o's/second
-			//
-			// after:
-			//	Log sequence number          28622392
-			//	Log buffer assigned up to    28622392
-			//	Log buffer completed up to   28622392
-			//	Log written up to            28622392
-			//	Log flushed up to            28622392
-			//	Added dirty pages up to      28622392
-			//	Pages flushed up to          28622392
-			//	Last checkpoint at           28622392
-			//	25 log i/o's done, 0.00 log i/o's/second
+			//      Log sequence number 3091027710
+			//      Log flushed up to   3090240098
+			//      Pages flushed up to 3074432960
+			//      Last checkpoint at  3050856266
+			//      0 pending log writes, 0 pending chkp writes
+			//      1187 log i/o's done, 14.67 log i/o's/second
 			setMap(p, "pending_log_writes", record[0])
 			setMap(p, "pending_chkp_writes", record[4])
 			continue
 		}
+		// MySQL >= 5.7 < 8
+		if strings.Contains(line, " pending log flushes, ") {
+			//  Log sequence number 12665751
+			//  Log flushed up to   12665751
+			//  Pages flushed up to 12665751
+			//  Last checkpoint at  12665742
+			//  0 pending log flushes, 0 pending chkp writes
+			// 10 log i/o's done, 0.00 log i/o's/second
+			setMap(p, "log_pending_log_flushes", record[0])
+			setMap(p, "pending_chkp_writes", record[4])
+			continue
+		}
+		// TODO: MySQL 8 does not output pending log writes / flushes, so we perhaps need another way to obtain these metrics.
+		//	Log sequence number          28622392
+		//	Log buffer assigned up to    28622392
+		//	Log buffer completed up to   28622392
+		//	Log written up to            28622392
+		//	Log flushed up to            28622392
+		//	Added dirty pages up to      28622392
+		//	Pages flushed up to          28622392
+		//	Last checkpoint at           28622392
+		//	25 log i/o's done, 0.00 log i/o's/second
+
 		if strings.HasPrefix(line, "Log sequence number") {
 			val, err := atof(record[3])
 			if err != nil {
