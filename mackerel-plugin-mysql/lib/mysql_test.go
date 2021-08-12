@@ -1291,7 +1291,6 @@ func TestMetricNamesShouldUniqueAndConst(t *testing.T) {
 	keys := make(map[string]string) // metricName: graphDefName
 	for name, g := range defs {
 		for _, v := range g.Metrics {
-			// TODO(lufia): bug?
 			if v.Name == "Threads_connected" {
 				if name != "connections" && name != "threads" {
 					t.Errorf(`%q are duplicated in "connections", "threads" and %q`, v.Name, name)
