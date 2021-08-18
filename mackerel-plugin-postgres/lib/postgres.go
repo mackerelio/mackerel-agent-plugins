@@ -191,15 +191,17 @@ func fetchDatabaseSize(db *sqlx.DB) (map[string]interface{}, error) {
 }
 
 func fetchXlogLocation(db *sqlx.DB, version version) (map[string]interface{}, error) {
-	rows, err := db.Query("SELECT pg_is_in_recovery()")
-	if err != nil {
-		logger.Errorf("Failed to select pg_is_in_recovery. %s", err)
-		return nil, err
-	}
 	var recovery bool
-	for rows.Next() {
-		if err := rows.Scan(&recovery); err != nil {
-			logger.Warningf("Failed to scan %s", err)
+	{
+		rows, err := db.Query("SELECT pg_is_in_recovery()")
+		if err != nil {
+			logger.Errorf("Failed to select pg_is_in_recovery. %s", err)
+			return nil, err
+		}
+		for rows.Next() {
+			if err := rows.Scan(&recovery); err != nil {
+				logger.Warningf("Failed to scan %s", err)
+			}
 		}
 	}
 
