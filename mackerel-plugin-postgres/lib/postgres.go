@@ -203,11 +203,25 @@ func fetchXlogLocation(db *sqlx.DB, version version) (map[string]interface{}, er
 		}
 	}
 
+	var walLevel string
+	{
+		rows, err := db.Query("SELECT setting FROM pg_settings WHERE name = 'wal_level'")
+		if err != nil {
+			logger.Errorf("Failed to show wal_level. %s", err)
+			return nil, err
+		}
+		for rows.Next() {
+			if err := rows.Scan(&walLevel); err != nil {
+				logger.Warningf("Failed to scan %s", err)
+			}
+		}
+	}
+
 	stat := map[string]interface{}{
 		"xlog_location_bytes": 0.0,
 	}
 
-	if !recovery {
+	if !recovery && walLevel == "logical" {
 		var bytes float64
 		if version.first >= 10 {
 			rows, err := db.Query(`SELECT pg_wal_lsn_diff(pg_current_wal_lsn(), '0/0')`)
