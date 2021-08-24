@@ -1,3 +1,14 @@
+mackerel-agent-plugins (0.68.0-1.v2) stable; urgency=low
+
+  * [plugin-postgres] suppress fetchXlogLocation when wal_level != 'logical' (by handlename)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/804>
+  * added "pending log flushes" (by yseto)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/802>
+  * fix pending_normal_aio_* (by yseto)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/801>
+
+ -- mackerel <mackerel-developers@hatena.ne.jp>  Tue, 24 Aug 2021 02:42:07 +0000
+
 mackerel-agent-plugins (0.67.1-1.v2) stable; urgency=low
 
   * [accesslog] use Seek to skip the log (by lufia)
