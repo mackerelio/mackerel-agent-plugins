@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.68.0 (2021-08-24)
+
+* [plugin-postgres] suppress fetchXlogLocation when wal_level != 'logical' #804 (handlename)
+* added "pending log flushes" #802 (yseto)
+* fix pending_normal_aio_* #801 (yseto)
+
+
 ## 0.67.1 (2021-08-05)
 
 * [accesslog] use Seek to skip the log #795 (lufia)

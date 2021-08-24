@@ -39,6 +39,11 @@ done
 %{__targetdir}/*
 
 %changelog
+* Tue Aug 24 2021 <mackerel-developers@hatena.ne.jp> - 0.68.0
+- [plugin-postgres] suppress fetchXlogLocation when wal_level != 'logical' (by handlename)
+- added "pending log flushes" (by yseto)
+- fix pending_normal_aio_* (by yseto)
+
 * Thu Aug 5 2021 <mackerel-developers@hatena.ne.jp> - 0.67.1
 - [accesslog] use Seek to skip the log (by lufia)
 - [ci][fluentd] add test.sh (by lufia)
