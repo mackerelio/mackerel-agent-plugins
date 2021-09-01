@@ -714,7 +714,7 @@ OS WAIT ARRAY INFO: reservation count 63
 OS WAIT ARRAY INFO: signal count 111
 RW-shared spins 0, rounds 85, OS waits 22
 RW-excl spins 0, rounds 4705, OS waits 17
-RW-sx spins 0, rounds 0, OS waits 0
+RW-sx spins 70, rounds 70, OS waits 70
 Spin rounds per wait: 85.00 RW-shared, 4705.00 RW-excl, 0.00 RW-sx
 ------------
 TRANSACTIONS
@@ -871,9 +871,9 @@ END OF INNODB MONITOR OUTPUT
 	stat := make(map[string]float64)
 	parseInnodbStatus(stub, false, stat)
 	// Innodb Semaphores
-	assert.EqualValues(t, stat["spin_waits"], 0)
+	assert.EqualValues(t, stat["spin_waits"], 70)
 	assert.EqualValues(t, stat["spin_rounds"], 0) // empty
-	assert.EqualValues(t, stat["os_waits"], 39)
+	assert.EqualValues(t, stat["os_waits"], 109)
 	assert.EqualValues(t, stat["innodb_sem_wait"], 0)         // empty
 	assert.EqualValues(t, stat["innodb_sem_wait_time_ms"], 0) // empty
 	// Innodb Transactions

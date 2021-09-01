@@ -834,6 +834,12 @@ func parseInnodbStatus(str string, trxIDHexFormat bool, p map[string]float64) {
 			increaseMap(p, "os_waits", record[7])
 			continue
 		}
+		if strings.HasPrefix(line, "RW-sx spins") {
+			// 5.7
+			increaseMap(p, "spin_waits", record[2])
+			increaseMap(p, "os_waits", record[7])
+			continue
+		}
 		if strings.Contains(line, "seconds the semaphore:") {
 			increaseMap(p, "innodb_sem_waits", "1")
 			wait, err := atof(record[9])
