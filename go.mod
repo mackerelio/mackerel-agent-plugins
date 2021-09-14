@@ -8,8 +8,6 @@ require (
 	github.com/Songmu/postailer v0.0.0-20181014062912-daaa1ba9cc39
 	github.com/Songmu/timeout v0.4.0
 	github.com/StackExchange/wmi v0.0.0-20190523213315-cbe66965904d
-	github.com/alouca/gologger v0.0.0-20120904114645-7d4b7291de9c // indirect
-	github.com/alouca/gosnmp v0.0.0-20170620005048-04d83944c9ab
 	github.com/aws/aws-sdk-go v1.39.4
 	github.com/erikstmartin/go-testdb v0.0.0-20160219214506-8d10e4a1bae5
 	github.com/fsouza/go-dockerclient v1.7.3
@@ -21,6 +19,7 @@ require (
 	github.com/go-redis/redis v6.15.9+incompatible
 	github.com/golang/groupcache v0.0.0-20191027212112-611e8accdfc9 // indirect
 	github.com/gomodule/redigo v1.8.5
+	github.com/gosnmp/gosnmp v1.32.0
 	github.com/hashicorp/go-version v1.3.0
 	github.com/jarcoal/httpmock v1.0.8
 	github.com/jmoiron/sqlx v1.3.4
