@@ -6,8 +6,9 @@ import (
 	"log"
 	"strconv"
 	"strings"
+	"time"
 
-	"github.com/alouca/gosnmp"
+	"github.com/gosnmp/gosnmp"
 	mp "github.com/mackerelio/go-mackerel-plugin-helper"
 )
 
@@ -31,13 +32,19 @@ type SNMPPlugin struct {
 func (m SNMPPlugin) FetchMetrics() (map[string]interface{}, error) {
 	stat := make(map[string]interface{})
 
-	s, err := gosnmp.NewGoSNMP(m.Host, m.Community, gosnmp.Version2c, 30)
+	gosnmp.Default.Target = m.Host
+	gosnmp.Default.Community = m.Community
+	gosnmp.Default.Version = gosnmp.Version2c
+	gosnmp.Default.Timeout = time.Duration(30) * time.Second
+
+	err := gosnmp.Default.Connect()
 	if err != nil {
 		return nil, err
 	}
+	defer gosnmp.Default.Conn.Close()
 
 	for _, sm := range m.SNMPMetricsSlice {
-		resp, err := s.Get(sm.OID)
+		resp, err := gosnmp.Default.Get([]string{sm.OID})
 		if err != nil {
 			log.Println("SNMP get failed: ", err)
 			continue
