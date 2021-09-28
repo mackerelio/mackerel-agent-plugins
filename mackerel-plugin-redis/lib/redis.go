@@ -3,6 +3,7 @@ package mpredis
 import (
 	"flag"
 	"fmt"
+	"net"
 	"os"
 	"regexp"
 	"strconv"
@@ -94,7 +95,7 @@ func (m RedisPlugin) MetricKeyPrefix() string {
 // FetchMetrics interface for mackerelplugin
 func (m RedisPlugin) FetchMetrics() (map[string]interface{}, error) {
 	network := "tcp"
-	address := fmt.Sprintf("%s:%s", m.Host, m.Port)
+	address := net.JoinHostPort(m.Host, m.Port)
 	if m.Socket != "" {
 		network = "unix"
 		address = m.Socket
@@ -286,7 +287,7 @@ func (m RedisPlugin) GraphDefinition() map[string]mp.Graphs {
 	}
 
 	network := "tcp"
-	address := fmt.Sprintf("%s:%s", m.Host, m.Port)
+	address := net.JoinHostPort(m.Host, m.Port)
 	if m.Socket != "" {
 		network = "unix"
 		address = m.Socket
