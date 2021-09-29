@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.69.0 (2021-09-29)
+
+* [plugin-redis] migrate redis client library to redigo #809 (pyto86pri)
+* replace library gosnmp in mackerel-plugin-snmp #808 (yseto)
+* [mysql] adapt for mysql5.7's InnoDB SEMAPHORES metrics #807 (do-su-0805)
+
+
 ## 0.68.0 (2021-08-24)
 
 * [plugin-postgres] suppress fetchXlogLocation when wal_level != 'logical' #804 (handlename)
