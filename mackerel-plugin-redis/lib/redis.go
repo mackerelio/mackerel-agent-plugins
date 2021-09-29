@@ -3,13 +3,14 @@ package mpredis
 import (
 	"flag"
 	"fmt"
+	"net"
 	"os"
 	"regexp"
 	"strconv"
 	"strings"
 	"time"
 
-	"github.com/fzzy/radix/redis"
+	"github.com/gomodule/redigo/redis"
 	mp "github.com/mackerelio/go-mackerel-plugin-helper"
 	"github.com/mackerelio/golib/logging"
 )
@@ -28,24 +29,18 @@ type RedisPlugin struct {
 	ConfigCommand string
 }
 
-func authenticateByPassword(c *redis.Client, password string) error {
-	if r := c.Cmd("AUTH", password); r.Err != nil {
-		logger.Errorf("Failed to authenticate. %s", r.Err)
-		return r.Err
+func authenticateByPassword(c redis.Conn, password string) error {
+	if _, err := c.Do("AUTH", password); err != nil {
+		logger.Errorf("Failed to authenticate. %s", err)
+		return err
 	}
 	return nil
 }
 
-func (m RedisPlugin) fetchPercentageOfMemory(c *redis.Client, stat map[string]interface{}) error {
-	r := c.Cmd(m.ConfigCommand, "GET", "maxmemory")
-	if r.Err != nil {
-		logger.Errorf("Failed to run `%s GET maxmemory` command. %s", m.ConfigCommand, r.Err)
-		return r.Err
-	}
-
-	res, err := r.Hash()
+func (m RedisPlugin) fetchPercentageOfMemory(c redis.Conn, stat map[string]interface{}) error {
+	res, err := redis.StringMap(c.Do(m.ConfigCommand, "GET", "maxmemory"))
 	if err != nil {
-		logger.Errorf("Failed to fetch maxmemory. %s", err)
+		logger.Errorf("Failed to run `%s GET maxmemory` command. %s", m.ConfigCommand, err)
 		return err
 	}
 
@@ -64,16 +59,10 @@ func (m RedisPlugin) fetchPercentageOfMemory(c *redis.Client, stat map[string]in
 	return nil
 }
 
-func (m RedisPlugin) fetchPercentageOfClients(c *redis.Client, stat map[string]interface{}) error {
-	r := c.Cmd(m.ConfigCommand, "GET", "maxclients")
-	if r.Err != nil {
-		logger.Errorf("Failed to run `%s GET maxclients` command. %s", m.ConfigCommand, r.Err)
-		return r.Err
-	}
-
-	res, err := r.Hash()
+func (m RedisPlugin) fetchPercentageOfClients(c redis.Conn, stat map[string]interface{}) error {
+	res, err := redis.StringMap(c.Do(m.ConfigCommand, "GET", "maxclients"))
 	if err != nil {
-		logger.Errorf("Failed to fetch maxclients. %s", err)
+		logger.Errorf("Failed to run `%s GET maxclients` command. %s", m.ConfigCommand, err)
 		return err
 	}
 
@@ -88,7 +77,7 @@ func (m RedisPlugin) fetchPercentageOfClients(c *redis.Client, stat map[string]i
 	return nil
 }
 
-func (m RedisPlugin) calculateCapacity(c *redis.Client, stat map[string]interface{}) error {
+func (m RedisPlugin) calculateCapacity(c redis.Conn, stat map[string]interface{}) error {
 	if err := m.fetchPercentageOfMemory(c, stat); err != nil {
 		return err
 	}
@@ -106,12 +95,12 @@ func (m RedisPlugin) MetricKeyPrefix() string {
 // FetchMetrics interface for mackerelplugin
 func (m RedisPlugin) FetchMetrics() (map[string]interface{}, error) {
 	network := "tcp"
-	target := fmt.Sprintf("%s:%s", m.Host, m.Port)
+	address := net.JoinHostPort(m.Host, m.Port)
 	if m.Socket != "" {
-		target = m.Socket
 		network = "unix"
+		address = m.Socket
 	}
-	c, err := redis.DialTimeout(network, target, time.Duration(m.Timeout)*time.Second)
+	c, err := redis.Dial(network, address, redis.DialConnectTimeout(time.Duration(m.Timeout)*time.Second))
 	if err != nil {
 		logger.Errorf("Failed to connect redis. %s", err)
 		return nil, err
@@ -124,14 +113,9 @@ func (m RedisPlugin) FetchMetrics() (map[string]interface{}, error) {
 		}
 	}
 
-	r := c.Cmd("info")
-	if r.Err != nil {
-		logger.Errorf("Failed to run info command. %s", r.Err)
-		return nil, r.Err
-	}
-	str, err := r.Str()
+	str, err := redis.String(c.Do("info"))
 	if err != nil {
-		logger.Errorf("Failed to fetch information. %s", err)
+		logger.Errorf("Failed to run info command. %s", err)
 		return nil, err
 	}
 
@@ -308,13 +292,13 @@ func (m RedisPlugin) GraphDefinition() map[string]mp.Graphs {
 	}
 
 	network := "tcp"
-	target := fmt.Sprintf("%s:%s", m.Host, m.Port)
+	address := net.JoinHostPort(m.Host, m.Port)
 	if m.Socket != "" {
-		target = m.Socket
 		network = "unix"
+		address = m.Socket
 	}
 
-	c, err := redis.DialTimeout(network, target, time.Duration(m.Timeout)*time.Second)
+	c, err := redis.Dial(network, address, redis.DialConnectTimeout(time.Duration(m.Timeout)*time.Second))
 	if err != nil {
 		logger.Errorf("Failed to connect redis. %s", err)
 		return nil
@@ -327,14 +311,9 @@ func (m RedisPlugin) GraphDefinition() map[string]mp.Graphs {
 		}
 	}
 
-	r := c.Cmd("info")
-	if r.Err != nil {
-		logger.Errorf("Failed to run info command. %s", r.Err)
-		return nil
-	}
-	str, err := r.Str()
+	str, err := redis.String(c.Do("info"))
 	if err != nil {
-		logger.Errorf("Failed to fetch information. %s", err)
+		logger.Errorf("Failed to run info command. %s", err)
 		return nil
 	}
 
