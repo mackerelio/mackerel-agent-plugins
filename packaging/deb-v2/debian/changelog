@@ -1,3 +1,14 @@
+mackerel-agent-plugins (0.69.0-1.v2) stable; urgency=low
+
+  * [plugin-redis] migrate redis client library to redigo (by pyto86pri)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/809>
+  * replace library gosnmp in mackerel-plugin-snmp (by yseto)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/808>
+  * [mysql] adapt for mysql5.7's InnoDB SEMAPHORES metrics (by do-su-0805)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/807>
+
+ -- mackerel <mackerel-developers@hatena.ne.jp>  Wed, 29 Sep 2021 02:01:53 +0000
+
 mackerel-agent-plugins (0.68.0-1.v2) stable; urgency=low
 
   * [plugin-postgres] suppress fetchXlogLocation when wal_level != 'logical' (by handlename)

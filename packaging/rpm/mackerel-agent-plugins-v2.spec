@@ -39,6 +39,11 @@ done
 %{__targetdir}/*
 
 %changelog
+* Wed Sep 29 2021 <mackerel-developers@hatena.ne.jp> - 0.69.0
+- [plugin-redis] migrate redis client library to redigo (by pyto86pri)
+- replace library gosnmp in mackerel-plugin-snmp (by yseto)
+- [mysql] adapt for mysql5.7's InnoDB SEMAPHORES metrics (by do-su-0805)
+
 * Tue Aug 24 2021 <mackerel-developers@hatena.ne.jp> - 0.68.0
 - [plugin-postgres] suppress fetchXlogLocation when wal_level != 'logical' (by handlename)
 - added "pending log flushes" (by yseto)
