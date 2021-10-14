@@ -3,20 +3,18 @@ module github.com/mackerelio/mackerel-agent-plugins
 go 1.16
 
 require (
-	cloud.google.com/go v0.50.0 // indirect
 	github.com/Songmu/axslogparser v1.4.0
 	github.com/Songmu/postailer v0.0.0-20181014062912-daaa1ba9cc39
 	github.com/Songmu/timeout v0.4.0
 	github.com/StackExchange/wmi v0.0.0-20190523213315-cbe66965904d
 	github.com/aws/aws-sdk-go v1.40.59
 	github.com/erikstmartin/go-testdb v0.0.0-20160219214506-8d10e4a1bae5
-	github.com/fsouza/go-dockerclient v1.7.3
+	github.com/fsouza/go-dockerclient v1.7.4
 	github.com/fukata/golang-stats-api-handler v1.0.0
 	github.com/globalsign/mgo v0.0.0-20181015135952-eeefdecb41b8
 	github.com/go-ldap/ldap/v3 v3.4.1
 	github.com/go-ole/go-ole v1.2.4 // indirect
 	github.com/go-redis/redis v6.15.9+incompatible
-	github.com/golang/groupcache v0.0.0-20191027212112-611e8accdfc9 // indirect
 	github.com/gomodule/redigo v1.8.5
 	github.com/gosnmp/gosnmp v1.32.0
 	github.com/hashicorp/go-version v1.3.0
@@ -40,18 +38,12 @@ require (
 	github.com/mattn/go-treasuredata v0.0.0-20170920030233-31758907cfc4
 	github.com/michaelklishin/rabbit-hole v1.5.0
 	github.com/montanaflynn/stats v0.6.6
-	github.com/onsi/ginkgo v1.10.2 // indirect
 	github.com/soh335/go-test-redisserver v0.1.0
 	github.com/streadway/amqp v0.0.0-20190827072141-edfb9018d271 // indirect
 	github.com/stretchr/testify v1.7.0
 	github.com/tomasen/fcgi_client v0.0.0-20180423082037-2bb3d819fd19
 	github.com/urfave/cli v1.22.5
 	github.com/ziutek/mymysql v1.5.4
-	go.opencensus.io v0.22.2 // indirect
-	golang.org/x/oauth2 v0.0.0-20191202225959-858c2ad4c8b6 // indirect
-	golang.org/x/sync v0.0.0-20201020160332-67f06af15bc9
-	google.golang.org/api v0.15.0 // indirect
-	google.golang.org/appengine v1.6.5 // indirect
-	google.golang.org/genproto v0.0.0-20191216205247-b31c10ee225f // indirect
+	golang.org/x/sync v0.0.0-20201207232520-09787c993a3a
 	layeh.com/gumble v0.0.0-20190524033244-046859aa1d90
 )
