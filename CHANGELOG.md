@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.69.1 (2021-10-14)
+
+* Bump github.com/aws/aws-sdk-go from 1.39.4 to 1.40.59 #816 (dependabot[bot])
+* Bump github.com/fsouza/go-dockerclient from 1.7.3 to 1.7.4 #814 (dependabot[bot])
+* Bump github.com/go-ldap/ldap/v3 from 3.3.0 to 3.4.1 #813 (dependabot[bot])
+* Bump github.com/lib/pq from 1.10.2 to 1.10.3 #812 (dependabot[bot])
+* Bump github.com/mackerelio/golib from 1.2.0 to 1.2.1 #811 (dependabot[bot])
+
+
 ## 0.69.0 (2021-09-29)
 
 * [plugin-redis] migrate redis client library to redigo #809 (pyto86pri)
