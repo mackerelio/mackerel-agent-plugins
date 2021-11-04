@@ -5,6 +5,8 @@ import (
 	"fmt"
 	"os"
 	"strconv"
+        "encoding/json"
+        "time"
 
 	r "github.com/go-redis/redis"
 	mp "github.com/mackerelio/go-mackerel-plugin-helper"
@@ -35,6 +37,7 @@ var graphdef = map[string]mp.Graphs{
 			{Name: "schedule", Label: "Schedule", Type: "uint64"},
 			{Name: "retry", Label: "Retry", Type: "uint64"},
 			{Name: "dead", Label: "Dead", Type: "uint64"},
+			{Name: "latency", Label: "Latency", Type: "uint64"},
 		},
 	},
 }
@@ -141,6 +144,42 @@ func (sp SidekiqPlugin) getEnqueued() uint64 {
 	return inject(queuesLlens, 0)
 }
 
+func (sp SidekiqPlugin) getLatency() uint64 {
+	key := addNamespace(sp.Namespace, "queues")
+	queues := sp.sMembers(key)
+	queuesLatencies := make([]uint64, 10)
+
+	prefix := addNamespace(sp.Namespace, "queue:")
+	for _, e := range queues {
+                queuesLRange, err := sp.Client.LRange(prefix+e, -1, -1).Result()
+                if err != nil {
+                        fmt.Fprintf(os.Stderr, "get last queue error")
+                }
+
+                if len(queuesLRange) == 0 {
+                        return 0
+                }
+                var job map[string]interface{}
+                var thence int64
+
+                err = json.Unmarshal([]byte(queuesLRange[0]), &job)
+                if err != nil {
+                        fmt.Fprintf(os.Stderr, "json parse error")
+                        return 0
+                }
+                now := time.Now().Unix()
+                if enqueuedAt, ok := job["enqueued_at"]; ok {
+                        enqueuedAt := enqueuedAt.(float64)
+                        thence = int64(enqueuedAt)
+                } else {
+                        thence = now
+                }
+		queuesLatencies = append(queuesLatencies, uint64(now - thence))
+	}
+
+	return inject(queuesLatencies, 0)
+}
+
 func (sp SidekiqPlugin) getSchedule() uint64 {
 	key := addNamespace(sp.Namespace, "schedule")
 	return sp.zCard(key)
@@ -179,6 +218,8 @@ func (sp SidekiqPlugin) getStats(field []string) map[string]interface{} {
 			stats[e] = sp.getRetry()
 		case "dead":
 			stats[e] = sp.getDead()
+		case "latency":
+			stats[e] = sp.getLatency()
 		}
 	}
 
@@ -187,7 +228,7 @@ func (sp SidekiqPlugin) getStats(field []string) map[string]interface{} {
 
 // FetchMetrics fetch the metrics
 func (sp SidekiqPlugin) FetchMetrics() (map[string]interface{}, error) {
-	field := []string{"busy", "enqueued", "schedule", "retry", "dead"}
+	field := []string{"busy", "enqueued", "schedule", "retry", "dead", "latency"}
 	stats := sp.getStats(field)
 	pf := sp.getProcessedFailed()
 
