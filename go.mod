@@ -7,7 +7,7 @@ require (
 	github.com/Songmu/postailer v0.0.0-20181014062912-daaa1ba9cc39
 	github.com/Songmu/timeout v0.4.0
 	github.com/StackExchange/wmi v0.0.0-20190523213315-cbe66965904d
-	github.com/aws/aws-sdk-go v1.40.59
+	github.com/aws/aws-sdk-go v1.41.19
 	github.com/erikstmartin/go-testdb v0.0.0-20160219214506-8d10e4a1bae5
 	github.com/fsouza/go-dockerclient v1.7.4
 	github.com/fukata/golang-stats-api-handler v1.0.0
