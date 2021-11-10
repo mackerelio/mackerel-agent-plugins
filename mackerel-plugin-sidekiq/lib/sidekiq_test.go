@@ -9,7 +9,7 @@ func TestGraphDefinition(t *testing.T) {
 
 	graphdef := sp.GraphDefinition()
 
-	expect := 2
+	expect := 3
 
 	if len(graphdef) != expect {
 		t.Errorf("GraphDefinition(): %d should be %d", len(graphdef), expect)
