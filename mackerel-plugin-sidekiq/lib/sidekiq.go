@@ -224,7 +224,7 @@ func (sp SidekiqPlugin) getQueueLatency() map[string]interface{} {
 			fmt.Fprintf(os.Stderr, "json parse error")
 			continue
 		}
-		now := float64(time.Now().UnixMicro()) / 1000 / 1000
+		now := float64(time.Now().Unix())
 		if enqueuedAt, ok := job["enqueued_at"]; ok {
 			enqueuedAt := enqueuedAt.(float64)
 			thence = enqueuedAt
