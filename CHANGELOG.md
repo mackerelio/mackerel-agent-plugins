@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.70.0 (2021-11-18)
+
+* [plugin-sidekiq] add queue latency metric #823 (ch1aki)
+
+
 ## 0.69.1 (2021-10-14)
 
 * Bump github.com/aws/aws-sdk-go from 1.39.4 to 1.40.59 #816 (dependabot[bot])
