@@ -1,10 +1,13 @@
 package mpsidekiq
 
 import (
+	"encoding/json"
 	"flag"
 	"fmt"
 	"os"
 	"strconv"
+	"strings"
+	"time"
 
 	r "github.com/go-redis/redis"
 	mp "github.com/mackerelio/go-mackerel-plugin-helper"
@@ -35,6 +38,13 @@ var graphdef = map[string]mp.Graphs{
 			{Name: "schedule", Label: "Schedule", Type: "uint64"},
 			{Name: "retry", Label: "Retry", Type: "uint64"},
 			{Name: "dead", Label: "Dead", Type: "uint64"},
+		},
+	},
+	"QueueLatency": mp.Graphs{
+		Label: "Sidekiq queue latency",
+		Unit:  "float",
+		Metrics: []mp.Metrics{
+			{Name: "*", Label: "%1"},
 		},
 	},
 }
@@ -185,20 +195,66 @@ func (sp SidekiqPlugin) getStats(field []string) map[string]interface{} {
 	return stats
 }
 
-// FetchMetrics fetch the metrics
-func (sp SidekiqPlugin) FetchMetrics() (map[string]interface{}, error) {
-	field := []string{"busy", "enqueued", "schedule", "retry", "dead"}
-	stats := sp.getStats(field)
-	pf := sp.getProcessedFailed()
+func metricName(names ...string) string {
+	return strings.Join(names, ".")
+}
 
-	// merge maps
-	m := func(map1 map[string]interface{}, map2 map[string]interface{}) map[string]interface{} {
-		for k, v := range map2 {
-			map1[k] = v
+func (sp SidekiqPlugin) getQueueLatency() map[string]interface{} {
+	latency := make(map[string]interface{}, 10)
+
+	key := addNamespace(sp.Namespace, "queues")
+	queues := sp.sMembers(key)
+
+	prefix := addNamespace(sp.Namespace, "queue:")
+	for _, q := range queues {
+		queuesLRange, err := sp.Client.LRange(prefix+q, -1, -1).Result()
+		if err != nil {
+			fmt.Fprintf(os.Stderr, "get last queue error")
 		}
 
-		return map1
-	}(stats, pf)
+		if len(queuesLRange) == 0 {
+			latency[metricName("QueueLatency", q)] = 0.0
+			continue
+		}
+		var job map[string]interface{}
+		var thence float64
+
+		err = json.Unmarshal([]byte(queuesLRange[0]), &job)
+		if err != nil {
+			fmt.Fprintf(os.Stderr, "json parse error")
+			continue
+		}
+		now := float64(time.Now().Unix())
+		if enqueuedAt, ok := job["enqueued_at"]; ok {
+			enqueuedAt := enqueuedAt.(float64)
+			thence = enqueuedAt
+		} else {
+			thence = now
+		}
+		latency[metricName("QueueLatency", q)] = (now - thence)
+	}
+
+	return latency
+}
+
+// FetchMetrics fetch the metrics
+func (sp SidekiqPlugin) FetchMetrics() (map[string]interface{}, error) {
+	field := []string{"busy", "enqueued", "schedule", "retry", "dead", "latency"}
+	stats := sp.getStats(field)
+	pf := sp.getProcessedFailed()
+	latency := sp.getQueueLatency()
+
+	// merge maps
+	m := func(m ...map[string]interface{}) map[string]interface{} {
+		r := make(map[string]interface{}, 20)
+		for _, c := range m {
+			for k, v := range c {
+				r[k] = v
+			}
+		}
+
+		return r
+	}(stats, pf, latency)
 
 	return m, nil
 }

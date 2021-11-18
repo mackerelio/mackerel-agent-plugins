@@ -21,6 +21,25 @@ mackerel-plugin-sidekiq [-host=<host>] [-port=<port>] [-password=<password>] [-d
 command = "/path/to/mackerel-plugin-sidekiq"
 ```
 
+## Graphs and Metrics
+
+### Sidekiq processed and failed count (sidekiq.ProcessedANDFailed)
+
+* processed (sidekiq.ProcessedANDFailed.processed)
+* failed (sidekiq.ProcessedANDFailed.failed)
+
+### Sidekiq stats (sidekiq.Stats)
+
+* busy (sidekiq.Stats.busy)
+* enqueued (sidekiq.Stats.enqueued)
+* scheduled (sidekiq.Stats.scheduled)
+* retry (sidekiq.Stats.retry)
+* dead (sidekiq.Stats.dead)
+
+### sidekiq queue latency (sidekiq.QueueLatency)
+
+* Latency sec (sidekiq.QueueLatency.#)
+
 ## Author
 
 [littlekbt](https://github.com/littlekbt)
