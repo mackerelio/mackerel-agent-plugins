@@ -39,6 +39,9 @@ done
 %{__targetdir}/*
 
 %changelog
+* Thu Nov 18 2021 <mackerel-developers@hatena.ne.jp> - 0.70.0
+- [plugin-sidekiq] add queue latency metric (by ch1aki)
+
 * Thu Oct 14 2021 <mackerel-developers@hatena.ne.jp> - 0.69.1
 - Bump github.com/aws/aws-sdk-go from 1.39.4 to 1.40.59 (by dependabot[bot])
 - Bump github.com/fsouza/go-dockerclient from 1.7.3 to 1.7.4 (by dependabot[bot])
