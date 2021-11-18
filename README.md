@@ -105,7 +105,7 @@ apt-get install mackerel-agent-plugins
 **mackerel-agent-plugins** supports two newer versions of Go.
 
 ```shell
-go install github.com/mackerelio/mackerel-agent-plugins/...
+go install github.com/mackerelio/mackerel-agent-plugins/...@latest
 ```
 
 Caution
