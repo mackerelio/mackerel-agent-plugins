@@ -6,14 +6,13 @@ require (
 	github.com/Songmu/axslogparser v1.4.0
 	github.com/Songmu/postailer v0.0.0-20181014062912-daaa1ba9cc39
 	github.com/Songmu/timeout v0.4.0
-	github.com/StackExchange/wmi v0.0.0-20190523213315-cbe66965904d
+	github.com/StackExchange/wmi v1.2.1
 	github.com/aws/aws-sdk-go v1.40.59
 	github.com/erikstmartin/go-testdb v0.0.0-20160219214506-8d10e4a1bae5
 	github.com/fsouza/go-dockerclient v1.7.4
 	github.com/fukata/golang-stats-api-handler v1.0.0
 	github.com/globalsign/mgo v0.0.0-20181015135952-eeefdecb41b8
 	github.com/go-ldap/ldap/v3 v3.4.1
-	github.com/go-ole/go-ole v1.2.4 // indirect
 	github.com/go-redis/redis v6.15.9+incompatible
 	github.com/gomodule/redigo v1.8.5
 	github.com/gosnmp/gosnmp v1.32.0
@@ -44,6 +43,6 @@ require (
 	github.com/tomasen/fcgi_client v0.0.0-20180423082037-2bb3d819fd19
 	github.com/urfave/cli v1.22.5
 	github.com/ziutek/mymysql v1.5.4
-	golang.org/x/sync v0.0.0-20201207232520-09787c993a3a
-	layeh.com/gumble v0.0.0-20190524033244-046859aa1d90
+	golang.org/x/sync v0.0.0-20210220032951-036812b2e83c
+	layeh.com/gumble v0.0.0-20200818122324-146f9205029b
 )
