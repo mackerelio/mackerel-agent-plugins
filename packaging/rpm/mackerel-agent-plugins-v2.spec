@@ -39,6 +39,10 @@ done
 %{__targetdir}/*
 
 %changelog
+* Wed Dec 1 2021 <mackerel-developers@hatena.ne.jp> - 0.70.1
+- upgrade to Go 1.17 and others (by lufia)
+- Bump github.com/mackerelio/go-osstat from 0.2.0 to 0.2.1 (by dependabot[bot])
+
 * Thu Nov 18 2021 <mackerel-developers@hatena.ne.jp> - 0.70.0
 - [plugin-sidekiq] add queue latency metric (by ch1aki)
 

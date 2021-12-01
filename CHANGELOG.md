@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.70.1 (2021-12-01)
+
+* upgrade to Go 1.17 and others #828 (lufia)
+* Bump github.com/mackerelio/go-osstat from 0.2.0 to 0.2.1 #818 (dependabot[bot])
+
+
 ## 0.70.0 (2021-11-18)
 
 * [plugin-sidekiq] add queue latency metric #823 (ch1aki)
