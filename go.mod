@@ -15,7 +15,7 @@ require (
 	github.com/go-ldap/ldap/v3 v3.4.1
 	github.com/go-redis/redis v6.15.9+incompatible
 	github.com/gomodule/redigo v1.8.5
-	github.com/gosnmp/gosnmp v1.32.0
+	github.com/gosnmp/gosnmp v1.34.0
 	github.com/hashicorp/go-version v1.3.0
 	github.com/jarcoal/httpmock v1.0.8
 	github.com/jmoiron/sqlx v1.3.4
