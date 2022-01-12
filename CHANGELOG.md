@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.70.2 (2022-01-12)
+
+* Bump github.com/jarcoal/httpmock from 1.0.8 to 1.1.0 #836 (dependabot[bot])
+* Bump github.com/gomodule/redigo from 1.8.5 to 1.8.6 #832 (dependabot[bot])
+* Bump github.com/gosnmp/gosnmp from 1.32.0 to 1.34.0 #830 (dependabot[bot])
+* Bump github.com/lib/pq from 1.10.3 to 1.10.4 #826 (dependabot[bot])
+
+
 ## 0.70.1 (2021-12-01)
 
 * upgrade to Go 1.17 and others #828 (lufia)
