@@ -39,6 +39,12 @@ done
 %{__targetdir}/*
 
 %changelog
+* Wed Jan 12 2022 <mackerel-developers@hatena.ne.jp> - 0.70.2
+- Bump github.com/jarcoal/httpmock from 1.0.8 to 1.1.0 (by dependabot[bot])
+- Bump github.com/gomodule/redigo from 1.8.5 to 1.8.6 (by dependabot[bot])
+- Bump github.com/gosnmp/gosnmp from 1.32.0 to 1.34.0 (by dependabot[bot])
+- Bump github.com/lib/pq from 1.10.3 to 1.10.4 (by dependabot[bot])
+
 * Wed Dec 1 2021 <mackerel-developers@hatena.ne.jp> - 0.70.1
 - upgrade to Go 1.17 and others (by lufia)
 - Bump github.com/mackerelio/go-osstat from 0.2.0 to 0.2.1 (by dependabot[bot])

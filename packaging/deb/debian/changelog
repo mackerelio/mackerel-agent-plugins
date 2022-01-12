@@ -1,3 +1,16 @@
+mackerel-agent-plugins (0.70.2-1) stable; urgency=low
+
+  * Bump github.com/jarcoal/httpmock from 1.0.8 to 1.1.0 (by dependabot[bot])
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/836>
+  * Bump github.com/gomodule/redigo from 1.8.5 to 1.8.6 (by dependabot[bot])
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/832>
+  * Bump github.com/gosnmp/gosnmp from 1.32.0 to 1.34.0 (by dependabot[bot])
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/830>
+  * Bump github.com/lib/pq from 1.10.3 to 1.10.4 (by dependabot[bot])
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/826>
+
+ -- mackerel <mackerel-developers@hatena.ne.jp>  Wed, 12 Jan 2022 05:30:45 +0000
+
 mackerel-agent-plugins (0.70.1-1) stable; urgency=low
 
   * upgrade to Go 1.17 and others (by lufia)
