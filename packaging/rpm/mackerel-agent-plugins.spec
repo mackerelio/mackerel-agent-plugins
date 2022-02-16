@@ -48,6 +48,12 @@ done
 %{__oldtargetdir}/*
 
 %changelog
+* Wed Feb 16 2022 <mackerel-developers@hatena.ne.jp> - 0.70.3
+- Bump github.com/aws/aws-sdk-go from 1.40.59 to 1.42.52 (by dependabot[bot])
+- Bump github.com/fsouza/go-dockerclient from 1.7.4 to 1.7.8 (by dependabot[bot])
+- Bump github.com/gomodule/redigo from 1.8.6 to 1.8.8 (by dependabot[bot])
+- Bump github.com/hashicorp/go-version from 1.3.0 to 1.4.0 (by dependabot[bot])
+
 * Wed Jan 12 2022 <mackerel-developers@hatena.ne.jp> - 0.70.2
 - Bump github.com/jarcoal/httpmock from 1.0.8 to 1.1.0 (by dependabot[bot])
 - Bump github.com/gomodule/redigo from 1.8.5 to 1.8.6 (by dependabot[bot])
