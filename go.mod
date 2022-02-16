@@ -8,8 +8,9 @@ require (
 	github.com/Songmu/timeout v0.4.0
 	github.com/StackExchange/wmi v1.2.1
 	github.com/aws/aws-sdk-go v1.42.52
+	github.com/docker/docker v20.10.8+incompatible // indirect
 	github.com/erikstmartin/go-testdb v0.0.0-20160219214506-8d10e4a1bae5
-	github.com/fsouza/go-dockerclient v1.7.4
+	github.com/fsouza/go-dockerclient v1.7.8
 	github.com/fukata/golang-stats-api-handler v1.0.0
 	github.com/globalsign/mgo v0.0.0-20181015135952-eeefdecb41b8
 	github.com/go-ldap/ldap/v3 v3.4.1
