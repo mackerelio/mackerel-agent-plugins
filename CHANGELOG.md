@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.70.3 (2022-02-16)
+
+* Bump github.com/aws/aws-sdk-go from 1.40.59 to 1.42.52 #848 (dependabot[bot])
+* Bump github.com/fsouza/go-dockerclient from 1.7.4 to 1.7.8 #847 (dependabot[bot])
+* Bump github.com/gomodule/redigo from 1.8.6 to 1.8.8 #839 (dependabot[bot])
+* Bump github.com/hashicorp/go-version from 1.3.0 to 1.4.0 #838 (dependabot[bot])
+
+
 ## 0.70.2 (2022-01-12)
 
 * Bump github.com/jarcoal/httpmock from 1.0.8 to 1.1.0 #836 (dependabot[bot])
