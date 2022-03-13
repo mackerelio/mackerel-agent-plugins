@@ -10,7 +10,7 @@ require (
 	github.com/aws/aws-sdk-go v1.43.11
 	github.com/docker/docker v20.10.8+incompatible // indirect
 	github.com/erikstmartin/go-testdb v0.0.0-20160219214506-8d10e4a1bae5
-	github.com/fsouza/go-dockerclient v1.7.9
+	github.com/fsouza/go-dockerclient v1.7.10
 	github.com/fukata/golang-stats-api-handler v1.0.0
 	github.com/globalsign/mgo v0.0.0-20181015135952-eeefdecb41b8
 	github.com/go-ldap/ldap/v3 v3.4.2
