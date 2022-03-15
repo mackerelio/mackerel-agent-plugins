@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.70.4 (2022-03-15)
+
+* Bump github.com/aws/aws-sdk-go from 1.42.52 to 1.43.11 #854 (dependabot[bot])
+* Bump github.com/fsouza/go-dockerclient from 1.7.8 to 1.7.9 #853 (dependabot[bot])
+* Bump github.com/go-ldap/ldap/v3 from 3.4.1 to 3.4.2 #851 (dependabot[bot])
+
+
 ## 0.70.3 (2022-02-16)
 
 * Bump github.com/aws/aws-sdk-go from 1.40.59 to 1.42.52 #848 (dependabot[bot])
