@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.70.5 (2022-03-30)
+
+* Bump github.com/mackerelio/go-osstat from 0.2.1 to 0.2.2 #863 (dependabot[bot])
+* Bump github.com/aws/aws-sdk-go from 1.43.11 to 1.43.26 #862 (dependabot[bot])
+* Bump github.com/stretchr/testify from 1.7.0 to 1.7.1 #859 (dependabot[bot])
+* Bump github.com/fsouza/go-dockerclient from 1.7.9 to 1.7.10 #856 (dependabot[bot])
+
+
 ## 0.70.4 (2022-03-15)
 
 * Bump github.com/aws/aws-sdk-go from 1.42.52 to 1.43.11 #854 (dependabot[bot])
