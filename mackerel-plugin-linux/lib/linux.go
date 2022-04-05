@@ -174,7 +174,7 @@ func collectWho(p *map[string]interface{}) error {
 func parseWho(str string, p *map[string]interface{}) error {
 	str = strings.TrimSpace(str)
 	if str == "" {
-		(*p)["users"] = 0
+		(*p)["users"] = float64(0)
 		return nil
 	}
 	line := strings.Split(str, "\n")
