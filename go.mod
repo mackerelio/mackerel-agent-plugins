@@ -13,7 +13,7 @@ require (
 	github.com/fsouza/go-dockerclient v1.7.10
 	github.com/fukata/golang-stats-api-handler v1.0.0
 	github.com/globalsign/mgo v0.0.0-20181015135952-eeefdecb41b8
-	github.com/go-ldap/ldap/v3 v3.4.2
+	github.com/go-ldap/ldap/v3 v3.4.3
 	github.com/go-redis/redis v6.15.9+incompatible
 	github.com/gomodule/redigo v1.8.8
 	github.com/gosnmp/gosnmp v1.34.0
