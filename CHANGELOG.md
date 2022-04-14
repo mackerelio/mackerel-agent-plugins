@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.70.6 (2022-04-14)
+
+* Bump github.com/go-ldap/ldap/v3 from 3.4.2 to 3.4.3 #869 (dependabot[bot])
+* Bump github.com/aws/aws-sdk-go from 1.43.26 to 1.43.36 #868 (dependabot[bot])
+* Bump github.com/lib/pq from 1.10.4 to 1.10.5 #867 (dependabot[bot])
+* [linux] users メトリックに 0 が投稿されない問題を修正 #866 (masarasi)
+
+
 ## 0.70.5 (2022-03-30)
 
 * Bump github.com/mackerelio/go-osstat from 0.2.1 to 0.2.2 #863 (dependabot[bot])

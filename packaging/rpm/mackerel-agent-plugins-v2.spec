@@ -39,6 +39,12 @@ done
 %{__targetdir}/*
 
 %changelog
+* Thu Apr 14 2022 <mackerel-developers@hatena.ne.jp> - 0.70.6
+- Bump github.com/go-ldap/ldap/v3 from 3.4.2 to 3.4.3 (by dependabot[bot])
+- Bump github.com/aws/aws-sdk-go from 1.43.26 to 1.43.36 (by dependabot[bot])
+- Bump github.com/lib/pq from 1.10.4 to 1.10.5 (by dependabot[bot])
+- [linux] users メトリックに 0 が投稿されない問題を修正 (by masarasi)
+
 * Wed Mar 30 2022 <mackerel-developers@hatena.ne.jp> - 0.70.5
 - Bump github.com/mackerelio/go-osstat from 0.2.1 to 0.2.2 (by dependabot[bot])
 - Bump github.com/aws/aws-sdk-go from 1.43.11 to 1.43.26 (by dependabot[bot])
