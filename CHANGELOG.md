@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.71.0 (2022-04-21)
+
+* [plugin-mysql] fix panic when parsing aio stats #874 (lufia)
+* Fix: Input 'job-number' has been deprecated with message: use flag-name instead #871 (ne-sachirou)
+
+
 ## 0.70.6 (2022-04-14)
 
 * Bump github.com/go-ldap/ldap/v3 from 3.4.2 to 3.4.3 #869 (dependabot[bot])

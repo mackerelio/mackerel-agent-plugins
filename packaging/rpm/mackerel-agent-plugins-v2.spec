@@ -39,6 +39,10 @@ done
 %{__targetdir}/*
 
 %changelog
+* Thu Apr 21 2022 <mackerel-developers@hatena.ne.jp> - 0.71.0
+- [plugin-mysql] fix panic when parsing aio stats (by lufia)
+- Fix: Input 'job-number' has been deprecated with message: use flag-name instead (by ne-sachirou)
+
 * Thu Apr 14 2022 <mackerel-developers@hatena.ne.jp> - 0.70.6
 - Bump github.com/go-ldap/ldap/v3 from 3.4.2 to 3.4.3 (by dependabot[bot])
 - Bump github.com/aws/aws-sdk-go from 1.43.26 to 1.43.36 (by dependabot[bot])
