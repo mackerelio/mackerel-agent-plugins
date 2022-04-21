@@ -1,3 +1,12 @@
+mackerel-agent-plugins (0.71.0-1) stable; urgency=low
+
+  * [plugin-mysql] fix panic when parsing aio stats (by lufia)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/874>
+  * Fix: Input 'job-number' has been deprecated with message: use flag-name instead (by ne-sachirou)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/871>
+
+ -- mackerel <mackerel-developers@hatena.ne.jp>  Thu, 21 Apr 2022 07:00:31 +0000
+
 mackerel-agent-plugins (0.70.6-1) stable; urgency=low
 
   * Bump github.com/go-ldap/ldap/v3 from 3.4.2 to 3.4.3 (by dependabot[bot])
