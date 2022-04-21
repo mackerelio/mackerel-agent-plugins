@@ -793,10 +793,11 @@ func calculateAio(s string) (int, error) {
 		}
 		return total, nil
 	}
-	if n := len(v); v[n-1] == ',' {
-		v = v[:n-1]
+	v = strings.TrimSpace(strings.TrimRight(v, ","))
+	if v == "" {
+		return 0, nil
 	}
-	return strconv.Atoi(strings.TrimSpace(v))
+	return strconv.Atoi(v)
 }
 
 func parseInnodbStatus(str string, trxIDHexFormat bool, p map[string]float64) {

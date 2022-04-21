@@ -1272,6 +1272,8 @@ func TestParseAio(t *testing.T) {
 		{"Pending normal aio reads: 10 [4, 6] ", 10, 0},
 		{"Pending normal aio reads: 10, aio writes: 20,", 10, 20},
 		{"Pending normal aio reads: 10", 10, 0},
+		{"Pending normal aio reads:, aio writes: [1, 3, 5, 7],", 0, 16},
+		{"Pending normal aio reads:, aio writes:,", 0, 0},
 	}
 
 	for _, tt := range pattern {
