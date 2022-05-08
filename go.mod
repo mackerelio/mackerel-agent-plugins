@@ -42,7 +42,7 @@ require (
 	github.com/streadway/amqp v0.0.0-20190827072141-edfb9018d271 // indirect
 	github.com/stretchr/testify v1.7.1
 	github.com/tomasen/fcgi_client v0.0.0-20180423082037-2bb3d819fd19
-	github.com/urfave/cli v1.22.5
+	github.com/urfave/cli v1.22.9
 	github.com/ziutek/mymysql v1.5.4
 	golang.org/x/sync v0.0.0-20210220032951-036812b2e83c
 	layeh.com/gumble v0.0.0-20200818122324-146f9205029b
