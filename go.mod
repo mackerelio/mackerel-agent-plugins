@@ -7,7 +7,7 @@ require (
 	github.com/Songmu/postailer v0.0.0-20181014062912-daaa1ba9cc39
 	github.com/Songmu/timeout v0.4.0
 	github.com/StackExchange/wmi v1.2.1
-	github.com/aws/aws-sdk-go v1.43.36
+	github.com/aws/aws-sdk-go v1.44.9
 	github.com/docker/docker v20.10.8+incompatible // indirect
 	github.com/erikstmartin/go-testdb v0.0.0-20160219214506-8d10e4a1bae5
 	github.com/fsouza/go-dockerclient v1.7.10
