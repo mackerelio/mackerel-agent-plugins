@@ -3,7 +3,7 @@ package mpdocker
 import (
 	"testing"
 
-	"github.com/fsouza/go-dockerclient"
+	docker "github.com/fsouza/go-dockerclient"
 )
 
 func TestNormalizeMetricName(t *testing.T) {

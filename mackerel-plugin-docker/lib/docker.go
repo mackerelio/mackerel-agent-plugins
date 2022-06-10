@@ -11,7 +11,7 @@ import (
 	"sync"
 	"time"
 
-	"github.com/fsouza/go-dockerclient"
+	docker "github.com/fsouza/go-dockerclient"
 	mp "github.com/mackerelio/go-mackerel-plugin-helper"
 )
 
@@ -192,13 +192,32 @@ func (m DockerPlugin) parseStats(stats *map[string]interface{}, name string, res
 		(*stats)[internalCPUStatPrefix+name+".user"] = (*result).CPUStats.CPUUsage.UsageInUsermode
 		(*stats)[internalCPUStatPrefix+name+".system"] = (*result).CPUStats.CPUUsage.UsageInKernelmode
 		(*stats)[internalCPUStatPrefix+name+".host"] = (*result).CPUStats.SystemCPUUsage
-		(*stats)[internalCPUStatPrefix+name+".onlineCPUs"] = len((*result).CPUStats.CPUUsage.PercpuUsage)
+
+		onlineCPUs := int((*result).CPUStats.OnlineCPUs)
+		// if either `CPUStats.OnlineCPUs` or `PerCPUStats.OnlineCPUs` is zero,
+		// use the length of CPUUsage.PerCPUUsage for onlineCPUs
+		// ref. https://docs.docker.com/engine/api/v1.41/#operation/ContainerStats
+		if onlineCPUs == 0 || (*result).PreCPUStats.OnlineCPUs == 0 {
+			onlineCPUs = len((*result).CPUStats.CPUUsage.PercpuUsage)
+		}
+		(*stats)[internalCPUStatPrefix+name+".onlineCPUs"] = onlineCPUs
 	} else {
 		(*stats)["docker.cpuacct."+name+".user"] = (*result).CPUStats.CPUUsage.UsageInUsermode
 		(*stats)["docker.cpuacct."+name+".system"] = (*result).CPUStats.CPUUsage.UsageInKernelmode
 	}
-	(*stats)["docker.memory."+name+".cache"] = (*result).MemoryStats.Stats.TotalCache
-	(*stats)["docker.memory."+name+".rss"] = (*result).MemoryStats.Stats.TotalRss
+
+	totalRss := (*result).MemoryStats.Stats.TotalRss
+	if totalRss == 0 {
+		// use `anon` and `file` for RSS and Cache usage on cgroup2 host
+		// ref. https://github.com/google/cadvisor/blob/a9858972e75642c2b1914c8d5428e33e6392c08a/container/libcontainer/handler.go#L799-L800
+		(*stats)["docker.memory."+name+".rss"] = (*result).MemoryStats.Stats.Anon
+		(*stats)["docker.memory."+name+".cache"] = (*result).MemoryStats.Stats.File
+
+	} else {
+		// use `total_rss` and `total_cache` for RSS and Cache usage on cgroup host
+		(*stats)["docker.memory."+name+".rss"] = totalRss
+		(*stats)["docker.memory."+name+".cache"] = (*result).MemoryStats.Stats.TotalCache
+	}
 
 	fields := []string{"read", "write", "sync", "async"}
 	for _, field := range fields {
