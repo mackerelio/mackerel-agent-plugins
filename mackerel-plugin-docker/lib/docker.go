@@ -291,7 +291,7 @@ func Do() {
 	}
 
 	optHost := flag.String("host", "unix:///var/run/docker.sock", "Host for socket")
-	_ = flag.String("command", "docker", "Command path to docker") // backward compatibility
+	flag.String("command", "docker", "Command path to docker(deprecated)") // backward compatibility
 	optMethod := flag.String("method", "", "Specify the method to collect stats, 'API' or 'File'. If not specified, an appropriate method is chosen.(deprecated)")
 	optTempfile := flag.String("tempfile", "", "Temp file name")
 	optNameFormat := flag.String("name-format", "name_id", "Set the name format from "+strings.Join(candidateNameFormat, ", "))
