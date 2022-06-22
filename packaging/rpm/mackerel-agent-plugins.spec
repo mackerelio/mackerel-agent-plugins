@@ -48,6 +48,14 @@ done
 %{__oldtargetdir}/*
 
 %changelog
+* Wed Jun 22 2022 <mackerel-developers@hatena.ne.jp> - 0.72.0
+- Bump github.com/aws/aws-sdk-go from 1.43.36 to 1.44.37 (by dependabot[bot])
+- Bump github.com/fsouza/go-dockerclient from 1.8.0 to 1.8.1 (by dependabot[bot])
+- [plugin-docker] update README and a description of -command option (by lufia)
+- [plugin-docker] fix CPU/Memory metrics on Docker hosts uses cgroup2 (by xruins)
+- [plugin-docker] (Breaking) drop 'File' method support (by lufia)
+- Bump github.com/fsouza/go-dockerclient from 1.7.10 to 1.8.0 (by dependabot[bot])
+
 * Thu Apr 21 2022 <mackerel-developers@hatena.ne.jp> - 0.71.0
 - [plugin-mysql] fix panic when parsing aio stats (by lufia)
 - Fix: Input 'job-number' has been deprecated with message: use flag-name instead (by ne-sachirou)

@@ -1,5 +1,15 @@
 # Changelog
 
+## 0.72.0 (2022-06-22)
+
+* Bump github.com/aws/aws-sdk-go from 1.43.36 to 1.44.37 #900 (dependabot[bot])
+* Bump github.com/fsouza/go-dockerclient from 1.8.0 to 1.8.1 #899 (dependabot[bot])
+* [plugin-docker] update README and a description of -command option #896 (lufia)
+* [plugin-docker] fix CPU/Memory metrics on Docker hosts uses cgroup2 #895 (xruins)
+* [plugin-docker] (Breaking) drop 'File' method support #894 (lufia)
+* Bump github.com/fsouza/go-dockerclient from 1.7.10 to 1.8.0 #892 (dependabot[bot])
+
+
 ## 0.71.0 (2022-04-21)
 
 * [plugin-mysql] fix panic when parsing aio stats #874 (lufia)
