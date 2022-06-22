@@ -1,3 +1,20 @@
+mackerel-agent-plugins (0.72.0-1) stable; urgency=low
+
+  * Bump github.com/aws/aws-sdk-go from 1.43.36 to 1.44.37 (by dependabot[bot])
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/900>
+  * Bump github.com/fsouza/go-dockerclient from 1.8.0 to 1.8.1 (by dependabot[bot])
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/899>
+  * [plugin-docker] update README and a description of -command option (by lufia)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/896>
+  * [plugin-docker] fix CPU/Memory metrics on Docker hosts uses cgroup2 (by xruins)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/895>
+  * [plugin-docker] (Breaking) drop 'File' method support (by lufia)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/894>
+  * Bump github.com/fsouza/go-dockerclient from 1.7.10 to 1.8.0 (by dependabot[bot])
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/892>
+
+ -- mackerel <mackerel-developers@hatena.ne.jp>  Wed, 22 Jun 2022 06:35:37 +0000
+
 mackerel-agent-plugins (0.71.0-1) stable; urgency=low
 
   * [plugin-mysql] fix panic when parsing aio stats (by lufia)
