@@ -39,7 +39,7 @@ require (
 	github.com/montanaflynn/stats v0.6.6
 	github.com/soh335/go-test-redisserver v0.1.0
 	github.com/streadway/amqp v0.0.0-20190827072141-edfb9018d271 // indirect
-	github.com/stretchr/testify v1.7.1
+	github.com/stretchr/testify v1.7.5
 	github.com/tomasen/fcgi_client v0.0.0-20180423082037-2bb3d819fd19
 	github.com/urfave/cli v1.22.5
 	github.com/ziutek/mymysql v1.5.4
