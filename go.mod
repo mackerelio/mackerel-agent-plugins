@@ -18,7 +18,7 @@ require (
 	github.com/gosnmp/gosnmp v1.34.0
 	github.com/hashicorp/go-version v1.4.0
 	github.com/jarcoal/httpmock v1.1.0
-	github.com/jmoiron/sqlx v1.3.4
+	github.com/jmoiron/sqlx v1.3.5
 	github.com/lestrrat-go/tcptest v0.0.0-20180223004312-f0345789c593
 	github.com/lestrrat-go/tcputil v0.0.0-20180223003554-d3c7f98154fb // indirect
 	github.com/lib/pq v1.10.5
