@@ -14,7 +14,7 @@ require (
 	github.com/globalsign/mgo v0.0.0-20181015135952-eeefdecb41b8
 	github.com/go-ldap/ldap/v3 v3.4.3
 	github.com/go-redis/redis v6.15.9+incompatible
-	github.com/gomodule/redigo v1.8.8
+	github.com/gomodule/redigo v1.8.9
 	github.com/gosnmp/gosnmp v1.34.0
 	github.com/hashicorp/go-version v1.4.0
 	github.com/jarcoal/httpmock v1.1.0
