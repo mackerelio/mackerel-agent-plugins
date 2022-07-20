@@ -48,6 +48,15 @@ done
 %{__oldtargetdir}/*
 
 %changelog
+* Wed Jul 20 2022 <mackerel-developers@hatena.ne.jp> - 0.72.1
+- Bump github.com/aws/aws-sdk-go from 1.44.37 to 1.44.56 (by dependabot[bot])
+- Bump github.com/gomodule/redigo from 1.8.8 to 1.8.9 (by dependabot[bot])
+- Bump github.com/stretchr/testify from 1.7.1 to 1.8.0 (by dependabot[bot])
+- Bump github.com/hashicorp/go-version from 1.4.0 to 1.6.0 (by dependabot[bot])
+- Bump github.com/mackerelio/go-mackerel-plugin from 0.1.2 to 0.1.3 (by dependabot[bot])
+- Bump github.com/urfave/cli from 1.22.5 to 1.22.9 (by dependabot[bot])
+- Bump github.com/jmoiron/sqlx from 1.3.4 to 1.3.5 (by dependabot[bot])
+
 * Wed Jun 22 2022 <mackerel-developers@hatena.ne.jp> - 0.72.0
 - Bump github.com/aws/aws-sdk-go from 1.43.36 to 1.44.37 (by dependabot[bot])
 - Bump github.com/fsouza/go-dockerclient from 1.8.0 to 1.8.1 (by dependabot[bot])
