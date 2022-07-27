@@ -20,5 +20,5 @@ the credential provided manually or fetched automatically with IAM Role, should 
 
 ```
 [plugin.metrics.aws-ec2_ebs]
-command = "/path/to/mackerel-plugin-aws-ec2-ebs"
+command = ["/path/to/mackerel-plugin-aws-ec2-ebs"]
 ```
