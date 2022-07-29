@@ -16,7 +16,11 @@ import (
 	mp "github.com/mackerelio/go-mackerel-plugin-helper"
 )
 
-var metricPeriodDefault = 300
+const (
+	metricPeriodDefault = 300
+	aggregationPeriod   = 60
+)
+
 var metricPeriodByVolumeType = map[string]int{
 	"io1": 60,
 }
@@ -42,62 +46,74 @@ var io1Graphs = append([]string{
 type cloudWatchSetting struct {
 	MetricName string
 	Statistics string
-	CalcFunc   func(float64, float64) float64
+	CalcFunc   func(float64) float64
+}
+
+func value(val float64) float64 {
+	return val
+}
+
+func valuePerSec(val float64) float64 {
+	return val / aggregationPeriod
+}
+
+func sec2msec(val float64) float64 {
+	return val * 1000
 }
 
 // http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/monitoring-volume-status.html
 var cloudwatchdefs = map[string](cloudWatchSetting){
 	"ec2.ebs.bandwidth.#.read": cloudWatchSetting{
 		MetricName: "VolumeReadBytes", Statistics: "Sum",
-		CalcFunc: func(val float64, period float64) float64 { return val / period },
+		CalcFunc: valuePerSec,
 	},
 	"ec2.ebs.bandwidth.#.write": cloudWatchSetting{
 		MetricName: "VolumeWriteBytes", Statistics: "Sum",
-		CalcFunc: func(val float64, period float64) float64 { return val / period },
+		CalcFunc: valuePerSec,
 	},
 	"ec2.ebs.throughput.#.read": cloudWatchSetting{
 		MetricName: "VolumeReadOps", Statistics: "Sum",
-		CalcFunc: func(val float64, period float64) float64 { return val / period },
+		CalcFunc: valuePerSec,
 	},
 	"ec2.ebs.throughput.#.write": cloudWatchSetting{
 		MetricName: "VolumeWriteOps", Statistics: "Sum",
-		CalcFunc: func(val float64, period float64) float64 { return val / period },
+		CalcFunc: valuePerSec,
 	},
 	"ec2.ebs.size_per_op.#.read": cloudWatchSetting{
 		MetricName: "VolumeReadBytes", Statistics: "Average",
-		CalcFunc: func(val float64, period float64) float64 { return val },
+		CalcFunc: value,
 	},
 	"ec2.ebs.size_per_op.#.write": cloudWatchSetting{
 		MetricName: "VolumeWriteBytes", Statistics: "Average",
-		CalcFunc: func(val float64, period float64) float64 { return val },
+		CalcFunc: value,
 	},
 	"ec2.ebs.latency.#.read": cloudWatchSetting{
 		MetricName: "VolumeTotalReadTime", Statistics: "Average",
-		CalcFunc: func(val float64, period float64) float64 { return val * 1000 },
+		CalcFunc: sec2msec,
 	},
 	"ec2.ebs.latency.#.write": cloudWatchSetting{
 		MetricName: "VolumeTotalWriteTime", Statistics: "Average",
-		CalcFunc: func(val float64, period float64) float64 { return val * 1000 },
+		CalcFunc: sec2msec,
 	},
 	"ec2.ebs.queue_length.#.queue_length": cloudWatchSetting{
 		MetricName: "VolumeQueueLength", Statistics: "Average",
-		CalcFunc: func(val float64, period float64) float64 { return val },
+		CalcFunc: value,
 	},
 	"ec2.ebs.idle_time.#.idle_time": cloudWatchSetting{
 		MetricName: "VolumeIdleTime", Statistics: "Sum",
-		CalcFunc: func(val float64, period float64) float64 { return val / period * 100 },
+		CalcFunc: func(val float64) float64 { return val / aggregationPeriod * 100.0 },
 	},
 	"ec2.ebs.throughput_delivered.#.throughput_delivered": cloudWatchSetting{
 		MetricName: "VolumeThroughputPercentage", Statistics: "Average",
-		CalcFunc: func(val float64, period float64) float64 { return val },
+		CalcFunc: value,
 	},
 	"ec2.ebs.consumed_ops.#.consumed_ops": cloudWatchSetting{
 		MetricName: "VolumeConsumedReadWriteOps", Statistics: "Sum",
-		CalcFunc: func(val float64, period float64) float64 { return val },
+		CalcFunc: value,
 	},
 	"ec2.ebs.burst_balance.#.burst_balance": cloudWatchSetting{
 		MetricName: "BurstBalance", Statistics: "Average",
-		CalcFunc: func(val float64, period float64) float64 { return val },
+		CalcFunc: value,
 	},
 }
 
@@ -175,14 +191,17 @@ var stderrLogger *log.Logger
 
 // EBSPlugin mackerel plugin for ebs
 type EBSPlugin struct {
+	// command line options
 	Region          string
 	AccessKeyID     string
 	SecretAccessKey string
 	InstanceID      string
-	Credentials     *credentials.Credentials
-	EC2             *ec2.EC2
-	CloudWatch      *cloudwatch.CloudWatch
-	Volumes         []*ec2.Volume
+
+	// internal states
+	Credentials *credentials.Credentials
+	EC2         *ec2.EC2
+	CloudWatch  *cloudwatch.CloudWatch
+	Volumes     []*ec2.Volume
 }
 
 func (p *EBSPlugin) prepare() error {
@@ -218,7 +237,7 @@ func (p *EBSPlugin) prepare() error {
 
 var errNoDataPoint = errors.New("fetched no datapoints")
 
-func (p EBSPlugin) getLastPoint(vol *ec2.Volume, metricName string, statType string) (float64, int, error) {
+func (p EBSPlugin) getLastPoint(vol *ec2.Volume, metricName string, statType string) (float64, error) {
 	now := time.Now()
 
 	period := metricPeriodDefault
@@ -237,17 +256,17 @@ func (p EBSPlugin) getLastPoint(vol *ec2.Volume, metricName string, statType str
 		StartTime:  &start,
 		EndTime:    &now,
 		MetricName: &metricName,
-		Period:     aws.Int64(60),
+		Period:     aws.Int64(aggregationPeriod),
 		Statistics: []*string{&statType},
 		Namespace:  aws.String("AWS/EBS"),
 	})
 	if err != nil {
-		return 0, 0, err
+		return 0, err
 	}
 
 	datapoints := resp.Datapoints
 	if len(datapoints) == 0 {
-		return 0, 0, errNoDataPoint
+		return 0, errNoDataPoint
 	}
 
 	latest := time.Unix(0, 0)
@@ -266,7 +285,7 @@ func (p EBSPlugin) getLastPoint(vol *ec2.Volume, metricName string, statType str
 		}
 	}
 
-	return latestVal, period, nil
+	return latestVal, nil
 }
 
 // FetchMetrics fetch the metrics
@@ -285,7 +304,7 @@ func (p EBSPlugin) FetchMetrics() (map[string]interface{}, error) {
 			for _, metric := range graphdef[graphName].Metrics {
 				metricKey := graphName + "." + metric.Name
 				cloudwatchdef := cloudwatchdefs[metricKey]
-				val, period, err := p.getLastPoint(vol, cloudwatchdef.MetricName, cloudwatchdef.Statistics)
+				val, err := p.getLastPoint(vol, cloudwatchdef.MetricName, cloudwatchdef.Statistics)
 				if err != nil {
 					retErr := errors.New(volumeID + " " + err.Error() + ":" + cloudwatchdef.MetricName)
 					if err == errNoDataPoint {
@@ -294,7 +313,7 @@ func (p EBSPlugin) FetchMetrics() (map[string]interface{}, error) {
 						return nil, retErr
 					}
 				} else {
-					stat[strings.Replace(metricKey, "#", volumeID, -1)] = cloudwatchdef.CalcFunc(val, float64(period))
+					stat[strings.Replace(metricKey, "#", volumeID, -1)] = cloudwatchdef.CalcFunc(val)
 				}
 			}
 		}
