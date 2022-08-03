@@ -3,6 +3,7 @@ package mpawsec2ebs
 import (
 	"errors"
 	"flag"
+	"fmt"
 	"log"
 	"strings"
 	"time"
@@ -43,10 +44,17 @@ var io1Graphs = append([]string{
 	"ec2.ebs.consumed_ops.#",
 }, baseGraphs...)
 
+type additionalCloudWatchSetting struct {
+	MetricName string
+	Statistics string
+	CalcFunc   func(float64, float64) float64
+}
+
 type cloudWatchSetting struct {
 	MetricName string
 	Statistics string
 	CalcFunc   func(float64) float64
+	Additional *additionalCloudWatchSetting
 }
 
 func value(val float64) float64 {
@@ -59,6 +67,10 @@ func valuePerSec(val float64) float64 {
 
 func sec2msec(val float64) float64 {
 	return val * 1000
+}
+
+func valPerOps(val, ops float64) float64 {
+	return val / ops
 }
 
 // http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/monitoring-volume-status.html
@@ -114,6 +126,37 @@ var cloudwatchdefs = map[string](cloudWatchSetting){
 	"ec2.ebs.burst_balance.#.burst_balance": cloudWatchSetting{
 		MetricName: "BurstBalance", Statistics: "Average",
 		CalcFunc: value,
+	},
+}
+
+var cloudwatchdefsNitro = map[string](cloudWatchSetting){
+	"ec2.ebs.size_per_op.#.read": cloudWatchSetting{
+		MetricName: "VolumeReadBytes", Statistics: "Sum",
+		Additional: &additionalCloudWatchSetting{
+			MetricName: "VolumeReadOps", Statistics: "Sum",
+			CalcFunc: valPerOps,
+		},
+	},
+	"ec2.ebs.size_per_op.#.write": cloudWatchSetting{
+		MetricName: "VolumeWriteBytes", Statistics: "Sum",
+		Additional: &additionalCloudWatchSetting{
+			MetricName: "VolumeWriteOps", Statistics: "Sum",
+			CalcFunc: valPerOps,
+		},
+	},
+	"ec2.ebs.latency.#.read": cloudWatchSetting{
+		MetricName: "VolumeTotalReadTime", Statistics: "Sum",
+		Additional: &additionalCloudWatchSetting{
+			MetricName: "VolumeReadOps", Statistics: "Sum",
+			CalcFunc: valPerOps,
+		},
+	},
+	"ec2.ebs.latency.#.write": cloudWatchSetting{
+		MetricName: "VolumeTotalWriteTime", Statistics: "Sum",
+		Additional: &additionalCloudWatchSetting{
+			MetricName: "VolumeWriteOps", Statistics: "Sum",
+			CalcFunc: valPerOps,
+		},
 	},
 }
 
@@ -202,6 +245,7 @@ type EBSPlugin struct {
 	EC2         *ec2.EC2
 	CloudWatch  *cloudwatch.CloudWatch
 	Volumes     []*ec2.Volume
+	Hypervisor  string
 }
 
 func (p *EBSPlugin) prepare() error {
@@ -210,6 +254,36 @@ func (p *EBSPlugin) prepare() error {
 	}
 
 	p.EC2 = ec2.New(session.New(&aws.Config{Credentials: p.Credentials, Region: &p.Region}))
+
+	var instanceType string
+	instance, err := p.EC2.DescribeInstances(&ec2.DescribeInstancesInput{
+		InstanceIds: []*string{&p.InstanceID},
+	})
+	if err != nil {
+		return err
+	}
+	if instance.NextToken != nil {
+		return errors.New("DescribeInstances response has NextToken")
+	}
+	for i := range instance.Reservations {
+		for j := range instance.Reservations[i].Instances {
+			instanceType = *instance.Reservations[i].Instances[j].InstanceType
+		}
+	}
+
+	instanceDetail, err := p.EC2.DescribeInstanceTypes(&ec2.DescribeInstanceTypesInput{
+		InstanceTypes: []*string{&instanceType},
+	})
+	if err != nil {
+		return err
+	}
+	if instanceDetail.NextToken != nil {
+		return errors.New("DescribeInstanceTypes response has NextToken")
+	}
+	for i := range instanceDetail.InstanceTypes {
+		p.Hypervisor = *instanceDetail.InstanceTypes[i].Hypervisor
+	}
+
 	resp, err := p.EC2.DescribeVolumes(&ec2.DescribeVolumesInput{
 		Filters: []*ec2.Filter{
 			{
@@ -288,9 +362,34 @@ func (p EBSPlugin) getLastPoint(vol *ec2.Volume, metricName string, statType str
 	return latestVal, nil
 }
 
+func (p EBSPlugin) fetch(volume *ec2.Volume, setting cloudWatchSetting) (float64, error) {
+	val, err := p.getLastPoint(volume, setting.MetricName, setting.Statistics)
+	if err != nil {
+		return 0, fmt.Errorf("%s %w : %s", *volume.VolumeId, err, setting.MetricName)
+	}
+
+	if setting.Additional == nil {
+		return setting.CalcFunc(val), nil
+	}
+
+	val2, err := p.getLastPoint(volume, setting.Additional.MetricName, setting.Additional.Statistics)
+	if err != nil {
+		return 0, fmt.Errorf("%s %w : %s", *volume.VolumeId, err, setting.Additional.MetricName)
+	}
+	return setting.Additional.CalcFunc(val, val2), nil
+}
+
 // FetchMetrics fetch the metrics
 func (p EBSPlugin) FetchMetrics() (map[string]interface{}, error) {
 	stat := make(map[string]interface{})
+
+	// Override when Nitro instance.
+	if p.Hypervisor == "nitro" {
+		for i := range cloudwatchdefsNitro {
+			cloudwatchdefs[i] = cloudwatchdefsNitro[i]
+		}
+	}
+
 	p.CloudWatch = cloudwatch.New(session.New(&aws.Config{Credentials: p.Credentials, Region: &p.Region}))
 	for _, vol := range p.Volumes {
 		volumeID := normalizeVolumeID(*vol.VolumeId)
@@ -304,16 +403,15 @@ func (p EBSPlugin) FetchMetrics() (map[string]interface{}, error) {
 			for _, metric := range graphdef[graphName].Metrics {
 				metricKey := graphName + "." + metric.Name
 				cloudwatchdef := cloudwatchdefs[metricKey]
-				val, err := p.getLastPoint(vol, cloudwatchdef.MetricName, cloudwatchdef.Statistics)
+				val, err := p.fetch(vol, cloudwatchdef)
 				if err != nil {
-					retErr := errors.New(volumeID + " " + err.Error() + ":" + cloudwatchdef.MetricName)
-					if err == errNoDataPoint {
+					if errors.Is(err, errNoDataPoint) {
 						// nop
 					} else {
-						return nil, retErr
+						return nil, err
 					}
 				} else {
-					stat[strings.Replace(metricKey, "#", volumeID, -1)] = cloudwatchdef.CalcFunc(val)
+					stat[strings.Replace(metricKey, "#", volumeID, -1)] = val
 				}
 			}
 		}
