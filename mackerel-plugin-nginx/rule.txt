@@ -1,0 +1,7 @@
+nginx.connections.connections	>=0
+nginx.requests.accepts	>=0
+nginx.requests.handled	>=0
+nginx.requests.requests	>=0
+nginx.queue.reading	>=0
+nginx.queue.writing	>=0
+nginx.queue.waiting	>=0
