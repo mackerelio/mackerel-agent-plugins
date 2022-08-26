@@ -1,0 +1,4 @@
+plack.workers.busy_workers	>=0
+plack.workers.idle_workers	>=0
+plack.req.requests	>=0
+plack.bytes.bytes_sent	>=0

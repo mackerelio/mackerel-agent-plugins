@@ -1,0 +1,2 @@
+requires "Plack", ">= 1.0048";
+requires "Plack::Middleware::ServerStatus::Lite", "0.36";
