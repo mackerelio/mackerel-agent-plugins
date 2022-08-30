@@ -6,13 +6,8 @@ import (
 	"strings"
 
 	mp "github.com/mackerelio/go-mackerel-plugin-helper"
-	"github.com/mackerelio/golib/logging"
 	td "github.com/mattn/go-treasuredata"
 )
-
-var logger = logging.GetLogger("metrics.plugin.td-table")
-
-var tableNames = []string{}
 
 // TDTablePlugin mackerel plugin for td
 type TDTablePlugin struct {

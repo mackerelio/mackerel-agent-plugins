@@ -13,10 +13,7 @@ import (
 	"strings"
 
 	mp "github.com/mackerelio/go-mackerel-plugin-helper"
-	"github.com/mackerelio/golib/logging"
 )
-
-var logger = logging.GetLogger("metrics.plugin.fluentd")
 
 func metricName(names ...string) string {
 	return strings.Join(names, ".")
