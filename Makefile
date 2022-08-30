@@ -9,7 +9,7 @@ BINDIR  = build/$(GOOS)/$(GOARCH)
 export GO111MODULE=on
 
 .PHONY: all
-all: lint cover testconvention rpm deb
+all: cover testconvention rpm deb
 
 .SECONDEXPANSION:
 $(BINDIR)/mackerel-plugin-%: mackerel-plugin-%/main.go $$(wildcard mackerel-plugin-%/lib/*.go)
@@ -32,7 +32,7 @@ depends_on:
 	@:
 
 .PHONY: test
-test: testgo lint testconvention
+test: testgo testconvention
 	./test.bash
 
 .PHONY: testgo
@@ -47,13 +47,12 @@ testconvention:
 
 .PHONY: testdeps
 testdeps:
-	cd && go get golang.org/x/lint/golint \
-	  golang.org/x/tools/cmd/cover \
+	cd && go get golang.org/x/tools/cmd/cover \
 	  github.com/mattn/goveralls
 
 .PHONY: lint
-lint: testdeps
-	golint -set_exit_status ./...
+lint:
+	golangci-lint run
 
 .PHONY: cover
 cover: testdeps
