@@ -255,15 +255,14 @@ func TestGraphDefinition(t *testing.T) {
 }
 
 func TestFetchMetricsPostfix(t *testing.T) {
+	cwd, _ := os.Getwd()
+
 	plugin := plugin{
 		mailq:       mailqFormats["postfix"],
+		path:        cwd + "/fixtures/postqueue",
 		keyPrefix:   "mailq",
 		labelPrefix: "Mailq",
 	}
-
-	origPath := os.Getenv("PATH")
-	os.Setenv("PATH", "./fixtures:/bin:/usr/bin")
-	defer os.Setenv("PATH", origPath)
 
 	{
 		os.Setenv("TEST_MAILQ_COUNT", "42")
