@@ -9,7 +9,7 @@ BINDIR  = build/$(GOOS)/$(GOARCH)
 export GO111MODULE=on
 
 .PHONY: all
-all: cover testconvention rpm deb
+all: testconvention rpm deb
 
 .SECONDEXPANSION:
 $(BINDIR)/mackerel-plugin-%: mackerel-plugin-%/main.go $$(wildcard mackerel-plugin-%/lib/*.go)
@@ -36,7 +36,7 @@ test: testgo testconvention
 	./test.bash
 
 .PHONY: testgo
-testgo: testdeps
+testgo:
 	go test $(VERBOSE_FLAG) ./...
 
 .PHONY: testconvention
@@ -45,19 +45,9 @@ testconvention:
 	go generate ./... && git diff --exit-code -- . ':(exclude)go.*' || \
 	  (echo 'please `go generate ./...` and commit them' && false)
 
-.PHONY: testdeps
-testdeps:
-	cd && go get golang.org/x/tools/cmd/cover \
-	  github.com/mattn/goveralls
-
 .PHONY: lint
 lint:
 	golangci-lint run
-
-.PHONY: cover
-cover: testdeps
-	#go test -race -covermode=atomic -coverprofile=.profile.cov ./...
-	go test -covermode=atomic -coverprofile=.profile.cov ./...
 
 .PHONY: rpm
 rpm: rpm-v1 rpm-v2
