@@ -12,7 +12,6 @@ import (
 
 // WindowsServerSessionsPlugin store the name of servers
 type WindowsServerSessionsPlugin struct {
-	names []string
 }
 
 func getCounts() (map[string]int, error) {
