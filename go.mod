@@ -1,6 +1,6 @@
 module github.com/mackerelio/mackerel-agent-plugins
 
-go 1.16
+go 1.18
 
 require (
 	github.com/Songmu/axslogparser v1.4.0
@@ -20,7 +20,6 @@ require (
 	github.com/jarcoal/httpmock v1.1.0
 	github.com/jmoiron/sqlx v1.3.5
 	github.com/lestrrat-go/tcptest v0.0.0-20180223004312-f0345789c593
-	github.com/lestrrat-go/tcputil v0.0.0-20180223003554-d3c7f98154fb // indirect
 	github.com/lib/pq v1.10.5
 	github.com/mackerelio/go-mackerel-plugin v0.1.3
 	github.com/mackerelio/go-mackerel-plugin-helper v0.1.1
@@ -38,11 +37,62 @@ require (
 	github.com/michaelklishin/rabbit-hole v1.5.0
 	github.com/montanaflynn/stats v0.6.6
 	github.com/soh335/go-test-redisserver v0.1.0
-	github.com/streadway/amqp v0.0.0-20190827072141-edfb9018d271 // indirect
 	github.com/stretchr/testify v1.8.0
 	github.com/tomasen/fcgi_client v0.0.0-20180423082037-2bb3d819fd19
 	github.com/urfave/cli v1.22.9
 	github.com/ziutek/mymysql v1.5.4
 	golang.org/x/sync v0.0.0-20210220032951-036812b2e83c
 	layeh.com/gumble v0.0.0-20200818122324-146f9205029b
+)
+
+require (
+	cloud.google.com/go v0.65.0 // indirect
+	github.com/Azure/go-ansiterm v0.0.0-20210617225240-d185dfc1b5a1 // indirect
+	github.com/Azure/go-ntlmssp v0.0.0-20211209120228-48547f28849e // indirect
+	github.com/Microsoft/go-winio v0.5.2 // indirect
+	github.com/Microsoft/hcsshim v0.9.3 // indirect
+	github.com/Songmu/go-ltsv v0.0.0-20181014062614-c30af2b7b171 // indirect
+	github.com/Songmu/wrapcommander v0.1.0 // indirect
+	github.com/containerd/cgroups v1.0.3 // indirect
+	github.com/containerd/containerd v1.6.6 // indirect
+	github.com/cpuguy83/go-md2man/v2 v2.0.0 // indirect
+	github.com/davecgh/go-spew v1.1.1 // indirect
+	github.com/docker/docker v20.10.17+incompatible // indirect
+	github.com/docker/go-connections v0.4.0 // indirect
+	github.com/docker/go-units v0.4.0 // indirect
+	github.com/go-asn1-ber/asn1-ber v1.5.4 // indirect
+	github.com/go-ole/go-ole v1.2.5 // indirect
+	github.com/gogo/protobuf v1.3.2 // indirect
+	github.com/golang/groupcache v0.0.0-20210331224755-41bb18bfe9da // indirect
+	github.com/golang/protobuf v1.5.2 // indirect
+	github.com/googleapis/gax-go/v2 v2.0.5 // indirect
+	github.com/jmespath/go-jmespath v0.4.0 // indirect
+	github.com/lestrrat-go/tcputil v0.0.0-20180223003554-d3c7f98154fb // indirect
+	github.com/moby/sys/mount v0.3.3 // indirect
+	github.com/moby/sys/mountinfo v0.6.2 // indirect
+	github.com/moby/term v0.0.0-20210619224110-3f7ff695adc6 // indirect
+	github.com/morikuni/aec v1.0.0 // indirect
+	github.com/opencontainers/go-digest v1.0.0 // indirect
+	github.com/opencontainers/image-spec v1.0.3-0.20211202183452-c5a74bcca799 // indirect
+	github.com/opencontainers/runc v1.1.2 // indirect
+	github.com/pkg/errors v0.9.1 // indirect
+	github.com/pmezard/go-difflib v1.0.0 // indirect
+	github.com/russross/blackfriday/v2 v2.0.1 // indirect
+	github.com/shurcooL/sanitized_anchor_name v1.0.0 // indirect
+	github.com/sirupsen/logrus v1.8.1 // indirect
+	github.com/streadway/amqp v0.0.0-20190827072141-edfb9018d271 // indirect
+	go.opencensus.io v0.23.0 // indirect
+	golang.org/x/crypto v0.0.0-20220331220935-ae2d96664a29 // indirect
+	golang.org/x/lint v0.0.0-20200302205851-738671d3881b // indirect
+	golang.org/x/net v0.0.0-20220127200216-cd36cc0744dd // indirect
+	golang.org/x/oauth2 v0.0.0-20210819190943-2bc19b11175f // indirect
+	golang.org/x/sys v0.0.0-20220520151302-bc2c85ada10a // indirect
+	golang.org/x/text v0.3.7 // indirect
+	golang.org/x/tools v0.1.5 // indirect
+	google.golang.org/api v0.30.0 // indirect
+	google.golang.org/appengine v1.6.7 // indirect
+	google.golang.org/genproto v0.0.0-20211208223120-3a66f561d7aa // indirect
+	google.golang.org/grpc v1.43.0 // indirect
+	google.golang.org/protobuf v1.27.1 // indirect
+	gopkg.in/yaml.v3 v3.0.1 // indirect
 )
