@@ -2,6 +2,7 @@ package mpmailq
 
 import (
 	"os"
+	"path/filepath"
 	"strings"
 	"testing"
 )
@@ -259,7 +260,7 @@ func TestFetchMetricsPostfix(t *testing.T) {
 
 	plugin := plugin{
 		mailq:       mailqFormats["postfix"],
-		path:        cwd + "/fixtures/postqueue",
+		path:        filepath.Join(cwd, "/fixtures/postqueue"),
 		keyPrefix:   "mailq",
 		labelPrefix: "Mailq",
 	}
@@ -283,7 +284,7 @@ func TestFetchMetricsQmail(t *testing.T) {
 
 	plugin := plugin{
 		mailq:       mailqFormats["qmail"],
-		path:        cwd + "/fixtures/qmail/qmail-qstat",
+		path:        filepath.Join(cwd, "/fixtures/qmail/qmail-qstat"),
 		keyPrefix:   "mailq",
 		labelPrefix: "Mailq",
 	}
