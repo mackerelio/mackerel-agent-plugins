@@ -6,12 +6,6 @@ linters:
     - errcheck
     - ineffassign
     - staticcheck
-linters-settings:
-  govet:
-#   enable-all: true
-    disable:
-      # Detected a number of cases that could not be handled after the switchover,
-      # TODO remove this rule.
 issues:
   exclude-rules:
     - path: _test\.go
