@@ -2,6 +2,7 @@ package mpmailq
 
 import (
 	"os"
+	"path/filepath"
 	"strings"
 	"testing"
 )
@@ -255,15 +256,14 @@ func TestGraphDefinition(t *testing.T) {
 }
 
 func TestFetchMetricsPostfix(t *testing.T) {
+	cwd, _ := os.Getwd()
+
 	plugin := plugin{
 		mailq:       mailqFormats["postfix"],
+		path:        filepath.Join(cwd, "fixtures/postqueue"),
 		keyPrefix:   "mailq",
 		labelPrefix: "Mailq",
 	}
-
-	origPath := os.Getenv("PATH")
-	os.Setenv("PATH", "./fixtures:/bin:/usr/bin")
-	defer os.Setenv("PATH", origPath)
 
 	{
 		os.Setenv("TEST_MAILQ_COUNT", "42")
@@ -284,7 +284,7 @@ func TestFetchMetricsQmail(t *testing.T) {
 
 	plugin := plugin{
 		mailq:       mailqFormats["qmail"],
-		path:        cwd + "/fixtures/qmail/qmail-qstat",
+		path:        filepath.Join(cwd, "fixtures/qmail/qmail-qstat"),
 		keyPrefix:   "mailq",
 		labelPrefix: "Mailq",
 	}

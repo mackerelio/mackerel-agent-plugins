@@ -8,14 +8,10 @@ import (
 	"strings"
 
 	mp "github.com/mackerelio/go-mackerel-plugin-helper"
-	"github.com/mackerelio/golib/logging"
 )
-
-var logger = logging.GetLogger("metrics.plugin.windows-server-sessions")
 
 // WindowsServerSessionsPlugin store the name of servers
 type WindowsServerSessionsPlugin struct {
-	names []string
 }
 
 func getCounts() (map[string]int, error) {

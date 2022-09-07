@@ -8,10 +8,7 @@ import (
 	"strings"
 
 	mp "github.com/mackerelio/go-mackerel-plugin-helper"
-	"github.com/mackerelio/golib/logging"
 )
-
-var logger = logging.GetLogger("metrics.plugin.redash")
 
 // RedashPlugin mackerel plugin
 type RedashPlugin struct {

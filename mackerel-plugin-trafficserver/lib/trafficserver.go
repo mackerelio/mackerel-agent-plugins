@@ -3,8 +3,6 @@ package mptrafficserver
 import (
 	"bytes"
 	"flag"
-	"log"
-	"os"
 	"os/exec"
 	"strconv"
 	"strings"
@@ -109,15 +107,6 @@ func getDataWithCommand() (*string, error) {
 // GraphDefinition interface for mackerelplugin
 func (m TrafficserverPlugin) GraphDefinition() map[string]mp.Graphs {
 	return graphdef
-}
-
-var stderrLogger *log.Logger
-
-func getStderrLogger() *log.Logger {
-	if stderrLogger == nil {
-		stderrLogger = log.New(os.Stderr, "", log.LstdFlags)
-	}
-	return stderrLogger
 }
 
 // Do the plugin

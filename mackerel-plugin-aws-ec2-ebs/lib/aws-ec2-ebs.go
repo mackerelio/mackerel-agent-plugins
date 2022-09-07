@@ -230,8 +230,6 @@ var graphdef = map[string]mp.Graphs{
 	},
 }
 
-var stderrLogger *log.Logger
-
 // EBSPlugin mackerel plugin for ebs
 type EBSPlugin struct {
 	// command line options
