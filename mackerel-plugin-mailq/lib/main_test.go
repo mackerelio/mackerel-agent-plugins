@@ -260,7 +260,7 @@ func TestFetchMetricsPostfix(t *testing.T) {
 
 	plugin := plugin{
 		mailq:       mailqFormats["postfix"],
-		path:        filepath.Join(cwd, "/fixtures/postqueue"),
+		path:        filepath.Join(cwd, "fixtures/postqueue"),
 		keyPrefix:   "mailq",
 		labelPrefix: "Mailq",
 	}
@@ -284,7 +284,7 @@ func TestFetchMetricsQmail(t *testing.T) {
 
 	plugin := plugin{
 		mailq:       mailqFormats["qmail"],
-		path:        filepath.Join(cwd, "/fixtures/qmail/qmail-qstat"),
+		path:        filepath.Join(cwd, "fixtures/qmail/qmail-qstat"),
 		keyPrefix:   "mailq",
 		labelPrefix: "Mailq",
 	}
