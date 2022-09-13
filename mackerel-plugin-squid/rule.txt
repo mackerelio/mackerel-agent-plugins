@@ -1,0 +1,14 @@
+squid.cache_storage_usage.swap_used_ratio	>=0
+squid.cache_storage_usage.memory_used_ratio	>=0
+squid.file_descriptor_usage.total_fd	>=0
+squid.file_descriptor_usage.max_fd	>=0
+squid.file_descriptor_usage.current_fd	>=0
+squid.file_descriptor_usage.avail_fd	>=0
+squid.file_descriptor_usage.reserved_fd	>=0
+squid.file_descriptor_usage.open_files	>=0
+squid.file_descriptor_usage.queued_files	>=0
+squid.memory_account_for.memory_poll_alloc	>=0
+squid.memory_account_for.memory_poll_free	>=0
+squid.requests.requests	>=0
+squid.cache_hit_ratio.5min.request_ratio	>=0
+squid.cpu_usage_ratio.5min.cpu_usage	>=0

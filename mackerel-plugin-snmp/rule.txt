@@ -1,0 +1,2 @@
+snmp.hrSystemNumUsers	>=0
+snmp.hrSystemProcesses	>=0
