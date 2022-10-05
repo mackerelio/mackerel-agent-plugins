@@ -20,7 +20,7 @@ require (
 	github.com/jarcoal/httpmock v1.1.0
 	github.com/jmoiron/sqlx v1.3.5
 	github.com/lestrrat-go/tcptest v0.0.0-20180223004312-f0345789c593
-	github.com/lib/pq v1.10.5
+	github.com/lib/pq v1.10.7
 	github.com/mackerelio/go-mackerel-plugin v0.1.3
 	github.com/mackerelio/go-mackerel-plugin-helper v0.1.1
 	github.com/mackerelio/go-osstat v0.2.2
