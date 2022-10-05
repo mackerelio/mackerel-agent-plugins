@@ -39,7 +39,7 @@ require (
 	github.com/soh335/go-test-redisserver v0.1.0
 	github.com/stretchr/testify v1.8.0
 	github.com/tomasen/fcgi_client v0.0.0-20180423082037-2bb3d819fd19
-	github.com/urfave/cli v1.22.9
+	github.com/urfave/cli v1.22.10
 	github.com/ziutek/mymysql v1.5.4
 	golang.org/x/sync v0.0.0-20210220032951-036812b2e83c
 	layeh.com/gumble v0.0.0-20200818122324-146f9205029b
