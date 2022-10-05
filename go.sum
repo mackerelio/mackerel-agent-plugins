@@ -541,8 +541,8 @@ github.com/mackerelio/go-mackerel-plugin v0.1.4 h1:+kyatPMFSoghKd7o9oge1FnDrVknF
 github.com/mackerelio/go-mackerel-plugin v0.1.4/go.mod h1:bau0bZbR1JXiCwDIg880djjttZ/0j885v5k0n+jAS/I=
 github.com/mackerelio/go-mackerel-plugin-helper v0.1.1 h1:OU/Gbr7sVA2tZxgjurQLXWed8DOU9Pf3ZnTvqeT/mEI=
 github.com/mackerelio/go-mackerel-plugin-helper v0.1.1/go.mod h1:B/n10G3NUumraiwSxLqyfoNuBNAwsOJ8coc12+pcO8E=
-github.com/mackerelio/go-osstat v0.2.2 h1:7jVyXGXTkQL3+6lDVUDBY+Fpo8VQPfyOkZeXxxsXX4c=
-github.com/mackerelio/go-osstat v0.2.2/go.mod h1:G2A1f01HIHVRhMdS1qnigXxS6C8ahppy5lCwBrbRp0s=
+github.com/mackerelio/go-osstat v0.2.3 h1:jAMXD5erlDE39kdX2CU7YwCGRcxIO33u/p8+Fhe5dJw=
+github.com/mackerelio/go-osstat v0.2.3/go.mod h1:DQbPOnsss9JHIXgBStc/dnhhir3gbd3YH+Dbdi7ptMA=
 github.com/mackerelio/golib v0.0.0-20190411032134-c87047ca454e/go.mod h1:kbqYA8VcFqcMt07v+GPSZQwqtwc7Wr0V0vzxUNMrk7E=
 github.com/mackerelio/golib v1.0.0/go.mod h1:Udb4zyFG2ui7TNTMOX8In0U8AT4woLu53/46ncRwNzE=
 github.com/mackerelio/golib v1.2.1 h1:SDcDn6Jw3p9bi1N0bg1Z/ilG5qcBB23qL8xNwrU0gg4=
