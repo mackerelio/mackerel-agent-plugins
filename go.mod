@@ -9,7 +9,7 @@ require (
 	github.com/StackExchange/wmi v1.2.1
 	github.com/aws/aws-sdk-go v1.44.116
 	github.com/erikstmartin/go-testdb v0.0.0-20160219214506-8d10e4a1bae5
-	github.com/fsouza/go-dockerclient v1.8.3
+	github.com/fsouza/go-dockerclient v1.9.0
 	github.com/fukata/golang-stats-api-handler v1.0.0
 	github.com/globalsign/mgo v0.0.0-20181015135952-eeefdecb41b8
 	github.com/go-ldap/ldap/v3 v3.4.4
@@ -41,7 +41,7 @@ require (
 	github.com/tomasen/fcgi_client v0.0.0-20180423082037-2bb3d819fd19
 	github.com/urfave/cli v1.22.10
 	github.com/ziutek/mymysql v1.5.4
-	golang.org/x/sync v0.0.0-20210220032951-036812b2e83c
+	golang.org/x/sync v0.0.0-20220722155255-886fb9371eb4
 	layeh.com/gumble v0.0.0-20200818122324-146f9205029b
 )
 
@@ -49,7 +49,7 @@ require (
 	cloud.google.com/go v0.65.0 // indirect
 	github.com/Azure/go-ansiterm v0.0.0-20210617225240-d185dfc1b5a1 // indirect
 	github.com/Azure/go-ntlmssp v0.0.0-20220621081337-cb9428e4ac1e // indirect
-	github.com/Microsoft/go-winio v0.5.2 // indirect
+	github.com/Microsoft/go-winio v0.6.0 // indirect
 	github.com/Microsoft/hcsshim v0.9.3 // indirect
 	github.com/Songmu/go-ltsv v0.0.0-20181014062614-c30af2b7b171 // indirect
 	github.com/Songmu/wrapcommander v0.1.0 // indirect
@@ -57,9 +57,9 @@ require (
 	github.com/containerd/containerd v1.6.6 // indirect
 	github.com/cpuguy83/go-md2man/v2 v2.0.0 // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect
-	github.com/docker/docker v20.10.17+incompatible // indirect
+	github.com/docker/docker v20.10.19+incompatible // indirect
 	github.com/docker/go-connections v0.4.0 // indirect
-	github.com/docker/go-units v0.4.0 // indirect
+	github.com/docker/go-units v0.5.0 // indirect
 	github.com/go-asn1-ber/asn1-ber v1.5.4 // indirect
 	github.com/go-ole/go-ole v1.2.5 // indirect
 	github.com/gogo/protobuf v1.3.2 // indirect
@@ -84,11 +84,12 @@ require (
 	go.opencensus.io v0.23.0 // indirect
 	golang.org/x/crypto v0.0.0-20220622213112-05595931fe9d // indirect
 	golang.org/x/lint v0.0.0-20200302205851-738671d3881b // indirect
-	golang.org/x/net v0.0.0-20220127200216-cd36cc0744dd // indirect
+	golang.org/x/mod v0.6.0-dev.0.20220419223038-86c51ed26bb4 // indirect
+	golang.org/x/net v0.0.0-20220722155237-a158d28d115b // indirect
 	golang.org/x/oauth2 v0.0.0-20210819190943-2bc19b11175f // indirect
-	golang.org/x/sys v0.0.0-20220520151302-bc2c85ada10a // indirect
+	golang.org/x/sys v0.0.0-20220722155257-8c9f86f7a55f // indirect
 	golang.org/x/text v0.3.7 // indirect
-	golang.org/x/tools v0.1.5 // indirect
+	golang.org/x/tools v0.1.12 // indirect
 	google.golang.org/api v0.30.0 // indirect
 	google.golang.org/appengine v1.6.7 // indirect
 	google.golang.org/genproto v0.0.0-20211208223120-3a66f561d7aa // indirect
