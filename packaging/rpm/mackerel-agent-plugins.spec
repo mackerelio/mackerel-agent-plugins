@@ -48,6 +48,25 @@ done
 %{__oldtargetdir}/*
 
 %changelog
+* Thu Oct 20 2022 <mackerel-developers@hatena.ne.jp> - 0.72.2
+- Bump github.com/aws/aws-sdk-go from 1.44.56 to 1.44.116 (by dependabot[bot])
+- Bump github.com/fsouza/go-dockerclient from 1.8.3 to 1.9.0 (by dependabot[bot])
+- added timeout on lint (by yseto)
+- Bump github.com/urfave/cli from 1.22.9 to 1.22.10 (by dependabot[bot])
+- Bump github.com/lib/pq from 1.10.5 to 1.10.7 (by dependabot[bot])
+- [uptime] Add tests (by wafuwafu13)
+- go.mod from 1.16 to 1.18 (by yseto)
+- Bump github.com/mackerelio/go-mackerel-plugin from 0.1.3 to 0.1.4 (by dependabot[bot])
+- Bump github.com/fsouza/go-dockerclient from 1.8.1 to 1.8.3 (by dependabot[bot])
+- Bump github.com/mackerelio/go-osstat from 0.2.2 to 0.2.3 (by dependabot[bot])
+- Improve test (by yseto)
+- Bump github.com/go-ldap/ldap/v3 from 3.4.3 to 3.4.4 (by dependabot[bot])
+- [aws-ec2-ebs] fix calcurate procedure of Nitro instance (by yseto)
+- [plugin-aws-ec2-ebs] fix misuse of period (by lufia)
+- Bump github.com/mackerelio/go-mackerel-plugin-helper from 0.1.1 to 0.1.2 (by dependabot[bot])
+- Bump github.com/gosnmp/gosnmp from 1.34.0 to 1.35.0 (by dependabot[bot])
+- Bump github.com/jarcoal/httpmock from 1.1.0 to 1.2.0 (by dependabot[bot])
+
 * Wed Jul 20 2022 <mackerel-developers@hatena.ne.jp> - 0.72.1
 - Bump github.com/aws/aws-sdk-go from 1.44.37 to 1.44.56 (by dependabot[bot])
 - Bump github.com/gomodule/redigo from 1.8.8 to 1.8.9 (by dependabot[bot])

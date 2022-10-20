@@ -1,5 +1,26 @@
 # Changelog
 
+## 0.72.2 (2022-10-20)
+
+* Bump github.com/aws/aws-sdk-go from 1.44.56 to 1.44.116 #942 (dependabot[bot])
+* Bump github.com/fsouza/go-dockerclient from 1.8.3 to 1.9.0 #941 (dependabot[bot])
+* added timeout on lint #935 (yseto)
+* Bump github.com/urfave/cli from 1.22.9 to 1.22.10 #933 (dependabot[bot])
+* Bump github.com/lib/pq from 1.10.5 to 1.10.7 #931 (dependabot[bot])
+* [uptime] Add tests #929 (wafuwafu13)
+* go.mod from 1.16 to 1.18 #928 (yseto)
+* Bump github.com/mackerelio/go-mackerel-plugin from 0.1.3 to 0.1.4 #927 (dependabot[bot])
+* Bump github.com/fsouza/go-dockerclient from 1.8.1 to 1.8.3 #925 (dependabot[bot])
+* Bump github.com/mackerelio/go-osstat from 0.2.2 to 0.2.3 #924 (dependabot[bot])
+* Improve test #923 (yseto)
+* Bump github.com/go-ldap/ldap/v3 from 3.4.3 to 3.4.4 #917 (dependabot[bot])
+* [aws-ec2-ebs] fix calcurate procedure of Nitro instance #916 (yseto)
+* [plugin-aws-ec2-ebs] fix misuse of period #915 (lufia)
+* Bump github.com/mackerelio/go-mackerel-plugin-helper from 0.1.1 to 0.1.2 #914 (dependabot[bot])
+* Bump github.com/gosnmp/gosnmp from 1.34.0 to 1.35.0 #889 (dependabot[bot])
+* Bump github.com/jarcoal/httpmock from 1.1.0 to 1.2.0 #883 (dependabot[bot])
+
+
 ## 0.72.1 (2022-07-20)
 
 * Bump github.com/aws/aws-sdk-go from 1.44.37 to 1.44.56 #910 (dependabot[bot])
