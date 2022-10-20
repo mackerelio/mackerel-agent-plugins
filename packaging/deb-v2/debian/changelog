@@ -1,3 +1,42 @@
+mackerel-agent-plugins (0.72.2-1.v2) stable; urgency=low
+
+  * Bump github.com/aws/aws-sdk-go from 1.44.56 to 1.44.116 (by dependabot[bot])
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/942>
+  * Bump github.com/fsouza/go-dockerclient from 1.8.3 to 1.9.0 (by dependabot[bot])
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/941>
+  * added timeout on lint (by yseto)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/935>
+  * Bump github.com/urfave/cli from 1.22.9 to 1.22.10 (by dependabot[bot])
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/933>
+  * Bump github.com/lib/pq from 1.10.5 to 1.10.7 (by dependabot[bot])
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/931>
+  * [uptime] Add tests (by wafuwafu13)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/929>
+  * go.mod from 1.16 to 1.18 (by yseto)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/928>
+  * Bump github.com/mackerelio/go-mackerel-plugin from 0.1.3 to 0.1.4 (by dependabot[bot])
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/927>
+  * Bump github.com/fsouza/go-dockerclient from 1.8.1 to 1.8.3 (by dependabot[bot])
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/925>
+  * Bump github.com/mackerelio/go-osstat from 0.2.2 to 0.2.3 (by dependabot[bot])
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/924>
+  * Improve test (by yseto)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/923>
+  * Bump github.com/go-ldap/ldap/v3 from 3.4.3 to 3.4.4 (by dependabot[bot])
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/917>
+  * [aws-ec2-ebs] fix calcurate procedure of Nitro instance (by yseto)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/916>
+  * [plugin-aws-ec2-ebs] fix misuse of period (by lufia)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/915>
+  * Bump github.com/mackerelio/go-mackerel-plugin-helper from 0.1.1 to 0.1.2 (by dependabot[bot])
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/914>
+  * Bump github.com/gosnmp/gosnmp from 1.34.0 to 1.35.0 (by dependabot[bot])
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/889>
+  * Bump github.com/jarcoal/httpmock from 1.1.0 to 1.2.0 (by dependabot[bot])
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/883>
+
+ -- mackerel <mackerel-developers@hatena.ne.jp>  Thu, 20 Oct 2022 02:19:25 +0000
+
 mackerel-agent-plugins (0.72.1-1.v2) stable; urgency=low
 
   * Bump github.com/aws/aws-sdk-go from 1.44.37 to 1.44.56 (by dependabot[bot])
