@@ -7,6 +7,7 @@ import (
 	"os"
 	"reflect"
 	"strconv"
+	"strings"
 	"time"
 
 	"github.com/globalsign/mgo"
@@ -18,93 +19,105 @@ import (
 
 var logger = logging.GetLogger("metrics.plugin.mongodb")
 
-var graphdef = map[string]mp.Graphs{
-	"mongodb.background_flushing": {
-		Label: "MongoDB Command",
-		Unit:  "float",
-		Metrics: []mp.Metrics{
-			{Name: "duration_ms", Label: "Duration in ms", Diff: true, Type: "uint64"},
+func (m MongoDBPlugin) defaultGraphdef() map[string]mp.Graphs {
+	labelPrefix := m.LabelPrefix()
+
+	return map[string]mp.Graphs{
+		"background_flushing": {
+			Label: labelPrefix + " Command",
+			Unit:  "float",
+			Metrics: []mp.Metrics{
+				{Name: "duration_ms", Label: "Duration in ms", Diff: true, Type: "uint64"},
+			},
 		},
-	},
-	"mongodb.connections": {
-		Label: "MongoDB Connections",
-		Unit:  "integer",
-		Metrics: []mp.Metrics{
-			{Name: "connections_current", Label: "current"},
+		"connections": {
+			Label: labelPrefix + " Connections",
+			Unit:  "integer",
+			Metrics: []mp.Metrics{
+				{Name: "connections_current", Label: "current"},
+			},
 		},
-	},
-	"mongodb.index_counters.btree": {
-		Label: "MongoDB Index Counters Btree",
-		Unit:  "integer",
-		Metrics: []mp.Metrics{
-			{Name: "btree_hits", Label: "hits", Diff: true, Type: "uint64"},
+		"index_counters.btree": {
+			Label: labelPrefix + " Index Counters Btree",
+			Unit:  "integer",
+			Metrics: []mp.Metrics{
+				{Name: "btree_hits", Label: "hits", Diff: true, Type: "uint64"},
+			},
 		},
-	},
-	"mongodb.opcounters": {
-		Label: "MongoDB opcounters",
-		Unit:  "integer",
-		Metrics: []mp.Metrics{
-			{Name: "opcounters_insert", Label: "Insert", Diff: true, Type: "uint64"},
-			{Name: "opcounters_query", Label: "Query", Diff: true, Type: "uint64"},
-			{Name: "opcounters_update", Label: "Update", Diff: true, Type: "uint64"},
-			{Name: "opcounters_delete", Label: "Delete", Diff: true, Type: "uint64"},
-			{Name: "opcounters_getmore", Label: "Getmore", Diff: true, Type: "uint64"},
-			{Name: "opcounters_command", Label: "Command", Diff: true, Type: "uint64"},
+		"opcounters": {
+			Label: labelPrefix + " opcounters",
+			Unit:  "integer",
+			Metrics: []mp.Metrics{
+				{Name: "opcounters_insert", Label: "Insert", Diff: true, Type: "uint64"},
+				{Name: "opcounters_query", Label: "Query", Diff: true, Type: "uint64"},
+				{Name: "opcounters_update", Label: "Update", Diff: true, Type: "uint64"},
+				{Name: "opcounters_delete", Label: "Delete", Diff: true, Type: "uint64"},
+				{Name: "opcounters_getmore", Label: "Getmore", Diff: true, Type: "uint64"},
+				{Name: "opcounters_command", Label: "Command", Diff: true, Type: "uint64"},
+			},
 		},
-	},
+	}
 }
 
-var graphdef30 = map[string]mp.Graphs{
-	"mongodb.background_flushing": {
-		Label: "MongoDB Command",
-		Unit:  "float",
-		Metrics: []mp.Metrics{
-			{Name: "duration_ms", Label: "Duration in ms", Diff: true, Type: "uint64"},
+func (m MongoDBPlugin) graphdef30() map[string]mp.Graphs {
+	labelPrefix := m.LabelPrefix()
+
+	return map[string]mp.Graphs{
+		"background_flushing": {
+			Label: labelPrefix + " Command",
+			Unit:  "float",
+			Metrics: []mp.Metrics{
+				{Name: "duration_ms", Label: "Duration in ms", Diff: true, Type: "uint64"},
+			},
 		},
-	},
-	"mongodb.connections": {
-		Label: "MongoDB Connections",
-		Unit:  "integer",
-		Metrics: []mp.Metrics{
-			{Name: "connections_current", Label: "current"},
+		"connections": {
+			Label: labelPrefix + " Connections",
+			Unit:  "integer",
+			Metrics: []mp.Metrics{
+				{Name: "connections_current", Label: "current"},
+			},
 		},
-	},
-	"mongodb.opcounters": {
-		Label: "MongoDB opcounters",
-		Unit:  "integer",
-		Metrics: []mp.Metrics{
-			{Name: "opcounters_insert", Label: "Insert", Diff: true, Type: "uint64"},
-			{Name: "opcounters_query", Label: "Query", Diff: true, Type: "uint64"},
-			{Name: "opcounters_update", Label: "Update", Diff: true, Type: "uint64"},
-			{Name: "opcounters_delete", Label: "Delete", Diff: true, Type: "uint64"},
-			{Name: "opcounters_getmore", Label: "Getmore", Diff: true, Type: "uint64"},
-			{Name: "opcounters_command", Label: "Command", Diff: true, Type: "uint64"},
+		"opcounters": {
+			Label: labelPrefix + " opcounters",
+			Unit:  "integer",
+			Metrics: []mp.Metrics{
+				{Name: "opcounters_insert", Label: "Insert", Diff: true, Type: "uint64"},
+				{Name: "opcounters_query", Label: "Query", Diff: true, Type: "uint64"},
+				{Name: "opcounters_update", Label: "Update", Diff: true, Type: "uint64"},
+				{Name: "opcounters_delete", Label: "Delete", Diff: true, Type: "uint64"},
+				{Name: "opcounters_getmore", Label: "Getmore", Diff: true, Type: "uint64"},
+				{Name: "opcounters_command", Label: "Command", Diff: true, Type: "uint64"},
+			},
 		},
-	},
+	}
 }
 
 //Adapt to version 3.2 or higher.
 //Check in version 3.6.
-var graphdef32 = map[string]mp.Graphs{
-	"mongodb.connections": {
-		Label: "MongoDB Connections",
-		Unit:  "integer",
-		Metrics: []mp.Metrics{
-			{Name: "connections_current", Label: "current"},
+func (m MongoDBPlugin) graphdef32() map[string]mp.Graphs {
+	labelPrefix := m.LabelPrefix()
+
+	return map[string]mp.Graphs{
+		"connections": {
+			Label: labelPrefix + " Connections",
+			Unit:  "integer",
+			Metrics: []mp.Metrics{
+				{Name: "connections_current", Label: "current"},
+			},
 		},
-	},
-	"mongodb.opcounters": {
-		Label: "MongoDB opcounters",
-		Unit:  "integer",
-		Metrics: []mp.Metrics{
-			{Name: "opcounters_insert", Label: "Insert", Diff: true, Type: "uint64"},
-			{Name: "opcounters_query", Label: "Query", Diff: true, Type: "uint64"},
-			{Name: "opcounters_update", Label: "Update", Diff: true, Type: "uint64"},
-			{Name: "opcounters_delete", Label: "Delete", Diff: true, Type: "uint64"},
-			{Name: "opcounters_getmore", Label: "Getmore", Diff: true, Type: "uint64"},
-			{Name: "opcounters_command", Label: "Command", Diff: true, Type: "uint64"},
+		"opcounters": {
+			Label: labelPrefix + " opcounters",
+			Unit:  "integer",
+			Metrics: []mp.Metrics{
+				{Name: "opcounters_insert", Label: "Insert", Diff: true, Type: "uint64"},
+				{Name: "opcounters_query", Label: "Query", Diff: true, Type: "uint64"},
+				{Name: "opcounters_update", Label: "Update", Diff: true, Type: "uint64"},
+				{Name: "opcounters_delete", Label: "Delete", Diff: true, Type: "uint64"},
+				{Name: "opcounters_getmore", Label: "Getmore", Diff: true, Type: "uint64"},
+				{Name: "opcounters_command", Label: "Command", Diff: true, Type: "uint64"},
+			},
 		},
-	},
+	}
 }
 
 var metricPlace22 = map[string][]string{
@@ -186,11 +199,12 @@ func getFloatValue(s map[string]interface{}, keys []string) (float64, error) {
 
 // MongoDBPlugin mackerel plugin for mongo
 type MongoDBPlugin struct {
-	URL      string
-	Username string
-	Password string
-	Source   string
-	Verbose  bool
+	URL       string
+	Username  string
+	Password  string
+	Source    string
+	KeyPrefix string
+	Verbose   bool
 }
 
 func (m MongoDBPlugin) fetchStatus() (bson.M, error) {
@@ -273,20 +287,34 @@ func (m MongoDBPlugin) parseStatus(serverStatus bson.M) (map[string]interface{},
 func (m MongoDBPlugin) GraphDefinition() map[string]mp.Graphs {
 	serverStatus, err := m.fetchStatus()
 	if err != nil {
-		return graphdef
+		return m.defaultGraphdef()
 	}
 
 	cv, err := version.NewVersion(m.getVersion(serverStatus))
 	if err != nil {
-		return graphdef
+		return m.defaultGraphdef()
 	}
 	if v, _ := version.NewVersion("3.2"); cv.Equal(v) || cv.GreaterThan(v) {
-		return graphdef32
+		return m.graphdef32()
 	} else if v, _ := version.NewVersion("3.0"); cv.Equal(v) || cv.GreaterThan(v) {
-		return graphdef30
+		return m.graphdef30()
 	}
 
-	return graphdef
+	return m.defaultGraphdef()
+}
+
+const defaultPrefix = "mongodb"
+
+// MetricKeyPrefix returns the metrics key prefix
+func (m MongoDBPlugin) MetricKeyPrefix() string {
+	if m.KeyPrefix == "" {
+		m.KeyPrefix = defaultPrefix
+	}
+	return m.KeyPrefix
+}
+
+func (m MongoDBPlugin) LabelPrefix() string {
+	return strings.Title(strings.Replace(m.MetricKeyPrefix(), defaultPrefix, "MongoDB", -1))
 }
 
 // Do the plugin
@@ -298,6 +326,7 @@ func Do() {
 	optSource := flag.String("source", "", "authenticationDatabase")
 	optVerbose := flag.Bool("v", false, "Verbose mode")
 	optTempfile := flag.String("tempfile", "", "Temp file name")
+	optKeyPrefix := flag.String("metric-key-prefix", "", "Metric key prefix")
 	flag.Parse()
 
 	var mongodb MongoDBPlugin
@@ -306,6 +335,7 @@ func Do() {
 	mongodb.Username = fmt.Sprintf("%s", *optUser)
 	mongodb.Password = fmt.Sprintf("%s", *optPass)
 	mongodb.Source = fmt.Sprintf("%s", *optSource)
+	mongodb.KeyPrefix = *optKeyPrefix
 
 	helper := mp.NewMackerelPlugin(mongodb)
 	if *optTempfile != "" {
