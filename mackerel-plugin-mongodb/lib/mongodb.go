@@ -15,6 +15,8 @@ import (
 	"github.com/hashicorp/go-version"
 	mp "github.com/mackerelio/go-mackerel-plugin-helper"
 	"github.com/mackerelio/golib/logging"
+	"golang.org/x/text/cases"
+	"golang.org/x/text/language"
 )
 
 var logger = logging.GetLogger("metrics.plugin.mongodb")
@@ -314,7 +316,7 @@ func (m MongoDBPlugin) MetricKeyPrefix() string {
 }
 
 func (m MongoDBPlugin) LabelPrefix() string {
-	return strings.Title(strings.Replace(m.MetricKeyPrefix(), defaultPrefix, "MongoDB", -1))
+	return cases.Title(language.Und, cases.NoLower).String(strings.Replace(m.MetricKeyPrefix(), defaultPrefix, "MongoDB", -1))
 }
 
 // Do the plugin
