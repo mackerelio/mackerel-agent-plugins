@@ -3,10 +3,11 @@ package mpmongodb
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/globalsign/mgo/bson"
-	"github.com/stretchr/testify/assert"
 	"reflect"
 	"testing"
+
+	"github.com/globalsign/mgo/bson"
+	"github.com/stretchr/testify/assert"
 )
 
 func TestGraphDefinition(t *testing.T) {
@@ -191,4 +192,24 @@ func TestParse36(t *testing.T) {
 	// Mongodb Stats
 	assert.EqualValues(t, reflect.TypeOf(stat["opcounters_command"]).String(), "float64")
 	assert.EqualValues(t, stat["opcounters_command"], 457766)
+}
+
+func TestMetricKeyPrefix(t *testing.T) {
+	var m MongoDBPlugin
+	prefix := m.MetricKeyPrefix()
+	assert.Equal(t, "mongodb", prefix)
+
+	m.KeyPrefix = "test"
+	prefix = m.MetricKeyPrefix()
+	assert.Equal(t, "test", prefix)
+}
+
+func TestLabelPrefix(t *testing.T) {
+	var m MongoDBPlugin
+	label := m.LabelPrefix()
+	assert.Equal(t, "MongoDB", label)
+
+	m.KeyPrefix = "test"
+	label = m.LabelPrefix()
+	assert.Equal(t, "Test", label)
 }
