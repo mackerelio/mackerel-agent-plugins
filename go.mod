@@ -7,7 +7,7 @@ require (
 	github.com/Songmu/postailer v0.0.0-20181014062912-daaa1ba9cc39
 	github.com/Songmu/timeout v0.4.0
 	github.com/StackExchange/wmi v1.2.1
-	github.com/aws/aws-sdk-go v1.44.116
+	github.com/aws/aws-sdk-go v1.44.126
 	github.com/erikstmartin/go-testdb v0.0.0-20160219214506-8d10e4a1bae5
 	github.com/fsouza/go-dockerclient v1.9.0
 	github.com/fukata/golang-stats-api-handler v1.0.0
@@ -42,6 +42,7 @@ require (
 	github.com/urfave/cli v1.22.10
 	github.com/ziutek/mymysql v1.5.4
 	golang.org/x/sync v0.0.0-20220722155255-886fb9371eb4
+	golang.org/x/text v0.3.7
 	layeh.com/gumble v0.0.0-20200818122324-146f9205029b
 )
 
@@ -88,7 +89,6 @@ require (
 	golang.org/x/net v0.0.0-20220722155237-a158d28d115b // indirect
 	golang.org/x/oauth2 v0.0.0-20210819190943-2bc19b11175f // indirect
 	golang.org/x/sys v0.0.0-20220722155257-8c9f86f7a55f // indirect
-	golang.org/x/text v0.3.7 // indirect
 	golang.org/x/tools v0.1.12 // indirect
 	google.golang.org/api v0.30.0 // indirect
 	google.golang.org/appengine v1.6.7 // indirect
