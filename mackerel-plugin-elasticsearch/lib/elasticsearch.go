@@ -26,42 +26,45 @@ var metricPlace = map[string][]string{
 	"total_refresh":               {"indices", "refresh", "total"},
 	"total_flush":                 {"indices", "flush", "total"},
 	"total_warmer":                {"indices", "warmer", "total"},
-	"total_percolate":             {"indices", "percolate", "total"},
-	"total_suggest":               {"indices", "suggest", "total"},
+	"total_percolate":             {"indices", "percolate", "total"}, // MISSINGv7 = no value after v7.0 (at least)
+	"total_suggest":               {"indices", "suggest", "total"},   // MISSINGv7
 	"docs_count":                  {"indices", "docs", "count"},
 	"docs_deleted":                {"indices", "docs", "deleted"},
 	"fielddata_size":              {"indices", "fielddata", "memory_size_in_bytes"},
-	"filter_cache_size":           {"indices", "filter_cache", "memory_size_in_bytes"},
+	"filter_cache_size":           {"indices", "filter_cache", "memory_size_in_bytes"}, // MISSINGv7
 	"segments_size":               {"indices", "segments", "memory_in_bytes"},
 	"segments_index_writer_size":  {"indices", "segments", "index_writer_memory_in_bytes"},
 	"segments_version_map_size":   {"indices", "segments", "version_map_memory_in_bytes"},
 	"segments_fixed_bit_set_size": {"indices", "segments", "fixed_bit_set_memory_in_bytes"},
 	"evictions_fielddata":         {"indices", "fielddata", "evictions"},
-	"evictions_filter_cache":      {"indices", "filter_cache", "evictions"},
+	"evictions_filter_cache":      {"indices", "filter_cache", "evictions"}, // MISSINGv7
 	"heap_used":                   {"jvm", "mem", "heap_used_in_bytes"},
 	"heap_max":                    {"jvm", "mem", "heap_max_in_bytes"},
 	"threads_generic":             {"thread_pool", "generic", "threads"},
-	"threads_index":               {"thread_pool", "index", "threads"},
-	"threads_snapshot_data":       {"thread_pool", "snapshot_data", "threads"},
+	"threads_index":               {"thread_pool", "index", "threads"},         // MISSINGv7
+	"threads_snapshot_data":       {"thread_pool", "snapshot_data", "threads"}, // MISSINGv7
 	"threads_get":                 {"thread_pool", "get", "threads"},
-	"threads_bench":               {"thread_pool", "bench", "threads"},
+	"threads_bench":               {"thread_pool", "bench", "threads"}, // MISSINGv7
 	"threads_snapshot":            {"thread_pool", "snapshot", "threads"},
-	"threads_merge":               {"thread_pool", "merge", "threads"},
-	"threads_suggest":             {"thread_pool", "suggest", "threads"},
-	"threads_bulk":                {"thread_pool", "bulk", "threads"},
-	"threads_optimize":            {"thread_pool", "optimize", "threads"},
+	"threads_merge":               {"thread_pool", "merge", "threads"},    // MISSINGv7
+	"threads_suggest":             {"thread_pool", "suggest", "threads"},  // MISSINGv7
+	"threads_bulk":                {"thread_pool", "bulk", "threads"},     // MISSINGv7
+	"threads_optimize":            {"thread_pool", "optimize", "threads"}, // MISSINGv7
 	"threads_warmer":              {"thread_pool", "warmer", "threads"},
 	"threads_flush":               {"thread_pool", "flush", "threads"},
 	"threads_search":              {"thread_pool", "search", "threads"},
-	"threads_percolate":           {"thread_pool", "percolate", "threads"},
+	"threads_percolate":           {"thread_pool", "percolate", "threads"}, // MISSINGv7
 	"threads_refresh":             {"thread_pool", "refresh", "threads"},
 	"threads_management":          {"thread_pool", "management", "threads"},
 	"threads_fetch_shard_started": {"thread_pool", "fetch_shard_started", "threads"},
 	"threads_fetch_shard_store":   {"thread_pool", "fetch_shard_store", "threads"},
-	"threads_listener":            {"thread_pool", "listener", "threads"},
+	"threads_listener":            {"thread_pool", "listener", "threads"}, // MISSINGv8
 	"count_rx":                    {"transport", "rx_count"},
 	"count_tx":                    {"transport", "tx_count"},
 	"open_file_descriptors":       {"process", "open_file_descriptors"},
+	"compilations":                {"script", "compilations"},
+	"cache_evictions":             {"script", "cache_evictions"},
+	"compilation_limit_triggered": {"script", "compilation_limit_triggered"},
 }
 
 func getFloatValue(s map[string]interface{}, keys []string) (float64, error) {
@@ -255,6 +258,15 @@ func (p ElasticsearchPlugin) GraphDefinition() map[string]mp.Graphs {
 			Unit:  "integer",
 			Metrics: []mp.Metrics{
 				{Name: "open_file_descriptors", Label: "Open File Descriptors"},
+			},
+		},
+		p.Prefix + ".script": {
+			Label: (p.LabelPrefix + " Script"),
+			Unit:  "integer",
+			Metrics: []mp.Metrics{
+				{Name: "compilations", Label: "Compilations", Diff: true},
+				{Name: "cache_evictions", Label: "Cache Evictions", Diff: true},
+				{Name: "compilation_limit_triggered", Label: "Compilation Limit Triggered", Diff: true},
 			},
 		},
 	}
