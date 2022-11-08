@@ -1,6 +1,7 @@
 package mpelasticsearch
 
 import (
+	"crypto/tls"
 	"encoding/json"
 	"errors"
 	"flag"
@@ -89,9 +90,13 @@ func getFloatValue(s map[string]interface{}, keys []string) (float64, error) {
 
 // ElasticsearchPlugin mackerel plugin for Elasticsearch
 type ElasticsearchPlugin struct {
-	URI         string
-	Prefix      string
-	LabelPrefix string
+	URI                  string
+	Prefix               string
+	LabelPrefix          string
+	Insecure             bool
+	User                 string
+	Password             string
+	SuppressMissingError bool
 }
 
 // FetchMetrics interface for mackerelplugin
@@ -101,8 +106,15 @@ func (p ElasticsearchPlugin) FetchMetrics() (map[string]float64, error) {
 		return nil, err
 	}
 	req.Header.Set("User-Agent", "mackerel-plugin-elasticsearch")
-
-	resp, err := http.DefaultClient.Do(req)
+	if p.User != "" && p.Password != "" {
+		req.SetBasicAuth(p.User, p.Password)
+	}
+	client := http.Client{
+		Transport: &http.Transport{
+			TLSClientConfig: &tls.Config{InsecureSkipVerify: p.Insecure},
+		},
+	}
+	resp, err := client.Do(req)
 	if err != nil {
 		return nil, err
 	}
@@ -130,7 +142,9 @@ func (p ElasticsearchPlugin) FetchMetrics() (map[string]float64, error) {
 	for k, v := range metricPlace {
 		val, err := getFloatValue(node, v)
 		if err != nil {
-			logger.Errorf("Failed to find '%s': %s", k, err)
+			if !p.SuppressMissingError {
+				logger.Errorf("Failed to find '%s': %s", k, err)
+			}
 			continue
 		}
 
@@ -256,6 +270,10 @@ func Do() {
 	optPrefix := flag.String("metric-key-prefix", "elasticsearch", "Metric key prefix")
 	optLabelPrefix := flag.String("metric-label-prefix", "", "Metric Label prefix")
 	optTempfile := flag.String("tempfile", "", "Temp file name")
+	optInsecure := flag.Bool("insecure", false, "Skip TLS certificate verification")
+	optUser := flag.String("user", "", "Basic auth user")
+	optPassword := flag.String("password", "", "Basic auth password")
+	optSuppressMissingError := flag.Bool("suppress-missing-error", false, "Suppress ERROR for missing values")
 	flag.Parse()
 
 	var elasticsearch ElasticsearchPlugin
@@ -266,6 +284,10 @@ func Do() {
 	} else {
 		elasticsearch.LabelPrefix = *optLabelPrefix
 	}
+	elasticsearch.Insecure = *optInsecure
+	elasticsearch.User = *optUser
+	elasticsearch.Password = *optPassword
+	elasticsearch.SuppressMissingError = *optSuppressMissingError
 
 	helper := mp.NewMackerelPlugin(elasticsearch)
 	if *optTempfile != "" {
