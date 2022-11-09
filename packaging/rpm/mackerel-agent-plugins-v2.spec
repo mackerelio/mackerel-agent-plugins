@@ -39,6 +39,11 @@ done
 %{__targetdir}/*
 
 %changelog
+* Wed Nov 9 2022 <mackerel-developers@hatena.ne.jp> - 0.73.0
+- Fix Elasticsearch plugin. (by fujiwara)
+- Bump github.com/stretchr/testify from 1.8.0 to 1.8.1 (by dependabot[bot])
+- [mongodb] add metric-key-prefix option (by tukaelu)
+
 * Thu Oct 20 2022 <mackerel-developers@hatena.ne.jp> - 0.72.2
 - Bump github.com/aws/aws-sdk-go from 1.44.56 to 1.44.116 (by dependabot[bot])
 - Bump github.com/fsouza/go-dockerclient from 1.8.3 to 1.9.0 (by dependabot[bot])
