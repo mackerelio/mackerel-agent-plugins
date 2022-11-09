@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.73.0 (2022-11-09)
+
+* Fix Elasticsearch plugin. #950 (fujiwara)
+* Bump github.com/stretchr/testify from 1.8.0 to 1.8.1 #946 (dependabot[bot])
+* [mongodb] add metric-key-prefix option #945 (tukaelu)
+
+
 ## 0.72.2 (2022-10-20)
 
 * Bump github.com/aws/aws-sdk-go from 1.44.56 to 1.44.116 #942 (dependabot[bot])
