@@ -21,10 +21,10 @@ port=9200
 docker run -d \
 	--name test-$plugin \
 	-p $port:$port \
-    -e "ELASTIC_PASSWORD=$password" \
-    -e "discovery.type=single-node" \
-    -e "ingest.geoip.downloader.enabled=false" \
-    elasticsearch:8.5.0
+	-e "ELASTIC_PASSWORD=$password" \
+	-e "discovery.type=single-node" \
+	-e "ingest.geoip.downloader.enabled=false" \
+	elasticsearch:8.5.0
 trap 'docker stop test-$plugin; docker rm test-$plugin; exit' EXIT
 sleep 60
 
