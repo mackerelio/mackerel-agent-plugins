@@ -31,6 +31,7 @@ func TestGraphDefinition(t *testing.T) {
 	assert.EqualValues(t, "threads_fetch_shard_started", graphdef["elasticsearch.thread_pool.threads"].Metrics[16].Name)
 	assert.EqualValues(t, "threads_fetch_shard_store", graphdef["elasticsearch.thread_pool.threads"].Metrics[17].Name)
 	assert.EqualValues(t, "threads_listener", graphdef["elasticsearch.thread_pool.threads"].Metrics[18].Name)
+	assert.EqualValues(t, "compilation_limit_triggered", graphdef["elasticsearch.script"].Metrics[2].Name)
 }
 
 func TestFetchMetrics(t *testing.T) {
@@ -44,10 +45,11 @@ func TestFetchMetrics(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	assert.EqualValues(t, 6991, stat["http_opened"])
-	assert.EqualValues(t, 1, stat["threads_generic"])
-	assert.EqualValues(t, 0, stat["threads_merge"])
-	assert.EqualValues(t, 2, stat["threads_fetch_shard_started"])
-	assert.EqualValues(t, 3, stat["threads_fetch_shard_store"])
-	assert.EqualValues(t, 1, stat["threads_listener"])
+	assert.EqualValues(t, 37, stat["http_opened"])
+	assert.EqualValues(t, 8, stat["threads_generic"])
+	assert.EqualValues(t, 13, stat["threads_search"])
+	assert.EqualValues(t, 0, stat["threads_fetch_shard_started"])
+	assert.EqualValues(t, 0, stat["threads_fetch_shard_store"])
+	assert.EqualValues(t, 331, stat["open_file_descriptors"])
+	assert.EqualValues(t, 1, stat["compilations"])
 }
