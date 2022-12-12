@@ -1,17 +1,6 @@
 mackerel-plugin-murmur
 ======================
 
-Murmur custom metrics plugin for mackerel.io agent.
+This plugin moved to [mackerelio/mackerel-plugin-murmur][url]
 
-## Synopsis
-
-```shell
-mackerel-plugin-murmur [-host=<host>] [-port=<port>] [-tempfile=<tempfile>] [-timeout=<timeout_ms>]
-```
-
-## Example of mackerel-agent.conf
-
-```
-[plugin.metrics.murmur]
-command = "/path/to/mackerel-plugin-murmur -host=localhost -port=64738 -timeout 250"
-```
+[url]: https://github.com/mackerelio/mackerel-plugin-murmur
