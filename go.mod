@@ -42,7 +42,7 @@ require (
 	github.com/urfave/cli v1.22.10
 	github.com/ziutek/mymysql v1.5.4
 	golang.org/x/sync v0.1.0
-	golang.org/x/text v0.3.7
+	golang.org/x/text v0.5.0
 	layeh.com/gumble v0.0.0-20200818122324-146f9205029b
 )
 
