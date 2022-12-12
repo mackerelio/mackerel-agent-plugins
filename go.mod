@@ -41,7 +41,7 @@ require (
 	github.com/tomasen/fcgi_client v0.0.0-20180423082037-2bb3d819fd19
 	github.com/urfave/cli v1.22.10
 	github.com/ziutek/mymysql v1.5.4
-	golang.org/x/sync v0.0.0-20220722155255-886fb9371eb4
+	golang.org/x/sync v0.1.0
 	golang.org/x/text v0.3.7
 	layeh.com/gumble v0.0.0-20200818122324-146f9205029b
 )
