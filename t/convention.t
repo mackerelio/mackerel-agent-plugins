@@ -13,6 +13,7 @@ my $plugins_in_other_repository = [qw(
     mackerel-plugin-gcp-compute-engine
     mackerel-plugin-gearmand
     mackerel-plugin-json
+    mackerel-plugin-nvidia-smi
 )];
 my $is_in_other_repository = {
     map { $_ => 1 } @$plugins_in_other_repository,
