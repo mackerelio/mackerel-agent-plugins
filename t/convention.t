@@ -10,6 +10,7 @@ my $plugins_in_other_repository = [qw(
     mackerel-plugin-aws-kinesis-firehose
     mackerel-plugin-aws-rekognition
     mackerel-plugin-aws-waf
+    mackerel-plugin-flume
     mackerel-plugin-gcp-compute-engine
     mackerel-plugin-gearmand
     mackerel-plugin-graphite
