@@ -244,12 +244,29 @@ func (m *MySQLPlugin) fetchShowInnodbStatus(db *sql.DB, stat map[string]float64)
 		trxIDHexFormat = true
 	}
 
+	columns, err := rows.Columns()
+	if err != nil {
+		return fmt.Errorf("FetchMetrics (fetchShowInnodbStatus): error: %w", err)
+	}
+
+	// when mysql 5.0, return result 1 column.
+	// when more than mysql 5.1, return result 3 columns.
+	count := len(columns)
+	scanner := make([]interface{}, count)
+	scannerPtr := make([]interface{}, count)
+	for i := range columns {
+		scannerPtr[i] = &scanner[i]
+	}
+
 	for rows.Next() {
-		var value string
-		if err := rows.Scan(trashScanner{}, trashScanner{}, &value); err != nil {
+		if err := rows.Scan(scannerPtr...); err != nil {
 			return fmt.Errorf("FetchMetrics (fetchShowInnodbStatus): error: %w", err)
 		}
-		parseInnodbStatus(value, trxIDHexFormat, stat)
+
+		c, ok := scanner[count-1].([]byte)
+		if ok {
+			parseInnodbStatus(string(c), trxIDHexFormat, stat)
+		}
 	}
 	return nil
 }
