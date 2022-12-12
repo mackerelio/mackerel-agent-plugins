@@ -14,6 +14,7 @@ require (
 	github.com/globalsign/mgo v0.0.0-20181015135952-eeefdecb41b8
 	github.com/go-ldap/ldap/v3 v3.4.4
 	github.com/go-redis/redis v6.15.9+incompatible
+	github.com/go-sql-driver/mysql v1.7.0
 	github.com/gomodule/redigo v1.8.9
 	github.com/gosnmp/gosnmp v1.35.0
 	github.com/hashicorp/go-version v1.6.0
@@ -40,7 +41,6 @@ require (
 	github.com/stretchr/testify v1.8.1
 	github.com/tomasen/fcgi_client v0.0.0-20180423082037-2bb3d819fd19
 	github.com/urfave/cli v1.22.10
-	github.com/ziutek/mymysql v1.5.4
 	golang.org/x/sync v0.0.0-20220722155255-886fb9371eb4
 	golang.org/x/text v0.3.7
 	layeh.com/gumble v0.0.0-20200818122324-146f9205029b
