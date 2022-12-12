@@ -156,8 +156,6 @@ type MySQLPlugin struct {
 	isUnixSocket   bool
 	EnableExtended bool
 	isAuroraReader bool
-	// TODO
-	Debug bool
 }
 
 // MetricKeyPrefix returns the metrics key prefix
@@ -1231,7 +1229,7 @@ func Do() {
 	optInnoDB := flag.Bool("disable_innodb", false, "Disable InnoDB metrics")
 	optMetricKeyPrefix := flag.String("metric-key-prefix", "mysql", "metric key prefix")
 	optEnableExtended := flag.Bool("enable_extended", false, "Enable Extended metrics")
-	optDebug := flag.Bool("debug", false, "Print debugging logs to stderr")
+	flag.Bool("debug", false, "Print debugging logs to stderr(deprecated)") // backward compatibility
 	flag.Parse()
 
 	var mysql MySQLPlugin
@@ -1247,7 +1245,6 @@ func Do() {
 	mysql.DisableInnoDB = *optInnoDB
 	mysql.prefix = *optMetricKeyPrefix
 	mysql.EnableExtended = *optEnableExtended
-	mysql.Debug = *optDebug
 	helper := mp.NewMackerelPlugin(&mysql)
 	helper.Tempfile = *optTempfile
 	helper.Run()
