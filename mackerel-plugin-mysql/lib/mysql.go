@@ -171,6 +171,7 @@ func (m *MySQLPlugin) fetchVersion(db *sql.DB) (version [3]int, err error) {
 	if err != nil {
 		return
 	}
+	defer rows.Close()
 	for rows.Next() {
 		var versionString string
 		if err = rows.Scan(trashScanner{}, &versionString); err != nil {
@@ -203,7 +204,7 @@ func (m *MySQLPlugin) fetchShowStatus(db *sql.DB, stat map[string]float64) error
 	if err != nil {
 		return fmt.Errorf("FetchMetrics (Status): %w", err)
 	}
-
+	defer rows.Close()
 	for rows.Next() {
 		var (
 			variableName string
@@ -227,7 +228,7 @@ func (m *MySQLPlugin) fetchShowInnodbStatus(db *sql.DB, stat map[string]float64)
 		log.Println("FetchMetrics (InnoDB Status): ", err)
 		log.Fatalln("Hint: If you don't use InnoDB and see InnoDB Status error, you should set -disable_innodb")
 	}
-
+	defer rows.Close()
 	var trxIDHexFormat bool
 	v, err := m.fetchVersion(db)
 	if err != nil {
@@ -258,7 +259,7 @@ func (m *MySQLPlugin) fetchShowVariables(db *sql.DB, stat map[string]float64) er
 	if err != nil {
 		return fmt.Errorf("FetchMetrics (Variables): %w", err)
 	}
-
+	defer rows.Close()
 	rawStat := make(map[string]string)
 	for rows.Next() {
 		var (
@@ -308,6 +309,7 @@ func (m *MySQLPlugin) fetchShowSlaveStatus(db *sql.DB, stat map[string]float64) 
 	if err != nil {
 		return fmt.Errorf("FetchMetrics (Slave Status): %w", err)
 	}
+	defer rows.Close()
 	for rows.Next() {
 		var (
 			variableName string
@@ -334,6 +336,7 @@ func (m *MySQLPlugin) fetchProcesslist(db *sql.DB, stat map[string]float64) erro
 	if err != nil {
 		return fmt.Errorf("FetchMetrics (Processlist): %w", err)
 	}
+	defer rows.Close()
 
 	for k := range processState {
 		stat[k] = 0
