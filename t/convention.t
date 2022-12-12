@@ -15,6 +15,7 @@ my $plugins_in_other_repository = [qw(
     mackerel-plugin-graphite
     mackerel-plugin-json
     mackerel-plugin-nvidia-smi
+    mackerel-plugin-xentop
 )];
 my $is_in_other_repository = {
     map { $_ => 1 } @$plugins_in_other_repository,
