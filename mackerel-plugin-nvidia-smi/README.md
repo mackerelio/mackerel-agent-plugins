@@ -1,18 +1,6 @@
 mackerel-plugin-nvidia-smi
 ==========================
 
-GPU custom metrics plugin using nvidia-smi for mackerel.io agent.
+This plugin moved to [mackerelio/mackerel-plugin-nvidia-smi][url]
 
-## Synopsis
-
-```shell
-mackerel-plugin-nvidia-smi [-metric-key-prefix=<Metric key prefix>]
-```
-
-## Example of mackerel-agent.conf
-
-```
-[plugin.metrics.nvidia-smi]
-command = "/path/to/mackerel-plugin-nvidia-smi"
-```
-
+[url]: https://github.com/mackerelio/mackerel-plugin-nvidia-smi
