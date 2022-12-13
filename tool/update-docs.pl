@@ -67,7 +67,7 @@ sub main {
     my @plugins = retrieve_plugins;
     update_readme(@plugins);
     my $config = load_packaging_confg;
-    update_packaging_specs(@{ $config->{plugins} });
+    update_packaging_specs(sort @{ $config->{plugins} });
 }
 
 main();
