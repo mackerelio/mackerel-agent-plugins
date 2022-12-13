@@ -22,9 +22,7 @@ import (
 	"github.com/mackerelio/mackerel-agent-plugins/mackerel-plugin-docker/lib"
 	"github.com/mackerelio/mackerel-agent-plugins/mackerel-plugin-elasticsearch/lib"
 	"github.com/mackerelio/mackerel-agent-plugins/mackerel-plugin-fluentd/lib"
-	"github.com/mackerelio/mackerel-agent-plugins/mackerel-plugin-flume/lib"
 	"github.com/mackerelio/mackerel-agent-plugins/mackerel-plugin-gostats/lib"
-	"github.com/mackerelio/mackerel-agent-plugins/mackerel-plugin-graphite/lib"
 	"github.com/mackerelio/mackerel-agent-plugins/mackerel-plugin-h2o/lib"
 	"github.com/mackerelio/mackerel-agent-plugins/mackerel-plugin-haproxy/lib"
 	"github.com/mackerelio/mackerel-agent-plugins/mackerel-plugin-inode/lib"
@@ -58,7 +56,6 @@ import (
 	"github.com/mackerelio/mackerel-agent-plugins/mackerel-plugin-uptime/lib"
 	"github.com/mackerelio/mackerel-agent-plugins/mackerel-plugin-uwsgi-vassal/lib"
 	"github.com/mackerelio/mackerel-agent-plugins/mackerel-plugin-varnish/lib"
-	"github.com/mackerelio/mackerel-agent-plugins/mackerel-plugin-xentop/lib"
 )
 
 func runPlugin(plug string) error {
@@ -99,12 +96,8 @@ func runPlugin(plug string) error {
 		mpelasticsearch.Do()
 	case "fluentd":
 		mpfluentd.Do()
-	case "flume":
-		mpflume.Do()
 	case "gostats":
 		mpgostats.Do()
-	case "graphite":
-		mpgraphite.Do()
 	case "h2o":
 		mph2o.Do()
 	case "haproxy":
@@ -171,8 +164,6 @@ func runPlugin(plug string) error {
 		mpuwsgivassal.Do()
 	case "varnish":
 		mpvarnish.Do()
-	case "xentop":
-		mpxentop.Do()
 	default:
 		return fmt.Errorf("unknown plugin: %q", plug)
 	}
@@ -198,9 +189,7 @@ var plugins = []string{
 	"docker",
 	"elasticsearch",
 	"fluentd",
-	"flume",
 	"gostats",
-	"graphite",
 	"h2o",
 	"haproxy",
 	"inode",
@@ -234,5 +223,4 @@ var plugins = []string{
 	"uptime",
 	"uwsgi-vassal",
 	"varnish",
-	"xentop",
 }

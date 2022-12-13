@@ -25,9 +25,7 @@ Documentation for each plugin is located in its respective sub directory.
 * [mackerel-plugin-docker](./mackerel-plugin-docker/README.md)
 * [mackerel-plugin-elasticsearch](./mackerel-plugin-elasticsearch/README.md)
 * [mackerel-plugin-fluentd](./mackerel-plugin-fluentd/README.md)
-* [mackerel-plugin-flume](./mackerel-plugin-flume/README.md)
 * [mackerel-plugin-gostats](./mackerel-plugin-gostats/README.md)
-* [mackerel-plugin-graphite](./mackerel-plugin-graphite/README.md)
 * [mackerel-plugin-h2o](./mackerel-plugin-h2o/README.md)
 * [mackerel-plugin-haproxy](./mackerel-plugin-haproxy/README.md)
 * [mackerel-plugin-inode](./mackerel-plugin-inode/README.md)
@@ -41,7 +39,6 @@ Documentation for each plugin is located in its respective sub directory.
 * [mackerel-plugin-mssql](./mackerel-plugin-mssql/README.md)
 * [mackerel-plugin-multicore](./mackerel-plugin-multicore/README.md)
 * [mackerel-plugin-munin](./mackerel-plugin-munin/README.md)
-* [mackerel-plugin-murmur](./mackerel-plugin-murmur/README.md)
 * [mackerel-plugin-mysql](./mackerel-plugin-mysql/README.md)
 * [mackerel-plugin-nginx](./mackerel-plugin-nginx/README.md)
 * [mackerel-plugin-openldap](./mackerel-plugin-openldap/README.md)
@@ -68,7 +65,6 @@ Documentation for each plugin is located in its respective sub directory.
 * [mackerel-plugin-varnish](./mackerel-plugin-varnish/README.md)
 * [mackerel-plugin-windows-process-stats](./mackerel-plugin-windows-process-stats/README.md)
 * [mackerel-plugin-windows-server-sessions](./mackerel-plugin-windows-server-sessions/README.md)
-* [mackerel-plugin-xentop](./mackerel-plugin-xentop/README.md)
 
 Installation
 ============

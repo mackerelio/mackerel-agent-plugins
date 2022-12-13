@@ -1,0 +1,11 @@
+github.com/davecgh/go-spew v1.1.1 h1:vj9j/u1bqnvCEfJOwUhtlOARqs3+rkHYY13jYWTU97c=
+github.com/mackerelio/go-mackerel-plugin v0.1.2 h1:bbxd2aBCYfrxOdBnvTUyyx8ckeVW2hhb41ewhXJheDA=
+github.com/mackerelio/go-mackerel-plugin v0.1.2/go.mod h1:NnKukHcC4C8yTElL+4vdEjTA1zFA42hLCn1s2K+2UNU=
+github.com/mackerelio/golib v1.2.0/go.mod h1:jSdKpwSkTVLi0wyk3YZ6enh6H19p02wUE8ShAFxaAPQ=
+github.com/mackerelio/golib v1.2.1 h1:SDcDn6Jw3p9bi1N0bg1Z/ilG5qcBB23qL8xNwrU0gg4=
+github.com/mackerelio/golib v1.2.1/go.mod h1:b8ZaapsHGH1FlEJlCqfD98CqafLeyMevyATDlID2BsM=
+github.com/mackerelio/mackerel-plugin-flume v1.0.0 h1:0hunHL9/0M2jaGl6mm0tzzLmf9qskqN6C2yi86s/HGk=
+github.com/mackerelio/mackerel-plugin-flume v1.0.0/go.mod h1:QKi5YBp3WNNiOM+uPPP8MNz3I+qs1FaP3XpFpJXBFMU=
+github.com/pmezard/go-difflib v1.0.0 h1:4DBwDE0NGyQoBHbLQYPwSUPoCMWR5BEzIk/f1lZbAQM=
+github.com/stretchr/testify v1.7.1 h1:5TQK59W5E3v0r2duFAb7P95B6hEeOyEnHRa8MjYSMTY=
+gopkg.in/yaml.v3 v3.0.0-20210107192922-496545a6307b h1:h8qDotaEPuJATrMmW04NCwg7v22aHH28wwpauUhK9Oo=

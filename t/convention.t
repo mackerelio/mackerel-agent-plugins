@@ -10,10 +10,14 @@ my $plugins_in_other_repository = [qw(
     mackerel-plugin-aws-kinesis-firehose
     mackerel-plugin-aws-rekognition
     mackerel-plugin-aws-waf
+    mackerel-plugin-flume
     mackerel-plugin-gcp-compute-engine
     mackerel-plugin-gearmand
+    mackerel-plugin-graphite
     mackerel-plugin-json
+    mackerel-plugin-murmur
     mackerel-plugin-nvidia-smi
+    mackerel-plugin-xentop
 )];
 my $is_in_other_repository = {
     map { $_ => 1 } @$plugins_in_other_repository,
