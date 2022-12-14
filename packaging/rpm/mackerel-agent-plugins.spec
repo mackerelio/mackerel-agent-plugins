@@ -29,7 +29,7 @@ This package provides plugins for Mackerel.
 
 %{__mkdir} -p %{buildroot}%{__targetdir}
 
-for i in accesslog apache2 aws-dynamodb aws-ec2-cpucredit aws-elasticache aws-elasticsearch aws-elb aws-kinesis-streams aws-lambda aws-rds aws-ses aws-s3-requests conntrack elasticsearch flume gostats graphite haproxy jmx-jolokia jvm linux mailq memcached mongodb multicore munin mysql nginx nvidia-smi openldap php-apc php-fpm php-opcache plack postgres proc-fd solr rabbitmq redis sidekiq snmp squid td-table-count trafficserver twemproxy uwsgi-vassal varnish xentop aws-cloudfront aws-ec2-ebs fluentd docker unicorn uptime inode h2o; do \
+for i in accesslog apache2 aws-cloudfront aws-dynamodb aws-ec2-cpucredit aws-ec2-ebs aws-elasticache aws-elasticsearch aws-elb aws-kinesis-streams aws-lambda aws-rds aws-s3-requests aws-ses conntrack docker elasticsearch fluentd gostats h2o haproxy inode jmx-jolokia jvm linux mailq memcached mongodb multicore munin mysql nginx openldap php-apc php-fpm php-opcache plack postgres proc-fd rabbitmq redis sidekiq snmp solr squid td-table-count trafficserver twemproxy unicorn uptime uwsgi-vassal varnish; do \
     %{__install} -m0755 %{_sourcedir}/%{_bindir}/mackerel-plugin-$i %{buildroot}%{__targetdir}/; \
 done
 
