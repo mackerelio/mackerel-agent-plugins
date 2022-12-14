@@ -39,6 +39,13 @@ done
 %{__targetdir}/*
 
 %changelog
+* Wed Dec 14 2022 <mackerel-developers@hatena.ne.jp> - 0.74.0
+- sort plugins on packaging files. (by yseto)
+- Purge less-used plugins from mackerel-agent-plugins package (by lufia)
+- Purge mackerel-plugin-nvidia-smi (by lufia)
+- Update dependencies (by lufia)
+- added test for elasticsearch (by yseto)
+
 * Wed Nov 9 2022 <mackerel-developers@hatena.ne.jp> - 0.73.0
 - Fix Elasticsearch plugin. (by fujiwara)
 - Bump github.com/stretchr/testify from 1.8.0 to 1.8.1 (by dependabot[bot])
