@@ -5,9 +5,8 @@ use strict;
 use warnings;
 use utf8;
 
-use File::Copy qw/move/;
+use IO::File;
 use JSON::PP qw/decode_json/;
-use Path::Tiny qw/path/;
 
 my $PLUGIN_PREFIX = 'mackerel-plugin-';
 my $PACKAGE_NAME = 'mackerel-agent-plugins';
@@ -16,12 +15,11 @@ my $PACKAGE_NAME = 'mackerel-agent-plugins';
 sub replace {
     my ($glob, $code) = @_;
     for my $file (glob $glob) {
-        my $content = $code->(path($file)->slurp_utf8, $file);
+        my $content = $code->(slurp_utf8($file), $file);
         $content .= "\n" if $content !~ /\n\z/ms;
 
-        my $f = path($file);
         # for keeping permission
-        $f->append_utf8({truncate => 1}, $content);
+        append_file($file, $content);
     }
 }
 
@@ -56,16 +54,44 @@ sub update_packaging_specs {
     };
     replace $_, $replace_sub for ("packaging/rpm/$PACKAGE_NAME*.spec", "packaging/deb*/debian/rules");
 
-    path('packaging/deb/debian/source/include-binaries')->spew(join("\n", map { "debian/$PLUGIN_PREFIX$_" } @plugins) . "\n");
+    write_file(
+        'packaging/deb/debian/source/include-binaries',
+        join("\n", map { "debian/$PLUGIN_PREFIX$_" } @plugins) . "\n"
+    );
 }
 
 sub update_packaging_binaries_list {
     my @plugins = @_;
-    path('packaging/plugin-lists')->spew(join("\n", map { "$PLUGIN_PREFIX$_" } @plugins) . "\n");
+    write_file(
+        'packaging/plugin-lists',
+        join("\n", map { "$PLUGIN_PREFIX$_" } @plugins) . "\n"
+    );
+}
+
+# file utility
+sub slurp_utf8 {
+    my $filename = shift;
+    my $fh = IO::File->new($filename, "<:utf8");
+    local $/;
+    <$fh>;
+}
+sub write_file {
+    my $filename = shift;
+    my $content = shift;
+    my $fh = IO::File->new($filename, ">:utf8");
+    print $fh $content;
+    $fh->close;
+}
+sub append_file {
+    my $filename = shift;
+    my $content = shift;
+    my $fh = IO::File->new($filename, "+>:utf8");
+    print $fh $content;
+    $fh->close;
 }
 
 sub load_packaging_confg {
-    decode_json path('packaging/config.json')->slurp;
+    decode_json(slurp_utf8('packaging/config.json'));
 }
 
 sub main {
