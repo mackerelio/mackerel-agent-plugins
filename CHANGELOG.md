@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.74.0 (2022-12-14)
+
+* sort plugins on packaging files. #963 (yseto)
+* Purge less-used plugins from mackerel-agent-plugins package #962 (lufia)
+* Purge mackerel-plugin-nvidia-smi #961 (lufia)
+* Update dependencies #960 (lufia)
+* added test for elasticsearch #952 (yseto)
+
+
 ## 0.73.0 (2022-11-09)
 
 * Fix Elasticsearch plugin. #950 (fujiwara)
