@@ -59,6 +59,11 @@ sub update_packaging_specs {
     path('packaging/deb/debian/source/include-binaries')->spew(join("\n", map { "debian/$PLUGIN_PREFIX$_" } @plugins) . "\n");
 }
 
+sub update_packaging_binaries_list {
+    my @plugins = @_;
+    path('packaging/plugin-lists')->spew(join("\n", map { "$PLUGIN_PREFIX$_" } @plugins) . "\n");
+}
+
 sub load_packaging_confg {
     decode_json path('packaging/config.json')->slurp;
 }
@@ -68,6 +73,7 @@ sub main {
     update_readme(@plugins);
     my $config = load_packaging_confg;
     update_packaging_specs(sort @{ $config->{plugins} });
+    update_packaging_binaries_list(sort @{ $config->{plugins} });
 }
 
 main();
