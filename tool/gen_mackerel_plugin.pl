@@ -106,7 +106,7 @@ subtask();
 # go:generate task
 ####
 
-my @plugins = sort @{ decode_json(slurp_utf8('packaging/config.json'))->{plugins}};
+my @plugins = sort @{ load_packaging_confg()->{plugins}};
 
 sub resolve_package {
     my $plug = shift;
