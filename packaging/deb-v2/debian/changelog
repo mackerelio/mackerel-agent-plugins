@@ -1,18 +1,3 @@
-mackerel-agent-plugins (0.74.0-1.v2) stable; urgency=low
-
-  * sort plugins on packaging files. (by yseto)
-    <https://github.com/mackerelio/mackerel-agent-plugins/pull/963>
-  * Purge less-used plugins from mackerel-agent-plugins package (by lufia)
-    <https://github.com/mackerelio/mackerel-agent-plugins/pull/962>
-  * Purge mackerel-plugin-nvidia-smi (by lufia)
-    <https://github.com/mackerelio/mackerel-agent-plugins/pull/961>
-  * Update dependencies (by lufia)
-    <https://github.com/mackerelio/mackerel-agent-plugins/pull/960>
-  * added test for elasticsearch (by yseto)
-    <https://github.com/mackerelio/mackerel-agent-plugins/pull/952>
-
- -- mackerel <mackerel-developers@hatena.ne.jp>  Wed, 14 Dec 2022 11:06:41 +0000
-
 mackerel-agent-plugins (0.73.0-1.v2) stable; urgency=low
 
   * Fix Elasticsearch plugin. (by fujiwara)
