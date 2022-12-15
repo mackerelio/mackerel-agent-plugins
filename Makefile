@@ -22,6 +22,12 @@ build:
 	  $(MAKE) $(BINDIR)/$$i; \
 	done
 
+.PHONY: build-for-packaging
+build-for-packaging:
+	for i in `cat packaging/plugin-lists`; do \
+	  $(MAKE) $(BINDIR)/$$i; \
+	done
+
 build/mackerel-plugin: $(patsubst %,depends_on,$(GOOS)$(GOARCH))
 	mkdir -p build
 	go build -ldflags="-s -w -X main.gitcommit=$(CURRENT_REVISION)" \
@@ -54,11 +60,11 @@ rpm: rpm-v1 rpm-v2
 
 .PHONY: rpm-v1
 rpm-v1:
-	$(MAKE) build GOOS=linux GOARCH=386
+	$(MAKE) build-for-packaging GOOS=linux GOARCH=386
 	rpmbuild --define "_sourcedir `pwd`" --define "_bindir build/linux/386" \
 	  --define "_version ${VERSION}" --define "buildarch noarch" \
 	  --target noarch -bb packaging/rpm/mackerel-agent-plugins.spec
-	$(MAKE) build GOOS=linux GOARCH=amd64
+	$(MAKE) build-for-packaging GOOS=linux GOARCH=amd64
 	rpmbuild --define "_sourcedir `pwd`" --define "_bindir build/linux/amd64" \
 	  --define "_version ${VERSION}" --define "buildarch x86_64" \
 	  --target x86_64 -bb packaging/rpm/mackerel-agent-plugins.spec
@@ -91,7 +97,7 @@ deb: deb-v1 deb-v2
 
 .PHONY: deb-v1
 deb-v1:
-	$(MAKE) build GOOS=linux GOARCH=386
+	$(MAKE) build-for-packaging GOOS=linux GOARCH=386
 	for i in `cat packaging/deb/debian/source/include-binaries`; do \
 	  cp build/linux/386/`basename $$i` packaging/deb/debian/; \
 	done
