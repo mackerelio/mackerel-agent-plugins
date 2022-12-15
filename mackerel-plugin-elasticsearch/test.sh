@@ -25,12 +25,13 @@ docker run -d \
 	-e "discovery.type=single-node" \
 	-e "ingest.geoip.downloader.enabled=false" \
 	elasticsearch:8.5.0
-trap 'docker stop test-$plugin; docker rm test-$plugin; exit' EXIT
-sleep 60
+trap 'docker stop test-$plugin; docker rm test-$plugin; exit 1' 1 2 3 15
 
 # to store previous value to calculate a diff of metrics
-$plugin -scheme https -port $port -user=elastic -password $password -insecure -suppress-missing-error >/dev/null 2>&1
+../tool/waituntil.bash -n 300 $plugin -scheme https -port $port -user=elastic -password $password -insecure -suppress-missing-error >/dev/null 2>&1
+
 sleep 1
+
 $plugin -scheme https -port $port -user=elastic -password $password -insecure -suppress-missing-error | graphite-metric-test -f rule.txt
 status=$?
 
