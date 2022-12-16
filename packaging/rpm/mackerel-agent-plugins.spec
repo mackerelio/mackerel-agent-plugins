@@ -34,7 +34,7 @@ for i in accesslog apache2 aws-cloudfront aws-dynamodb aws-ec2-cpucredit aws-ec2
 done
 
 %{__install} -d -m755 %{buildroot}%{__oldtargetdir}
-for i in apache2 aws-ec2-cpucredit aws-elasticache aws-elasticsearch aws-elb aws-rds aws-ses conntrack elasticsearch gostats haproxy jmx-jolokia jvm linux mailq memcached mongodb munin mysql nginx php-apc php-opcache plack postgres rabbitmq redis snmp squid td-table-count trafficserver varnish xentop aws-cloudfront aws-ec2-ebs fluentd docker unicorn uptime inode; \
+for i in apache2 aws-ec2-cpucredit aws-elasticache aws-elasticsearch aws-elb aws-rds aws-ses conntrack elasticsearch gostats haproxy jmx-jolokia jvm linux mailq memcached mongodb munin mysql nginx php-apc php-opcache plack postgres rabbitmq redis snmp squid td-table-count trafficserver varnish aws-cloudfront aws-ec2-ebs fluentd docker unicorn uptime inode; \
 do \
     ln -s ../../bin/mackerel-plugin-$i %{buildroot}%{__oldtargetdir}/mackerel-plugin-$i; \
 done
