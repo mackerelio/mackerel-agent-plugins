@@ -53,6 +53,8 @@
        "uptime",
        "inode",
        "h2o"
+    ],
+    "external-plugins": [
     ]
 }
 

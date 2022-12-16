@@ -27,16 +27,28 @@ sub retrieve_plugins {
 }
 
 sub update_readme {
-    my @plugins = @_;
+    my $plugins = shift;
+    my $external_plugins = shift;
 
     my $doc_links = '';
-    for my $plug (@plugins) {
-        $doc_links .= "* [$PLUGIN_PREFIX$plug](./$PLUGIN_PREFIX$plug/README.md)\n"
+    my %doc_links_lines;
+    for my $plug (@$plugins) {
+        $doc_links_lines{$plug} = "* [$PLUGIN_PREFIX$plug](./$PLUGIN_PREFIX$plug/README.md)\n"
     }
+    for my $plug (@$external_plugins) {
+        my $link = sprintf "https://%s/blob/main/README.md", $plug->{'repository'};
+        $doc_links_lines{$plug->{name}} = "* [$PLUGIN_PREFIX$plug->{name}]($link)\n"
+    }
+
+    for my $key (sort keys %doc_links_lines) {
+        $doc_links .= $doc_links_lines{$key};
+    }
+
     replace 'README.md' => sub {
         my $readme = shift;
         my $plu_reg = qr/$PLUGIN_PREFIX[-0-9a-zA-Z_]+/;
-        $readme =~ s!(?:\* \[$plu_reg\]\(\./$plu_reg/README\.md\)\n)+!$doc_links!ms;
+        my $plu_reg_readme = qr/\.\/$PLUGIN_PREFIX[-0-9a-zA-Z_]+|https:\/\/github\.com\/mackerelio\/[-0-0a-zA-Z_]+\/blob\/main/;
+        $readme =~ s!(?:\* \[$plu_reg\]\($plu_reg_readme/README\.md\)\n)+!$doc_links!ms;
         $readme;
     };
 }
@@ -100,11 +112,16 @@ sub load_packaging_confg {
 ####
 
 sub subtask {
-    my @plugins = retrieve_plugins;
-    update_readme(@plugins);
     my $config = load_packaging_confg;
-    update_packaging_specs(sort @{ $config->{plugins} });
-    update_packaging_binaries_list(sort @{ $config->{plugins} });
+    my @plugins = retrieve_plugins;
+    update_readme(\@plugins, $config->{'external-plugins'});
+
+    my @all_plugins = (
+        @{ $config->{plugins} },
+        map { $_->{name} } @{ $config->{'external-plugins'} },
+    );
+    update_packaging_specs(sort @all_plugins);
+    update_packaging_binaries_list(sort @all_plugins);
 }
 
 subtask();
@@ -114,6 +131,7 @@ subtask();
 ####
 
 my @plugins = sort @{ load_packaging_confg()->{plugins}};
+my @external_plugins = sort @{ load_packaging_confg()->{'external-plugins'}};
 
 sub resolve_package {
     my $plug = shift;
@@ -128,6 +146,14 @@ for my $plug (@plugins) {
     my $pkg = "mp$plug";
        $pkg =~ s/-//g;
     $imports .= sprintf qq[\t"github.com/mackerelio/mackerel-agent-plugins/mackerel-plugin-%s/lib"\n], $plug;
+    $case .= sprintf qq[\tcase "%s":\n\t\t%s.Do()\n], $plug, $pkg;
+    $plugs .= sprintf qq[\t"%s",\n], $plug;
+}
+for my $pluginfo (@external_plugins) {
+    my $plug = $pluginfo->{name};
+    my $pkg = "mp$plug";
+       $pkg =~ s/-//g;
+    $imports .= sprintf qq[\t"%s/lib"\n], $pluginfo->{repository};
     $case .= sprintf qq[\tcase "%s":\n\t\t%s.Do()\n], $plug, $pkg;
     $plugs .= sprintf qq[\t"%s",\n], $plug;
 }

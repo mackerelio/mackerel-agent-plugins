@@ -19,4 +19,13 @@ for my $plug (@$plugins_to_be_packaged) {
     ok $plugins{$plug}, "$plug ok";
 }
 
+my $external_plugins_to_be_packaged = $config->{'external-plugins'};
+isa_ok $external_plugins_to_be_packaged, 'ARRAY';
+
+for my $plug (@$external_plugins_to_be_packaged) {
+    ok $plug->{name}, "name ok";
+    my $name = $plug->{name};
+    like $plug->{repository}, qr|^github[.]com/mackerelio/|, "$name repository ok";
+}
+
 done_testing;
