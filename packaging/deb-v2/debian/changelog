@@ -1,28 +1,3 @@
-mackerel-agent-plugins (0.74.0-1.v2) stable; urgency=low
-
-  * fix packaging process on ci (by yseto)
-    <https://github.com/mackerelio/mackerel-agent-plugins/pull/971>
-  * refine file rewrite process (by yseto)
-    <https://github.com/mackerelio/mackerel-agent-plugins/pull/970>
-  * remove xentop on backward compatibility symlink (by yseto)
-    <https://github.com/mackerelio/mackerel-agent-plugins/pull/969>
-  * fix packaging (by yseto)
-    <https://github.com/mackerelio/mackerel-agent-plugins/pull/968>
-  * [plugin-elasticsearch] Fix the test for elasticsearch (by lufia)
-    <https://github.com/mackerelio/mackerel-agent-plugins/pull/966>
-  * sort plugins on packaging files. (by yseto)
-    <https://github.com/mackerelio/mackerel-agent-plugins/pull/963>
-  * Purge less-used plugins from mackerel-agent-plugins package (by lufia)
-    <https://github.com/mackerelio/mackerel-agent-plugins/pull/962>
-  * Purge mackerel-plugin-nvidia-smi (by lufia)
-    <https://github.com/mackerelio/mackerel-agent-plugins/pull/961>
-  * Update dependencies (by lufia)
-    <https://github.com/mackerelio/mackerel-agent-plugins/pull/960>
-  * added test for elasticsearch (by yseto)
-    <https://github.com/mackerelio/mackerel-agent-plugins/pull/952>
-
- -- mackerel <mackerel-developers@hatena.ne.jp>  Mon, 19 Dec 2022 02:57:05 +0000
-
 mackerel-agent-plugins (0.73.0-1.v2) stable; urgency=low
 
   * Fix Elasticsearch plugin. (by fujiwara)
