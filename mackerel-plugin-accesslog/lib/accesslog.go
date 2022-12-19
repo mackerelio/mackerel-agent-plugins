@@ -179,7 +179,9 @@ func (p *AccesslogPlugin) FetchMetrics() (map[string]float64, error) {
 		ret[string(fmt.Sprintf("%d", l.Status)[0])+"xx_count"]++
 		ret["total_count"]++
 
-		if l.ReqTime != nil {
+		if l.ReqTimeMicroSec != nil {
+			reqtimes = append(reqtimes, *l.ReqTimeMicroSec)
+		} else if l.ReqTime != nil {
 			reqtimes = append(reqtimes, *l.ReqTime)
 		} else if l.TakenSec != nil {
 			reqtimes = append(reqtimes, *l.TakenSec)
