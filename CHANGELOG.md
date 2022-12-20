@@ -1,5 +1,21 @@
 # Changelog
 
+## 0.74.0 (2022-12-20)
+
+* use ubuntu-20.04 #978 (yseto)
+* fix packaging process on ci #971 (yseto)
+* refine file rewrite process #970 (yseto)
+* remove xentop on backward compatibility symlink #969 (yseto)
+* fix packaging #968 (yseto)
+* [plugin-elasticsearch] Fix the test for elasticsearch #966 (lufia)
+* added external plugin support #964 (yseto)
+* sort plugins on packaging files. #963 (yseto)
+* Purge less-used plugins from mackerel-agent-plugins package #962 (lufia)
+* Purge mackerel-plugin-nvidia-smi #961 (lufia)
+* Update dependencies #960 (lufia)
+* added test for elasticsearch #952 (yseto)
+
+
 ## 0.73.0 (2022-11-09)
 
 * Fix Elasticsearch plugin. #950 (fujiwara)
