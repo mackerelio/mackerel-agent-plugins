@@ -16,6 +16,7 @@ my $plugins_in_other_repository = [qw(
     mackerel-plugin-graphite
     mackerel-plugin-json
     mackerel-plugin-murmur
+    mackerel-plugin-mysql
     mackerel-plugin-nvidia-smi
     mackerel-plugin-xentop
 )];
