@@ -34,7 +34,6 @@ import (
 	"github.com/mackerelio/mackerel-agent-plugins/mackerel-plugin-mongodb/lib"
 	"github.com/mackerelio/mackerel-agent-plugins/mackerel-plugin-multicore/lib"
 	"github.com/mackerelio/mackerel-agent-plugins/mackerel-plugin-munin/lib"
-	"github.com/mackerelio/mackerel-agent-plugins/mackerel-plugin-mysql/lib"
 	"github.com/mackerelio/mackerel-agent-plugins/mackerel-plugin-nginx/lib"
 	"github.com/mackerelio/mackerel-agent-plugins/mackerel-plugin-openldap/lib"
 	"github.com/mackerelio/mackerel-agent-plugins/mackerel-plugin-php-apc/lib"
@@ -56,6 +55,7 @@ import (
 	"github.com/mackerelio/mackerel-agent-plugins/mackerel-plugin-uptime/lib"
 	"github.com/mackerelio/mackerel-agent-plugins/mackerel-plugin-uwsgi-vassal/lib"
 	"github.com/mackerelio/mackerel-agent-plugins/mackerel-plugin-varnish/lib"
+	"github.com/mackerelio/mackerel-plugin-mysql/lib"
 )
 
 func runPlugin(plug string) error {
@@ -120,8 +120,6 @@ func runPlugin(plug string) error {
 		mpmulticore.Do()
 	case "munin":
 		mpmunin.Do()
-	case "mysql":
-		mpmysql.Do()
 	case "nginx":
 		mpnginx.Do()
 	case "openldap":
@@ -164,6 +162,8 @@ func runPlugin(plug string) error {
 		mpuwsgivassal.Do()
 	case "varnish":
 		mpvarnish.Do()
+	case "mysql":
+		mpmysql.Do()
 	default:
 		return fmt.Errorf("unknown plugin: %q", plug)
 	}
@@ -201,7 +201,6 @@ var plugins = []string{
 	"mongodb",
 	"multicore",
 	"munin",
-	"mysql",
 	"nginx",
 	"openldap",
 	"php-apc",
@@ -223,4 +222,5 @@ var plugins = []string{
 	"uptime",
 	"uwsgi-vassal",
 	"varnish",
+	"mysql",
 }
