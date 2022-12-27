@@ -25,13 +25,6 @@ require (
 	github.com/mackerelio/go-mackerel-plugin-helper v0.1.2
 	github.com/mackerelio/go-osstat v0.2.3
 	github.com/mackerelio/golib v1.2.1
-	github.com/mackerelio/mackerel-plugin-aws-ec2 v1.0.1
-	github.com/mackerelio/mackerel-plugin-aws-kinesis-firehose v1.0.1
-	github.com/mackerelio/mackerel-plugin-aws-rekognition v1.0.1
-	github.com/mackerelio/mackerel-plugin-aws-waf v1.1.0
-	github.com/mackerelio/mackerel-plugin-gcp-compute-engine v1.0.2
-	github.com/mackerelio/mackerel-plugin-gearmand v1.0.1
-	github.com/mackerelio/mackerel-plugin-json v1.2.4
 	github.com/mattn/go-pipeline v0.0.0-20190323144519-32d779b32768
 	github.com/mattn/go-treasuredata v0.0.0-20170920030233-31758907cfc4
 	github.com/michaelklishin/rabbit-hole v1.5.0
@@ -46,7 +39,6 @@ require (
 )
 
 require (
-	cloud.google.com/go v0.65.0 // indirect
 	github.com/Azure/go-ansiterm v0.0.0-20210617225240-d185dfc1b5a1 // indirect
 	github.com/Azure/go-ntlmssp v0.0.0-20220621081337-cb9428e4ac1e // indirect
 	github.com/Microsoft/go-winio v0.6.0 // indirect
@@ -64,8 +56,6 @@ require (
 	github.com/go-ole/go-ole v1.2.5 // indirect
 	github.com/gogo/protobuf v1.3.2 // indirect
 	github.com/golang/groupcache v0.0.0-20210331224755-41bb18bfe9da // indirect
-	github.com/golang/protobuf v1.5.2 // indirect
-	github.com/googleapis/gax-go/v2 v2.0.5 // indirect
 	github.com/jmespath/go-jmespath v0.4.0 // indirect
 	github.com/lestrrat-go/tcputil v0.0.0-20180223003554-d3c7f98154fb // indirect
 	github.com/moby/sys/mount v0.3.3 // indirect
@@ -85,14 +75,7 @@ require (
 	golang.org/x/crypto v0.0.0-20220622213112-05595931fe9d // indirect
 	golang.org/x/lint v0.0.0-20200302205851-738671d3881b // indirect
 	golang.org/x/mod v0.6.0-dev.0.20220419223038-86c51ed26bb4 // indirect
-	golang.org/x/net v0.0.0-20220722155237-a158d28d115b // indirect
-	golang.org/x/oauth2 v0.0.0-20210819190943-2bc19b11175f // indirect
 	golang.org/x/sys v0.0.0-20220722155257-8c9f86f7a55f // indirect
 	golang.org/x/tools v0.1.12 // indirect
-	google.golang.org/api v0.30.0 // indirect
-	google.golang.org/appengine v1.6.7 // indirect
-	google.golang.org/genproto v0.0.0-20211208223120-3a66f561d7aa // indirect
-	google.golang.org/grpc v1.43.0 // indirect
-	google.golang.org/protobuf v1.27.1 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 )
