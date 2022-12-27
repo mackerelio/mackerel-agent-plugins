@@ -14,7 +14,7 @@ all: testconvention rpm deb
 .SECONDEXPANSION:
 $(BINDIR)/mackerel-plugin-%: mackerel-plugin-%/main.go $$(wildcard mackerel-plugin-%/lib/*.go)
 	@if [ ! -d $(BINDIR) ]; then mkdir -p $(BINDIR); fi
-	go build -ldflags="-s -w" -o $@ ./`basename $@`
+	CGO_ENABLED=0 go build -ldflags="-s -w" -o $@ ./`basename $@`
 
 .PHONY: build
 build:
@@ -30,7 +30,7 @@ build-for-packaging:
 
 build/mackerel-plugin: $(patsubst %,depends_on,$(GOOS)$(GOARCH))
 	mkdir -p build
-	go build -ldflags="-s -w -X main.gitcommit=$(CURRENT_REVISION)" \
+	CGO_ENABLED=0 go build -ldflags="-s -w -X main.gitcommit=$(CURRENT_REVISION)" \
 	  -o build/mackerel-plugin
 
 .PHONY: depends_on
