@@ -25,6 +25,7 @@ require (
 	github.com/mackerelio/go-mackerel-plugin-helper v0.1.2
 	github.com/mackerelio/go-osstat v0.2.3
 	github.com/mackerelio/golib v1.2.1
+	github.com/mackerelio/mackerel-plugin-mysql v1.0.0
 	github.com/mattn/go-pipeline v0.0.0-20190323144519-32d779b32768
 	github.com/mattn/go-treasuredata v0.0.0-20170920030233-31758907cfc4
 	github.com/michaelklishin/rabbit-hole v1.5.0
@@ -33,7 +34,6 @@ require (
 	github.com/stretchr/testify v1.8.1
 	github.com/tomasen/fcgi_client v0.0.0-20180423082037-2bb3d819fd19
 	github.com/urfave/cli v1.22.10
-	github.com/ziutek/mymysql v1.5.4
 	golang.org/x/sync v0.1.0
 	golang.org/x/text v0.5.0
 )
@@ -71,6 +71,7 @@ require (
 	github.com/shurcooL/sanitized_anchor_name v1.0.0 // indirect
 	github.com/sirupsen/logrus v1.8.1 // indirect
 	github.com/streadway/amqp v0.0.0-20190827072141-edfb9018d271 // indirect
+	github.com/ziutek/mymysql v1.5.4 // indirect
 	go.opencensus.io v0.23.0 // indirect
 	golang.org/x/crypto v0.0.0-20220622213112-05595931fe9d // indirect
 	golang.org/x/lint v0.0.0-20200302205851-738671d3881b // indirect

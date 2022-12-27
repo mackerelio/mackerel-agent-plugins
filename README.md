@@ -39,7 +39,7 @@ Documentation for each plugin is located in its respective sub directory.
 * [mackerel-plugin-mssql](./mackerel-plugin-mssql/README.md)
 * [mackerel-plugin-multicore](./mackerel-plugin-multicore/README.md)
 * [mackerel-plugin-munin](./mackerel-plugin-munin/README.md)
-* [mackerel-plugin-mysql](./mackerel-plugin-mysql/README.md)
+* [mackerel-plugin-mysql](https://github.com/mackerelio/mackerel-plugin-mysql/blob/main/README.md)
 * [mackerel-plugin-nginx](./mackerel-plugin-nginx/README.md)
 * [mackerel-plugin-openldap](./mackerel-plugin-openldap/README.md)
 * [mackerel-plugin-php-apc](./mackerel-plugin-php-apc/README.md)
