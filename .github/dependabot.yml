@@ -7,3 +7,11 @@ updates:
     time: "01:00"
     timezone: Asia/Tokyo
   open-pull-requests-limit: 10
+# TODO when remove rpm-v1, deb-v1 task on Makefile, remove below lines
+- package-ecosystem: gomod
+  directory: "mackerel-plugin-mysql/"
+  schedule:
+    interval: weekly
+    time: "01:00"
+    timezone: Asia/Tokyo
+  open-pull-requests-limit: 10
