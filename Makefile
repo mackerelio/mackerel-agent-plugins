@@ -14,7 +14,7 @@ all: testconvention rpm deb
 .SECONDEXPANSION:
 $(BINDIR)/mackerel-plugin-%: mackerel-plugin-%/main.go $$(wildcard mackerel-plugin-%/lib/*.go)
 	@if [ ! -d $(BINDIR) ]; then mkdir -p $(BINDIR); fi
-	CGO_ENABLED=0 go build -ldflags="-s -w" -o $@ ./`basename $@`
+	cd `basename $@` && CGO_ENABLED=0 go build -ldflags="-s -w" -o ../$@
 
 .PHONY: build
 build:
