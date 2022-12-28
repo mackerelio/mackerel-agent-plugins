@@ -102,6 +102,25 @@ var fetchMetricsTests = []struct {
 			"99_percentile":  0.025,
 		},
 	},
+	{
+		Name:   "LTSV log (reqtime microsec)",
+		InFile: "testdata/sample-ltsv-reqtime-microsec.tsv",
+		Output: map[string]float64{
+			"2xx_count":      7,
+			"3xx_count":      1,
+			"4xx_count":      1,
+			"5xx_count":      1,
+			"total_count":    10,
+			"2xx_percentage": 70,
+			"3xx_percentage": 10,
+			"4xx_percentage": 10,
+			"5xx_percentage": 10,
+			"average":        0.00036090000000000004,
+			"90_percentile":  0.000628,
+			"95_percentile":  0.0008155,
+			"99_percentile":  0.0008155,
+		},
+	},
 }
 
 func TestFetchMetrics(t *testing.T) {
