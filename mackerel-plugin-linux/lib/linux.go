@@ -286,7 +286,7 @@ func collectDiskStats(path string, p *map[string]interface{}) error {
 		}
 
 		// exclude virtual device
-		if strings.Index(realPath, "/devices/virtual/") != -1 {
+		if strings.Contains(realPath, "/devices/virtual/") {
 			if !collectVirtualDevice.Match([]byte(name)) {
 				continue
 			}
