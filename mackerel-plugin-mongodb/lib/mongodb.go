@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"flag"
 	"fmt"
+	"net"
 	"os"
 	"reflect"
 	"strconv"
@@ -94,8 +95,8 @@ func (m MongoDBPlugin) graphdef30() map[string]mp.Graphs {
 	}
 }
 
-//Adapt to version 3.2 or higher.
-//Check in version 3.6.
+// Adapt to version 3.2 or higher.
+// Check in version 3.6.
 func (m MongoDBPlugin) graphdef32() map[string]mp.Graphs {
 	labelPrefix := m.LabelPrefix()
 
@@ -333,10 +334,10 @@ func Do() {
 
 	var mongodb MongoDBPlugin
 	mongodb.Verbose = *optVerbose
-	mongodb.URL = fmt.Sprintf("%s:%s", *optHost, *optPort)
-	mongodb.Username = fmt.Sprintf("%s", *optUser)
-	mongodb.Password = fmt.Sprintf("%s", *optPass)
-	mongodb.Source = fmt.Sprintf("%s", *optSource)
+	mongodb.URL = net.JoinHostPort(*optHost, *optPort)
+	mongodb.Username = *optUser
+	mongodb.Password = *optPass
+	mongodb.Source = *optSource
 	mongodb.KeyPrefix = *optKeyPrefix
 
 	helper := mp.NewMackerelPlugin(mongodb)
