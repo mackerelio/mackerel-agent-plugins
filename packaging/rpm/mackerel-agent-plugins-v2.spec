@@ -39,6 +39,14 @@ done
 %{__targetdir}/*
 
 %changelog
+* Wed Jan 18 2023 <mackerel-developers@hatena.ne.jp> - 0.75.0
+- fix build on current working directory. (by yseto)
+- added compile option. (by yseto)
+- plugin-mysql is external repository (by yseto)
+- packaging: make compression format xz (by lufia)
+- accesslog: use `reqtime_microsec` if exists (by wafuwafu13)
+- split go.mod for plugins that have previously split repositories (by yseto)
+
 * Tue Dec 20 2022 <mackerel-developers@hatena.ne.jp> - 0.74.0
 - use ubuntu-20.04 (by yseto)
 - fix packaging process on ci (by yseto)

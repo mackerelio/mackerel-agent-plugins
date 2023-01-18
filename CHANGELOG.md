@@ -1,5 +1,15 @@
 # Changelog
 
+## 0.75.0 (2023-01-18)
+
+* fix build on current working directory. #985 (yseto)
+* added compile option. #983 (yseto)
+* plugin-mysql is external repository #982 (yseto)
+* packaging: make compression format xz #981 (lufia)
+* accesslog: use `reqtime_microsec` if exists #976 (wafuwafu13)
+* split go.mod for plugins that have previously split repositories #972 (yseto)
+
+
 ## 0.74.0 (2022-12-20)
 
 * use ubuntu-20.04 #978 (yseto)
