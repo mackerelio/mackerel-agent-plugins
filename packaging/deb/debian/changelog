@@ -1,3 +1,20 @@
+mackerel-agent-plugins (0.75.0-1) stable; urgency=low
+
+  * fix build on current working directory. (by yseto)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/985>
+  * added compile option. (by yseto)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/983>
+  * plugin-mysql is external repository (by yseto)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/982>
+  * packaging: make compression format xz (by lufia)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/981>
+  * accesslog: use `reqtime_microsec` if exists (by wafuwafu13)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/976>
+  * split go.mod for plugins that have previously split repositories (by yseto)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/972>
+
+ -- mackerel <mackerel-developers@hatena.ne.jp>  Wed, 18 Jan 2023 06:20:36 +0000
+
 mackerel-agent-plugins (0.74.0-1) stable; urgency=low
 
   * use ubuntu-20.04 (by yseto)
