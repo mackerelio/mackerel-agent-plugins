@@ -94,8 +94,8 @@ func (m MongoDBPlugin) graphdef30() map[string]mp.Graphs {
 	}
 }
 
-//Adapt to version 3.2 or higher.
-//Check in version 3.6.
+// Adapt to version 3.2 or higher.
+// Check in version 3.6.
 func (m MongoDBPlugin) graphdef32() map[string]mp.Graphs {
 	labelPrefix := m.LabelPrefix()
 
