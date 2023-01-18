@@ -255,7 +255,7 @@ func fetchXlogLocation(db *sqlx.DB, version version) (map[string]interface{}, er
 	return stat, nil
 }
 
-var versionRe = regexp.MustCompile("PostgreSQL (\\d+)\\.(\\d+)(\\.(\\d+))?")
+var versionRe = regexp.MustCompile(`PostgreSQL (\d+)\.(\d+)(\.(\d+))?`)
 
 type version struct {
 	first  uint

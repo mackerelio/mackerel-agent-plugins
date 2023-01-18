@@ -93,8 +93,8 @@ func (m VarnishPlugin) FetchMetrics() (map[string]interface{}, error) {
 		return nil, fmt.Errorf("%s: %s", err, out)
 	}
 
-	lineexp := regexp.MustCompile("^([^ ]+) +(\\d+)")
-	smaexp := regexp.MustCompile("^SMA\\.([^\\.]+)\\.(.+)$")
+	lineexp := regexp.MustCompile(`^([^ ]+) +(\d+)`)
+	smaexp := regexp.MustCompile(`^SMA\.([^\.]+)\.(.+)$`)
 
 	stat := map[string]interface{}{
 		"requests": float64(0),
