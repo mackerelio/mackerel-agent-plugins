@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"net/http"
 	"net/url"
+	"os"
 	"strconv"
 	"strings"
 
@@ -328,6 +329,7 @@ func Do() {
 	err := solr.loadVersion()
 	if err != nil {
 		logger.Errorf("loadVersion : %v", err)
+		os.Exit(1)
 	}
 	err = solr.loadStats()
 	if err != nil {
