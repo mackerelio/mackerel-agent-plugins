@@ -244,6 +244,7 @@ type EBSPlugin struct {
 	CloudWatch  *cloudwatch.CloudWatch
 	Volumes     []*ec2.Volume
 	Hypervisor  string
+	Session     *session.Session
 }
 
 func (p *EBSPlugin) prepare() error {
@@ -251,7 +252,13 @@ func (p *EBSPlugin) prepare() error {
 		p.Credentials = credentials.NewStaticCredentials(p.AccessKeyID, p.SecretAccessKey, "")
 	}
 
-	p.EC2 = ec2.New(session.New(&aws.Config{Credentials: p.Credentials, Region: &p.Region}))
+	var err error
+	p.Session, err = session.NewSession(&aws.Config{Credentials: p.Credentials, Region: &p.Region})
+	if err != nil {
+		return err
+	}
+
+	p.EC2 = ec2.New(p.Session)
 
 	var instanceType string
 	instance, err := p.EC2.DescribeInstances(&ec2.DescribeInstancesInput{
@@ -388,7 +395,7 @@ func (p EBSPlugin) FetchMetrics() (map[string]interface{}, error) {
 		}
 	}
 
-	p.CloudWatch = cloudwatch.New(session.New(&aws.Config{Credentials: p.Credentials, Region: &p.Region}))
+	p.CloudWatch = cloudwatch.New(p.Session)
 	for _, vol := range p.Volumes {
 		volumeID := normalizeVolumeID(*vol.VolumeId)
 		var graphs []string
@@ -440,8 +447,12 @@ func Do() {
 	ebs.Region = *optRegion
 	ebs.InstanceID = *optInstanceID
 
+	sess, err := session.NewSession()
+	if err != nil {
+		log.Fatalln(err)
+	}
 	// get metadata in ec2 instance
-	ec2MC := ec2metadata.New(session.New())
+	ec2MC := ec2metadata.New(sess)
 	if *optRegion == "" {
 		ebs.Region, _ = ec2MC.Region()
 	}

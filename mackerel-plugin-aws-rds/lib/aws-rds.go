@@ -241,7 +241,11 @@ func Do() {
 	}
 
 	if *optRegion == "" {
-		ec2metadata := ec2metadata.New(session.New())
+		sess, err := session.NewSession()
+		if err != nil {
+			log.Fatalln(err)
+		}
+		ec2metadata := ec2metadata.New(sess)
 		if ec2metadata.Available() {
 			rds.Region, _ = ec2metadata.Region()
 		}
