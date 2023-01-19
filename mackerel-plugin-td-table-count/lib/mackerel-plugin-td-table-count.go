@@ -35,7 +35,7 @@ func getTables(m TDTablePlugin) ([]td.Table, error) {
 			}
 		}
 
-		if ignore == false {
+		if !ignore {
 			filteredTables = append(filteredTables, table)
 		}
 	}
