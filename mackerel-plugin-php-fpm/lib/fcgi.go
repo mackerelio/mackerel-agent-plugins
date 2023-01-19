@@ -2,7 +2,7 @@ package mpphpfpm
 
 import (
 	"bytes"
-	"io/ioutil"
+	"io"
 	"net/http"
 	"strconv"
 	"time"
@@ -69,6 +69,6 @@ func (t *FastCGITransport) RoundTrip(req *http.Request) (*http.Response, error) 
 	if _, err := buf.ReadFrom(body); err != nil {
 		return nil, err
 	}
-	resp.Body = ioutil.NopCloser(&buf)
+	resp.Body = io.NopCloser(&buf)
 	return resp, nil
 }

@@ -111,6 +111,9 @@ func (m DockerPlugin) FetchMetrics() (map[string]interface{}, error) {
 		return nil, err
 	}
 	stats, err = m.FetchMetricsWithAPI(containers)
+	if err != nil {
+		return nil, err
+	}
 
 	if m.UseCPUPercentage {
 		if time.Now().Sub(m.lastMetricValues.Timestamp) <= 5*time.Minute {
@@ -176,7 +179,10 @@ func (m DockerPlugin) FetchMetricsWithAPI(containers []docker.APIContainers) (ma
 				log.Fatalf("Stats: Expected 1 result. Got %d.", len(resultStats))
 			}
 			mu.Lock()
-			m.parseStats(&res, metricName, resultStats[0])
+			err = m.parseStats(&res, metricName, resultStats[0])
+			if err != nil {
+				log.Fatal(err)
+			}
 			mu.Unlock()
 		}(container)
 	}

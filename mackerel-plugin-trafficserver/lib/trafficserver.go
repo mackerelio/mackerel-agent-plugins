@@ -64,7 +64,10 @@ func (m TrafficserverPlugin) FetchMetrics() (map[string]interface{}, error) {
 	}
 
 	stat := make(map[string]interface{})
-	parseVars(strp, &stat)
+	err = parseVars(strp, &stat)
+	if err != nil {
+		return nil, err
+	}
 
 	return stat, nil
 }

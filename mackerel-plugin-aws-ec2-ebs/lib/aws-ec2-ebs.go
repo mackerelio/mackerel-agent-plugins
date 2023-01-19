@@ -391,7 +391,7 @@ func (p EBSPlugin) FetchMetrics() (map[string]interface{}, error) {
 	p.CloudWatch = cloudwatch.New(session.New(&aws.Config{Credentials: p.Credentials, Region: &p.Region}))
 	for _, vol := range p.Volumes {
 		volumeID := normalizeVolumeID(*vol.VolumeId)
-		graphs := defaultGraphs
+		var graphs []string
 		if *vol.VolumeType == "io1" {
 			graphs = io1Graphs
 		} else {

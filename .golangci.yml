@@ -3,8 +3,6 @@ linters:
   # TODO remove this rule.
   disable:
     - gosimple
-    - errcheck
-    - ineffassign
     - staticcheck
 issues:
   exclude-rules:

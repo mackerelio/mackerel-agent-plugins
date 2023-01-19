@@ -3,10 +3,7 @@ package mpunicorn
 import (
 	"flag"
 	"fmt"
-	"io/ioutil"
-
 	"os"
-
 	"strings"
 
 	mp "github.com/mackerelio/go-mackerel-plugin-helper"
@@ -105,7 +102,7 @@ func Do() {
 		logger.Errorf("Required unicorn pidfile.")
 		os.Exit(1)
 	} else {
-		pid, err := ioutil.ReadFile(*optPidFile)
+		pid, err := os.ReadFile(*optPidFile)
 		if err != nil {
 			logger.Errorf("Failed to load unicorn pid file. %s", err)
 			os.Exit(1)

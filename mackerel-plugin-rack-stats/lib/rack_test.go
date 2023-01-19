@@ -2,12 +2,10 @@ package mprackstats
 
 import (
 	"fmt"
-	"io/ioutil"
 	"net"
 	"net/http"
 	"net/http/httptest"
 	"net/url"
-	"os"
 	"reflect"
 	"testing"
 
@@ -83,11 +81,7 @@ func TestParseHttp(t *testing.T) {
 func TestParseUnix(t *testing.T) {
 	var rack RackStatsPlugin
 
-	dir, err := ioutil.TempDir(os.TempDir(), "")
-	if err != nil {
-		t.Error(err)
-	}
-	defer os.RemoveAll(dir)
+	dir := t.TempDir()
 
 	testSock = fmt.Sprintf("%s/unicorn.sock", dir)
 

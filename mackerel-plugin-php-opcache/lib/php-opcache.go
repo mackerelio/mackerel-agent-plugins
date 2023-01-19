@@ -3,7 +3,8 @@ package mpphpopcache
 import (
 	"errors"
 	"fmt"
-	"io/ioutil"
+	"io"
+	"log"
 	"net/http"
 	"os"
 	"strconv"
@@ -117,7 +118,7 @@ func getPhpOpcacheMetrics(host string, port uint16, path string) (string, error)
 	if resp.StatusCode != http.StatusOK {
 		return "", fmt.Errorf("HTTP status error: %d", resp.StatusCode)
 	}
-	body, err := ioutil.ReadAll(resp.Body)
+	body, err := io.ReadAll(resp.Body)
 	if err != nil {
 		return "", err
 	}
@@ -149,5 +150,8 @@ func Do() {
 	app.Flags = flags
 	app.Action = doMain
 
-	app.Run(os.Args)
+	err := app.Run(os.Args)
+	if err != nil {
+		log.Fatalln(err)
+	}
 }

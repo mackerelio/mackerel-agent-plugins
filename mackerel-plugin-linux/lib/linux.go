@@ -5,7 +5,7 @@ import (
 	"bytes"
 	"fmt"
 	"io"
-	"io/ioutil"
+	"log"
 	"os"
 	"os/exec"
 	"path/filepath"
@@ -263,13 +263,17 @@ func collectDiskStats(path string, p *map[string]interface{}) error {
 
 	sysBlockDir := filepath.Join(path, "block")
 
-	devices, err := ioutil.ReadDir(sysBlockDir)
+	devices, err := os.ReadDir(sysBlockDir)
 	if err != nil {
 		return err
 	}
 
 	for _, d := range devices {
-		if d.Mode()&os.ModeSymlink != os.ModeSymlink {
+		fi, err := d.Info()
+		if err != nil {
+			return err
+		}
+		if fi.Mode()&os.ModeSymlink != os.ModeSymlink {
 			continue
 		}
 
@@ -289,7 +293,7 @@ func collectDiskStats(path string, p *map[string]interface{}) error {
 		}
 
 		// exclude removable device
-		content, err := ioutil.ReadFile(filepath.Join(realPath, "removable"))
+		content, err := os.ReadFile(filepath.Join(realPath, "removable"))
 		if err != nil {
 			return err
 		}
@@ -297,7 +301,7 @@ func collectDiskStats(path string, p *map[string]interface{}) error {
 			continue
 		}
 
-		content, err = ioutil.ReadFile(filepath.Join(realPath, "stat"))
+		content, err = os.ReadFile(filepath.Join(realPath, "stat"))
 		if err != nil {
 			return err
 		}
@@ -474,5 +478,8 @@ func Do() {
 	app.Flags = flags
 	app.Action = doMain
 
-	app.Run(os.Args)
+	err := app.Run(os.Args)
+	if err != nil {
+		log.Fatalln(err)
+	}
 }
