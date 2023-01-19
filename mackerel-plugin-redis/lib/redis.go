@@ -92,6 +92,12 @@ func (m RedisPlugin) MetricKeyPrefix() string {
 	return m.Prefix
 }
 
+var (
+	commentLine = regexp.MustCompile("^#")
+	dbLine      = regexp.MustCompile("^db")
+	slaveLine   = regexp.MustCompile(`^slave\d+`)
+)
+
 // FetchMetrics interface for mackerelplugin
 func (m RedisPlugin) FetchMetrics() (map[string]interface{}, error) {
 	network := "tcp"
@@ -129,7 +135,7 @@ func (m RedisPlugin) FetchMetrics() (map[string]interface{}, error) {
 		if line == "" {
 			continue
 		}
-		if re, _ := regexp.MatchString("^#", line); re {
+		if commentLine.MatchString(line) {
 			continue
 		}
 
@@ -139,7 +145,7 @@ func (m RedisPlugin) FetchMetrics() (map[string]interface{}, error) {
 		}
 		key, value := record[0], record[1]
 
-		if re, _ := regexp.MatchString("^slave\\d+", key); re {
+		if slaveLine.MatchString(key) {
 			slaves = append(slaves, key)
 			kv := strings.Split(value, ",")
 			var offset, lag string
@@ -165,7 +171,7 @@ func (m RedisPlugin) FetchMetrics() (map[string]interface{}, error) {
 			continue
 		}
 
-		if re, _ := regexp.MatchString("^db", key); re {
+		if dbLine.MatchString(key) {
 			kv := strings.SplitN(value, ",", 3)
 			keys, expires := kv[0], kv[1]
 
@@ -330,7 +336,7 @@ func (m RedisPlugin) GraphDefinition() map[string]mp.Graphs {
 		}
 		key, _ := record[0], record[1]
 
-		if re, _ := regexp.MatchString("^slave\\d+", key); re {
+		if slaveLine.MatchString(key) {
 			metricsLag = append(metricsLag, mp.Metrics{Name: fmt.Sprintf("%s_lag", key), Label: fmt.Sprintf("Replication lag to %s", key), Diff: false})
 			metricsOffsetDelay = append(metricsOffsetDelay, mp.Metrics{Name: fmt.Sprintf("%s_offset_delay", key), Label: fmt.Sprintf("Offset delay to %s", key), Diff: false})
 		}
