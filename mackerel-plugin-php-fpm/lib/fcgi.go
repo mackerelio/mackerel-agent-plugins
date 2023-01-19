@@ -21,7 +21,7 @@ func (*FastCGITransport) timeout(req *http.Request) time.Duration {
 	if !ok {
 		return 0 // no timeout
 	}
-	return t.Sub(time.Now())
+	return time.Until(t)
 }
 
 // RoundTrip implements the RoundTripper interface.
