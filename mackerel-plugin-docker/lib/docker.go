@@ -13,6 +13,8 @@ import (
 
 	docker "github.com/fsouza/go-dockerclient"
 	mp "github.com/mackerelio/go-mackerel-plugin-helper"
+	"golang.org/x/text/cases"
+	"golang.org/x/text/language"
 )
 
 var graphdef = map[string]mp.Graphs{
@@ -228,17 +230,17 @@ func (m DockerPlugin) parseStats(stats *map[string]interface{}, name string, res
 	fields := []string{"read", "write", "sync", "async"}
 	for _, field := range fields {
 		for _, s := range (*result).BlkioStats.IOQueueRecursive {
-			if s.Op == strings.Title(field) {
+			if s.Op == cases.Title(language.Und, cases.NoLower).String(field) {
 				(*stats)["docker.blkio.io_queued."+name+"."+field] = s.Value
 			}
 		}
 		for _, s := range (*result).BlkioStats.IOServicedRecursive {
-			if s.Op == strings.Title(field) {
+			if s.Op == cases.Title(language.Und, cases.NoLower).String(field) {
 				(*stats)["docker.blkio.io_serviced."+name+"."+field] = s.Value
 			}
 		}
 		for _, s := range (*result).BlkioStats.IOServiceBytesRecursive {
-			if s.Op == strings.Title(field) {
+			if s.Op == cases.Title(language.Und, cases.NoLower).String(field) {
 				(*stats)["docker.blkio.io_service_bytes."+name+"."+field] = s.Value
 			}
 		}

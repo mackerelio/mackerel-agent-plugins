@@ -12,6 +12,8 @@ import (
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/cloudwatch"
 	mp "github.com/mackerelio/go-mackerel-plugin-helper"
+	"golang.org/x/text/cases"
+	"golang.org/x/text/language"
 )
 
 const (
@@ -156,7 +158,7 @@ func (p KinesisStreamsPlugin) FetchMetrics() (map[string]interface{}, error) {
 
 // GraphDefinition of KinesisStreamsPlugin
 func (p KinesisStreamsPlugin) GraphDefinition() map[string]mp.Graphs {
-	labelPrefix := strings.Title(p.Prefix)
+	labelPrefix := cases.Title(language.Und, cases.NoLower).String(p.Prefix)
 	labelPrefix = strings.Replace(labelPrefix, "-", " ", -1)
 
 	var graphdef = map[string]mp.Graphs{

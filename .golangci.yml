@@ -1,8 +1,3 @@
-linters:
-  # Detected a number of cases that could not be handled after the switchover,
-  # TODO remove this rule.
-  disable:
-    - staticcheck
 issues:
   exclude-rules:
     - path: _test\.go

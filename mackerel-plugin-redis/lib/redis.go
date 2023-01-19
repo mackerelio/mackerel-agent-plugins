@@ -13,6 +13,8 @@ import (
 	"github.com/gomodule/redigo/redis"
 	mp "github.com/mackerelio/go-mackerel-plugin-helper"
 	"github.com/mackerelio/golib/logging"
+	"golang.org/x/text/cases"
+	"golang.org/x/text/language"
 )
 
 var logger = logging.GetLogger("metrics.plugin.redis")
@@ -225,7 +227,7 @@ func (m RedisPlugin) FetchMetrics() (map[string]interface{}, error) {
 
 // GraphDefinition interface for mackerelplugin
 func (m RedisPlugin) GraphDefinition() map[string]mp.Graphs {
-	labelPrefix := strings.Title(m.Prefix)
+	labelPrefix := cases.Title(language.Und, cases.NoLower).String(m.Prefix)
 
 	var graphdef = map[string]mp.Graphs{
 		"queries": {

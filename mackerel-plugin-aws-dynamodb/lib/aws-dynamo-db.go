@@ -8,6 +8,8 @@ import (
 	"time"
 
 	"golang.org/x/sync/errgroup"
+	"golang.org/x/text/cases"
+	"golang.org/x/text/language"
 
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/credentials"
@@ -308,7 +310,7 @@ func transformMetrics(stats map[string]interface{}) map[string]interface{} {
 
 // GraphDefinition of DynamoDBPlugin
 func (p DynamoDBPlugin) GraphDefinition() map[string]mp.Graphs {
-	labelPrefix := strings.Title(p.Prefix)
+	labelPrefix := cases.Title(language.Und, cases.NoLower).String(p.Prefix)
 	labelPrefix = strings.Replace(labelPrefix, "-", " ", -1)
 	labelPrefix = strings.Replace(labelPrefix, "Dynamodb", "DynamoDB", -1)
 

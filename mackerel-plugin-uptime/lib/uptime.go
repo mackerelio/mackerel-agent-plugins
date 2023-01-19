@@ -3,10 +3,11 @@ package mpuptime
 import (
 	"flag"
 	"fmt"
-	"strings"
 
 	mp "github.com/mackerelio/go-mackerel-plugin"
 	"github.com/mackerelio/go-osstat/uptime"
+	"golang.org/x/text/cases"
+	"golang.org/x/text/language"
 )
 
 // UptimePlugin mackerel plugin
@@ -24,7 +25,7 @@ func (u UptimePlugin) MetricKeyPrefix() string {
 
 // GraphDefinition interface for mackerelplugin
 func (u UptimePlugin) GraphDefinition() map[string]mp.Graphs {
-	labelPrefix := strings.Title(u.Prefix)
+	labelPrefix := cases.Title(language.Und, cases.NoLower).String(u.Prefix)
 	return map[string]mp.Graphs{
 		"": {
 			Label: labelPrefix,

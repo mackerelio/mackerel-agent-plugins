@@ -8,6 +8,8 @@ import (
 
 	mp "github.com/mackerelio/go-mackerel-plugin-helper"
 	"github.com/mackerelio/golib/logging"
+	"golang.org/x/text/cases"
+	"golang.org/x/text/language"
 )
 
 var logger = logging.GetLogger("metrics.plugin.unicorn")
@@ -63,7 +65,7 @@ func (u UnicornPlugin) MetricKeyPrefix() string {
 
 // GraphDefinition interface for mackerelplugin
 func (u UnicornPlugin) GraphDefinition() map[string]mp.Graphs {
-	labelPrefix := strings.Title(u.MetricKeyPrefix())
+	labelPrefix := cases.Title(language.Und, cases.NoLower).String(u.MetricKeyPrefix())
 	var graphdef = map[string]mp.Graphs{
 		"memory": {
 			Label: (labelPrefix + " Memory"),

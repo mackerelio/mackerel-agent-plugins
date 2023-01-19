@@ -13,6 +13,8 @@ import (
 
 	mp "github.com/mackerelio/go-mackerel-plugin-helper"
 	"github.com/mackerelio/golib/logging"
+	"golang.org/x/text/cases"
+	"golang.org/x/text/language"
 )
 
 var (
@@ -246,7 +248,7 @@ func (s SolrPlugin) GraphDefinition() map[string]mp.Graphs {
 		}
 
 		for _, key := range []string{"indexHeapUsageBytes", "segmentCount", "sizeInBytes"} {
-			metricLabel := strings.Title(key)
+			metricLabel := cases.Title(language.Und, cases.NoLower).String(key)
 			graphdef[fmt.Sprintf("%s.%s.%s", s.Prefix, core, key)] = mp.Graphs{
 				Label: fmt.Sprintf("%s %s", core, metricLabel),
 				Unit:  "integer",
@@ -266,7 +268,7 @@ func (s SolrPlugin) GraphDefinition() map[string]mp.Graphs {
 			var metrics []mp.Metrics
 			for _, path := range handlerPaths {
 				path = escapeSlash(path)
-				metricLabel := strings.Title(path)
+				metricLabel := cases.Title(language.Und, cases.NoLower).String(path)
 				diff := false
 				if key == "requests" || key == "errors" || key == "timeouts" ||
 					key == "clientErrors" || key == "serverErrors" || key == "requestTimes" {
@@ -280,7 +282,7 @@ func (s SolrPlugin) GraphDefinition() map[string]mp.Graphs {
 			if key == "requests" || key == "errors" || key == "timeouts" {
 				unit = "integer"
 			}
-			graphLabel := fmt.Sprintf("%s %s", core, strings.Title(key))
+			graphLabel := fmt.Sprintf("%s %s", core, cases.Title(language.Und, cases.NoLower).String(key))
 			graphdef[fmt.Sprintf("%s.%s.%s", s.Prefix, core, key)] = mp.Graphs{
 				Label:   graphLabel,
 				Unit:    unit,
@@ -291,7 +293,7 @@ func (s SolrPlugin) GraphDefinition() map[string]mp.Graphs {
 		for _, key := range cacheStatKeys {
 			var metrics []mp.Metrics
 			for _, cacheType := range cacheTypes {
-				metricLabel := strings.Title(cacheType)
+				metricLabel := cases.Title(language.Und, cases.NoLower).String(cacheType)
 				metrics = append(metrics,
 					mp.Metrics{Name: fmt.Sprintf("%s_%s_%s", core, key, cacheType), Label: metricLabel},
 				)
@@ -300,7 +302,7 @@ func (s SolrPlugin) GraphDefinition() map[string]mp.Graphs {
 			if key == "hitratio" {
 				unit = "float"
 			}
-			graphLabel := fmt.Sprintf("%s %s", core, strings.Title(key))
+			graphLabel := fmt.Sprintf("%s %s", core, cases.Title(language.Und, cases.NoLower).String(key))
 			graphdef[fmt.Sprintf("%s.%s.%s", s.Prefix, core, key)] = mp.Graphs{
 				Label:   graphLabel,
 				Unit:    unit,

@@ -10,6 +10,8 @@ import (
 	"strings"
 
 	"github.com/jmoiron/sqlx"
+	"golang.org/x/text/cases"
+	"golang.org/x/text/language"
 	// PostgreSQL Driver
 	_ "github.com/lib/pq"
 	mp "github.com/mackerelio/go-mackerel-plugin-helper"
@@ -368,7 +370,7 @@ func (p PostgresPlugin) FetchMetrics() (map[string]interface{}, error) {
 
 // GraphDefinition interface for mackerelplugin
 func (p PostgresPlugin) GraphDefinition() map[string]mp.Graphs {
-	labelPrefix := strings.Title(p.MetricKeyPrefix())
+	labelPrefix := cases.Title(language.Und, cases.NoLower).String(p.MetricKeyPrefix())
 
 	var graphdef = map[string]mp.Graphs{
 		"connections": {

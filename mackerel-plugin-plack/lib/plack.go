@@ -7,9 +7,10 @@ import (
 	"io"
 	"net/http"
 	"strconv"
-	"strings"
 
 	mp "github.com/mackerelio/go-mackerel-plugin-helper"
+	"golang.org/x/text/cases"
+	"golang.org/x/text/language"
 )
 
 // PlackPlugin mackerel plugin for Plack
@@ -179,7 +180,7 @@ func Do() {
 		plack.URI = fmt.Sprintf("%s://%s:%s%s", *optScheme, *optHost, *optPort, *optPath)
 	}
 	if plack.LabelPrefix == "" {
-		plack.LabelPrefix = strings.Title(plack.Prefix)
+		plack.LabelPrefix = cases.Title(language.Und, cases.NoLower).String(plack.Prefix)
 	}
 
 	helper := mp.NewMackerelPlugin(plack)
