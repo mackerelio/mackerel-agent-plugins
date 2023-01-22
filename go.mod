@@ -33,7 +33,7 @@ require (
 	github.com/soh335/go-test-redisserver v0.1.0
 	github.com/stretchr/testify v1.8.1
 	github.com/tomasen/fcgi_client v0.0.0-20180423082037-2bb3d819fd19
-	github.com/urfave/cli v1.22.10
+	github.com/urfave/cli v1.22.11
 	golang.org/x/sync v0.1.0
 	golang.org/x/text v0.5.0
 )
