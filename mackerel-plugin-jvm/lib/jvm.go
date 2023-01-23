@@ -131,7 +131,7 @@ func (m JVMPlugin) checkCMSGC() (bool, error) {
 		logger.Errorf("Failed to run exec jinfo. %s. Please run with the java process user.", err)
 		return false, err
 	}
-	return strings.Index(string(stdout), "+UseConcMarkSweepGC") != -1, nil
+	return strings.Contains(string(stdout), "+UseConcMarkSweepGC"), nil
 }
 
 func fetchCMSInitiatingOccupancyFraction(lvmid, JinfoPath string) (float64, error) {

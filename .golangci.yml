@@ -2,7 +2,6 @@ linters:
   # Detected a number of cases that could not be handled after the switchover,
   # TODO remove this rule.
   disable:
-    - gosimple
     - staticcheck
 issues:
   exclude-rules:

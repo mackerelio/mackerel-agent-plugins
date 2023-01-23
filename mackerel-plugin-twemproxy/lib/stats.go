@@ -73,9 +73,9 @@ func (t *TwemproxyStats) UnmarshalJSON(data []byte) error {
 
 L:
 	for k, v := range raw {
-		switch v.(type) {
+		switch v := v.(type) {
 		case float64:
-			cv := uint64(v.(float64))
+			cv := uint64(v)
 			switch k {
 			case "total_connections":
 				t.TotalConnections = &cv
@@ -88,7 +88,7 @@ L:
 				break L
 			}
 		case map[string]interface{}:
-			pool, perr := decodePoolStats(v.(map[string]interface{}))
+			pool, perr := decodePoolStats(v)
 			if perr != nil {
 				err = perr
 				break L
@@ -113,9 +113,9 @@ func decodePoolStats(rawStats map[string]interface{}) (*PoolStats, error) {
 
 L:
 	for k, v := range rawStats {
-		switch v.(type) {
+		switch v := v.(type) {
 		case float64:
-			cv := uint64(v.(float64))
+			cv := uint64(v)
 			switch k {
 			case "client_eof":
 				pool.ClientEOF = &cv
@@ -134,7 +134,7 @@ L:
 				break L
 			}
 		case map[string]interface{}:
-			server, serr := decodeServerStats(v.(map[string]interface{}))
+			server, serr := decodeServerStats(v)
 			if serr != nil {
 				err = serr
 				break L

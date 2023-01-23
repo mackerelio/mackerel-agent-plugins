@@ -279,12 +279,10 @@ func (p DynamoDBPlugin) FetchMetrics() (map[string]interface{}, error) {
 				return err
 			}
 
-			if operationalStats != nil {
-				for name, s := range operationalStats {
-					mu.Lock()
-					stats[name] = s
-					mu.Unlock()
-				}
+			for name, s := range operationalStats {
+				mu.Lock()
+				stats[name] = s
+				mu.Unlock()
 			}
 			return nil
 		})
