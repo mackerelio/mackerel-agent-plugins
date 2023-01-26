@@ -1,9 +1,0 @@
-Source: mackerel-agent-plugins
-Maintainer: Shinji Tanaka <stanaka@hatena.ne.jp>
-Section: misc
-Priority: optional
-Standards-Version: 3.9.2
-
-Package: mackerel-agent-plugins
-Architecture: all
-Description: plugins for Mackerel
