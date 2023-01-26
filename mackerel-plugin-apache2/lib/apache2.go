@@ -129,14 +129,12 @@ func (c Apache2Plugin) FetchMetrics() (map[string]interface{}, error) {
 	return stat, nil
 }
 
+var scoreboardLine = regexp.MustCompile("Scoreboard(.*)")
+
 // parsing scoreboard from server-status?auto
 func parseApache2Scoreboard(str string, p *map[string]interface{}) error {
 	for _, line := range strings.Split(str, "\n") {
-		matched, err := regexp.MatchString("Scoreboard(.*)", line)
-		if err != nil {
-			return err
-		}
-		if !matched {
+		if !scoreboardLine.MatchString(line) {
 			continue
 		}
 		record := strings.Split(line, ":")

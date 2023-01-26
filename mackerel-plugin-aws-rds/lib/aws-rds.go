@@ -4,7 +4,6 @@ import (
 	"errors"
 	"flag"
 	"log"
-	"strings"
 	"time"
 
 	"github.com/aws/aws-sdk-go/aws"
@@ -13,6 +12,8 @@ import (
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/cloudwatch"
 	mp "github.com/mackerelio/go-mackerel-plugin"
+	"golang.org/x/text/cases"
+	"golang.org/x/text/language"
 )
 
 // RDSPlugin mackerel plugin for amazon RDS
@@ -234,14 +235,18 @@ func Do() {
 		if *optPrefix == "rds" {
 			rds.LabelPrefix = "RDS"
 		} else {
-			rds.LabelPrefix = strings.Title(*optPrefix)
+			rds.LabelPrefix = cases.Title(language.Und, cases.NoLower).String(*optPrefix)
 		}
 	} else {
 		rds.LabelPrefix = *optLabelPrefix
 	}
 
 	if *optRegion == "" {
-		ec2metadata := ec2metadata.New(session.New())
+		sess, err := session.NewSession()
+		if err != nil {
+			log.Fatalln(err)
+		}
+		ec2metadata := ec2metadata.New(sess)
 		if ec2metadata.Available() {
 			rds.Region, _ = ec2metadata.Region()
 		}

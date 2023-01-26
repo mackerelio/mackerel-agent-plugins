@@ -9,6 +9,8 @@ import (
 	"strings"
 
 	mp "github.com/mackerelio/go-mackerel-plugin-helper"
+	"golang.org/x/text/cases"
+	"golang.org/x/text/language"
 )
 
 var cmdMetricNames = []string{
@@ -79,7 +81,7 @@ func (p McrouterPlugin) GraphDefinition() map[string]mp.Graphs {
 		})
 	}
 
-	labelPrefix := strings.Title(p.Prefix)
+	labelPrefix := cases.Title(language.Und, cases.NoLower).String(p.Prefix)
 	return map[string]mp.Graphs{
 		"cmd_count": {
 			Label:   (labelPrefix + " Receive Command"),

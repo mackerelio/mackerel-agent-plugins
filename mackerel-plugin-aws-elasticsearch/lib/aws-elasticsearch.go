@@ -341,7 +341,11 @@ func Do() {
 	var es ESPlugin
 
 	if *optRegion == "" {
-		ec2metadata := ec2metadata.New(session.New())
+		sess, err := session.NewSession()
+		if err != nil {
+			log.Fatalln(err)
+		}
+		ec2metadata := ec2metadata.New(sess)
 		if ec2metadata.Available() {
 			es.Region, _ = ec2metadata.Region()
 		}

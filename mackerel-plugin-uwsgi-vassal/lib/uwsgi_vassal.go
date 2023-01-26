@@ -9,6 +9,8 @@ import (
 	"strings"
 
 	mp "github.com/mackerelio/go-mackerel-plugin"
+	"golang.org/x/text/cases"
+	"golang.org/x/text/language"
 )
 
 // UWSGIVassalPlugin mackerel plugin for uWSGI
@@ -172,7 +174,7 @@ func (p UWSGIVassalPlugin) FetchMetrics() (map[string]float64, error) {
 
 // GraphDefinition interface for mackerelplugin
 func (p UWSGIVassalPlugin) GraphDefinition() map[string]mp.Graphs {
-	labelPrefix := strings.Title(p.Prefix)
+	labelPrefix := cases.Title(language.Und, cases.NoLower).String(p.Prefix)
 
 	var graphdef = map[string]mp.Graphs{
 		(p.Prefix + ".workers"): {
@@ -213,7 +215,7 @@ func Do() {
 	flag.Parse()
 
 	uwsgi := UWSGIVassalPlugin{Socket: *optSocket, Prefix: *optPrefix}
-	uwsgi.LabelPrefix = strings.Title(uwsgi.Prefix)
+	uwsgi.LabelPrefix = cases.Title(language.Und, cases.NoLower).String(uwsgi.Prefix)
 
 	helper := mp.NewMackerelPlugin(uwsgi)
 	helper.Tempfile = *optTempfile

@@ -7,10 +7,11 @@ import (
 	"flag"
 	"fmt"
 	"net/http"
-	"strings"
 
 	mp "github.com/mackerelio/go-mackerel-plugin"
 	"github.com/mackerelio/golib/logging"
+	"golang.org/x/text/cases"
+	"golang.org/x/text/language"
 )
 
 var logger = logging.GetLogger("metrics.plugin.elasticsearch")
@@ -292,7 +293,7 @@ func Do() {
 	elasticsearch.URI = fmt.Sprintf("%s://%s:%s", *optScheme, *optHost, *optPort)
 	elasticsearch.Prefix = *optPrefix
 	if *optLabelPrefix == "" {
-		elasticsearch.LabelPrefix = strings.Title(*optPrefix)
+		elasticsearch.LabelPrefix = cases.Title(language.Und, cases.NoLower).String(*optPrefix)
 	} else {
 		elasticsearch.LabelPrefix = *optLabelPrefix
 	}

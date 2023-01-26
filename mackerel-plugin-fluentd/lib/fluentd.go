@@ -13,6 +13,8 @@ import (
 	"strings"
 
 	mp "github.com/mackerelio/go-mackerel-plugin-helper"
+	"golang.org/x/text/cases"
+	"golang.org/x/text/language"
 )
 
 func metricName(names ...string) string {
@@ -299,7 +301,7 @@ var extendedGraphs = map[string]mp.Graphs{
 
 // GraphDefinition interface for mackerelplugin
 func (f FluentdPlugin) GraphDefinition() map[string]mp.Graphs {
-	labelPrefix := strings.Title(f.Prefix)
+	labelPrefix := cases.Title(language.Und, cases.NoLower).String(f.Prefix)
 	graphs := make(map[string]mp.Graphs, len(defaultGraphs))
 	for key, g := range defaultGraphs {
 		if f.Workers > 1 {

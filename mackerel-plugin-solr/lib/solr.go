@@ -246,7 +246,7 @@ func (s SolrPlugin) GraphDefinition() map[string]mp.Graphs {
 		}
 
 		for _, key := range []string{"indexHeapUsageBytes", "segmentCount", "sizeInBytes"} {
-			metricLabel := strings.Title(key)
+			metricLabel := strings.Title(key) // nolint because this label will use in solr plugin's graph-defs, it should keep same representation
 			graphdef[fmt.Sprintf("%s.%s.%s", s.Prefix, core, key)] = mp.Graphs{
 				Label: fmt.Sprintf("%s %s", core, metricLabel),
 				Unit:  "integer",
@@ -266,7 +266,7 @@ func (s SolrPlugin) GraphDefinition() map[string]mp.Graphs {
 			var metrics []mp.Metrics
 			for _, path := range handlerPaths {
 				path = escapeSlash(path)
-				metricLabel := strings.Title(path)
+				metricLabel := strings.Title(key) // nolint because this label will use in solr plugin's graph-defs, it should keep same representation
 				diff := false
 				if key == "requests" || key == "errors" || key == "timeouts" ||
 					key == "clientErrors" || key == "serverErrors" || key == "requestTimes" {
@@ -280,7 +280,7 @@ func (s SolrPlugin) GraphDefinition() map[string]mp.Graphs {
 			if key == "requests" || key == "errors" || key == "timeouts" {
 				unit = "integer"
 			}
-			graphLabel := fmt.Sprintf("%s %s", core, strings.Title(key))
+			graphLabel := fmt.Sprintf("%s %s", core, strings.Title(key)) // nolint because this label will use in solr plugin's graph-defs, it should keep same representation
 			graphdef[fmt.Sprintf("%s.%s.%s", s.Prefix, core, key)] = mp.Graphs{
 				Label:   graphLabel,
 				Unit:    unit,
@@ -291,7 +291,7 @@ func (s SolrPlugin) GraphDefinition() map[string]mp.Graphs {
 		for _, key := range cacheStatKeys {
 			var metrics []mp.Metrics
 			for _, cacheType := range cacheTypes {
-				metricLabel := strings.Title(cacheType)
+				metricLabel := strings.Title(key) // nolint because this label will use in solr plugin's graph-defs, it should keep same representation
 				metrics = append(metrics,
 					mp.Metrics{Name: fmt.Sprintf("%s_%s_%s", core, key, cacheType), Label: metricLabel},
 				)
@@ -300,7 +300,7 @@ func (s SolrPlugin) GraphDefinition() map[string]mp.Graphs {
 			if key == "hitratio" {
 				unit = "float"
 			}
-			graphLabel := fmt.Sprintf("%s %s", core, strings.Title(key))
+			graphLabel := fmt.Sprintf("%s %s", core, strings.Title(key)) // nolint because this label will use in solr plugin's graph-defs, it should keep same representation
 			graphdef[fmt.Sprintf("%s.%s.%s", s.Prefix, core, key)] = mp.Graphs{
 				Label:   graphLabel,
 				Unit:    unit,

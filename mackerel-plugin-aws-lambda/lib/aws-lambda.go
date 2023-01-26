@@ -3,7 +3,6 @@ package mpawslambda
 import (
 	"flag"
 	"log"
-	"strings"
 	"time"
 
 	"github.com/aws/aws-sdk-go/aws"
@@ -12,6 +11,8 @@ import (
 	"github.com/aws/aws-sdk-go/service/cloudwatch"
 	"github.com/aws/aws-sdk-go/service/cloudwatch/cloudwatchiface"
 	mp "github.com/mackerelio/go-mackerel-plugin-helper"
+	"golang.org/x/text/cases"
+	"golang.org/x/text/language"
 )
 
 const (
@@ -186,7 +187,7 @@ func (p LambdaPlugin) FetchMetrics() (map[string]interface{}, error) {
 
 // GraphDefinition of LambdaPlugin
 func (p LambdaPlugin) GraphDefinition() map[string]mp.Graphs {
-	labelPrefix := strings.Title(p.Prefix)
+	labelPrefix := cases.Title(language.Und, cases.NoLower).String(p.Prefix)
 
 	graphdef := map[string]mp.Graphs{
 		"invocations": {

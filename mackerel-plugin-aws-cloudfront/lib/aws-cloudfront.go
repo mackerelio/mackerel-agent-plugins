@@ -12,6 +12,8 @@ import (
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/cloudwatch"
 	mp "github.com/mackerelio/go-mackerel-plugin"
+	"golang.org/x/text/cases"
+	"golang.org/x/text/language"
 )
 
 const (
@@ -134,7 +136,7 @@ func (p CloudFrontPlugin) FetchMetrics() (map[string]float64, error) {
 
 // GraphDefinition of CloudFrontPlugin
 func (p CloudFrontPlugin) GraphDefinition() map[string]mp.Graphs {
-	labelPrefix := strings.Title(p.Prefix)
+	labelPrefix := cases.Title(language.Und, cases.NoLower).String(p.Prefix)
 	labelPrefix = strings.Replace(labelPrefix, "-", " ", -1)
 	labelPrefix = strings.Replace(labelPrefix, "Aws", "AWS", -1)
 	labelPrefix = strings.Replace(labelPrefix, "Cloudfront", "CloudFront", -1)
