@@ -63,11 +63,6 @@ sub update_packaging_specs {
         $content;
     };
     replace $_, $replace_sub for ("packaging/rpm/$PACKAGE_NAME*.spec", "packaging/deb*/debian/rules");
-
-    write_file(
-        'packaging/deb/debian/source/include-binaries',
-        join("\n", map { "debian/$PLUGIN_PREFIX$_" } @plugins) . "\n"
-    );
 }
 
 sub update_packaging_binaries_list {

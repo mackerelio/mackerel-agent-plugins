@@ -93,18 +93,7 @@ rpm-v2-arm:
 	  --target aarch64 -bb packaging/rpm/mackerel-agent-plugins-v2.spec
 
 .PHONY: deb
-deb: deb-v1 deb-v2
-
-.PHONY: deb-v1
-deb-v1:
-	$(MAKE) build-for-packaging GOOS=linux GOARCH=386
-	for i in `cat packaging/deb/debian/source/include-binaries`; do \
-	  cp build/linux/386/`basename $$i` packaging/deb/debian/; \
-	done
-	cd packaging/deb && debuild --no-tgz-check -rfakeroot -uc -us
-
-.PHONY: deb-v2
-deb-v2: deb-v2-x86 deb-v2-arm
+deb: deb-v2-x86 deb-v2-arm
 
 .PHONY: deb-v2-x86
 deb-v2-x86:
