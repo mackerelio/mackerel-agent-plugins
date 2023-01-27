@@ -21,7 +21,7 @@ type SidekiqPlugin struct {
 }
 
 var graphdef = map[string]mp.Graphs{
-	"ProcessedANDFailed": mp.Graphs{
+	"ProcessedANDFailed": {
 		Label: "Sidekiq processed and failed count",
 		Unit:  "integer",
 		Metrics: []mp.Metrics{
@@ -29,7 +29,7 @@ var graphdef = map[string]mp.Graphs{
 			{Name: "failed", Label: "Failed", Type: "uint64", Diff: true},
 		},
 	},
-	"Stats": mp.Graphs{
+	"Stats": {
 		Label: "Sidekiq stats",
 		Unit:  "integer",
 		Metrics: []mp.Metrics{
@@ -40,7 +40,7 @@ var graphdef = map[string]mp.Graphs{
 			{Name: "dead", Label: "Dead", Type: "uint64"},
 		},
 	},
-	"QueueLatency": mp.Graphs{
+	"QueueLatency": {
 		Label: "Sidekiq queue latency",
 		Unit:  "float",
 		Metrics: []mp.Metrics{

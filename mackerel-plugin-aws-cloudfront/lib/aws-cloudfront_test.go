@@ -10,14 +10,14 @@ import (
 
 func TestGraphDefinition(t *testing.T) {
 	p := CloudFrontPlugin{
-		Name: "AWSCloudFront",
+		Name:   "AWSCloudFront",
 		Prefix: "aws-cloudfront",
 	}
 	graphdef := p.GraphDefinition()
 
 	expectedLabels := map[string](string){
-		"Requests": "AWS CloudFront Requests",
-		"Transfer": "AWS CloudFront Transfer",
+		"Requests":  "AWS CloudFront Requests",
+		"Transfer":  "AWS CloudFront Transfer",
 		"ErrorRate": "AWS CloudFront ErrorRate",
 	}
 
