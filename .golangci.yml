@@ -1,3 +1,7 @@
+linters:
+  # see also https://golangci-lint.run/usage/linters/#enabled-by-default
+  enable:
+   - gofmt
 issues:
   exclude-rules:
     - path: _test\.go
@@ -6,4 +10,3 @@ issues:
         - gosimple
         - staticcheck
         - ineffassign
-
