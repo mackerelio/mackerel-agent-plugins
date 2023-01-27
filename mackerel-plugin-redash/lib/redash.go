@@ -5,9 +5,10 @@ import (
 	"fmt"
 	"net/url"
 	"os"
-	"strings"
 
 	mp "github.com/mackerelio/go-mackerel-plugin-helper"
+	"golang.org/x/text/cases"
+	"golang.org/x/text/language"
 )
 
 // RedashPlugin mackerel plugin
@@ -27,7 +28,7 @@ func (p RedashPlugin) MetricKeyPrefix() string {
 
 // GraphDefinition interface for mackerelplugin
 func (p RedashPlugin) GraphDefinition() map[string]mp.Graphs {
-	labelPrefix := strings.Title(p.Prefix)
+	labelPrefix := cases.Title(language.Und, cases.NoLower).String(p.Prefix)
 
 	var graphdef = map[string]mp.Graphs{
 		"task_queues_count": {

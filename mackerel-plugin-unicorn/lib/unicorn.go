@@ -3,14 +3,13 @@ package mpunicorn
 import (
 	"flag"
 	"fmt"
-	"io/ioutil"
-
 	"os"
-
 	"strings"
 
 	mp "github.com/mackerelio/go-mackerel-plugin-helper"
 	"github.com/mackerelio/golib/logging"
+	"golang.org/x/text/cases"
+	"golang.org/x/text/language"
 )
 
 var logger = logging.GetLogger("metrics.plugin.unicorn")
@@ -66,7 +65,7 @@ func (u UnicornPlugin) MetricKeyPrefix() string {
 
 // GraphDefinition interface for mackerelplugin
 func (u UnicornPlugin) GraphDefinition() map[string]mp.Graphs {
-	labelPrefix := strings.Title(u.MetricKeyPrefix())
+	labelPrefix := cases.Title(language.Und, cases.NoLower).String(u.MetricKeyPrefix())
 	var graphdef = map[string]mp.Graphs{
 		"memory": {
 			Label: (labelPrefix + " Memory"),
@@ -105,7 +104,7 @@ func Do() {
 		logger.Errorf("Required unicorn pidfile.")
 		os.Exit(1)
 	} else {
-		pid, err := ioutil.ReadFile(*optPidFile)
+		pid, err := os.ReadFile(*optPidFile)
 		if err != nil {
 			logger.Errorf("Failed to load unicorn pid file. %s", err)
 			os.Exit(1)

@@ -4,9 +4,10 @@ import (
 	"flag"
 	"fmt"
 	"regexp"
-	"strings"
 
 	mp "github.com/mackerelio/go-mackerel-plugin-helper"
+	"golang.org/x/text/cases"
+	"golang.org/x/text/language"
 )
 
 // TwemproxyPlugin mackerel plugin
@@ -27,7 +28,7 @@ func (p TwemproxyPlugin) MetricKeyPrefix() string {
 
 // GraphDefinition interface for mackerelplugin
 func (p TwemproxyPlugin) GraphDefinition() map[string]mp.Graphs {
-	labelPrefix := strings.Title(p.Prefix)
+	labelPrefix := cases.Title(language.Und, cases.NoLower).String(p.Prefix)
 
 	var graphdef = map[string]mp.Graphs{
 		"connections": {

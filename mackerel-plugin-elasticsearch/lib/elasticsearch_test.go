@@ -2,16 +2,16 @@ package mpelasticsearch
 
 import (
 	"fmt"
-	"io/ioutil"
 	"net/http"
 	"net/http/httptest"
+	"os"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
 )
 
 var testHandler = http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-	json, err := ioutil.ReadFile("./stat.json")
+	json, err := os.ReadFile("./stat.json")
 	if err != nil {
 		panic(err)
 	}

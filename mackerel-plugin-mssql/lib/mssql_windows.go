@@ -79,7 +79,7 @@ func (m MSSQLPlugin) FetchMetrics() (map[string]float64, error) {
 
 // GraphDefinition interface for mackerelplugin
 func (m MSSQLPlugin) GraphDefinition() map[string](mp.Graphs) {
-	labelPrefix := strings.Title(strings.Replace(m.MetricKeyPrefix(), "mssql", "MSSQL", -1))
+	labelPrefix := cases.Title(language.Und, cases.NoLower).String(strings.Replace(m.MetricKeyPrefix(), "mssql", "MSSQL", -1))
 	return map[string](mp.Graphs){
 		"buffer": mp.Graphs{
 			Label: labelPrefix + " Buffer",

@@ -3,6 +3,7 @@ package mpawsec2cpucredit
 import (
 	"errors"
 	"flag"
+	"log"
 	"time"
 
 	"github.com/aws/aws-sdk-go/aws"
@@ -137,7 +138,11 @@ func Do() {
 	var cpucredit CPUCreditPlugin
 
 	if *optRegion == "" || *optInstanceID == "" {
-		ec2metadata := ec2metadata.New(session.New())
+		sess, err := session.NewSession()
+		if err != nil {
+			log.Fatalln(err)
+		}
+		ec2metadata := ec2metadata.New(sess)
 		if ec2metadata.Available() {
 			cpucredit.Region, _ = ec2metadata.Region()
 			cpucredit.InstanceID, _ = ec2metadata.GetMetadata("instance-id")

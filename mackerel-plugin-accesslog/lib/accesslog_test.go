@@ -2,7 +2,7 @@ package mpaccesslog
 
 import (
 	"encoding/json"
-	"io/ioutil"
+	"os"
 	"path/filepath"
 	"reflect"
 	"testing"
@@ -217,7 +217,7 @@ func TestSkipLogOnceIfNoPos(t *testing.T) {
 	var pos struct {
 		Pos int64 `json:"pos"`
 	}
-	b, err := ioutil.ReadFile(posFile)
+	b, err := os.ReadFile(posFile)
 	if err != nil {
 		t.Errorf("ReadFile(%s): %v", posFile, err)
 		return

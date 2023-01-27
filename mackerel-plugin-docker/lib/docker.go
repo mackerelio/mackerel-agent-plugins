@@ -13,6 +13,8 @@ import (
 
 	docker "github.com/fsouza/go-dockerclient"
 	mp "github.com/mackerelio/go-mackerel-plugin-helper"
+	"golang.org/x/text/cases"
+	"golang.org/x/text/language"
 )
 
 var graphdef = map[string]mp.Graphs{
@@ -111,9 +113,12 @@ func (m DockerPlugin) FetchMetrics() (map[string]interface{}, error) {
 		return nil, err
 	}
 	stats, err = m.FetchMetricsWithAPI(containers)
+	if err != nil {
+		return nil, err
+	}
 
 	if m.UseCPUPercentage {
-		if time.Now().Sub(m.lastMetricValues.Timestamp) <= 5*time.Minute {
+		if time.Since(m.lastMetricValues.Timestamp) <= 5*time.Minute {
 			addCPUPercentageStats(&stats, m.lastMetricValues.Values)
 		}
 	}
@@ -176,7 +181,10 @@ func (m DockerPlugin) FetchMetricsWithAPI(containers []docker.APIContainers) (ma
 				log.Fatalf("Stats: Expected 1 result. Got %d.", len(resultStats))
 			}
 			mu.Lock()
-			m.parseStats(&res, metricName, resultStats[0])
+			err = m.parseStats(&res, metricName, resultStats[0])
+			if err != nil {
+				log.Fatal(err)
+			}
 			mu.Unlock()
 		}(container)
 	}
@@ -222,17 +230,17 @@ func (m DockerPlugin) parseStats(stats *map[string]interface{}, name string, res
 	fields := []string{"read", "write", "sync", "async"}
 	for _, field := range fields {
 		for _, s := range (*result).BlkioStats.IOQueueRecursive {
-			if s.Op == strings.Title(field) {
+			if s.Op == cases.Title(language.Und, cases.NoLower).String(field) {
 				(*stats)["docker.blkio.io_queued."+name+"."+field] = s.Value
 			}
 		}
 		for _, s := range (*result).BlkioStats.IOServicedRecursive {
-			if s.Op == strings.Title(field) {
+			if s.Op == cases.Title(language.Und, cases.NoLower).String(field) {
 				(*stats)["docker.blkio.io_serviced."+name+"."+field] = s.Value
 			}
 		}
 		for _, s := range (*result).BlkioStats.IOServiceBytesRecursive {
-			if s.Op == strings.Title(field) {
+			if s.Op == cases.Title(language.Und, cases.NoLower).String(field) {
 				(*stats)["docker.blkio.io_service_bytes."+name+"."+field] = s.Value
 			}
 		}

@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"flag"
 	"fmt"
+	"net"
 	"os"
 	"reflect"
 	"strconv"
@@ -333,10 +334,10 @@ func Do() {
 
 	var mongodb MongoDBPlugin
 	mongodb.Verbose = *optVerbose
-	mongodb.URL = fmt.Sprintf("%s:%s", *optHost, *optPort)
-	mongodb.Username = fmt.Sprintf("%s", *optUser)
-	mongodb.Password = fmt.Sprintf("%s", *optPass)
-	mongodb.Source = fmt.Sprintf("%s", *optSource)
+	mongodb.URL = net.JoinHostPort(*optHost, *optPort)
+	mongodb.Username = *optUser
+	mongodb.Password = *optPass
+	mongodb.Source = *optSource
 	mongodb.KeyPrefix = *optKeyPrefix
 
 	helper := mp.NewMackerelPlugin(mongodb)

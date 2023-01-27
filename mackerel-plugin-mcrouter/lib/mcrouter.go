@@ -4,12 +4,13 @@ import (
 	"encoding/json"
 	"flag"
 	"fmt"
-	"io/ioutil"
 	"os"
 	"path"
 	"strings"
 
 	mp "github.com/mackerelio/go-mackerel-plugin-helper"
+	"golang.org/x/text/cases"
+	"golang.org/x/text/language"
 )
 
 var cmdMetricNames = []string{
@@ -80,7 +81,7 @@ func (p McrouterPlugin) GraphDefinition() map[string]mp.Graphs {
 		})
 	}
 
-	labelPrefix := strings.Title(p.Prefix)
+	labelPrefix := cases.Title(language.Und, cases.NoLower).String(p.Prefix)
 	return map[string]mp.Graphs{
 		"cmd_count": {
 			Label:   (labelPrefix + " Receive Command"),
@@ -134,7 +135,7 @@ func (p McrouterPlugin) FetchMetrics() (map[string]interface{}, error) {
 }
 
 func readStatsFile(statsFile string) (map[string]float64, error) {
-	data, err := ioutil.ReadFile(statsFile)
+	data, err := os.ReadFile(statsFile)
 	if err != nil {
 		return nil, err
 	}

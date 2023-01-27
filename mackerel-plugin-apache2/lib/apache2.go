@@ -3,7 +3,8 @@ package mpapache2
 import (
 	"errors"
 	"fmt"
-	"io/ioutil"
+	"io"
+	"log"
 	"net/http"
 	"os"
 	"regexp"
@@ -128,14 +129,12 @@ func (c Apache2Plugin) FetchMetrics() (map[string]interface{}, error) {
 	return stat, nil
 }
 
+var scoreboardLine = regexp.MustCompile("Scoreboard(.*)")
+
 // parsing scoreboard from server-status?auto
 func parseApache2Scoreboard(str string, p *map[string]interface{}) error {
 	for _, line := range strings.Split(str, "\n") {
-		matched, err := regexp.MatchString("Scoreboard(.*)", line)
-		if err != nil {
-			return err
-		}
-		if !matched {
+		if !scoreboardLine.MatchString(line) {
 			continue
 		}
 		record := strings.Split(line, ":")
@@ -219,7 +218,7 @@ func getApache2Metrics(host string, port uint16, path string, header []string) (
 	if resp.StatusCode != http.StatusOK {
 		return "", fmt.Errorf("HTTP status error: %d", resp.StatusCode)
 	}
-	body, err := ioutil.ReadAll(resp.Body)
+	body, err := io.ReadAll(resp.Body)
 	if err != nil {
 		return "", err
 	}
@@ -237,5 +236,8 @@ func Do() {
 	app.Flags = flags
 	app.Action = doMain
 
-	app.Run(os.Args)
+	err := app.Run(os.Args)
+	if err != nil {
+		log.Fatalln(err)
+	}
 }

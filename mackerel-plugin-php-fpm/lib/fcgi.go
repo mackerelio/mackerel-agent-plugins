@@ -2,7 +2,7 @@ package mpphpfpm
 
 import (
 	"bytes"
-	"io/ioutil"
+	"io"
 	"net/http"
 	"strconv"
 	"time"
@@ -21,7 +21,7 @@ func (*FastCGITransport) timeout(req *http.Request) time.Duration {
 	if !ok {
 		return 0 // no timeout
 	}
-	return t.Sub(time.Now())
+	return time.Until(t)
 }
 
 // RoundTrip implements the RoundTripper interface.
@@ -69,6 +69,6 @@ func (t *FastCGITransport) RoundTrip(req *http.Request) (*http.Response, error) 
 	if _, err := buf.ReadFrom(body); err != nil {
 		return nil, err
 	}
-	resp.Body = ioutil.NopCloser(&buf)
+	resp.Body = io.NopCloser(&buf)
 	return resp, nil
 }

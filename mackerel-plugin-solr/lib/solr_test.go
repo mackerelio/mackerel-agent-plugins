@@ -2,9 +2,9 @@ package mpsolr
 
 import (
 	"fmt"
-	"io/ioutil"
 	"net/http"
 	"net/http/httptest"
+	"os"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -31,7 +31,7 @@ var testHandler = http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) 
 
 func fetchJSON(name string) string {
 	path := fmt.Sprintf("./stats/%s/%s.json", solrVersion, name)
-	json, err := ioutil.ReadFile(path)
+	json, err := os.ReadFile(path)
 	if err != nil {
 		panic(err)
 	}

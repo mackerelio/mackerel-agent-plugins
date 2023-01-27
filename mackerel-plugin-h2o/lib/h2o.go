@@ -6,7 +6,6 @@ import (
 	"flag"
 	"fmt"
 	"io"
-	"io/ioutil"
 	"net/http"
 	"strings"
 
@@ -252,7 +251,7 @@ func (h2o H2OPlugin) parseStats(body io.Reader) (map[string]float64, error) {
 	stat := make(map[string]interface{})
 	metrics := make(map[string]float64)
 
-	b, err := ioutil.ReadAll(body)
+	b, err := io.ReadAll(body)
 	if err != nil {
 		return nil, err
 	}

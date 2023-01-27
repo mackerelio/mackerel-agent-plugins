@@ -15,6 +15,8 @@ import (
 	ldap "github.com/go-ldap/ldap/v3"
 	mp "github.com/mackerelio/go-mackerel-plugin-helper"
 	"github.com/mackerelio/golib/logging"
+	"golang.org/x/text/cases"
+	"golang.org/x/text/language"
 )
 
 var (
@@ -116,6 +118,9 @@ func getLatestCSN(host, base, bind, passwd string, useTLS, insecureSkipVerify bo
 	} else {
 		l, err = ldap.Dial("tcp", host)
 	}
+	if err != nil {
+		return res, err
+	}
 	err = l.Bind(bind, passwd)
 	if err != nil {
 		logger.Errorf("Failed to Bind %s, err: %s", bind, err)
@@ -207,7 +212,7 @@ func (m OpenLDAPPlugin) MetricKeyPrefix() string {
 
 // GraphDefinition interface for mackerelplugin
 func (m OpenLDAPPlugin) GraphDefinition() map[string]mp.Graphs {
-	labelPrefix := strings.Title(m.Prefix)
+	labelPrefix := cases.Title(language.Und, cases.NoLower).String(m.Prefix)
 	graphs := map[string]mp.Graphs{
 		"operations_initiated": {
 			Label: (labelPrefix + " operations Initiated"),

@@ -6,10 +6,11 @@ import (
 	"fmt"
 	"io"
 	"net/http"
-	"strings"
 
-	"github.com/fukata/golang-stats-api-handler"
+	stats_api "github.com/fukata/golang-stats-api-handler"
 	mp "github.com/mackerelio/go-mackerel-plugin"
+	"golang.org/x/text/cases"
+	"golang.org/x/text/language"
 )
 
 // GostatsPlugin mackerel plugin for go server
@@ -52,7 +53,7 @@ type GostatsPlugin struct {
 
 // GraphDefinition interface for mackerelplugin
 func (m GostatsPlugin) GraphDefinition() map[string]mp.Graphs {
-	labelPrefix := strings.Title(m.Prefix)
+	labelPrefix := cases.Title(language.Und, cases.NoLower).String(m.Prefix)
 	return map[string]mp.Graphs{
 		(m.Prefix + ".runtime"): {
 			Label: (labelPrefix + " Runtime"),

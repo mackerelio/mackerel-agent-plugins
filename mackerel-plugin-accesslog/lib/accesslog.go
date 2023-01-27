@@ -11,7 +11,6 @@ import (
 	"os"
 	"path/filepath"
 	"regexp"
-	"strings"
 	"time"
 
 	"github.com/Songmu/axslogparser"
@@ -19,6 +18,8 @@ import (
 	mp "github.com/mackerelio/go-mackerel-plugin"
 	"github.com/mackerelio/golib/pluginutil"
 	"github.com/montanaflynn/stats"
+	"golang.org/x/text/cases"
+	"golang.org/x/text/language"
 )
 
 var parsers = axslogparser.Parsers{
@@ -45,7 +46,7 @@ func (p *AccesslogPlugin) MetricKeyPrefix() string {
 
 // GraphDefinition interface for mackerelplugin
 func (p *AccesslogPlugin) GraphDefinition() map[string]mp.Graphs {
-	labelPrefix := strings.Title(p.prefix)
+	labelPrefix := cases.Title(language.Und, cases.NoLower).String(p.prefix)
 	return map[string]mp.Graphs{
 		"access_num": {
 			Label: labelPrefix + " Access Num",

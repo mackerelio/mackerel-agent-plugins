@@ -11,6 +11,8 @@ import (
 	"strings"
 
 	mp "github.com/mackerelio/go-mackerel-plugin"
+	"golang.org/x/text/cases"
+	"golang.org/x/text/language"
 )
 
 // MemcachedPlugin mackerel plugin for memchached
@@ -116,7 +118,7 @@ func (m MemcachedPlugin) parseStats(conn io.Reader) (map[string]float64, error) 
 
 // GraphDefinition interface for mackerelplugin
 func (m MemcachedPlugin) GraphDefinition() map[string]mp.Graphs {
-	labelPrefix := strings.Title(m.Prefix)
+	labelPrefix := cases.Title(language.Und, cases.NoLower).String(m.Prefix)
 
 	// https://github.com/memcached/memcached/blob/master/doc/protocol.txt
 	var graphdef = map[string]mp.Graphs{
