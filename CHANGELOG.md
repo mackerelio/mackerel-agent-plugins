@@ -1,5 +1,28 @@
 # Changelog
 
+## 0.76.0 (2023-02-01)
+
+* Bump github.com/aws/aws-sdk-go from 1.44.184 to 1.44.190 #1014 (dependabot[bot])
+* Bump actions/setup-go from 2 to 3 #1013 (dependabot[bot])
+* Bump actions/cache from 2 to 3 #1012 (dependabot[bot])
+* Bump actions/upload-artifact from 2 to 3 #1011 (dependabot[bot])
+* Bump actions/download-artifact from 2 to 3 #1010 (dependabot[bot])
+* Bump actions/checkout from 2 to 3 #1009 (dependabot[bot])
+* Bump github.com/mackerelio/mackerel-plugin-mysql from 1.0.0 to 1.1.0 in /mackerel-plugin-mysql #1008 (dependabot[bot])
+* Bump github.com/urfave/cli from 1.22.10 to 1.22.12 #1006 (dependabot[bot])
+* Bump github.com/mackerelio/mackerel-plugin-mysql from 1.0.0 to 1.1.0 #1005 (dependabot[bot])
+* Enables Dependabot version updates for GitHub Actions #1004 (Arthur1)
+* Remove debian package v1 process. #1003 (yseto)
+* fix staticcheck #1001 (yseto)
+* Bump github.com/fsouza/go-dockerclient from 1.9.0 to 1.9.3 #999 (dependabot[bot])
+* Bump github.com/aws/aws-sdk-go from 1.44.116 to 1.44.184 #998 (dependabot[bot])
+* fix gosimple #997 (yseto)
+* fix errcheck, ineffassign. #996 (yseto)
+* ci: enable `gofmt` #994 (wafuwafu13)
+* Bump golang.org/x/text from 0.5.0 to 0.6.0 #991 (dependabot[bot])
+* Bump github.com/montanaflynn/stats from 0.6.6 to 0.7.0 #990 (dependabot[bot])
+
+
 ## 0.75.0 (2023-01-18)
 
 * fix build on current working directory. #985 (yseto)
