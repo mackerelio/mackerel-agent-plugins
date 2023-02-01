@@ -1,3 +1,46 @@
+mackerel-agent-plugins (0.76.0-1.v2) stable; urgency=low
+
+  * Bump github.com/aws/aws-sdk-go from 1.44.184 to 1.44.190 (by dependabot[bot])
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/1014>
+  * Bump actions/setup-go from 2 to 3 (by dependabot[bot])
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/1013>
+  * Bump actions/cache from 2 to 3 (by dependabot[bot])
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/1012>
+  * Bump actions/upload-artifact from 2 to 3 (by dependabot[bot])
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/1011>
+  * Bump actions/download-artifact from 2 to 3 (by dependabot[bot])
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/1010>
+  * Bump actions/checkout from 2 to 3 (by dependabot[bot])
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/1009>
+  * Bump github.com/mackerelio/mackerel-plugin-mysql from 1.0.0 to 1.1.0 in /mackerel-plugin-mysql (by dependabot[bot])
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/1008>
+  * Bump github.com/urfave/cli from 1.22.10 to 1.22.12 (by dependabot[bot])
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/1006>
+  * Bump github.com/mackerelio/mackerel-plugin-mysql from 1.0.0 to 1.1.0 (by dependabot[bot])
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/1005>
+  * Enables Dependabot version updates for GitHub Actions (by Arthur1)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/1004>
+  * Remove debian package v1 process. (by yseto)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/1003>
+  * fix staticcheck (by yseto)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/1001>
+  * Bump github.com/fsouza/go-dockerclient from 1.9.0 to 1.9.3 (by dependabot[bot])
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/999>
+  * Bump github.com/aws/aws-sdk-go from 1.44.116 to 1.44.184 (by dependabot[bot])
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/998>
+  * fix gosimple (by yseto)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/997>
+  * fix errcheck, ineffassign. (by yseto)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/996>
+  * ci: enable `gofmt` (by wafuwafu13)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/994>
+  * Bump golang.org/x/text from 0.5.0 to 0.6.0 (by dependabot[bot])
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/991>
+  * Bump github.com/montanaflynn/stats from 0.6.6 to 0.7.0 (by dependabot[bot])
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/990>
+
+ -- mackerel <mackerel-developers@hatena.ne.jp>  Wed, 1 Feb 2023 06:09:43 +0000
+
 mackerel-agent-plugins (0.75.0-1.v2) stable; urgency=low
 
   * fix build on current working directory. (by yseto)

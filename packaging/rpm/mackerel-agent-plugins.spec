@@ -48,6 +48,27 @@ done
 %{__oldtargetdir}/*
 
 %changelog
+* Wed Feb 1 2023 <mackerel-developers@hatena.ne.jp> - 0.76.0
+- Bump github.com/aws/aws-sdk-go from 1.44.184 to 1.44.190 (by dependabot[bot])
+- Bump actions/setup-go from 2 to 3 (by dependabot[bot])
+- Bump actions/cache from 2 to 3 (by dependabot[bot])
+- Bump actions/upload-artifact from 2 to 3 (by dependabot[bot])
+- Bump actions/download-artifact from 2 to 3 (by dependabot[bot])
+- Bump actions/checkout from 2 to 3 (by dependabot[bot])
+- Bump github.com/mackerelio/mackerel-plugin-mysql from 1.0.0 to 1.1.0 in /mackerel-plugin-mysql (by dependabot[bot])
+- Bump github.com/urfave/cli from 1.22.10 to 1.22.12 (by dependabot[bot])
+- Bump github.com/mackerelio/mackerel-plugin-mysql from 1.0.0 to 1.1.0 (by dependabot[bot])
+- Enables Dependabot version updates for GitHub Actions (by Arthur1)
+- Remove debian package v1 process. (by yseto)
+- fix staticcheck (by yseto)
+- Bump github.com/fsouza/go-dockerclient from 1.9.0 to 1.9.3 (by dependabot[bot])
+- Bump github.com/aws/aws-sdk-go from 1.44.116 to 1.44.184 (by dependabot[bot])
+- fix gosimple (by yseto)
+- fix errcheck, ineffassign. (by yseto)
+- ci: enable `gofmt` (by wafuwafu13)
+- Bump golang.org/x/text from 0.5.0 to 0.6.0 (by dependabot[bot])
+- Bump github.com/montanaflynn/stats from 0.6.6 to 0.7.0 (by dependabot[bot])
+
 * Wed Jan 18 2023 <mackerel-developers@hatena.ne.jp> - 0.75.0
 - fix build on current working directory. (by yseto)
 - added compile option. (by yseto)
