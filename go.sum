@@ -508,6 +508,8 @@ github.com/mackerelio/go-osstat v0.2.3 h1:jAMXD5erlDE39kdX2CU7YwCGRcxIO33u/p8+Fh
 github.com/mackerelio/go-osstat v0.2.3/go.mod h1:DQbPOnsss9JHIXgBStc/dnhhir3gbd3YH+Dbdi7ptMA=
 github.com/mackerelio/golib v1.2.1 h1:SDcDn6Jw3p9bi1N0bg1Z/ilG5qcBB23qL8xNwrU0gg4=
 github.com/mackerelio/golib v1.2.1/go.mod h1:b8ZaapsHGH1FlEJlCqfD98CqafLeyMevyATDlID2BsM=
+github.com/mackerelio/mackerel-plugin-mongodb v1.0.0 h1:rzYjImpQXFfwmhvLkPcnaABn6LlgOnhOmXCiPBDa8d0=
+github.com/mackerelio/mackerel-plugin-mongodb v1.0.0/go.mod h1:sMP9Lfb7NnggmKNADDoSggdxBlry8LnDeSNTh36fr1M=
 github.com/mackerelio/mackerel-plugin-mysql v1.1.0 h1:/N8g4wUVkzuSEFj3Qkyec+X5XmRV6wOdl4peOR9QtRA=
 github.com/mackerelio/mackerel-plugin-mysql v1.1.0/go.mod h1:cynO5nuvm4C5Lv5BGWi8Rdt7bpxZrmuI6/+rKgKtGxM=
 github.com/magiconair/properties v1.8.0/go.mod h1:PppfXfuXeibc/6YijjN8zIbojt8czPbwD3XqdrwzmxQ=
