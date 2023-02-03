@@ -22,7 +22,6 @@
        "linux",
        "mailq",
        "memcached",
-       "mongodb",
        "multicore",
        "munin",
        "nginx",
@@ -54,6 +53,10 @@
        "h2o"
     ],
     "external-plugins": [
+        {
+            "name": "mongodb",
+            "repository": "github.com/mackerelio/mackerel-plugin-mongodb"
+        },
         {
             "name": "mysql",
             "repository": "github.com/mackerelio/mackerel-plugin-mysql"
