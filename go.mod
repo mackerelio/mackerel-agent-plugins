@@ -15,7 +15,7 @@ require (
 	github.com/go-redis/redis v6.15.9+incompatible
 	github.com/gomodule/redigo v1.8.9
 	github.com/gosnmp/gosnmp v1.35.0
-	github.com/jarcoal/httpmock v1.2.0
+	github.com/jarcoal/httpmock v1.3.0
 	github.com/jmoiron/sqlx v1.3.5
 	github.com/lestrrat-go/tcptest v0.0.0-20180223004312-f0345789c593
 	github.com/lib/pq v1.10.7
