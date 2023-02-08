@@ -11,12 +11,10 @@ require (
 	github.com/erikstmartin/go-testdb v0.0.0-20160219214506-8d10e4a1bae5
 	github.com/fsouza/go-dockerclient v1.9.3
 	github.com/fukata/golang-stats-api-handler v1.0.0
-	github.com/globalsign/mgo v0.0.0-20181015135952-eeefdecb41b8
 	github.com/go-ldap/ldap/v3 v3.4.4
 	github.com/go-redis/redis v6.15.9+incompatible
 	github.com/gomodule/redigo v1.8.9
 	github.com/gosnmp/gosnmp v1.35.0
-	github.com/hashicorp/go-version v1.6.0
 	github.com/jarcoal/httpmock v1.2.0
 	github.com/jmoiron/sqlx v1.3.5
 	github.com/lestrrat-go/tcptest v0.0.0-20180223004312-f0345789c593
@@ -25,6 +23,7 @@ require (
 	github.com/mackerelio/go-mackerel-plugin-helper v0.1.2
 	github.com/mackerelio/go-osstat v0.2.3
 	github.com/mackerelio/golib v1.2.1
+	github.com/mackerelio/mackerel-plugin-mongodb v1.0.0
 	github.com/mackerelio/mackerel-plugin-mysql v1.1.0
 	github.com/mattn/go-pipeline v0.0.0-20190323144519-32d779b32768
 	github.com/mattn/go-treasuredata v0.0.0-20170920030233-31758907cfc4
@@ -52,11 +51,13 @@ require (
 	github.com/docker/docker v20.10.23+incompatible // indirect
 	github.com/docker/go-connections v0.4.0 // indirect
 	github.com/docker/go-units v0.5.0 // indirect
+	github.com/globalsign/mgo v0.0.0-20181015135952-eeefdecb41b8 // indirect
 	github.com/go-asn1-ber/asn1-ber v1.5.4 // indirect
 	github.com/go-ole/go-ole v1.2.5 // indirect
 	github.com/go-sql-driver/mysql v1.7.0 // indirect
 	github.com/gogo/protobuf v1.3.2 // indirect
 	github.com/golang/groupcache v0.0.0-20210331224755-41bb18bfe9da // indirect
+	github.com/hashicorp/go-version v1.6.0 // indirect
 	github.com/jmespath/go-jmespath v0.4.0 // indirect
 	github.com/lestrrat-go/tcputil v0.0.0-20180223003554-d3c7f98154fb // indirect
 	github.com/moby/sys/mount v0.3.3 // indirect

@@ -126,7 +126,7 @@ subtask();
 ####
 
 my @plugins = sort @{ load_packaging_confg()->{plugins}};
-my @external_plugins = sort @{ load_packaging_confg()->{'external-plugins'}};
+my @external_plugins = sort { $a->{name} cmp $b->{name} } @{ load_packaging_confg()->{'external-plugins'}};
 
 sub resolve_package {
     my $plug = shift;

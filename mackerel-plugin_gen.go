@@ -31,7 +31,6 @@ import (
 	"github.com/mackerelio/mackerel-agent-plugins/mackerel-plugin-linux/lib"
 	"github.com/mackerelio/mackerel-agent-plugins/mackerel-plugin-mailq/lib"
 	"github.com/mackerelio/mackerel-agent-plugins/mackerel-plugin-memcached/lib"
-	"github.com/mackerelio/mackerel-agent-plugins/mackerel-plugin-mongodb/lib"
 	"github.com/mackerelio/mackerel-agent-plugins/mackerel-plugin-multicore/lib"
 	"github.com/mackerelio/mackerel-agent-plugins/mackerel-plugin-munin/lib"
 	"github.com/mackerelio/mackerel-agent-plugins/mackerel-plugin-nginx/lib"
@@ -55,6 +54,7 @@ import (
 	"github.com/mackerelio/mackerel-agent-plugins/mackerel-plugin-uptime/lib"
 	"github.com/mackerelio/mackerel-agent-plugins/mackerel-plugin-uwsgi-vassal/lib"
 	"github.com/mackerelio/mackerel-agent-plugins/mackerel-plugin-varnish/lib"
+	"github.com/mackerelio/mackerel-plugin-mongodb/lib"
 	"github.com/mackerelio/mackerel-plugin-mysql/lib"
 )
 
@@ -114,8 +114,6 @@ func runPlugin(plug string) error {
 		mpmailq.Do()
 	case "memcached":
 		mpmemcached.Do()
-	case "mongodb":
-		mpmongodb.Do()
 	case "multicore":
 		mpmulticore.Do()
 	case "munin":
@@ -162,6 +160,8 @@ func runPlugin(plug string) error {
 		mpuwsgivassal.Do()
 	case "varnish":
 		mpvarnish.Do()
+	case "mongodb":
+		mpmongodb.Do()
 	case "mysql":
 		mpmysql.Do()
 	default:
@@ -198,7 +198,6 @@ var plugins = []string{
 	"linux",
 	"mailq",
 	"memcached",
-	"mongodb",
 	"multicore",
 	"munin",
 	"nginx",
@@ -222,5 +221,6 @@ var plugins = []string{
 	"uptime",
 	"uwsgi-vassal",
 	"varnish",
+	"mongodb",
 	"mysql",
 }
