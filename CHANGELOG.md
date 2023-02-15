@@ -1,5 +1,15 @@
 # Changelog
 
+## 0.76.1 (2023-02-15)
+
+* Bump golang.org/x/text from 0.6.0 to 0.7.0 #1022 (dependabot[bot])
+* Bump github.com/fsouza/go-dockerclient from 1.9.3 to 1.9.4 #1021 (dependabot[bot])
+* Bump github.com/aws/aws-sdk-go from 1.44.190 to 1.44.199 #1020 (dependabot[bot])
+* Remove `circle.yml` #1019 (wafuwafu13)
+* plugin-mongodb is external repository #1018 (yseto)
+* Bump github.com/jarcoal/httpmock from 1.2.0 to 1.3.0 #1016 (dependabot[bot])
+
+
 ## 0.76.0 (2023-02-01)
 
 * Bump github.com/aws/aws-sdk-go from 1.44.184 to 1.44.190 #1014 (dependabot[bot])

@@ -39,6 +39,14 @@ done
 %{__targetdir}/*
 
 %changelog
+* Wed Feb 15 2023 <mackerel-developers@hatena.ne.jp> - 0.76.1
+- Bump golang.org/x/text from 0.6.0 to 0.7.0 (by dependabot[bot])
+- Bump github.com/fsouza/go-dockerclient from 1.9.3 to 1.9.4 (by dependabot[bot])
+- Bump github.com/aws/aws-sdk-go from 1.44.190 to 1.44.199 (by dependabot[bot])
+- Remove `circle.yml` (by wafuwafu13)
+- plugin-mongodb is external repository (by yseto)
+- Bump github.com/jarcoal/httpmock from 1.2.0 to 1.3.0 (by dependabot[bot])
+
 * Wed Feb 1 2023 <mackerel-developers@hatena.ne.jp> - 0.76.0
 - Bump github.com/aws/aws-sdk-go from 1.44.184 to 1.44.190 (by dependabot[bot])
 - Bump actions/setup-go from 2 to 3 (by dependabot[bot])
