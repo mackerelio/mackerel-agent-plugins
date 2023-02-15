@@ -14,10 +14,7 @@ import (
 
 	"github.com/StackExchange/wmi"
 	mp "github.com/mackerelio/go-mackerel-plugin"
-	"github.com/mackerelio/golib/logging"
 )
-
-var logger = logging.GetLogger("metrics.plugin.mssql")
 
 // MSSQLPlugin store the name of servers
 type MSSQLPlugin struct {

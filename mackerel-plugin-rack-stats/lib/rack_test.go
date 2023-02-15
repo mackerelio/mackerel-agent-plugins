@@ -7,6 +7,7 @@ import (
 	"net/http/httptest"
 	"net/url"
 	"reflect"
+	"runtime"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -79,6 +80,9 @@ func TestParseHttp(t *testing.T) {
 }
 
 func TestParseUnix(t *testing.T) {
+	if runtime.GOOS == "windows" {
+		t.Skip("skipping test on windows")
+	}
 	var rack RackStatsPlugin
 
 	dir := t.TempDir()
