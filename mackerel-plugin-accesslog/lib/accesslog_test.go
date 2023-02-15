@@ -5,6 +5,7 @@ import (
 	"os"
 	"path/filepath"
 	"reflect"
+	"runtime"
 	"testing"
 
 	"github.com/Songmu/axslogparser"
@@ -198,6 +199,9 @@ func TestFetchMetricsWithCustomParser(t *testing.T) {
 }
 
 func TestSkipLogOnceIfNoPos(t *testing.T) {
+	if runtime.GOOS == "windows" {
+		t.Skip("skipping test on windows")
+	}
 	dir := t.TempDir()
 	posFile := filepath.Join(dir, "plugin-accesslog.test.pos")
 	p := &AccesslogPlugin{
