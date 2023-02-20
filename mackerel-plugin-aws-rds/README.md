@@ -18,7 +18,7 @@ mackerel-plugin-aws-rds -identifier=<db-instance-identifer> [-region=<aws-region
     * `postgresql`
 
 ## AWS IAM Policy
-the credential provided manually or fetched automatically by IAM Role should have the policy that includes an action, 'cloudwatch:GetMetricStatistics'
+the credential provided manually or fetched automatically by IAM Role should have the policy that includes an action, `cloudwatch:GetMetricStatistics`
 
 ## Example of mackerel-agent.conf
 
