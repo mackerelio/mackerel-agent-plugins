@@ -4,8 +4,8 @@ header("Content-Type: text/plain");
 
 // In PHP7 or later, it is required to use apcu_*. instead of apc_*.
 if(function_exists("apcu_cache_info")){
-    $cache      = apcu_cache_info();
-    $cache_user = apcu_cache_info(true);
+    $cache      = apcu_cache_info(false);
+    $cache_user = $cache;
     $mem        = apcu_sma_info();
 } else {
     $cache      = apc_cache_info();
