@@ -16,10 +16,10 @@ require (
 	github.com/mackerelio/golib v1.2.1 // indirect
 	go.opencensus.io v0.24.0 // indirect
 	golang.org/x/lint v0.0.0-20210508222113-6edffad5e616 // indirect
-	golang.org/x/net v0.3.0 // indirect
+	golang.org/x/net v0.7.0 // indirect
 	golang.org/x/oauth2 v0.3.0 // indirect
-	golang.org/x/sys v0.3.0 // indirect
-	golang.org/x/text v0.5.0 // indirect
+	golang.org/x/sys v0.5.0 // indirect
+	golang.org/x/text v0.7.0 // indirect
 	golang.org/x/tools v0.1.12 // indirect
 	google.golang.org/api v0.105.0 // indirect
 	google.golang.org/appengine v1.6.7 // indirect
