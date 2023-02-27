@@ -2,7 +2,7 @@ module github.com/mackerelio/mackerel-agent-plugins/mackerel-plugin-mysql
 
 go 1.19
 
-require github.com/mackerelio/mackerel-plugin-mysql v1.1.0
+require github.com/mackerelio/mackerel-plugin-mysql v1.2.0
 
 require (
 	github.com/go-sql-driver/mysql v1.7.0 // indirect
