@@ -1,3 +1,28 @@
+mackerel-agent-plugins (0.77.0-1.v2) stable; urgency=low
+
+  * Bump github.com/mackerelio/mackerel-plugin-mysql from 1.1.0 to 1.2.0 (by dependabot[bot])
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/1039>
+  * Bump github.com/mackerelio/mackerel-plugin-mysql from 1.1.0 to 1.2.0 in /mackerel-plugin-mysql (by dependabot[bot])
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/1038>
+  * Bump github.com/stretchr/testify from 1.8.1 to 1.8.2 (by dependabot[bot])
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/1036>
+  * Bump github.com/fsouza/go-dockerclient from 1.9.4 to 1.9.5 (by dependabot[bot])
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/1035>
+  * fix syntax for aws rds (by heleeen)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/1031>
+  * Bump golang.org/x/net from 0.3.0 to 0.7.0 in /mackerel-plugin-gcp-compute-engine (by dependabot[bot])
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/1029>
+  * Bump github.com/containerd/containerd from 1.6.14 to 1.6.18 (by dependabot[bot])
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/1028>
+  * added multiple-os tests (by yseto)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/1026>
+  * added import. (by yseto)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/1025>
+  * added external repository mongodb (by yseto)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/1023>
+
+ -- mackerel <mackerel-developers@hatena.ne.jp>  Mon, 27 Feb 2023 10:08:45 +0000
+
 mackerel-agent-plugins (0.76.1-1.v2) stable; urgency=low
 
   * Bump golang.org/x/text from 0.6.0 to 0.7.0 (by dependabot[bot])
