@@ -1,5 +1,19 @@
 # Changelog
 
+## 0.77.0 (2023-02-27)
+
+* Bump github.com/mackerelio/mackerel-plugin-mysql from 1.1.0 to 1.2.0 #1039 (dependabot[bot])
+* Bump github.com/mackerelio/mackerel-plugin-mysql from 1.1.0 to 1.2.0 in /mackerel-plugin-mysql #1038 (dependabot[bot])
+* Bump github.com/stretchr/testify from 1.8.1 to 1.8.2 #1036 (dependabot[bot])
+* Bump github.com/fsouza/go-dockerclient from 1.9.4 to 1.9.5 #1035 (dependabot[bot])
+* fix syntax for aws rds #1031 (heleeen)
+* Bump golang.org/x/net from 0.3.0 to 0.7.0 in /mackerel-plugin-gcp-compute-engine #1029 (dependabot[bot])
+* Bump github.com/containerd/containerd from 1.6.14 to 1.6.18 #1028 (dependabot[bot])
+* added multiple-os tests #1026 (yseto)
+* added import. #1025 (yseto)
+* added external repository mongodb #1023 (yseto)
+
+
 ## 0.76.1 (2023-02-15)
 
 * Bump golang.org/x/text from 0.6.0 to 0.7.0 #1022 (dependabot[bot])
