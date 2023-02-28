@@ -3,7 +3,7 @@ mackerel-plugin-php-apc
 
 ## Description
 
-Get PHP APC (Alternative PHP Cache) metrics for Mackerel and Sensu.
+Get PHP APC (Alternative PHP Cache) or APCu (APC User Cache) metrics for Mackerel and Sensu.
 
 ## Usage (for Apache)
 
@@ -36,7 +36,7 @@ Edit your apache config file to access metric from localhost only. For example i
     Allow from 127.0.0.1 ::1
 </Directory>
 ```
- 
+
 And, reload apache configuration.
 
 ```
@@ -68,4 +68,5 @@ Please execute 'mackerel-plugin-php-apc -h' and you can get command line options
 
 ## Author
 
-[Yuichiro Saito](https://github.com/koemu)
+- Original author. [Yuichiro Saito](https://github.com/koemu)
+- Add APCu and PHP>=7 env support. [uzulla](https://github.com/uzulla)
