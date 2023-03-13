@@ -9,7 +9,7 @@ require (
 	github.com/StackExchange/wmi v1.2.1
 	github.com/aws/aws-sdk-go v1.44.219
 	github.com/erikstmartin/go-testdb v0.0.0-20160219214506-8d10e4a1bae5
-	github.com/fsouza/go-dockerclient v1.9.5
+	github.com/fsouza/go-dockerclient v1.9.6
 	github.com/fukata/golang-stats-api-handler v1.0.0
 	github.com/go-ldap/ldap/v3 v3.4.4
 	github.com/go-redis/redis v6.15.9+incompatible
@@ -79,7 +79,7 @@ require (
 	golang.org/x/crypto v0.0.0-20220622213112-05595931fe9d // indirect
 	golang.org/x/lint v0.0.0-20200302205851-738671d3881b // indirect
 	golang.org/x/mod v0.8.0 // indirect
-	golang.org/x/sys v0.5.0 // indirect
+	golang.org/x/sys v0.6.0 // indirect
 	golang.org/x/tools v0.6.0 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 )
