@@ -48,6 +48,14 @@ done
 %{__oldtargetdir}/*
 
 %changelog
+* Mon Mar 13 2023 <mackerel-developers@hatena.ne.jp> - 0.78.0
+- Bump github.com/fsouza/go-dockerclient from 1.9.5 to 1.9.6 (by dependabot[bot])
+- Bump github.com/aws/aws-sdk-go from 1.44.199 to 1.44.219 (by dependabot[bot])
+- Bump golang.org/x/text from 0.7.0 to 0.8.0 (by dependabot[bot])
+- Bump github.com/mackerelio/mackerel-plugin-mongodb from 1.0.0 to 1.1.0 in /mackerel-plugin-mongodb (by dependabot[bot])
+- Bump github.com/mackerelio/mackerel-plugin-mongodb from 1.0.0 to 1.1.0 (by dependabot[bot])
+- Fix support APCu and PHP7 or later environment. (by uzulla)
+
 * Mon Feb 27 2023 <mackerel-developers@hatena.ne.jp> - 0.77.0
 - Bump github.com/mackerelio/mackerel-plugin-mysql from 1.1.0 to 1.2.0 (by dependabot[bot])
 - Bump github.com/mackerelio/mackerel-plugin-mysql from 1.1.0 to 1.2.0 in /mackerel-plugin-mysql (by dependabot[bot])

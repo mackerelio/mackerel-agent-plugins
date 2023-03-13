@@ -1,5 +1,15 @@
 # Changelog
 
+## 0.78.0 (2023-03-13)
+
+* Bump github.com/fsouza/go-dockerclient from 1.9.5 to 1.9.6 #1044 (dependabot[bot])
+* Bump github.com/aws/aws-sdk-go from 1.44.199 to 1.44.219 #1043 (dependabot[bot])
+* Bump golang.org/x/text from 0.7.0 to 0.8.0 #1042 (dependabot[bot])
+* Bump github.com/mackerelio/mackerel-plugin-mongodb from 1.0.0 to 1.1.0 in /mackerel-plugin-mongodb #1037 (dependabot[bot])
+* Bump github.com/mackerelio/mackerel-plugin-mongodb from 1.0.0 to 1.1.0 #1033 (dependabot[bot])
+* Fix support APCu and PHP7 or later environment. #1032 (uzulla)
+
+
 ## 0.77.0 (2023-02-27)
 
 * Bump github.com/mackerelio/mackerel-plugin-mysql from 1.1.0 to 1.2.0 #1039 (dependabot[bot])
