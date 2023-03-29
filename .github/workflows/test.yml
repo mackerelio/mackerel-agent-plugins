@@ -15,20 +15,25 @@ jobs:
     uses: mackerelio/workflows/.github/workflows/go-lint.yml@main
     with:
       os-versions: '["ubuntu-latest", "windows-latest"]'
-  test:
+  test-linux:
     uses: mackerelio/workflows/.github/workflows/go-test.yml@main
     with:
-      os-versions: '["ubuntu-latest", "windows-latest"]'
-  test-linux:
+      os-versions: '["ubuntu-latest"]'
+      pre: |
+        sudo apt-get update
+        sudo apt-get install -y redis-server
+  test-windows:
+    uses: mackerelio/workflows/.github/workflows/go-test.yml@main
+    with:
+      os-versions: '["windows-latest"]'
+  integration-test-linux:
     uses: mackerelio/workflows/.github/workflows/setup-go-matrix.yml@main
     with:
       os-versions: '["ubuntu-latest"]'
       run: |
-        sudo apt-get update
-        sudo apt-get install -y redis-server
-        ./test.bash
         make testconvention
-  test-windows:
+        ./test.bash
+  integration-test-windows:
     uses: mackerelio/workflows/.github/workflows/setup-go-matrix.yml@main
     with:
       os-versions: '["windows-latest"]'
@@ -36,7 +41,7 @@ jobs:
         go build -o mackerel-plugin-mssql/mackerel-plugin-mssql.exe ./mackerel-plugin-mssql
         go build -o mackerel-plugin-windows-server-sessions/mackerel-plugin-windows-server-sessions.exe ./mackerel-plugin-windows-server-sessions
   build:
-    needs: [test]
+    needs: [test-linux, integration-test-linux]
     runs-on: ubuntu-latest
     if: github.ref == 'refs/heads/master' || startsWith(github.ref, 'refs/tags/v')
     steps:
