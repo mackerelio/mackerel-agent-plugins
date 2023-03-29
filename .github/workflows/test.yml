@@ -12,18 +12,9 @@ env:
   DEBIAN_FRONTEND: noninteractive
 jobs:
   lint:
-    strategy:
-      matrix:
-        os: [ubuntu-latest, windows-latest]
-    runs-on: ${{ matrix.os }}
-    steps:
-      - uses: actions/setup-go@v3
-        with:
-          go-version: 1.19.x
-      - uses: actions/checkout@v3
-      - uses: golangci/golangci-lint-action@v3
-        with:
-          args: --timeout 5m
+    uses: mackerelio/workflows/.github/workflows/go-lint.yml@main
+    with:
+      os-versions: '["ubuntu-latest", "windows-latest"]'
   test:
     strategy:
       matrix:
