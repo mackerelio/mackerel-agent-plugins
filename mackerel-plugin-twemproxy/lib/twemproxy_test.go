@@ -9,6 +9,7 @@ import (
 	"sort"
 	"strconv"
 	"strings"
+	"sync"
 	"testing"
 	"time"
 
@@ -17,8 +18,21 @@ import (
 
 var (
 	statsServer *tcptest.TCPTest
-	stats       string
+	reply       string
+	replyLock   sync.RWMutex
 )
+
+func getReply() string {
+	replyLock.RLock()
+	defer replyLock.RUnlock()
+	return reply
+}
+
+func setReply(s string) {
+	replyLock.Lock()
+	reply = s
+	replyLock.Unlock()
+}
 
 func TestMain(m *testing.M) {
 	os.Exit(mainTest(m))
@@ -64,7 +78,8 @@ func startTCPServer(port int) error {
 
 	for {
 		go func(client net.Conn) {
-			_, err = client.Write([]byte(stats))
+			stats := getReply()
+			_, err := client.Write([]byte(stats))
 			if err != nil {
 				log.Printf("Failed to write %v: err=%v", stats, err)
 			}
@@ -145,7 +160,7 @@ var jsonStr = `{
 
 func TestFetchMetrics(t *testing.T) {
 	// response a valid stats json
-	stats = jsonStr
+	setReply(jsonStr)
 
 	// get metrics
 	p := TwemproxyPlugin{
@@ -226,7 +241,7 @@ func TestFetchMetrics(t *testing.T) {
 
 func TestFetchMetrics_disableEachMetrics(t *testing.T) {
 	// response a valid stats json
-	stats = jsonStr
+	setReply(jsonStr)
 
 	// get metrics
 	p := TwemproxyPlugin{
@@ -267,7 +282,7 @@ func TestFetchMetricsFail(t *testing.T) {
 	assertPanic := func(t *testing.T, f func() (map[string]interface{}, error)) {
 		defer func() {
 			if r := recover(); r == nil {
-				t.Errorf("FetchMetrics should be panic: stats=%v", stats)
+				t.Errorf("FetchMetrics should be panic: stats=%v", getReply())
 			}
 		}()
 		f()
@@ -282,21 +297,21 @@ func TestFetchMetricsFail(t *testing.T) {
 
 	noClientErrJSONStr := strings.Replace(
 		jsonStr, "\"client_err\": 10,\n", "", 1)
-	stats = noClientErrJSONStr
+	setReply(noClientErrJSONStr)
 	assertPanic(t, p.FetchMetrics)
 
 	noOutQueueJSONStr := strings.Replace(
 		jsonStr, "\"out_queue\": 1,\n", "", 1)
-	stats = noOutQueueJSONStr
+	setReply(noOutQueueJSONStr)
 	assertPanic(t, p.FetchMetrics)
 
 	// return error against a stats json with addition
 	addInvalidParamJSONStr := strings.Replace(
 		jsonStr, "3895,", "3895, \"hoge\": 1,", 1)
-	stats = addInvalidParamJSONStr
+	setReply(addInvalidParamJSONStr)
 	_, err := p.FetchMetrics()
 	if err == nil {
-		t.Errorf("FetchMetrics should return error: stats=%v", stats)
+		t.Errorf("FetchMetrics should return error: stats=%v", getReply())
 	}
 }
 
