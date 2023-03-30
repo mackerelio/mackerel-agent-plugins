@@ -12,65 +12,36 @@ env:
   DEBIAN_FRONTEND: noninteractive
 jobs:
   lint:
-    strategy:
-      matrix:
-        os: [ubuntu-latest, windows-latest]
-    runs-on: ${{ matrix.os }}
-    steps:
-      - uses: actions/setup-go@v3
-        with:
-          go-version: 1.19.x
-      - uses: actions/checkout@v3
-      - uses: golangci/golangci-lint-action@v3
-        with:
-          args: --timeout 5m
-  test:
-    strategy:
-      matrix:
-        go: ["1.19.x", "1.18.x"]
-        os: [ubuntu-latest, windows-latest]
-    runs-on: ${{ matrix.os }}
-    steps:
-      - if: matrix.os == 'ubuntu-latest'
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y redis-server
-      - uses: actions/setup-go@v3
-        with:
-          go-version: ${{ matrix.go }}
-      - uses: actions/checkout@v3
-      - uses: actions/cache@v3
-        with:
-          path: ~/go/pkg/mod
-          key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
-          restore-keys: |
-            ${{ runner.os }}-go-
-      - run: go test -covermode=atomic -coverprofile=.profile.cov ./...
-        shell: bash
-      - if: matrix.os == 'ubuntu-latest'
-        run: |
-          ./test.bash
-          make testconvention
-      - if: matrix.os == 'windows-latest'
-        run: |
-          go build -o mackerel-plugin-mssql/mackerel-plugin-mssql.exe ./mackerel-plugin-mssql
-          go build -o mackerel-plugin-windows-server-sessions/mackerel-plugin-windows-server-sessions.exe ./mackerel-plugin-windows-server-sessions
-      - uses: shogo82148/actions-goveralls@v1
-        with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          path-to-profile: .profile.cov
-          parallel: true
-          flag-name: Go-${{ matrix.os }}-${{ matrix.go }}
-  finish:
-    needs: [test]
-    runs-on: ubuntu-latest
-    steps:
-      - uses: shogo82148/actions-goveralls@v1
-        with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          parallel-finished: true
+    uses: mackerelio/workflows/.github/workflows/go-lint.yml@main
+    with:
+      os-versions: '["ubuntu-latest", "windows-latest"]'
+  test-linux:
+    uses: mackerelio/workflows/.github/workflows/go-test.yml@main
+    with:
+      os-versions: '["ubuntu-latest"]'
+      pre: |
+        sudo apt-get update
+        sudo apt-get install -y redis-server
+  test-windows:
+    uses: mackerelio/workflows/.github/workflows/go-test.yml@main
+    with:
+      os-versions: '["windows-latest"]'
+  integration-test-linux:
+    uses: mackerelio/workflows/.github/workflows/setup-go-matrix.yml@main
+    with:
+      os-versions: '["ubuntu-latest"]'
+      run: |
+        make testconvention
+        ./test.bash
+  integration-test-windows:
+    uses: mackerelio/workflows/.github/workflows/setup-go-matrix.yml@main
+    with:
+      os-versions: '["windows-latest"]'
+      run: |
+        go build -o mackerel-plugin-mssql/mackerel-plugin-mssql.exe ./mackerel-plugin-mssql
+        go build -o mackerel-plugin-windows-server-sessions/mackerel-plugin-windows-server-sessions.exe ./mackerel-plugin-windows-server-sessions
   build:
-    needs: [test]
+    needs: [test-linux, integration-test-linux]
     runs-on: ubuntu-latest
     if: github.ref == 'refs/heads/master' || startsWith(github.ref, 'refs/tags/v')
     steps:
@@ -78,16 +49,10 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y rpm devscripts debhelper fakeroot crossbuild-essential-arm64
           mkdir -p ~/rpmbuild/{BUILD,BUILDROOT,RPMS,SOURCES,SPECS,SRPMS}
-      - uses: actions/cache@v3
-        with:
-          path: ~/go/pkg/mod
-          key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
-          restore-keys: |
-            ${{ runner.os }}-go-
-      - uses: actions/setup-go@v3
-        with:
-          go-version: 1.19.x
       - uses: actions/checkout@v3
+      - uses: actions/setup-go@v4
+        with:
+          go-version: 1.20.x
       - run: make clean rpm deb
       - uses: actions/upload-artifact@v3
         with:
