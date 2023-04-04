@@ -46,8 +46,8 @@ func (p TwemproxyPlugin) GraphDefinition() map[string]mp.Graphs {
 				{Name: "total_pool_client_error", Label: "Pool Client Error", Diff: true},
 				{Name: "total_pool_server_ejects", Label: "Pool Server Ejects", Diff: true},
 				{Name: "total_pool_forward_error", Label: "Pool Forward Error", Diff: true},
-				{Name: "total_server_timeout", Label: "Server Error", Diff: true},
-				{Name: "total_server_error", Label: "Server Timeout", Diff: true},
+				{Name: "total_server_timeout", Label: "Server Timeout", Diff: true},
+				{Name: "total_server_error", Label: "Server Error", Diff: true},
 			},
 		},
 		"pool_error.#": {
