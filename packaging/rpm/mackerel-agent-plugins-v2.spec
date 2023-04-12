@@ -39,6 +39,14 @@ done
 %{__targetdir}/*
 
 %changelog
+* Wed Apr 12 2023 <mackerel-developers@hatena.ne.jp> - 0.78.1
+- Bump golang.org/x/text from 0.8.0 to 0.9.0 (by dependabot[bot])
+- Bump github.com/aws/aws-sdk-go from 1.44.229 to 1.44.239 (by dependabot[bot])
+- Fix timeout/error labels of mackerel-plugin-twemproxy (by kmuto)
+- [ci] refactor .github/workflows/test.yml (by lufia)
+- Bump github.com/aws/aws-sdk-go from 1.44.219 to 1.44.229 (by dependabot[bot])
+- Bump github.com/mackerelio/go-osstat from 0.2.3 to 0.2.4 (by dependabot[bot])
+
 * Mon Mar 13 2023 <mackerel-developers@hatena.ne.jp> - 0.78.0
 - Bump github.com/fsouza/go-dockerclient from 1.9.5 to 1.9.6 (by dependabot[bot])
 - Bump github.com/aws/aws-sdk-go from 1.44.199 to 1.44.219 (by dependabot[bot])

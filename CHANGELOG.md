@@ -1,5 +1,15 @@
 # Changelog
 
+## 0.78.1 (2023-04-12)
+
+* Bump golang.org/x/text from 0.8.0 to 0.9.0 #1057 (dependabot[bot])
+* Bump github.com/aws/aws-sdk-go from 1.44.229 to 1.44.239 #1056 (dependabot[bot])
+* Fix timeout/error labels of mackerel-plugin-twemproxy #1055 (kmuto)
+* [ci] refactor .github/workflows/test.yml #1050 (lufia)
+* Bump github.com/aws/aws-sdk-go from 1.44.219 to 1.44.229 #1049 (dependabot[bot])
+* Bump github.com/mackerelio/go-osstat from 0.2.3 to 0.2.4 #1046 (dependabot[bot])
+
+
 ## 0.78.0 (2023-03-13)
 
 * Bump github.com/fsouza/go-dockerclient from 1.9.5 to 1.9.6 #1044 (dependabot[bot])
