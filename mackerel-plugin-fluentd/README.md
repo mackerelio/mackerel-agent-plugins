@@ -6,7 +6,7 @@ Fluentd (http://www.fluentd.org/) custom metrics plugin for mackerel.io agent.
 ## Synopsis
 
 ```shell
-mackerel-plugin-fluentd [-host=<host>] [-port=<port>] [-tempfile=<tempfile>] [-plugin-type=<plugin-type>] [-plugin-id-pattern=<plugin-id-pattern>] [-workers=<workers>]
+mackerel-plugin-fluentd [-host=<host>] [-port=<port>] [-tempfile=<tempfile>] [-plugin-type=<plugin-type>] [-plugin-id-pattern=<plugin-id-pattern>] [-workers=<workers>] [-extended_metrics=<metric-names>]
 ```
 
 ## Example of mackerel-agent.conf
