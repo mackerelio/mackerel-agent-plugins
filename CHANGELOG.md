@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.78.2 (2023-06-14)
+
+* Bump github.com/mackerelio/mackerel-plugin-mysql from 1.2.0 to 1.2.1 in /mackerel-plugin-mysql #1077 (dependabot[bot])
+* Bump github.com/mackerelio/mackerel-plugin-mysql from 1.2.0 to 1.2.1 #1076 (dependabot[bot])
+* [fluentd] add README.md with extended_metrics option #1072 (sakamossan)
+
+
 ## 0.78.1 (2023-04-12)
 
 * Bump golang.org/x/text from 0.8.0 to 0.9.0 #1057 (dependabot[bot])
