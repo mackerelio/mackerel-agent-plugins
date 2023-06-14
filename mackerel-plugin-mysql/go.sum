@@ -5,8 +5,8 @@ github.com/mackerelio/go-mackerel-plugin v0.1.4 h1:+kyatPMFSoghKd7o9oge1FnDrVknF
 github.com/mackerelio/go-mackerel-plugin v0.1.4/go.mod h1:bau0bZbR1JXiCwDIg880djjttZ/0j885v5k0n+jAS/I=
 github.com/mackerelio/golib v1.2.1 h1:SDcDn6Jw3p9bi1N0bg1Z/ilG5qcBB23qL8xNwrU0gg4=
 github.com/mackerelio/golib v1.2.1/go.mod h1:b8ZaapsHGH1FlEJlCqfD98CqafLeyMevyATDlID2BsM=
-github.com/mackerelio/mackerel-plugin-mysql v1.2.0 h1:iihCo4RpMyMu9GKc0WOcq10BD9W3/a4xqE3rVdHEjv0=
-github.com/mackerelio/mackerel-plugin-mysql v1.2.0/go.mod h1:cynO5nuvm4C5Lv5BGWi8Rdt7bpxZrmuI6/+rKgKtGxM=
+github.com/mackerelio/mackerel-plugin-mysql v1.2.1 h1:hx6jcaxymCIADV3rHhVkP2XbCZDWpmRaXfYmc03ssEM=
+github.com/mackerelio/mackerel-plugin-mysql v1.2.1/go.mod h1:cynO5nuvm4C5Lv5BGWi8Rdt7bpxZrmuI6/+rKgKtGxM=
 github.com/pmezard/go-difflib v1.0.0 h1:4DBwDE0NGyQoBHbLQYPwSUPoCMWR5BEzIk/f1lZbAQM=
 github.com/stretchr/testify v1.8.1 h1:w7B6lhMri9wdJUVmEZPGGhZzrYTPvgJArz7wNPgYKsk=
 golang.org/x/text v0.5.0 h1:OLmvp0KP+FVG99Ct/qFiL/Fhk4zp4QQnZ7b2U+5piUM=
