@@ -48,6 +48,11 @@ done
 %{__oldtargetdir}/*
 
 %changelog
+* Wed Jun 14 2023 <mackerel-developers@hatena.ne.jp> - 0.78.2
+- Bump github.com/mackerelio/mackerel-plugin-mysql from 1.2.0 to 1.2.1 in /mackerel-plugin-mysql (by dependabot[bot])
+- Bump github.com/mackerelio/mackerel-plugin-mysql from 1.2.0 to 1.2.1 (by dependabot[bot])
+- [fluentd] add README.md with extended_metrics option (by sakamossan)
+
 * Wed Apr 12 2023 <mackerel-developers@hatena.ne.jp> - 0.78.1
 - Bump golang.org/x/text from 0.8.0 to 0.9.0 (by dependabot[bot])
 - Bump github.com/aws/aws-sdk-go from 1.44.229 to 1.44.239 (by dependabot[bot])
