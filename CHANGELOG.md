@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.78.3 (2023-07-13)
+
+
+
 ## 0.78.2 (2023-06-14)
 
 * Bump github.com/mackerelio/mackerel-plugin-mysql from 1.2.0 to 1.2.1 in /mackerel-plugin-mysql #1077 (dependabot[bot])
