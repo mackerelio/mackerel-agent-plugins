@@ -1,3 +1,8 @@
+mackerel-agent-plugins (0.78.3-1.v2) stable; urgency=low
+
+
+ -- mackerel <mackerel-developers@hatena.ne.jp>  Thu, 13 Jul 2023 06:45:25 +0000
+
 mackerel-agent-plugins (0.78.2-1.v2) stable; urgency=low
 
   * Bump github.com/mackerelio/mackerel-plugin-mysql from 1.2.0 to 1.2.1 in /mackerel-plugin-mysql (by dependabot[bot])

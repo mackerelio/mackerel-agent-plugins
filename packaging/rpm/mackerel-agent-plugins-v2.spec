@@ -39,6 +39,8 @@ done
 %{__targetdir}/*
 
 %changelog
+* Thu Jul 13 2023 <mackerel-developers@hatena.ne.jp> - 0.78.3
+
 * Wed Jun 14 2023 <mackerel-developers@hatena.ne.jp> - 0.78.2
 - Bump github.com/mackerelio/mackerel-plugin-mysql from 1.2.0 to 1.2.1 in /mackerel-plugin-mysql (by dependabot[bot])
 - Bump github.com/mackerelio/mackerel-plugin-mysql from 1.2.0 to 1.2.1 (by dependabot[bot])
