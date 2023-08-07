@@ -22,12 +22,6 @@ build:
 	  $(MAKE) $(BINDIR)/$$i; \
 	done
 
-.PHONY: build-for-packaging
-build-for-packaging:
-	for i in `cat packaging/plugin-lists`; do \
-	  $(MAKE) $(BINDIR)/$$i; \
-	done
-
 build/mackerel-plugin: $(patsubst %,depends_on,$(GOOS)$(GOARCH))
 	mkdir -p build
 	CGO_ENABLED=0 go build -ldflags="-s -w -X main.gitcommit=$(CURRENT_REVISION)" \
