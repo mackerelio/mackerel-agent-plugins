@@ -22,12 +22,6 @@ build:
 	  $(MAKE) $(BINDIR)/$$i; \
 	done
 
-.PHONY: build-for-packaging
-build-for-packaging:
-	for i in `cat packaging/plugin-lists`; do \
-	  $(MAKE) $(BINDIR)/$$i; \
-	done
-
 build/mackerel-plugin: $(patsubst %,depends_on,$(GOOS)$(GOARCH))
 	mkdir -p build
 	CGO_ENABLED=0 go build -ldflags="-s -w -X main.gitcommit=$(CURRENT_REVISION)" \
@@ -56,18 +50,7 @@ lint:
 	golangci-lint run
 
 .PHONY: rpm
-rpm: rpm-v1 rpm-v2
-
-.PHONY: rpm-v1
-rpm-v1:
-	$(MAKE) build-for-packaging GOOS=linux GOARCH=386
-	rpmbuild --define "_sourcedir `pwd`" --define "_bindir build/linux/386" \
-	  --define "_version ${VERSION}" --define "buildarch noarch" \
-	  --target noarch -bb packaging/rpm/mackerel-agent-plugins.spec
-	$(MAKE) build-for-packaging GOOS=linux GOARCH=amd64
-	rpmbuild --define "_sourcedir `pwd`" --define "_bindir build/linux/amd64" \
-	  --define "_version ${VERSION}" --define "buildarch x86_64" \
-	  --target x86_64 -bb packaging/rpm/mackerel-agent-plugins.spec
+rpm: rpm-v2
 
 .PHONY: rpm-v2
 rpm-v2: rpm-v2-x86 rpm-v2-arm

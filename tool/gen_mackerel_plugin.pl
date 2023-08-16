@@ -65,14 +65,6 @@ sub update_packaging_specs {
     replace $_, $replace_sub for ("packaging/rpm/$PACKAGE_NAME*.spec", "packaging/deb*/debian/rules");
 }
 
-sub update_packaging_binaries_list {
-    my @plugins = @_;
-    write_file(
-        'packaging/plugin-lists',
-        join("\n", map { "$PLUGIN_PREFIX$_" } @plugins) . "\n"
-    );
-}
-
 ####
 # file utility
 ####
@@ -116,7 +108,6 @@ sub subtask {
         map { $_->{name} } @{ $config->{'external-plugins'} },
     );
     update_packaging_specs(sort @all_plugins);
-    update_packaging_binaries_list(sort @all_plugins);
 }
 
 subtask();
