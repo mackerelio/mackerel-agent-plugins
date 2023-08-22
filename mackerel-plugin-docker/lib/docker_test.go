@@ -124,7 +124,7 @@ func TestAddCPUPercentageStats(t *testing.T) {
 	if stat, ok := stats["docker.cpuacct_percentage.containerA.user"]; !ok {
 		t.Errorf("docker.cpuacct_percentage.containerA.user should be calculated")
 	} else if stat != float64(40.0) {
-		t.Errorf("docker.cpuacct_percentage.containerA.user should be %f, but %f", stat, float64(40.0))
+		t.Errorf("docker.cpuacct_percentage.containerA.user should be %f, but %f", float64(40.0), stat)
 	}
 
 	if _, ok := stats["docker.cpuacct_percentage.containerC.user"]; ok {
