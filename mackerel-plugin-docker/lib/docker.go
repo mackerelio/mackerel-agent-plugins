@@ -270,19 +270,30 @@ func addCPUPercentageStats(stats *map[string]interface{}, lastStat map[string]in
 		currentUserUsage, ok1 := (*stats)[internalCPUStatPrefix+name+".user"]
 		prevUserUsage, ok2 := lastStat[internalCPUStatPrefix+name+".user"]
 		if ok1 && ok2 {
-			userUsage := float64(currentUserUsage.(uint64) - uint64(prevUserUsage.(float64)))
-			if userUsage >= 0 {
-				(*stats)["docker.cpuacct_percentage."+name+".user"] = userUsage / hostUsage * 100.0 * float64(cpuNumsInt)
+			currentUserUsageUInt := currentUserUsage.(uint64)
+			prevUserUsageUInt := uint64(prevUserUsage.(float64))
+			var userUsage float64
+			if currentUserUsageUInt >= prevUserUsageUInt {
+				userUsage = float64(currentUserUsage.(uint64) - uint64(prevUserUsage.(float64)))
+			} else {
+				// counter has been reset
+				userUsage = float64(currentUserUsageUInt)
 			}
+			(*stats)["docker.cpuacct_percentage."+name+".user"] = userUsage / hostUsage * 100.0 * float64(cpuNumsInt)
 		}
 
 		currentSystemUsage, ok1 := (*stats)[internalCPUStatPrefix+name+".system"]
 		prevSystemUsage, ok2 := lastStat[internalCPUStatPrefix+name+".system"]
 		if ok1 && ok2 {
-			systemUsage := float64(currentSystemUsage.(uint64) - uint64(prevSystemUsage.(float64)))
-			if systemUsage >= 0 {
-				(*stats)["docker.cpuacct_percentage."+name+".system"] = systemUsage / hostUsage * 100.0 * float64(cpuNumsInt)
+			currentSystemUsageUInt := currentSystemUsage.(uint64)
+			prevSystemUsageUInt := uint64(prevSystemUsage.(float64))
+			var systemUsage float64
+			if currentSystemUsageUInt >= prevSystemUsageUInt {
+				systemUsage = float64(currentSystemUsageUInt - prevSystemUsageUInt)
+			} else {
+				systemUsage = float64(currentSystemUsageUInt)
 			}
+			(*stats)["docker.cpuacct_percentage."+name+".system"] = systemUsage / hostUsage * 100.0 * float64(cpuNumsInt)
 		}
 	}
 }

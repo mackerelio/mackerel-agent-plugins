@@ -99,6 +99,10 @@ func TestAddCPUPercentageStats(t *testing.T) {
 		"docker._internal.cpuacct.containerD.host":       uint64(100000),
 		"docker._internal.cpuacct.containerD.user":       uint64(3000),
 		"docker._internal.cpuacct.containerD.system":     uint64(2000),
+		"docker._internal.cpuacct.containerF.user":       uint64(3000), // it has been reset
+		"docker._internal.cpuacct.containerF.system":     uint64(1000), // it has been reset
+		"docker._internal.cpuacct.containerF.host":       uint64(100000100000),
+		"docker._internal.cpuacct.containerF.onlineCPUs": int(2),
 	}
 	oldStats := map[string]interface{}{
 		"docker._internal.cpuacct.containerA.host":   float64(90000),
@@ -111,6 +115,9 @@ func TestAddCPUPercentageStats(t *testing.T) {
 		"docker._internal.cpuacct.containerE.host":   float64(100000),
 		"docker._internal.cpuacct.containerE.user":   float64(3000),
 		"docker._internal.cpuacct.containerE.system": float64(2000),
+		"docker._internal.cpuacct.containerF.user":   float64(40000000000),
+		"docker._internal.cpuacct.containerF.system": float64(20000000000),
+		"docker._internal.cpuacct.containerF.host":   float64(100000000000),
 	}
 	addCPUPercentageStats(&stats, oldStats)
 
@@ -134,5 +141,11 @@ func TestAddCPUPercentageStats(t *testing.T) {
 
 	if _, ok := stats["docker.cpuacct_percentage.containerE.user"]; ok {
 		t.Errorf("docker.cpuacct_percentage.containerE.user should not be calculated")
+	}
+
+	if stat, ok := stats["docker.cpuacct_percentage.containerF.user"]; !ok {
+		t.Errorf("docker.cpuacct_percentage.containerF.user should be calculated")
+	} else if stat != float64(6.0) {
+		t.Errorf("docker.cpuacct_percentage.containerF.user should be %f, but %f", float64(6.0), stat)
 	}
 }
