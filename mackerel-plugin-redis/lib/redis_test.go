@@ -3,11 +3,10 @@
 package mpredis
 
 import (
+	"strings"
 	"testing"
-	"time"
 
-	"github.com/gomodule/redigo/redis"
-	"github.com/soh335/go-test-redisserver"
+	"github.com/go-redis/redismock/v9"
 )
 
 var metrics = []string{
@@ -16,36 +15,35 @@ var metrics = []string{
 	"used_memory_rss", "used_memory_peak", "used_memory_lua", "uptime_in_seconds",
 }
 
-func TestFetchMetricsUnixSocket(t *testing.T) {
-	s, err := redistest.NewServer(true, nil)
-	if err != nil {
-		t.Errorf("Failed to invoke testserver. %s", err)
-		return
-	}
-	defer s.Stop()
+func TestFetchMetrics(t *testing.T) {
+	db, mock := redismock.NewClientMock()
 
-	// set test data
-	conn, err := redis.Dial("unix", s.Config["unixsocket"])
-	if err != nil {
-		t.Errorf("Failed to create a testclient. %s", err)
-		return
-	}
-	_, err = conn.Do("SET", "TEST_KEY0", 1)
-	if err != nil {
-		t.Errorf("Failed to send a SET command. %s", err)
-		return
-	}
-	conn.Do("SET", "TEST_KEY1", 1, "EX", 1)
-	conn.Do("SET", "TEST_KEY2", 1, "EX", 2)
-	conn.Do("SET", "TEST_KEY3", 1, "EX", 10)
-	conn.Do("SET", "TEST_KEY4", 1, "EX", 20)
-	conn.Do("SET", "TEST_KEY5", 1, "EX", 30)
-	time.Sleep(3 * time.Second)
+	mock.ExpectInfo().SetVal(strings.Join([]string{
+		"db0:keys=4,expires=3,avg_ttl=0",
+		"expired_keys:2",
+
+		"instantaneous_ops_per_sec:0",
+		"total_connections_received:0",
+		"rejected_connections:0",
+		"connected_clients:1",
+		"blocked_clients:1",
+		"connected_slaves:0",
+		"evicted_keys:0",
+		"keyspace_hits:0",
+		"keyspace_misses:0",
+		"used_memory:0",
+		"used_memory_rss:0",
+		"used_memory_peak:0",
+		"used_memory_lua:0",
+		"uptime_in_seconds:1",
+	},
+		"\r\n"),
+	)
 
 	redis := RedisPlugin{
+		rdb:           db,
 		Timeout:       5,
 		Prefix:        "redis",
-		Socket:        s.Config["unixsocket"],
 		ConfigCommand: "CONFIG",
 	}
 	stat, err := redis.FetchMetrics()
@@ -72,30 +70,19 @@ func TestFetchMetricsUnixSocket(t *testing.T) {
 }
 
 func TestFetchMetricsPercentageOfMemory(t *testing.T) {
-	s, err := redistest.NewServer(true, nil)
-	if err != nil {
-		t.Errorf("Failed to invoke testserver. %s", err)
-		return
-	}
-	defer s.Stop()
+	db, mock := redismock.NewClientMock()
 
+	val := map[string]string{"maxmemory": "0.0"}
+	mock.ExpectConfigGet("maxmemory").SetVal(val)
 	rp := RedisPlugin{
+		rdb:           db,
 		Timeout:       5,
 		Prefix:        "redis",
-		Socket:        s.Config["unixsocket"],
-		ConfigCommand: "CONFIG",
+		ConfigCommand: "config",
 	}
 
-	conn, err := redis.Dial("unix", s.Config["unixsocket"])
-
-	// Without maxmemory
-	_, err = conn.Do("CONFIG", "SET", "maxmemory", 0.0)
-	if err != nil {
-		t.Errorf("Failed to send a CONFIG command. %s", err)
-		return
-	}
-
-	stat1, err := rp.FetchMetrics()
+	stat1 := make(map[string]interface{})
+	err := rp.fetchPercentageOfMemory(stat1)
 	if err != nil {
 		t.Errorf("something went wrong")
 	}
@@ -105,52 +92,30 @@ func TestFetchMetricsPercentageOfMemory(t *testing.T) {
 	} else if value != 0.0 {
 		t.Errorf("metric of 'percentage_of_memory' should be 0.0, but %v", value)
 	}
+}
 
-	// With maxmemory
-	_, err = conn.Do("CONFIG", "SET", "maxmemory", 1024*1024)
-	if err != nil {
-		t.Errorf("Failed to send a CONFIG command. %s", err)
-		return
+func TestFetchMetricsPercentageOfMemory_100percent(t *testing.T) {
+	db, mock := redismock.NewClientMock()
+
+	val := map[string]string{"maxmemory": "1048576.0"}
+	mock.ExpectConfigGet("maxmemory").SetVal(val)
+	rp := RedisPlugin{
+		rdb:           db,
+		Timeout:       5,
+		Prefix:        "redis",
+		ConfigCommand: "config",
 	}
 
-	stat2, err := rp.FetchMetrics()
+	stat1 := make(map[string]interface{})
+	stat1["used_memory"] = float64(1048576)
+	err := rp.fetchPercentageOfMemory(stat1)
 	if err != nil {
 		t.Errorf("something went wrong")
 	}
 
-	if value, ok := stat2["percentage_of_memory"]; !ok {
+	if value, ok := stat1["percentage_of_memory"]; !ok {
 		t.Errorf("metric of 'percentage_of_memory' cannnot be fetched")
 	} else if value == 0.0 {
 		t.Errorf("metric of 'percentage_of_memory' should not be 0.0, but %v", value)
-	}
-}
-
-func TestFetchMetrics(t *testing.T) {
-	// should detect empty port
-	portStr := "63331"
-	s, err := redistest.NewServer(true, map[string]string{
-		"port": portStr,
-	})
-	if err != nil {
-		t.Errorf("Failed to invoke testserver. %s", err)
-		return
-	}
-	defer s.Stop()
-	redis := RedisPlugin{
-		Timeout:       5,
-		Prefix:        "redis",
-		Port:          portStr,
-		ConfigCommand: "CONFIG",
-	}
-	stat, err := redis.FetchMetrics()
-
-	if err != nil {
-		t.Errorf("something went wrong")
-	}
-
-	for _, v := range metrics {
-		if _, ok := stat[v]; !ok {
-			t.Errorf("metric of %s cannot be fetched", v)
-		}
 	}
 }
