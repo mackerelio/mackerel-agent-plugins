@@ -3,18 +3,20 @@
 package mpredis
 
 import (
+	"context"
 	"flag"
 	"fmt"
 	"net"
 	"os"
+	"os/signal"
 	"regexp"
 	"strconv"
 	"strings"
 	"time"
 
-	"github.com/gomodule/redigo/redis"
 	mp "github.com/mackerelio/go-mackerel-plugin-helper"
 	"github.com/mackerelio/golib/logging"
+	"github.com/redis/go-redis/v9"
 	"golang.org/x/text/cases"
 	"golang.org/x/text/language"
 )
@@ -23,6 +25,9 @@ var logger = logging.GetLogger("metrics.plugin.redis")
 
 // RedisPlugin mackerel plugin for Redis
 type RedisPlugin struct {
+	ctx context.Context
+	rdb *redis.Client
+
 	Host          string
 	Port          string
 	Password      string
@@ -33,16 +38,14 @@ type RedisPlugin struct {
 	ConfigCommand string
 }
 
-func authenticateByPassword(c redis.Conn, password string) error {
-	if _, err := c.Do("AUTH", password); err != nil {
-		logger.Errorf("Failed to authenticate. %s", err)
-		return err
-	}
-	return nil
+func (m *RedisPlugin) configCmd(key string) *redis.MapStringStringCmd {
+	cmd := redis.NewMapStringStringCmd(m.ctx, m.ConfigCommand, "get", key)
+	m.rdb.Process(m.ctx, cmd)
+	return cmd
 }
 
-func (m RedisPlugin) fetchPercentageOfMemory(c redis.Conn, stat map[string]interface{}) error {
-	res, err := redis.StringMap(c.Do(m.ConfigCommand, "GET", "maxmemory"))
+func (m *RedisPlugin) fetchPercentageOfMemory(stat map[string]interface{}) error {
+	res, err := m.configCmd("maxmemory").Result()
 	if err != nil {
 		logger.Errorf("Failed to run `%s GET maxmemory` command. %s", m.ConfigCommand, err)
 		return err
@@ -63,8 +66,9 @@ func (m RedisPlugin) fetchPercentageOfMemory(c redis.Conn, stat map[string]inter
 	return nil
 }
 
-func (m RedisPlugin) fetchPercentageOfClients(c redis.Conn, stat map[string]interface{}) error {
-	res, err := redis.StringMap(c.Do(m.ConfigCommand, "GET", "maxclients"))
+func (m *RedisPlugin) fetchPercentageOfClients(stat map[string]interface{}) error {
+	res, err := m.configCmd("maxclients").Result()
+
 	if err != nil {
 		logger.Errorf("Failed to run `%s GET maxclients` command. %s", m.ConfigCommand, err)
 		return err
@@ -81,11 +85,11 @@ func (m RedisPlugin) fetchPercentageOfClients(c redis.Conn, stat map[string]inte
 	return nil
 }
 
-func (m RedisPlugin) calculateCapacity(c redis.Conn, stat map[string]interface{}) error {
-	if err := m.fetchPercentageOfMemory(c, stat); err != nil {
+func (m *RedisPlugin) calculateCapacity(stat map[string]interface{}) error {
+	if err := m.fetchPercentageOfMemory(stat); err != nil {
 		return err
 	}
-	return m.fetchPercentageOfClients(c, stat)
+	return m.fetchPercentageOfClients(stat)
 }
 
 // MetricKeyPrefix interface for PluginWithPrefix
@@ -102,28 +106,26 @@ var (
 	slaveLine   = regexp.MustCompile(`^slave\d+`)
 )
 
-// FetchMetrics interface for mackerelplugin
-func (m RedisPlugin) FetchMetrics() (map[string]interface{}, error) {
+func (m *RedisPlugin) Connect() {
 	network := "tcp"
 	address := net.JoinHostPort(m.Host, m.Port)
 	if m.Socket != "" {
 		network = "unix"
 		address = m.Socket
 	}
-	c, err := redis.Dial(network, address, redis.DialConnectTimeout(time.Duration(m.Timeout)*time.Second))
-	if err != nil {
-		logger.Errorf("Failed to connect redis. %s", err)
-		return nil, err
-	}
-	defer c.Close()
 
-	if m.Password != "" {
-		if err = authenticateByPassword(c, m.Password); err != nil {
-			return nil, err
-		}
-	}
+	m.rdb = redis.NewClient(&redis.Options{
+		Addr:        address,
+		Password:    m.Password,
+		DB:          0,
+		Network:     network,
+		DialTimeout: time.Duration(m.Timeout) * time.Second,
+	})
+}
 
-	str, err := redis.String(c.Do("info"))
+// FetchMetrics interface for mackerelplugin
+func (m RedisPlugin) FetchMetrics() (map[string]interface{}, error) {
+	str, err := m.rdb.Info(m.ctx).Result()
 	if err != nil {
 		logger.Errorf("Failed to run info command. %s", err)
 		return nil, err
@@ -215,7 +217,7 @@ func (m RedisPlugin) FetchMetrics() (map[string]interface{}, error) {
 	}
 
 	if m.ConfigCommand != "" {
-		if err := m.calculateCapacity(c, stat); err != nil {
+		if err := m.calculateCapacity(stat); err != nil {
 			logger.Infof("Failed to calculate capacity. (The cause may be that AWS Elasticache Redis has no `%s` command.) Skip these metrics. %s", m.ConfigCommand, err)
 		}
 	}
@@ -301,27 +303,7 @@ func (m RedisPlugin) GraphDefinition() map[string]mp.Graphs {
 		},
 	}
 
-	network := "tcp"
-	address := net.JoinHostPort(m.Host, m.Port)
-	if m.Socket != "" {
-		network = "unix"
-		address = m.Socket
-	}
-
-	c, err := redis.Dial(network, address, redis.DialConnectTimeout(time.Duration(m.Timeout)*time.Second))
-	if err != nil {
-		logger.Errorf("Failed to connect redis. %s", err)
-		return nil
-	}
-	defer c.Close()
-
-	if m.Password != "" {
-		if err = authenticateByPassword(c, m.Password); err != nil {
-			return nil
-		}
-	}
-
-	str, err := redis.String(c.Do("info"))
+	str, err := m.rdb.Info(m.ctx).Result()
 	if err != nil {
 		logger.Errorf("Failed to run info command. %s", err)
 		return nil
@@ -377,7 +359,11 @@ func Do() {
 
 	flag.Parse()
 
+	ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt)
+	defer stop()
+
 	redis := RedisPlugin{
+		ctx:           ctx,
 		Timeout:       *optTimeout,
 		Prefix:        *optPrefix,
 		ConfigCommand: *optConfigCommand,
@@ -389,6 +375,9 @@ func Do() {
 		redis.Port = *optPort
 		redis.Password = *optPassword
 	}
+	redis.Connect()
+	defer redis.rdb.Close()
+
 	helper := mp.NewMackerelPlugin(redis)
 	helper.Tempfile = *optTempfile
 
