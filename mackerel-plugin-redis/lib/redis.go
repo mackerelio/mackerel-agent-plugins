@@ -38,14 +38,22 @@ type RedisPlugin struct {
 	ConfigCommand string
 }
 
-func (m *RedisPlugin) configCmd(key string) *redis.MapStringStringCmd {
+func (m *RedisPlugin) configCmd(key string) (*redis.MapStringStringCmd, error) {
 	cmd := redis.NewMapStringStringCmd(m.ctx, m.ConfigCommand, "get", key)
-	m.rdb.Process(m.ctx, cmd)
-	return cmd
+	err := m.rdb.Process(m.ctx, cmd)
+	if err != nil {
+		return nil, err
+	}
+	return cmd, nil
 }
 
 func (m *RedisPlugin) fetchPercentageOfMemory(stat map[string]interface{}) error {
-	res, err := m.configCmd("maxmemory").Result()
+	cmd, err := m.configCmd("maxmemory")
+	if err != nil {
+		logger.Errorf("Failed to run `%s GET maxmemory` command. %s", m.ConfigCommand, err)
+		return err
+	}
+	res, err := cmd.Result()
 	if err != nil {
 		logger.Errorf("Failed to run `%s GET maxmemory` command. %s", m.ConfigCommand, err)
 		return err
@@ -67,8 +75,12 @@ func (m *RedisPlugin) fetchPercentageOfMemory(stat map[string]interface{}) error
 }
 
 func (m *RedisPlugin) fetchPercentageOfClients(stat map[string]interface{}) error {
-	res, err := m.configCmd("maxclients").Result()
-
+	cmd, err := m.configCmd("maxclients")
+	if err != nil {
+		logger.Errorf("Failed to run `%s GET maxclients` command. %s", m.ConfigCommand, err)
+		return err
+	}
+	res, err := cmd.Result()
 	if err != nil {
 		logger.Errorf("Failed to run `%s GET maxclients` command. %s", m.ConfigCommand, err)
 		return err
