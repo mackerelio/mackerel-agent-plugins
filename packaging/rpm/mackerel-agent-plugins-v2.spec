@@ -39,6 +39,10 @@ done
 %{__targetdir}/*
 
 %changelog
+* Mon Sep 4 2023 <mackerel-developers@hatena.ne.jp> - 0.78.4
+- Fixed Docker CPU Percentage's unusual spike when restarting containers (by Arthur1)
+- Remove old rpm packaging (by yseto)
+
 * Thu Jul 13 2023 <mackerel-developers@hatena.ne.jp> - 0.78.3
 
 * Wed Jun 14 2023 <mackerel-developers@hatena.ne.jp> - 0.78.2

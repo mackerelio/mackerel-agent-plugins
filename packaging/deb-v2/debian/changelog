@@ -1,3 +1,12 @@
+mackerel-agent-plugins (0.78.4-1.v2) stable; urgency=low
+
+  * Fixed Docker CPU Percentage's unusual spike when restarting containers (by Arthur1)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/1100>
+  * Remove old rpm packaging (by yseto)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/1095>
+
+ -- mackerel <mackerel-developers@hatena.ne.jp>  Mon, 4 Sep 2023 03:17:45 +0000
+
 mackerel-agent-plugins (0.78.3-1.v2) stable; urgency=low
 
 
