@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.78.4 (2023-09-04)
+
+* Fixed Docker CPU Percentage's unusual spike when restarting containers #1100 (Arthur1)
+* Remove old rpm packaging #1095 (yseto)
+
+
 ## 0.78.3 (2023-07-13)
 
 
