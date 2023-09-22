@@ -30,9 +30,9 @@ require (
 	github.com/michaelklishin/rabbit-hole v1.5.0
 	github.com/montanaflynn/stats v0.7.0
 	github.com/redis/go-redis/v9 v9.1.0
-	github.com/stretchr/testify v1.8.2
+	github.com/stretchr/testify v1.8.4
 	github.com/tomasen/fcgi_client v0.0.0-20180423082037-2bb3d819fd19
-	github.com/urfave/cli v1.22.12
+	github.com/urfave/cli v1.22.14
 	golang.org/x/sync v0.1.0
 	golang.org/x/text v0.9.0
 )
