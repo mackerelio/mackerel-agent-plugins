@@ -1,3 +1,24 @@
+mackerel-agent-plugins (0.79.0-1.v2) stable; urgency=low
+
+  * Bump github.com/aws/aws-sdk-go from 1.44.239 to 1.45.11 (by dependabot[bot])
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/1109>
+  * Bump actions/checkout from 3 to 4 (by dependabot[bot])
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/1108>
+  * use go-redis (by yseto)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/1105>
+  * Bump golang.org/x/text from 0.9.0 to 0.13.0 (by dependabot[bot])
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/1103>
+  * Bump golang.org/x/sync from 0.1.0 to 0.3.0 (by dependabot[bot])
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/1082>
+  * Bump github.com/urfave/cli from 1.22.12 to 1.22.14 (by dependabot[bot])
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/1080>
+  * Bump github.com/montanaflynn/stats from 0.7.0 to 0.7.1 (by dependabot[bot])
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/1068>
+  * Bump github.com/lib/pq from 1.10.7 to 1.10.9 (by dependabot[bot])
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/1063>
+
+ -- mackerel <mackerel-developers@hatena.ne.jp>  Fri, 22 Sep 2023 03:20:44 +0000
+
 mackerel-agent-plugins (0.78.4-1.v2) stable; urgency=low
 
   * Fixed Docker CPU Percentage's unusual spike when restarting containers (by Arthur1)
