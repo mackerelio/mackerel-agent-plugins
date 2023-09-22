@@ -1,5 +1,17 @@
 # Changelog
 
+## 0.79.0 (2023-09-22)
+
+* Bump github.com/aws/aws-sdk-go from 1.44.239 to 1.45.11 #1109 (dependabot[bot])
+* Bump actions/checkout from 3 to 4 #1108 (dependabot[bot])
+* use go-redis #1105 (yseto)
+* Bump golang.org/x/text from 0.9.0 to 0.13.0 #1103 (dependabot[bot])
+* Bump golang.org/x/sync from 0.1.0 to 0.3.0 #1082 (dependabot[bot])
+* Bump github.com/urfave/cli from 1.22.12 to 1.22.14 #1080 (dependabot[bot])
+* Bump github.com/montanaflynn/stats from 0.7.0 to 0.7.1 #1068 (dependabot[bot])
+* Bump github.com/lib/pq from 1.10.7 to 1.10.9 #1063 (dependabot[bot])
+
+
 ## 0.78.4 (2023-09-04)
 
 * Fixed Docker CPU Percentage's unusual spike when restarting containers #1100 (Arthur1)

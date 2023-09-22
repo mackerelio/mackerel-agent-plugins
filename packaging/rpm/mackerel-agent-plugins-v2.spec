@@ -39,6 +39,16 @@ done
 %{__targetdir}/*
 
 %changelog
+* Fri Sep 22 2023 <mackerel-developers@hatena.ne.jp> - 0.79.0
+- Bump github.com/aws/aws-sdk-go from 1.44.239 to 1.45.11 (by dependabot[bot])
+- Bump actions/checkout from 3 to 4 (by dependabot[bot])
+- use go-redis (by yseto)
+- Bump golang.org/x/text from 0.9.0 to 0.13.0 (by dependabot[bot])
+- Bump golang.org/x/sync from 0.1.0 to 0.3.0 (by dependabot[bot])
+- Bump github.com/urfave/cli from 1.22.12 to 1.22.14 (by dependabot[bot])
+- Bump github.com/montanaflynn/stats from 0.7.0 to 0.7.1 (by dependabot[bot])
+- Bump github.com/lib/pq from 1.10.7 to 1.10.9 (by dependabot[bot])
+
 * Mon Sep 4 2023 <mackerel-developers@hatena.ne.jp> - 0.78.4
 - Fixed Docker CPU Percentage's unusual spike when restarting containers (by Arthur1)
 - Remove old rpm packaging (by yseto)
