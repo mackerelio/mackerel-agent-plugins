@@ -13,7 +13,7 @@ require (
 	github.com/fukata/golang-stats-api-handler v1.0.0
 	github.com/go-ldap/ldap/v3 v3.4.4
 	github.com/go-redis/redis v6.15.9+incompatible
-	github.com/go-redis/redismock/v9 v9.0.3
+	github.com/go-redis/redismock/v9 v9.2.0
 	github.com/gosnmp/gosnmp v1.35.0
 	github.com/jarcoal/httpmock v1.3.0
 	github.com/jmoiron/sqlx v1.3.5
@@ -29,7 +29,7 @@ require (
 	github.com/mattn/go-treasuredata v0.0.0-20170920030233-31758907cfc4
 	github.com/michaelklishin/rabbit-hole v1.5.0
 	github.com/montanaflynn/stats v0.7.1
-	github.com/redis/go-redis/v9 v9.1.0
+	github.com/redis/go-redis/v9 v9.2.0
 	github.com/stretchr/testify v1.8.4
 	github.com/tomasen/fcgi_client v0.0.0-20180423082037-2bb3d819fd19
 	github.com/urfave/cli v1.22.14
