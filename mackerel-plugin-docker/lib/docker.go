@@ -179,7 +179,10 @@ func (m DockerPlugin) FetchMetricsWithAPI(containers []docker.APIContainers) (ma
 				log.Fatalf("Stats: Expected 1 result. Got %d.", len(resultStats))
 			}
 			mu.Lock()
-			m.parseStats(&res, metricName, resultStats[0])
+			err = m.parseStats(&res, metricName, resultStats[0])
+			if err != nil {
+				log.Fatal(err)
+			}
 			mu.Unlock()
 		}(container)
 	}

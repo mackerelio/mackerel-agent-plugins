@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"io"
+	"log"
 	"net/http"
 	"os"
 	"regexp"
@@ -237,5 +238,8 @@ func Do() {
 	app.Flags = flags
 	app.Action = doMain
 
-	app.Run(os.Args)
+	err := app.Run(os.Args)
+	if err != nil {
+		log.Fatalln(err)
+	}
 }

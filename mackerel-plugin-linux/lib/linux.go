@@ -5,6 +5,7 @@ import (
 	"bytes"
 	"fmt"
 	"io"
+	"log"
 	"os"
 	"os/exec"
 	"path/filepath"
@@ -477,5 +478,8 @@ func Do() {
 	app.Flags = flags
 	app.Action = doMain
 
-	app.Run(os.Args)
+	err := app.Run(os.Args)
+	if err != nil {
+		log.Fatalln(err)
+	}
 }

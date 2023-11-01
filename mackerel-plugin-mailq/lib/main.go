@@ -92,7 +92,7 @@ func (p *plugin) fetchMailqCount() (count uint64, err error) {
 
 	count, err = p.mailq.parse(stdout)
 	if err != nil {
-		cmd.Wait()
+		cmd.Wait() // nolint
 		return
 	}
 

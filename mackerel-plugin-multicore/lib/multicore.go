@@ -301,9 +301,12 @@ func outputMulticore(tempFileName string) {
 	}
 
 	savedItem, err := fetchSavedItem(tempFileName)
-	saveValues(tempFileName, currentValues, now)
 	if err != nil {
 		log.Fatalln("fetchLastValues: ", err)
+	}
+	err = saveValues(tempFileName, currentValues, now)
+	if err != nil {
+		log.Fatalln("saveValues: ", err)
 	}
 
 	// maybe first time run

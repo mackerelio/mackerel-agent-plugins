@@ -325,8 +325,14 @@ func Do() {
 	}
 
 	solr.BaseURL = fmt.Sprintf("%s://%s:%s/solr", solr.Protocol, solr.Host, solr.Port)
-	solr.loadVersion()
-	solr.loadStats()
+	err := solr.loadVersion()
+	if err != nil {
+		logger.Errorf("loadVersion : %v", err)
+	}
+	err = solr.loadStats()
+	if err != nil {
+		logger.Errorf("loadStats : %v", err)
+	}
 
 	helper := mp.NewMackerelPlugin(solr)
 	helper.Tempfile = *optTempfile
