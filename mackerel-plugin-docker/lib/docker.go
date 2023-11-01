@@ -111,6 +111,9 @@ func (m DockerPlugin) FetchMetrics() (map[string]interface{}, error) {
 		return nil, err
 	}
 	stats, err = m.FetchMetricsWithAPI(containers)
+	if err != nil {
+		return nil, err
+	}
 
 	if m.UseCPUPercentage {
 		if time.Now().Sub(m.lastMetricValues.Timestamp) <= 5*time.Minute {

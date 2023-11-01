@@ -118,7 +118,7 @@ func (n NginxPlugin) parseStats(body io.Reader) (map[string]interface{}, error) 
 		return nil, errors.New("cannot get values")
 	}
 
-	line, _, err = r.ReadLine()
+	_, _, err = r.ReadLine()
 	if err != nil {
 		return nil, errors.New("cannot get values")
 	}

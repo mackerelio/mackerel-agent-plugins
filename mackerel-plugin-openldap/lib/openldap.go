@@ -116,6 +116,9 @@ func getLatestCSN(host, base, bind, passwd string, useTLS, insecureSkipVerify bo
 	} else {
 		l, err = ldap.Dial("tcp", host)
 	}
+	if err != nil {
+		return res, err
+	}
 	err = l.Bind(bind, passwd)
 	if err != nil {
 		logger.Errorf("Failed to Bind %s, err: %s", bind, err)

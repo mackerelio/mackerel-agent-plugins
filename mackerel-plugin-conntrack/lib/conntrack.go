@@ -64,6 +64,5 @@ func CurrentValue(paths []string) (n uint64, err error) {
 	}
 
 	// Convert to uint64.
-	n, err = strconv.ParseUint(cnt, 10, 64)
-	return n, nil
+	return strconv.ParseUint(cnt, 10, 64)
 }
