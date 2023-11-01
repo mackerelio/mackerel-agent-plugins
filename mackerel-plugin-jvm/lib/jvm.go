@@ -3,7 +3,6 @@ package mpjvm
 import (
 	"flag"
 	"fmt"
-	"io/ioutil"
 	"os"
 	"os/exec"
 	"strconv"
@@ -401,7 +400,7 @@ func Do() {
 	} else {
 		// https://docs.oracle.com/javase/7/docs/technotes/tools/share/jps.html
 		// `The lvmid is typically, but not necessarily, the operating system's process identifier for the JVM process.`
-		pid, err := ioutil.ReadFile(*optPidFile)
+		pid, err := os.ReadFile(*optPidFile)
 		if err != nil {
 			logger.Errorf("Failed to load pid. %s", err)
 			os.Exit(1)

@@ -5,7 +5,6 @@ import (
 	"flag"
 	"fmt"
 	"io"
-	"io/ioutil"
 	"log"
 	"os"
 	"os/exec"
@@ -122,7 +121,7 @@ func compileEnvPairs(s *services, plg string) *map[string]string {
 }
 
 func setPluginEnvironments(plg string, confdir string) {
-	files, err := ioutil.ReadDir(confdir)
+	files, err := os.ReadDir(confdir)
 	if err != nil {
 		log.Fatalln(err)
 	}

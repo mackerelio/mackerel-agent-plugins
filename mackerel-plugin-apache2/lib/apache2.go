@@ -3,7 +3,7 @@ package mpapache2
 import (
 	"errors"
 	"fmt"
-	"io/ioutil"
+	"io"
 	"net/http"
 	"os"
 	"regexp"
@@ -219,7 +219,7 @@ func getApache2Metrics(host string, port uint16, path string, header []string) (
 	if resp.StatusCode != http.StatusOK {
 		return "", fmt.Errorf("HTTP status error: %d", resp.StatusCode)
 	}
-	body, err := ioutil.ReadAll(resp.Body)
+	body, err := io.ReadAll(resp.Body)
 	if err != nil {
 		return "", err
 	}

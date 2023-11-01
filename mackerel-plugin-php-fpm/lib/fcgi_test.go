@@ -2,11 +2,10 @@ package mpphpfpm
 
 import (
 	"context"
-	"io/ioutil"
+	"io"
 	"net"
 	"net/http"
 	"net/http/fcgi"
-	"os"
 	"path/filepath"
 	"testing"
 	"time"
@@ -42,11 +41,7 @@ func (s *FastCGIServer) Close() error {
 }
 
 func TestFCGITransport(t *testing.T) {
-	dir, err := ioutil.TempDir("", "mackerel-plugin-php-fpm")
-	if err != nil {
-		t.Fatal(err)
-	}
-	defer os.RemoveAll(dir)
+	dir := t.TempDir()
 
 	tests := []struct {
 		Name    string
@@ -118,7 +113,7 @@ func testFCGITransport(t *testing.T, network, address string) {
 			defer resp.Body.Close()
 
 			assert.Equal(t, tt.Status, resp.StatusCode)
-			b, err := ioutil.ReadAll(resp.Body)
+			b, err := io.ReadAll(resp.Body)
 			if err != nil {
 				assert.Fail(t, "failed to read response", err)
 				return

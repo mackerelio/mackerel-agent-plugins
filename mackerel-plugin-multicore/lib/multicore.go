@@ -7,7 +7,6 @@ import (
 	"flag"
 	"fmt"
 	"io"
-	"io/ioutil"
 	"log"
 	"os"
 	"path/filepath"
@@ -239,7 +238,7 @@ func calculatePercentage(currentValue *uint64, lastValue *uint64, currentTotal u
 }
 
 func fetchLoadavg5() (float64, error) {
-	contentbytes, err := ioutil.ReadFile("/proc/loadavg")
+	contentbytes, err := os.ReadFile("/proc/loadavg")
 	if err != nil {
 		return 0.0, err
 	}

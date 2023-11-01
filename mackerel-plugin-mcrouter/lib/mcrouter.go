@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"flag"
 	"fmt"
-	"io/ioutil"
 	"os"
 	"path"
 	"strings"
@@ -134,7 +133,7 @@ func (p McrouterPlugin) FetchMetrics() (map[string]interface{}, error) {
 }
 
 func readStatsFile(statsFile string) (map[string]float64, error) {
-	data, err := ioutil.ReadFile(statsFile)
+	data, err := os.ReadFile(statsFile)
 	if err != nil {
 		return nil, err
 	}
