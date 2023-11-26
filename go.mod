@@ -14,7 +14,7 @@ require (
 	github.com/go-ldap/ldap/v3 v3.4.4
 	github.com/go-redis/redis v6.15.9+incompatible
 	github.com/go-redis/redismock/v9 v9.0.3
-	github.com/gosnmp/gosnmp v1.35.0
+	github.com/gosnmp/gosnmp v1.37.0
 	github.com/jarcoal/httpmock v1.3.0
 	github.com/jmoiron/sqlx v1.3.5
 	github.com/lestrrat-go/tcptest v0.0.0-20180223004312-f0345789c593
@@ -79,7 +79,7 @@ require (
 	golang.org/x/crypto v0.0.0-20220622213112-05595931fe9d // indirect
 	golang.org/x/lint v0.0.0-20200302205851-738671d3881b // indirect
 	golang.org/x/mod v0.8.0 // indirect
-	golang.org/x/sys v0.6.0 // indirect
+	golang.org/x/sys v0.13.0 // indirect
 	golang.org/x/tools v0.6.0 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 )
