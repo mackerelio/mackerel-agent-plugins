@@ -43,7 +43,7 @@ jobs:
           sudo apt-get install -y rpm devscripts debhelper fakeroot crossbuild-essential-arm64
           mkdir -p ~/rpmbuild/{BUILD,BUILDROOT,RPMS,SOURCES,SPECS,SRPMS}
       - uses: actions/checkout@v4
-      - uses: actions/setup-go@v4
+      - uses: actions/setup-go@v5
         with:
           go-version: 1.20.x
       - run: make clean rpm deb
