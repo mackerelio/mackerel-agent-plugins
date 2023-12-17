@@ -47,7 +47,7 @@ jobs:
         with:
           go-version: 1.20.x
       - run: make clean rpm deb
-      - uses: actions/upload-artifact@v3
+      - uses: actions/upload-artifact@v4
         with:
           name: linux-build-artifacts
           path: |
