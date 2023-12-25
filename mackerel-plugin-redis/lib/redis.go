@@ -4,6 +4,7 @@ package mpredis
 
 import (
 	"context"
+	"crypto/tls"
 	"flag"
 	"fmt"
 	"net"
@@ -36,6 +37,9 @@ type RedisPlugin struct {
 	Timeout       int
 	Tempfile      string
 	ConfigCommand string
+
+	EnableTLS          bool
+	InsecureSkipVerify bool
 }
 
 func (m *RedisPlugin) configCmd(key string) (*redis.MapStringStringCmd, error) {
@@ -125,14 +129,19 @@ func (m *RedisPlugin) Connect() {
 		network = "unix"
 		address = m.Socket
 	}
-
-	m.rdb = redis.NewClient(&redis.Options{
+	options := &redis.Options{
 		Addr:        address,
 		Password:    m.Password,
 		DB:          0,
 		Network:     network,
 		DialTimeout: time.Duration(m.Timeout) * time.Second,
-	})
+	}
+	if m.EnableTLS {
+		options.TLSConfig = &tls.Config{
+			InsecureSkipVerify: m.InsecureSkipVerify,
+		}
+	}
+	m.rdb = redis.NewClient(options)
 }
 
 // FetchMetrics interface for mackerelplugin
@@ -368,6 +377,8 @@ func Do() {
 	optTimeout := flag.Int("timeout", 5, "Timeout")
 	optTempfile := flag.String("tempfile", "", "Temp file name")
 	optConfigCommand := flag.String("config-command", "CONFIG", "Custom CONFIG command. Disable CONFIG command when passed \"\".")
+	optEnableTLS := flag.Bool("tls", false, "Enables TLS connection")
+	optTLSSkipVerify := flag.Bool("tls-skip-verify", false, "Disable TLS certificate verification")
 
 	flag.Parse()
 
@@ -386,6 +397,8 @@ func Do() {
 		redis.Host = *optHost
 		redis.Port = *optPort
 		redis.Password = *optPassword
+		redis.EnableTLS = *optEnableTLS
+		redis.InsecureSkipVerify = *optTLSSkipVerify
 	}
 	redis.Connect()
 	defer redis.rdb.Close()
