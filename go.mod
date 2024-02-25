@@ -33,7 +33,7 @@ require (
 	github.com/stretchr/testify v1.8.4
 	github.com/tomasen/fcgi_client v0.0.0-20180423082037-2bb3d819fd19
 	github.com/urfave/cli v1.22.14
-	golang.org/x/sync v0.3.0
+	golang.org/x/sync v0.6.0
 	golang.org/x/text v0.14.0
 )
 
