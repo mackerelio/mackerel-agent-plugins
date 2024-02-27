@@ -39,6 +39,15 @@ done
 %{__targetdir}/*
 
 %changelog
+* Tue Feb 27 2024 <mackerel-developers@hatena.ne.jp> - 0.80.0
+- Update mysql, mongodb plugins. (by yseto)
+- update go version -> 1.22 (by lufia)
+- added TLS support on mackerel-plugin-redis (by yseto)
+- Bump golang.org/x/crypto from 0.0.0-20220622213112-05595931fe9d to 0.17.0 (by dependabot[bot])
+- Bump actions/upload-artifact from 3 to 4 (by dependabot[bot])
+- Bump actions/download-artifact from 3 to 4 (by dependabot[bot])
+- Bump actions/setup-go from 4 to 5 (by dependabot[bot])
+
 * Fri Sep 22 2023 <mackerel-developers@hatena.ne.jp> - 0.79.0
 - Bump github.com/aws/aws-sdk-go from 1.44.239 to 1.45.11 (by dependabot[bot])
 - Bump actions/checkout from 3 to 4 (by dependabot[bot])
