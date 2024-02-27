@@ -1,6 +1,6 @@
 module github.com/mackerelio/mackerel-agent-plugins
 
-go 1.18
+go 1.19
 
 require (
 	github.com/Songmu/axslogparser v1.4.0
@@ -23,8 +23,8 @@ require (
 	github.com/mackerelio/go-mackerel-plugin-helper v0.1.2
 	github.com/mackerelio/go-osstat v0.2.4
 	github.com/mackerelio/golib v1.2.1
-	github.com/mackerelio/mackerel-plugin-mongodb v1.1.0
-	github.com/mackerelio/mackerel-plugin-mysql v1.2.1
+	github.com/mackerelio/mackerel-plugin-mongodb v1.1.1
+	github.com/mackerelio/mackerel-plugin-mysql v1.2.2
 	github.com/mattn/go-pipeline v0.0.0-20190323144519-32d779b32768
 	github.com/mattn/go-treasuredata v0.0.0-20170920030233-31758907cfc4
 	github.com/michaelklishin/rabbit-hole v1.5.0
@@ -33,7 +33,7 @@ require (
 	github.com/stretchr/testify v1.8.4
 	github.com/tomasen/fcgi_client v0.0.0-20180423082037-2bb3d819fd19
 	github.com/urfave/cli v1.22.14
-	golang.org/x/sync v0.3.0
+	golang.org/x/sync v0.6.0
 	golang.org/x/text v0.14.0
 )
 
@@ -53,11 +53,11 @@ require (
 	github.com/docker/go-units v0.5.0 // indirect
 	github.com/go-asn1-ber/asn1-ber v1.5.4 // indirect
 	github.com/go-ole/go-ole v1.2.5 // indirect
-	github.com/go-sql-driver/mysql v1.7.0 // indirect
+	github.com/go-sql-driver/mysql v1.7.1 // indirect
 	github.com/gogo/protobuf v1.3.2 // indirect
-	github.com/golang/snappy v0.0.1 // indirect
+	github.com/golang/snappy v0.0.4 // indirect
 	github.com/jmespath/go-jmespath v0.4.0 // indirect
-	github.com/klauspost/compress v1.13.6 // indirect
+	github.com/klauspost/compress v1.17.7 // indirect
 	github.com/lestrrat-go/tcputil v0.0.0-20180223003554-d3c7f98154fb // indirect
 	github.com/moby/patternmatcher v0.5.0 // indirect
 	github.com/moby/sys/sequential v0.5.0 // indirect
@@ -72,14 +72,14 @@ require (
 	github.com/sirupsen/logrus v1.8.1 // indirect
 	github.com/streadway/amqp v0.0.0-20190827072141-edfb9018d271 // indirect
 	github.com/xdg-go/pbkdf2 v1.0.0 // indirect
-	github.com/xdg-go/scram v1.1.1 // indirect
-	github.com/xdg-go/stringprep v1.0.3 // indirect
-	github.com/youmark/pkcs8 v0.0.0-20181117223130-1be2e3e5546d // indirect
-	go.mongodb.org/mongo-driver v1.11.1 // indirect
-	golang.org/x/crypto v0.17.0 // indirect
-	golang.org/x/lint v0.0.0-20200302205851-738671d3881b // indirect
-	golang.org/x/mod v0.8.0 // indirect
-	golang.org/x/sys v0.15.0 // indirect
-	golang.org/x/tools v0.6.0 // indirect
+	github.com/xdg-go/scram v1.1.2 // indirect
+	github.com/xdg-go/stringprep v1.0.4 // indirect
+	github.com/youmark/pkcs8 v0.0.0-20201027041543-1326539a0a0a // indirect
+	go.mongodb.org/mongo-driver v1.14.0 // indirect
+	golang.org/x/crypto v0.20.0 // indirect
+	golang.org/x/lint v0.0.0-20210508222113-6edffad5e616 // indirect
+	golang.org/x/mod v0.15.0 // indirect
+	golang.org/x/sys v0.17.0 // indirect
+	golang.org/x/tools v0.18.0 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 )
