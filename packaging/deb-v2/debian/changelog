@@ -1,3 +1,22 @@
+mackerel-agent-plugins (0.80.0-1.v2) stable; urgency=low
+
+  * Update mysql, mongodb plugins. (by yseto)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/1152>
+  * update go version -> 1.22 (by lufia)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/1145>
+  * added TLS support on mackerel-plugin-redis (by yseto)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/1144>
+  * Bump golang.org/x/crypto from 0.0.0-20220622213112-05595931fe9d to 0.17.0 (by dependabot[bot])
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/1141>
+  * Bump actions/upload-artifact from 3 to 4 (by dependabot[bot])
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/1140>
+  * Bump actions/download-artifact from 3 to 4 (by dependabot[bot])
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/1139>
+  * Bump actions/setup-go from 4 to 5 (by dependabot[bot])
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/1136>
+
+ -- mackerel <mackerel-developers@hatena.ne.jp>  Tue, 27 Feb 2024 06:04:13 +0000
+
 mackerel-agent-plugins (0.79.0-1.v2) stable; urgency=low
 
   * Bump github.com/aws/aws-sdk-go from 1.44.239 to 1.45.11 (by dependabot[bot])
