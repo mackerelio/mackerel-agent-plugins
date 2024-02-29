@@ -1,39 +1,51 @@
+//go:build windows
+
 package mpwindowsserversessions
 
 import (
-	"encoding/csv"
 	"flag"
-	"os/exec"
-	"strconv"
+	"os"
 	"strings"
+
+	"github.com/yusufpapurcu/wmi"
 
 	mp "github.com/mackerelio/go-mackerel-plugin-helper"
 )
 
 // WindowsServerSessionsPlugin store the name of servers
 type WindowsServerSessionsPlugin struct {
+	LegacyMetricName bool
 }
 
-func getCounts() (map[string]int, error) {
-	// WMIC PATH Win32_PerfFormattedData_PerfNet_Server GET ServerSessions /FORMAT:CSV
-	output, err := exec.Command("WMIC", "PATH", "Win32_PerfFormattedData_PerfNet_Server", "GET", "ServerSessions", "/FORMAT:CSV").Output()
+// cf.) https://learn.microsoft.com/en-us/previous-versions/aa394265(v=vs.85)
+type Win32_PerfFormattedData_PerfNet_Server struct {
+	ServerSessions uint32
+}
+
+type ServerSessionsCount struct {
+	Node           string
+	ServerSessions uint32
+}
+
+func getCounts() ([]ServerSessionsCount, error) {
+	var dst []Win32_PerfFormattedData_PerfNet_Server
+	q := wmi.CreateQuery(&dst, "")
+	if err := wmi.Query(q, &dst); err != nil {
+		return nil, err
+	}
+
+	if len(dst) == 0 {
+		return []ServerSessionsCount{}, nil
+	}
+
+	node, err := os.Hostname()
 	if err != nil {
 		return nil, err
 	}
-	r := csv.NewReader(strings.NewReader(string(output[1:])))
-	records, err := r.ReadAll()
-	if err != nil {
-		return nil, err
+	counts := []ServerSessionsCount{
+		{Node: node, ServerSessions: dst[0].ServerSessions},
 	}
-	counts := make(map[string]int)
-	for _, record := range records[1:] {
-		name := strings.TrimSpace(record[0])
-		n, err := strconv.Atoi(strings.TrimSpace(record[1]))
-		if err != nil {
-			continue
-		}
-		counts[name] = n
-	}
+
 	return counts, nil
 }
 
@@ -43,9 +55,16 @@ func (m WindowsServerSessionsPlugin) FetchMetrics() (map[string]interface{}, err
 	if err != nil {
 		return nil, err
 	}
-	stat := make(map[string]interface{})
-	for k, v := range counts {
-		stat["windows.server.sessions."+k+".count"] = uint64(v)
+	stat := make(map[string]interface{}, len(counts))
+	for _, v := range counts {
+		var nodeMetricKey string
+		// node name of Windows can contain ".", which is the metric name delimiter on Mackerel.
+		if m.LegacyMetricName {
+			nodeMetricKey = v.Node
+		} else {
+			nodeMetricKey = strings.ReplaceAll(v.Node, ".", "_")
+		}
+		stat["windows.server.sessions."+nodeMetricKey+".count"] = v.ServerSessions
 	}
 	return stat, nil
 }
@@ -66,9 +85,11 @@ func (m WindowsServerSessionsPlugin) GraphDefinition() map[string](mp.Graphs) {
 // Do the plugin
 func Do() {
 	optTempfile := flag.String("tempfile", "", "Temp file name")
+	legacyMetricName := flag.Bool("legacymetricname", false, `Prevent escaping "." in the node name for metric keys`)
 	flag.Parse()
 
 	var plugin WindowsServerSessionsPlugin
+	plugin.LegacyMetricName = *legacyMetricName
 
 	helper := mp.NewMackerelPlugin(plugin)
 
