@@ -6,7 +6,7 @@ Windows Server Sessions custom metrics plugin for mackerel-agent.
 ## Usage
 
 ```shell
-mackerel-plugin-windows-server-sessions
+mackerel-plugin-windows-server-sessions [-legacymetricname]
 ```
 
 ## Example of mackerel-agent.conf

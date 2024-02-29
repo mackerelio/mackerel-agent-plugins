@@ -14,6 +14,7 @@ import (
 
 // WindowsServerSessionsPlugin store the name of servers
 type WindowsServerSessionsPlugin struct {
+	LegacyMetricName bool
 }
 
 // cf.) https://learn.microsoft.com/en-us/previous-versions/aa394265(v=vs.85)
@@ -56,8 +57,13 @@ func (m WindowsServerSessionsPlugin) FetchMetrics() (map[string]interface{}, err
 	}
 	stat := make(map[string]interface{}, len(counts))
 	for _, v := range counts {
+		var nodeMetricKey string
 		// node name of Windows can contain ".", which is the metric name delimiter on Mackerel.
-		nodeMetricKey := strings.ReplaceAll(v.Node, ".", "_")
+		if m.LegacyMetricName {
+			nodeMetricKey = v.Node
+		} else {
+			nodeMetricKey = strings.ReplaceAll(v.Node, ".", "_")
+		}
 		stat["windows.server.sessions."+nodeMetricKey+".count"] = v.ServerSessions
 	}
 	return stat, nil
@@ -79,9 +85,11 @@ func (m WindowsServerSessionsPlugin) GraphDefinition() map[string](mp.Graphs) {
 // Do the plugin
 func Do() {
 	optTempfile := flag.String("tempfile", "", "Temp file name")
+	legacyMetricName := flag.Bool("legacymetricname", false, `Prevent escaping "." in the node name for metric keys`)
 	flag.Parse()
 
 	var plugin WindowsServerSessionsPlugin
+	plugin.LegacyMetricName = *legacyMetricName
 
 	helper := mp.NewMackerelPlugin(plugin)
 
