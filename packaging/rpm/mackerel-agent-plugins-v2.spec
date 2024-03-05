@@ -39,6 +39,9 @@ done
 %{__targetdir}/*
 
 %changelog
+* Tue Mar 5 2024 <mackerel-developers@hatena.ne.jp> - 0.81.0
+- [mackerel-plugin-windows-server-sessions] Remove the dependency for WMIC command (by Arthur1)
+
 * Tue Feb 27 2024 <mackerel-developers@hatena.ne.jp> - 0.80.0
 - Update mysql, mongodb plugins. (by yseto)
 - update go version -> 1.22 (by lufia)
