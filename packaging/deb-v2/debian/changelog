@@ -1,3 +1,10 @@
+mackerel-agent-plugins (0.81.0-1.v2) stable; urgency=low
+
+  * [mackerel-plugin-windows-server-sessions] Remove the dependency for WMIC command (by Arthur1)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/1155>
+
+ -- mackerel <mackerel-developers@hatena.ne.jp>  Tue, 5 Mar 2024 09:44:31 +0000
+
 mackerel-agent-plugins (0.80.0-1.v2) stable; urgency=low
 
   * Update mysql, mongodb plugins. (by yseto)

@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.81.0 (2024-03-05)
+
+* [mackerel-plugin-windows-server-sessions] Remove the dependency for WMIC command #1155 (Arthur1)
+
+
 ## 0.80.0 (2024-02-27)
 
 * Update mysql, mongodb plugins. #1152 (yseto)
