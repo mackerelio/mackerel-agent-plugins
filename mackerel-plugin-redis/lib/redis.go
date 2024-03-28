@@ -31,6 +31,7 @@ type RedisPlugin struct {
 
 	Host          string
 	Port          string
+	Username      string
 	Password      string
 	Socket        string
 	Prefix        string
@@ -131,6 +132,7 @@ func (m *RedisPlugin) Connect() {
 	}
 	options := &redis.Options{
 		Addr:        address,
+		Username:    m.Username,
 		Password:    m.Password,
 		DB:          0,
 		Network:     network,
@@ -371,6 +373,7 @@ func (m RedisPlugin) GraphDefinition() map[string]mp.Graphs {
 func Do() {
 	optHost := flag.String("host", "localhost", "Hostname")
 	optPort := flag.String("port", "6379", "Port")
+	optUsername := flag.String("username", "default", "Username")
 	optPassword := flag.String("password", os.Getenv("REDIS_PASSWORD"), "Password")
 	optSocket := flag.String("socket", "", "Server socket (overrides host and port)")
 	optPrefix := flag.String("metric-key-prefix", "redis", "Metric key prefix")
@@ -396,6 +399,7 @@ func Do() {
 	} else {
 		redis.Host = *optHost
 		redis.Port = *optPort
+		redis.Username = *optUsername
 		redis.Password = *optPassword
 		redis.EnableTLS = *optEnableTLS
 		redis.InsecureSkipVerify = *optTLSSkipVerify
