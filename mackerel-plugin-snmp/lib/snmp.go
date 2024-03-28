@@ -52,8 +52,11 @@ func (m SNMPPlugin) FetchMetrics() (map[string]interface{}, error) {
 
 		ret, err := strconv.ParseFloat(fmt.Sprint(resp.Variables[0].Value), 64)
 		if err != nil {
-			log.Println(err)
-			continue
+			ret, err = strconv.ParseFloat(fmt.Sprintf("%s", resp.Variables[0].Value), 64)
+			if err != nil {
+				log.Println(err)
+				continue
+			}
 		}
 
 		stat[sm.Metrics.Name] = ret
