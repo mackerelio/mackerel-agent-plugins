@@ -52,6 +52,12 @@ func (m SNMPPlugin) FetchMetrics() (map[string]interface{}, error) {
 
 		ret, err := strconv.ParseFloat(fmt.Sprint(resp.Variables[0].Value), 64)
 		if err != nil {
+			// NOTE: Cannot assume strconv.ParseFloat("%s", resp.Variables[0].Value)
+			// first, as resp.Variables[0].Value may be an int class, etc.
+			// Normally, an object values such as INTEGER or Counter are
+			// successfully accepted in the above conversions.
+			// However, STRING object values are passed as byte arrays, so the above
+			// conversion will result in an error.
 			ret, err = strconv.ParseFloat(fmt.Sprintf("%s", resp.Variables[0].Value), 64)
 			if err != nil {
 				log.Println(err)
