@@ -6,7 +6,7 @@ Redis custom metrics plugin for mackerel.io agent.
 ## Synopsis
 
 ```shell
-mackerel-plugin-redis [-host=<hostname>] [-port=<port>] [-password=<password>] [-socket=<unix socket>] [-timeout=<time>] [-metric-key-prefix=<prefix>] [-config-command=<CONFIG command name>] [-tls] [-tls-skip-verify]
+mackerel-plugin-redis [-host=<hostname>] [-port=<port>] [-username=<username>] [-password=<password>] [-socket=<unix socket>] [-timeout=<time>] [-metric-key-prefix=<prefix>] [-config-command=<CONFIG command name>] [-tls] [-tls-skip-verify]
 ```
 
 ## Example of mackerel-agent.conf
