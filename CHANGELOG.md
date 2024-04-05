@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.82.0 (2024-04-05)
+
+* add STRING number support #1166 (kmuto)
+* Allow mackerel-plugin-redis to specify username #1165 (mkadokawa-idcf)
+
+
 ## 0.81.0 (2024-03-05)
 
 * [mackerel-plugin-windows-server-sessions] Remove the dependency for WMIC command #1155 (Arthur1)
