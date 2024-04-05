@@ -39,6 +39,10 @@ done
 %{__targetdir}/*
 
 %changelog
+* Fri Apr 5 2024 <mackerel-developers@hatena.ne.jp> - 0.82.0
+- add STRING number support (by kmuto)
+- Allow mackerel-plugin-redis to specify username (by mkadokawa-idcf)
+
 * Tue Mar 5 2024 <mackerel-developers@hatena.ne.jp> - 0.81.0
 - [mackerel-plugin-windows-server-sessions] Remove the dependency for WMIC command (by Arthur1)
 
