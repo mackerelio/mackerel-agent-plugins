@@ -1,5 +1,21 @@
 # Changelog
 
+## 0.82.1 (2024-04-23)
+
+* Bump github.com/aws/aws-sdk-go from 1.45.11 to 1.51.26 #1175 (dependabot[bot])
+* Bump golang.org/x/net from 0.7.0 to 0.23.0 in /mackerel-plugin-gcp-compute-engine #1172 (dependabot[bot])
+* Bump github.com/docker/docker from 23.0.1+incompatible to 24.0.9+incompatible #1163 (dependabot[bot])
+* Bump google.golang.org/protobuf from 1.28.1 to 1.33.0 in /mackerel-plugin-gcp-compute-engine #1160 (dependabot[bot])
+* Bump google.golang.org/protobuf from 1.27.1 to 1.33.0 in /mackerel-plugin-murmur #1159 (dependabot[bot])
+* Bump github.com/redis/go-redis/v9 from 9.1.0 to 9.5.1 #1148 (dependabot[bot])
+* Bump github.com/opencontainers/runc from 1.1.2 to 1.1.12 #1147 (dependabot[bot])
+* Bump github.com/containerd/containerd from 1.6.18 to 1.6.26 #1143 (dependabot[bot])
+* Bump golang.org/x/crypto from 0.0.0-20220622213112-05595931fe9d to 0.17.0 in /mackerel-plugin-mongodb #1142 (dependabot[bot])
+* Bump google.golang.org/grpc from 1.51.0 to 1.56.3 in /mackerel-plugin-gcp-compute-engine #1125 (dependabot[bot])
+* Bump github.com/go-redis/redismock/v9 from 9.0.3 to 9.2.0 #1122 (dependabot[bot])
+* Bump github.com/jarcoal/httpmock from 1.3.0 to 1.3.1 #1111 (dependabot[bot])
+
+
 ## 0.82.0 (2024-04-05)
 
 * add STRING number support #1166 (kmuto)
