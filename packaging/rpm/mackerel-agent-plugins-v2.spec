@@ -39,6 +39,20 @@ done
 %{__targetdir}/*
 
 %changelog
+* Tue Apr 23 2024 <mackerel-developers@hatena.ne.jp> - 0.82.1
+- Bump github.com/aws/aws-sdk-go from 1.45.11 to 1.51.26 (by dependabot[bot])
+- Bump golang.org/x/net from 0.7.0 to 0.23.0 in /mackerel-plugin-gcp-compute-engine (by dependabot[bot])
+- Bump github.com/docker/docker from 23.0.1+incompatible to 24.0.9+incompatible (by dependabot[bot])
+- Bump google.golang.org/protobuf from 1.28.1 to 1.33.0 in /mackerel-plugin-gcp-compute-engine (by dependabot[bot])
+- Bump google.golang.org/protobuf from 1.27.1 to 1.33.0 in /mackerel-plugin-murmur (by dependabot[bot])
+- Bump github.com/redis/go-redis/v9 from 9.1.0 to 9.5.1 (by dependabot[bot])
+- Bump github.com/opencontainers/runc from 1.1.2 to 1.1.12 (by dependabot[bot])
+- Bump github.com/containerd/containerd from 1.6.18 to 1.6.26 (by dependabot[bot])
+- Bump golang.org/x/crypto from 0.0.0-20220622213112-05595931fe9d to 0.17.0 in /mackerel-plugin-mongodb (by dependabot[bot])
+- Bump google.golang.org/grpc from 1.51.0 to 1.56.3 in /mackerel-plugin-gcp-compute-engine (by dependabot[bot])
+- Bump github.com/go-redis/redismock/v9 from 9.0.3 to 9.2.0 (by dependabot[bot])
+- Bump github.com/jarcoal/httpmock from 1.3.0 to 1.3.1 (by dependabot[bot])
+
 * Fri Apr 5 2024 <mackerel-developers@hatena.ne.jp> - 0.82.0
 - add STRING number support (by kmuto)
 - Allow mackerel-plugin-redis to specify username (by mkadokawa-idcf)
