@@ -35,7 +35,7 @@ require (
 	github.com/urfave/cli v1.22.14
 	github.com/yusufpapurcu/wmi v1.2.4
 	golang.org/x/sync v0.6.0
-	golang.org/x/text v0.14.0
+	golang.org/x/text v0.15.0
 )
 
 require (
