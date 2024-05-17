@@ -172,6 +172,25 @@ DD0C740001C      274 Thu Mar  3 23:52:37  foobar@example.com
 		}
 	}
 
+	// #1185
+	{
+		output := `-Queue ID- --Size-- ----Arrival Time---- -Sender/Recipient-------
+DD0C740001C      274 Thu Mar  3 23:52:37  foobar@example.com
+          (connect to mail.invalid[192.0.2.100]:25: Connection timed out)
+                                         nyao@mail.invalid
+
+-- 1 Kbytes in 1 Request.
+`
+
+		count, err := mailq.parse(strings.NewReader(output))
+		if err != nil {
+			t.Errorf("Error in parseMailq: %s", err.Error())
+		}
+		if count != 1 {
+			t.Errorf("Incorrect parse result %d", count)
+		}
+	}
+
 	{
 		output := `Mail queue is empty
 `

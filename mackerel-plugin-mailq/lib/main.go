@@ -28,7 +28,7 @@ var mailqFormats = map[string]mailq{
 		command: "postqueue",
 		args:    []string{"-p"},
 		line:    -1,
-		pattern: `-- \d+ Kbytes in (\d+) Requests\.`,
+		pattern: `-- \d+ Kbytes in (\d+) (?:Request|Requests)\.`,
 	},
 	"qmail": {
 		command: "qmail-qstat",
