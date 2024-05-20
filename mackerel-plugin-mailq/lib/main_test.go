@@ -290,7 +290,9 @@ func TestFetchMetricsPostfix(t *testing.T) {
 	for _, tc := range []struct {
 		mailqCount int
 	}{
-		{mailqCount: 42}, {mailqCount: 0}, {mailqCount: 1},
+		{mailqCount: 42},
+		{mailqCount: 0},
+		{mailqCount: 1}, // #1185
 	} {
 		os.Setenv("TEST_MAILQ_COUNT", strconv.Itoa(tc.mailqCount))
 		defer os.Unsetenv("TEST_MAILQ_COUNT")
