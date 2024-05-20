@@ -5,6 +5,7 @@ package mpmailq
 import (
 	"os"
 	"path/filepath"
+	"strconv"
 	"strings"
 	"testing"
 )
@@ -286,15 +287,19 @@ func TestFetchMetricsPostfix(t *testing.T) {
 		labelPrefix: "Mailq",
 	}
 
-	{
-		os.Setenv("TEST_MAILQ_COUNT", "42")
+	for _, tc := range []struct {
+		mailqCount int
+	}{
+		{mailqCount: 42}, {mailqCount: 0}, {mailqCount: 1},
+	} {
+		os.Setenv("TEST_MAILQ_COUNT", strconv.Itoa(tc.mailqCount))
 		defer os.Unsetenv("TEST_MAILQ_COUNT")
 
 		metrics, err := plugin.FetchMetrics()
 		if err != nil {
 			t.Errorf("Error %s", err.Error())
 		}
-		if metrics["count"].(uint64) != 42 {
+		if metrics["count"].(uint64) != uint64(tc.mailqCount) {
 			t.Errorf("Incorrect value: %d", metrics["count"].(uint64))
 		}
 	}
