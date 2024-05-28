@@ -5,6 +5,12 @@
 [[ $1 != -p ]] && exit 1
 
 TEST_MAILQ_COUNT=${TEST_MAILQ_COUNT:-0}
+POSTQUEUE_REQUEST_LABEL="Requests"
+
+if [[ $TEST_MAILQ_COUNT -eq 1 ]]; then
+    POSTQUEUE_REQUEST_LABEL="Request"
+fi
+
 if [[ $TEST_MAILQ_COUNT -ne 0 ]]; then
     cat <<EOF
 -Queue ID- --Size-- ----Arrival Time---- -Sender/Recipient-------
@@ -18,7 +24,7 @@ DD0C740001C      274 Thu Mar  3 23:52:37  foobar@example.com
 EOF
     done
     cat <<EOF
--- 15 Kbytes in ${TEST_MAILQ_COUNT} Requests.
+-- 15 Kbytes in ${TEST_MAILQ_COUNT} ${POSTQUEUE_REQUEST_LABEL}.
 EOF
 else
     cat <<EOF

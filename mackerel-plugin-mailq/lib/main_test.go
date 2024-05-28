@@ -5,6 +5,7 @@ package mpmailq
 import (
 	"os"
 	"path/filepath"
+	"strconv"
 	"strings"
 	"testing"
 )
@@ -172,6 +173,25 @@ DD0C740001C      274 Thu Mar  3 23:52:37  foobar@example.com
 		}
 	}
 
+	// #1185
+	{
+		output := `-Queue ID- --Size-- ----Arrival Time---- -Sender/Recipient-------
+DD0C740001C      274 Thu Mar  3 23:52:37  foobar@example.com
+          (connect to mail.invalid[192.0.2.100]:25: Connection timed out)
+                                         nyao@mail.invalid
+
+-- 1 Kbytes in 1 Request.
+`
+
+		count, err := mailq.parse(strings.NewReader(output))
+		if err != nil {
+			t.Errorf("Error in parseMailq: %s", err.Error())
+		}
+		if count != 1 {
+			t.Errorf("Incorrect parse result %d", count)
+		}
+	}
+
 	{
 		output := `Mail queue is empty
 `
@@ -267,15 +287,21 @@ func TestFetchMetricsPostfix(t *testing.T) {
 		labelPrefix: "Mailq",
 	}
 
-	{
-		os.Setenv("TEST_MAILQ_COUNT", "42")
+	for _, tc := range []struct {
+		mailqCount int
+	}{
+		{mailqCount: 42},
+		{mailqCount: 0},
+		{mailqCount: 1}, // #1185
+	} {
+		os.Setenv("TEST_MAILQ_COUNT", strconv.Itoa(tc.mailqCount))
 		defer os.Unsetenv("TEST_MAILQ_COUNT")
 
 		metrics, err := plugin.FetchMetrics()
 		if err != nil {
 			t.Errorf("Error %s", err.Error())
 		}
-		if metrics["count"].(uint64) != 42 {
+		if metrics["count"].(uint64) != uint64(tc.mailqCount) {
 			t.Errorf("Incorrect value: %d", metrics["count"].(uint64))
 		}
 	}
