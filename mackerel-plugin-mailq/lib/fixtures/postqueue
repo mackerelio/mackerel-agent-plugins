@@ -5,7 +5,7 @@
 [[ $1 != -p ]] && exit 1
 
 TEST_MAILQ_COUNT=${TEST_MAILQ_COUNT:-0}
-POSTQUEUE_REQUEST_LABEL="Request"
+POSTQUEUE_REQUEST_LABEL="Requests"
 
 if [[ $TEST_MAILQ_COUNT -eq 1 ]]; then
     POSTQUEUE_REQUEST_LABEL="Request"
