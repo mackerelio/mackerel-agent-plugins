@@ -39,6 +39,12 @@ done
 %{__targetdir}/*
 
 %changelog
+* Wed Jun 12 2024 <mackerel-developers@hatena.ne.jp> - 0.83.0
+- [plugin-mailq] mailq/postfix: Fix mail queue count regexp capture when it's `1` (by yongjiajun)
+- Bump github.com/urfave/cli from 1.22.14 to 1.22.15 (by dependabot[bot])
+- Bump golang.org/x/sync from 0.6.0 to 0.7.0 (by dependabot[bot])
+- Bump github.com/stretchr/testify from 1.8.4 to 1.9.0 (by dependabot[bot])
+
 * Tue Apr 23 2024 <mackerel-developers@hatena.ne.jp> - 0.82.1
 - Bump github.com/aws/aws-sdk-go from 1.45.11 to 1.51.26 (by dependabot[bot])
 - Bump golang.org/x/net from 0.7.0 to 0.23.0 in /mackerel-plugin-gcp-compute-engine (by dependabot[bot])
