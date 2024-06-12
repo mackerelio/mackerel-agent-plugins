@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.83.0 (2024-06-12)
+
+* [plugin-mailq] mailq/postfix: Fix mail queue count regexp capture when it's `1` #1186 (yongjiajun)
+* Bump github.com/urfave/cli from 1.22.14 to 1.22.15 #1181 (dependabot[bot])
+* Bump golang.org/x/sync from 0.6.0 to 0.7.0 #1180 (dependabot[bot])
+* Bump github.com/stretchr/testify from 1.8.4 to 1.9.0 #1177 (dependabot[bot])
+
+
 ## 0.82.1 (2024-04-23)
 
 * Bump github.com/aws/aws-sdk-go from 1.45.11 to 1.51.26 #1175 (dependabot[bot])
