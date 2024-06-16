@@ -19,7 +19,7 @@ require (
 	github.com/jmoiron/sqlx v1.3.5
 	github.com/lestrrat-go/tcptest v0.0.0-20180223004312-f0345789c593
 	github.com/lib/pq v1.10.9
-	github.com/mackerelio/go-mackerel-plugin v0.1.4
+	github.com/mackerelio/go-mackerel-plugin v0.1.5
 	github.com/mackerelio/go-mackerel-plugin-helper v0.1.2
 	github.com/mackerelio/go-osstat v0.2.4
 	github.com/mackerelio/golib v1.2.1
@@ -35,7 +35,7 @@ require (
 	github.com/urfave/cli v1.22.15
 	github.com/yusufpapurcu/wmi v1.2.4
 	golang.org/x/sync v0.7.0
-	golang.org/x/text v0.14.0
+	golang.org/x/text v0.15.0
 )
 
 require (
