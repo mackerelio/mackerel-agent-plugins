@@ -20,7 +20,7 @@ require (
 	github.com/lestrrat-go/tcptest v0.0.0-20180223004312-f0345789c593
 	github.com/lib/pq v1.10.9
 	github.com/mackerelio/go-mackerel-plugin v0.1.4
-	github.com/mackerelio/go-mackerel-plugin-helper v0.1.2
+	github.com/mackerelio/go-mackerel-plugin-helper v0.1.3
 	github.com/mackerelio/go-osstat v0.2.4
 	github.com/mackerelio/golib v1.2.1
 	github.com/mackerelio/mackerel-plugin-mongodb v1.1.1
@@ -35,7 +35,7 @@ require (
 	github.com/urfave/cli v1.22.15
 	github.com/yusufpapurcu/wmi v1.2.4
 	golang.org/x/sync v0.7.0
-	golang.org/x/text v0.14.0
+	golang.org/x/text v0.15.0
 )
 
 require (
@@ -79,7 +79,6 @@ require (
 	github.com/youmark/pkcs8 v0.0.0-20201027041543-1326539a0a0a // indirect
 	go.mongodb.org/mongo-driver v1.14.0 // indirect
 	golang.org/x/crypto v0.20.0 // indirect
-	golang.org/x/lint v0.0.0-20210508222113-6edffad5e616 // indirect
 	golang.org/x/mod v0.15.0 // indirect
 	golang.org/x/sys v0.17.0 // indirect
 	golang.org/x/tools v0.18.0 // indirect
