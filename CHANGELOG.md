@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.84.0 (2024-07-01)
+
+* [mackerel-plugin-php-fpm] add slow_requests_delta metrics because slow_requests is a counter #1201 (Arthur1)
+
+
 ## 0.83.0 (2024-06-12)
 
 * [plugin-mailq] mailq/postfix: Fix mail queue count regexp capture when it's `1` #1186 (yongjiajun)

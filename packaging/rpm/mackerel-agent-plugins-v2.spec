@@ -39,6 +39,9 @@ done
 %{__targetdir}/*
 
 %changelog
+* Mon Jul 1 2024 <mackerel-developers@hatena.ne.jp> - 0.84.0
+- [mackerel-plugin-php-fpm] add slow_requests_delta metrics because slow_requests is a counter (by Arthur1)
+
 * Wed Jun 12 2024 <mackerel-developers@hatena.ne.jp> - 0.83.0
 - [plugin-mailq] mailq/postfix: Fix mail queue count regexp capture when it's `1` (by yongjiajun)
 - Bump github.com/urfave/cli from 1.22.14 to 1.22.15 (by dependabot[bot])
