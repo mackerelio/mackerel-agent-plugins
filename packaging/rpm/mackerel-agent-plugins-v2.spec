@@ -39,6 +39,14 @@ done
 %{__targetdir}/*
 
 %changelog
+* Thu Aug 8 2024 <mackerel-developers@hatena.ne.jp> - 0.85.0
+- Bump golang.org/x/text from 0.15.0 to 0.17.0 (by dependabot[bot])
+- [mackerel-plugin-snmp] support 32bit counter overflow. (by yseto)
+- Bump github.com/mackerelio/go-mackerel-plugin from 0.1.4 to 0.1.5 (by dependabot[bot])
+- Bump github.com/mackerelio/go-mackerel-plugin-helper from 0.1.2 to 0.1.3 (by dependabot[bot])
+- Bump github.com/mackerelio/go-osstat from 0.2.4 to 0.2.5 (by dependabot[bot])
+- Bump github.com/jmoiron/sqlx from 1.3.5 to 1.4.0 (by dependabot[bot])
+
 * Mon Jul 1 2024 <mackerel-developers@hatena.ne.jp> - 0.84.0
 - [mackerel-plugin-php-fpm] add slow_requests_delta metrics because slow_requests is a counter (by Arthur1)
 
