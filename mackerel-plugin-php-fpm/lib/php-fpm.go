@@ -182,7 +182,8 @@ func (p PhpFpmPlugin) GraphDefinition() map[string]mp.Graphs {
 			Label: p.LabelPrefix + " Slow Requests",
 			Unit:  "integer",
 			Metrics: []mp.Metrics{
-				{Name: "slow_requests", Label: "Slow Requests", Diff: false, Type: "uint64"},
+				{Name: "slow_requests", Label: "Slow Requests Counter", Diff: false, Type: "uint64"},
+				{Name: "slow_requests_delta", Label: "Slow Requests Delta", Diff: true, Type: "uint64"},
 			},
 		},
 	}
@@ -205,6 +206,7 @@ func (p PhpFpmPlugin) FetchMetrics() (map[string]interface{}, error) {
 		"listen_queue_len":     status.ListenQueueLen,
 		"max_listen_queue":     status.MaxListenQueue,
 		"slow_requests":        status.SlowRequests,
+		"slow_requests_delta":  status.SlowRequests,
 	}, nil
 }
 

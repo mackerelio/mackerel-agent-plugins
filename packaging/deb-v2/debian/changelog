@@ -1,3 +1,10 @@
+mackerel-agent-plugins (0.84.0-1.v2) stable; urgency=low
+
+  * [mackerel-plugin-php-fpm] add slow_requests_delta metrics because slow_requests is a counter (by Arthur1)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/1201>
+
+ -- mackerel <mackerel-developers@hatena.ne.jp>  Mon, 1 Jul 2024 05:41:17 +0000
+
 mackerel-agent-plugins (0.83.0-1.v2) stable; urgency=low
 
   * [plugin-mailq] mailq/postfix: Fix mail queue count regexp capture when it's `1` (by yongjiajun)

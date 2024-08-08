@@ -118,6 +118,16 @@ func Do() {
 		if len(vals) >= 4 {
 			mpm.Stacked, _ = strconv.ParseBool(vals[3])
 		}
+		if len(vals) >= 5 {
+			switch vals[4] {
+			case "uint64":
+				mpm.Type = "uint64"
+			case "uint32":
+				mpm.Type = "uint32"
+			default:
+				// do nothing
+			}
+		}
 
 		sms = append(sms, SNMPMetrics{OID: vals[0], Metrics: mpm})
 	}
