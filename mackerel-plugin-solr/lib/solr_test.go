@@ -18,14 +18,14 @@ var (
 var testHandler = http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 	switch r.URL.Path {
 	case "/solr/admin/info/system":
-		fmt.Fprintf(w, fetchJSON("system"))
+		fmt.Fprint(w, fetchJSON("system"))
 	case "/solr/admin/cores":
-		fmt.Fprintf(w, fetchJSON("cores"))
+		fmt.Fprint(w, fetchJSON("cores"))
 	case "/solr/testcore/admin/mbeans":
 		key := r.URL.Query()["cat"][0]
-		fmt.Fprintf(w, fetchJSONForMbeans(key))
+		fmt.Fprint(w, fetchJSONForMbeans(key))
 	default:
-		fmt.Fprintf(w, "")
+		fmt.Fprint(w, "")
 	}
 })
 
