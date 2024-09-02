@@ -16,7 +16,7 @@ var testHandler = http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) 
 		panic(err)
 	}
 
-	fmt.Fprintf(w, string(json))
+	fmt.Fprint(w, string(json))
 })
 
 func TestGraphDefinition(t *testing.T) {
