@@ -14,7 +14,12 @@ mackerel-plugin-aws-ec2-ebs [-instance-id=<id>] [-region=<aws-region>] [-access-
 * you can set keys by environment variables: `AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY` (see https://github.com/aws/aws-sdk-go#configuring-credentials)
 
 ## AWS IAM Policy
-the credential provided manually or fetched automatically with IAM Role, should have the policy that includes an action, `cloudwatch:GetMetricStatistics` and `ec2:DescribeVolumes`
+the credential provided manually or fetched automatically with IAM Role, should have the policy that allows actions below.
+
+* `cloudwatch:GetMetricStatistics`
+* `ec2:DescribeInstanceTypes`
+* `ec2:DescribeInstances`
+* `ec2:DescribeVolumes`
 
 ## Example of mackerel-agent.conf
 
