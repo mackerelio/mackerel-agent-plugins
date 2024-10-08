@@ -107,8 +107,8 @@ github.com/mackerelio/golib v1.2.1 h1:SDcDn6Jw3p9bi1N0bg1Z/ilG5qcBB23qL8xNwrU0gg
 github.com/mackerelio/golib v1.2.1/go.mod h1:b8ZaapsHGH1FlEJlCqfD98CqafLeyMevyATDlID2BsM=
 github.com/mackerelio/mackerel-plugin-mongodb v1.1.1 h1:EA6gcQBd0xv1i/8S85UqazfsNEOX7jcNS+gEkC3t32c=
 github.com/mackerelio/mackerel-plugin-mongodb v1.1.1/go.mod h1:A5rpmvlCJujZNVxPtJFz6jJEXRTnZ3bSkbiBDgt+ILs=
-github.com/mackerelio/mackerel-plugin-mysql v1.2.2 h1:mIpDxVroQigv3CIsC8O/PFBYOB3zp/ev+noGIL839Fg=
-github.com/mackerelio/mackerel-plugin-mysql v1.2.2/go.mod h1:qOSQPnPXnZyJVBsUDjML1wG1kVrcmbYLzjZ1Tcsq1kk=
+github.com/mackerelio/mackerel-plugin-mysql v1.3.0 h1:3c3aZP4inaP5OHaUmlMLe5braHUy0Rqj3GlRAwdSzzw=
+github.com/mackerelio/mackerel-plugin-mysql v1.3.0/go.mod h1:qOSQPnPXnZyJVBsUDjML1wG1kVrcmbYLzjZ1Tcsq1kk=
 github.com/mattn/go-pipeline v0.0.0-20190323144519-32d779b32768 h1:uZ41sUUU0/vDwBwMVz7O1jtcSyLFn/AeUdMr9MKcDsc=
 github.com/mattn/go-pipeline v0.0.0-20190323144519-32d779b32768/go.mod h1:THCMZVX5asLpinN+6hFlR1xKFcFsaDpAtUltGqZauBM=
 github.com/mattn/go-sqlite3 v1.14.22 h1:2gZY6PC6kBnID23Tichd1K+Z0oS6nE/XwU+Vz/5o4kU=
