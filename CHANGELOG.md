@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.86.0 (2024-10-08)
+
+* Bump github.com/mackerelio/mackerel-plugin-mysql from 1.2.1 to 1.3.0 in /mackerel-plugin-mysql #1228 (dependabot[bot])
+* Watch every module go.mod #1225 (yohfee)
+* Bump github.com/mackerelio/mackerel-plugin-mysql from 1.2.2 to 1.3.0 #1224 (dependabot[bot])
+* Fix lint #1220 (yohfee)
+* [plugin-aws-ec2-ebs] add actions to README need to be allowed in the iam policy #1219 (miztch)
+
+
 ## 0.85.0 (2024-08-08)
 
 * Bump golang.org/x/text from 0.15.0 to 0.17.0 #1216 (dependabot[bot])
