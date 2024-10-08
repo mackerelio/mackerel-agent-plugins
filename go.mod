@@ -24,7 +24,7 @@ require (
 	github.com/mackerelio/go-osstat v0.2.5
 	github.com/mackerelio/golib v1.2.1
 	github.com/mackerelio/mackerel-plugin-mongodb v1.1.1
-	github.com/mackerelio/mackerel-plugin-mysql v1.2.2
+	github.com/mackerelio/mackerel-plugin-mysql v1.3.0
 	github.com/mattn/go-pipeline v0.0.0-20190323144519-32d779b32768
 	github.com/mattn/go-treasuredata v0.0.0-20170920030233-31758907cfc4
 	github.com/michaelklishin/rabbit-hole v1.5.0
