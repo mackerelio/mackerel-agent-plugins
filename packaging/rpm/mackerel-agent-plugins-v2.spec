@@ -39,6 +39,13 @@ done
 %{__targetdir}/*
 
 %changelog
+* Tue Oct 8 2024 <mackerel-developers@hatena.ne.jp> - 0.86.0
+- Bump github.com/mackerelio/mackerel-plugin-mysql from 1.2.1 to 1.3.0 in /mackerel-plugin-mysql (by dependabot[bot])
+- Watch every module go.mod (by yohfee)
+- Bump github.com/mackerelio/mackerel-plugin-mysql from 1.2.2 to 1.3.0 (by dependabot[bot])
+- Fix lint (by yohfee)
+- [plugin-aws-ec2-ebs] add actions to README need to be allowed in the iam policy (by miztch)
+
 * Thu Aug 8 2024 <mackerel-developers@hatena.ne.jp> - 0.85.0
 - Bump golang.org/x/text from 0.15.0 to 0.17.0 (by dependabot[bot])
 - [mackerel-plugin-snmp] support 32bit counter overflow. (by yseto)
