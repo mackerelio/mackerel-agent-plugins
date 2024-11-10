@@ -34,8 +34,8 @@ require (
 	github.com/tomasen/fcgi_client v0.0.0-20180423082037-2bb3d819fd19
 	github.com/urfave/cli v1.22.15
 	github.com/yusufpapurcu/wmi v1.2.4
-	golang.org/x/sync v0.8.0
-	golang.org/x/text v0.17.0
+	golang.org/x/sync v0.9.0
+	golang.org/x/text v0.20.0
 )
 
 require (
