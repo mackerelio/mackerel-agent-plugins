@@ -107,3 +107,56 @@ func TestFetchMetrics(t *testing.T) {
 		t.Errorf("fetchMetrics('-gc') = %v; want %v", actual, expected)
 	}
 }
+
+func TestGraphDefinition(t *testing.T) {
+	tests := []struct {
+		plugin        JVMPlugin
+		expectedKey   string
+		expectedLabel string
+	}{
+		{
+			plugin: JVMPlugin{
+				JavaName: "Tomcat",
+			},
+			expectedKey:   "jvm.tomcat.gc_events",
+			expectedLabel: "JVM Tomcat GC events",
+		},
+		{
+			plugin: JVMPlugin{
+				JavaName:    "Tomcat",
+				Prefix:      "foo.bar",
+				LabelPrefix: "Hoge Fuga",
+			},
+			expectedKey:   "jvm.foo.bar.gc_events",
+			expectedLabel: "JVM Hoge Fuga GC events",
+		},
+		{
+			plugin: JVMPlugin{
+				JavaName:    "Tomcat",
+				LabelPrefix: "Hoge Fuga",
+			},
+			expectedKey:   "jvm.tomcat.gc_events",
+			expectedLabel: "JVM Hoge Fuga GC events",
+		},
+		{
+			plugin: JVMPlugin{
+				JavaName: "Tomcat",
+				Prefix:   "foo.bar",
+			},
+			expectedKey:   "jvm.foo.bar.gc_events",
+			expectedLabel: "JVM Tomcat GC events",
+		},
+	}
+
+	for _, tt := range tests {
+		graphDefs := tt.plugin.GraphDefinition()
+
+		metric, ok := graphDefs[tt.expectedKey]
+		if !ok {
+			t.Errorf("expected to have key %s but not found", tt.expectedKey)
+		}
+		if metric.Label != tt.expectedLabel {
+			t.Errorf("expected to have label %s but got: %s", tt.expectedLabel, metric.Label)
+		}
+	}
+}
