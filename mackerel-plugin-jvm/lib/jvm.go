@@ -245,7 +245,15 @@ func (m JVMPlugin) FetchMetrics() (map[string]interface{}, error) {
 // GraphDefinition interface for mackerelplugin
 func (m JVMPlugin) GraphDefinition() map[string]mp.Graphs {
 	labelPrefix := m.LabelPrefix
-	lowerJavaName := strings.ToLower(m.Prefix)
+	if labelPrefix == "" {
+		labelPrefix = m.JavaName
+	}
+
+	lowerJavaName := m.Prefix
+	if lowerJavaName == "" {
+		lowerJavaName = m.JavaName
+	}
+	lowerJavaName = strings.ToLower(lowerJavaName)
 
 	return map[string]mp.Graphs{
 		fmt.Sprintf("jvm.%s.gc_events", lowerJavaName): {
@@ -414,16 +422,8 @@ func Do() {
 	}
 
 	jvm.JavaName = *optJavaName
-
 	jvm.Prefix = *optKeyPrefix
-	if jvm.Prefix == "" {
-		jvm.Prefix = jvm.JavaName
-	}
-
 	jvm.LabelPrefix = *optLabelPrefix
-	if jvm.LabelPrefix == "" {
-		jvm.LabelPrefix = jvm.JavaName
-	}
 
 	helper := mp.NewMackerelPlugin(jvm)
 	helper.Tempfile = *optTempfile
