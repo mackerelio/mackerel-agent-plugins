@@ -124,8 +124,8 @@ func TestGraphDefinition(t *testing.T) {
 		{
 			plugin: JVMPlugin{
 				JavaName:    "Tomcat",
-				Prefix:      "foo.bar",
-				LabelPrefix: "Hoge Fuga",
+				MetricKey:   "foo.bar",
+				MetricLabel: "Hoge Fuga",
 			},
 			expectedKey:   "jvm.foo.bar.gc_events",
 			expectedLabel: "JVM Hoge Fuga GC events",
@@ -133,15 +133,15 @@ func TestGraphDefinition(t *testing.T) {
 		{
 			plugin: JVMPlugin{
 				JavaName:    "Tomcat",
-				LabelPrefix: "Hoge Fuga",
+				MetricLabel: "Hoge Fuga",
 			},
 			expectedKey:   "jvm.tomcat.gc_events",
 			expectedLabel: "JVM Hoge Fuga GC events",
 		},
 		{
 			plugin: JVMPlugin{
-				JavaName: "Tomcat",
-				Prefix:   "foo.bar",
+				JavaName:  "Tomcat",
+				MetricKey: "foo.bar",
 			},
 			expectedKey:   "jvm.foo.bar.gc_events",
 			expectedLabel: "JVM Tomcat GC events",

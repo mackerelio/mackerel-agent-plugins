@@ -24,8 +24,8 @@ type JVMPlugin struct {
 	JinfoPath   string
 	JavaName    string
 	Tempfile    string
-	Prefix      string
-	LabelPrefix string
+	MetricKey   string
+	MetricLabel string
 }
 
 // # jps
@@ -244,12 +244,12 @@ func (m JVMPlugin) FetchMetrics() (map[string]interface{}, error) {
 
 // GraphDefinition interface for mackerelplugin
 func (m JVMPlugin) GraphDefinition() map[string]mp.Graphs {
-	labelPrefix := m.LabelPrefix
-	if labelPrefix == "" {
-		labelPrefix = m.JavaName
+	metricLabel := m.MetricLabel
+	if metricLabel == "" {
+		metricLabel = m.JavaName
 	}
 
-	lowerJavaName := m.Prefix
+	lowerJavaName := m.MetricKey
 	if lowerJavaName == "" {
 		lowerJavaName = m.JavaName
 	}
@@ -257,7 +257,7 @@ func (m JVMPlugin) GraphDefinition() map[string]mp.Graphs {
 
 	return map[string]mp.Graphs{
 		fmt.Sprintf("jvm.%s.gc_events", lowerJavaName): {
-			Label: fmt.Sprintf("JVM %s GC events", labelPrefix),
+			Label: fmt.Sprintf("JVM %s GC events", metricLabel),
 			Unit:  "integer",
 			Metrics: []mp.Metrics{
 				{Name: "YGC", Label: "Young GC event", Diff: true},
@@ -266,7 +266,7 @@ func (m JVMPlugin) GraphDefinition() map[string]mp.Graphs {
 			},
 		},
 		fmt.Sprintf("jvm.%s.gc_time", lowerJavaName): {
-			Label: fmt.Sprintf("JVM %s GC time (sec)", labelPrefix),
+			Label: fmt.Sprintf("JVM %s GC time (sec)", metricLabel),
 			Unit:  "float",
 			Metrics: []mp.Metrics{
 				{Name: "YGCT", Label: "Young GC time", Diff: true},
@@ -275,7 +275,7 @@ func (m JVMPlugin) GraphDefinition() map[string]mp.Graphs {
 			},
 		},
 		fmt.Sprintf("jvm.%s.gc_time_percentage", lowerJavaName): {
-			Label: fmt.Sprintf("JVM %s GC time percentage", labelPrefix),
+			Label: fmt.Sprintf("JVM %s GC time percentage", metricLabel),
 			Unit:  "percentage",
 			Metrics: []mp.Metrics{
 				// gc_time_percentage is the percentage of gc time to 60 sec.
@@ -285,7 +285,7 @@ func (m JVMPlugin) GraphDefinition() map[string]mp.Graphs {
 			},
 		},
 		fmt.Sprintf("jvm.%s.new_space", lowerJavaName): {
-			Label: fmt.Sprintf("JVM %s New Space memory", labelPrefix),
+			Label: fmt.Sprintf("JVM %s New Space memory", metricLabel),
 			Unit:  "float",
 			Metrics: []mp.Metrics{
 				{Name: "NGCMX", Label: "New max", Diff: false, Scale: 1024},
@@ -296,7 +296,7 @@ func (m JVMPlugin) GraphDefinition() map[string]mp.Graphs {
 			},
 		},
 		fmt.Sprintf("jvm.%s.old_space", lowerJavaName): {
-			Label: fmt.Sprintf("JVM %s Old Space memory", labelPrefix),
+			Label: fmt.Sprintf("JVM %s Old Space memory", metricLabel),
 			Unit:  "float",
 			Metrics: []mp.Metrics{
 				{Name: "OGCMX", Label: "Old max", Diff: false, Scale: 1024},
@@ -305,7 +305,7 @@ func (m JVMPlugin) GraphDefinition() map[string]mp.Graphs {
 			},
 		},
 		fmt.Sprintf("jvm.%s.perm_space", lowerJavaName): {
-			Label: fmt.Sprintf("JVM %s Permanent Space", labelPrefix),
+			Label: fmt.Sprintf("JVM %s Permanent Space", metricLabel),
 			Unit:  "float",
 			Metrics: []mp.Metrics{
 				{Name: "PGCMX", Label: "Perm max", Diff: false, Scale: 1024},
@@ -314,7 +314,7 @@ func (m JVMPlugin) GraphDefinition() map[string]mp.Graphs {
 			},
 		},
 		fmt.Sprintf("jvm.%s.metaspace", lowerJavaName): {
-			Label: fmt.Sprintf("JVM %s Metaspace", labelPrefix),
+			Label: fmt.Sprintf("JVM %s Metaspace", metricLabel),
 			Unit:  "float",
 			Metrics: []mp.Metrics{
 				{Name: "MCMX", Label: "Metaspace capacity max", Diff: false, Scale: 1024},
@@ -326,7 +326,7 @@ func (m JVMPlugin) GraphDefinition() map[string]mp.Graphs {
 			},
 		},
 		fmt.Sprintf("jvm.%s.memorySpace", lowerJavaName): {
-			Label: fmt.Sprintf("JVM %s MemorySpace", labelPrefix),
+			Label: fmt.Sprintf("JVM %s MemorySpace", metricLabel),
 			Unit:  "float",
 			Metrics: []mp.Metrics{
 				{Name: "oldSpaceRate", Label: "GC Old Memory Space", Diff: false},
@@ -384,8 +384,8 @@ func Do() {
 	optJavaName := flag.String("javaname", "", "Java app name")
 	optPidFile := flag.String("pidfile", "", "pidfile path")
 	optTempfile := flag.String("tempfile", "", "Temp file name")
-	optKeyPrefix := flag.String("metric-key-prefix", "", "Metric key prefix")
-	optLabelPrefix := flag.String("metric-label-prefix", "", "Metric label prefix")
+	optMetricKey := flag.String("metric-key", "", "Specifying the Name field in the Graph Definition")
+	optMetricLabel := flag.String("metric-label", "", "Specifying the Label field in the Graph Definition")
 	flag.Parse()
 
 	var jvm JVMPlugin
@@ -422,8 +422,8 @@ func Do() {
 	}
 
 	jvm.JavaName = *optJavaName
-	jvm.Prefix = *optKeyPrefix
-	jvm.LabelPrefix = *optLabelPrefix
+	jvm.MetricKey = *optMetricKey
+	jvm.MetricLabel = *optMetricLabel
 
 	helper := mp.NewMackerelPlugin(jvm)
 	helper.Tempfile = *optTempfile
