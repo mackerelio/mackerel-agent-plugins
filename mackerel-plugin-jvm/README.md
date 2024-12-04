@@ -38,8 +38,7 @@ You can check javaname by jps command.
 14822 Jps
 ```
 
-Please choose an arbitrary name as `javaname` when you use `pidfile` option.
-It is used as a graph label.
+Please choose an arbitrary name as `javaname` when you use `pidfile` option. It is used as a mertric name and graph label.
 
 ## User to execute this plugin
 
