@@ -26,7 +26,7 @@ user = "SOME_USER_NAME"
 This plugin can retrieve metrics from remote jstatd with rmi protocol by setting `-remote` option.
 In this case, following limitations are applied:
 - jps and jstat commands must be executable localy from this plugin
-- CMS Initiating Occupancy Fraction' metric cannot be retrieved remotely
+- 'CMS Initiating Occupancy Fraction' metric cannot be retrieved remotely
 
 ## About javaname
 
