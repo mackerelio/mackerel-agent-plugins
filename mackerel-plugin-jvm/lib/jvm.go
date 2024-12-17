@@ -249,14 +249,14 @@ func (m JVMPlugin) GraphDefinition() map[string]mp.Graphs {
 		metricLabel = m.JavaName
 	}
 
-	lowerMetricKey := m.MetricKey
-	if lowerMetricKey == "" {
-		lowerMetricKey = m.JavaName
+	javaName := m.MetricKey
+	if javaName == "" {
+		javaName = m.JavaName
 	}
-	lowerMetricKey = strings.ToLower(lowerMetricKey)
+	lowerJavaName := strings.ToLower(javaName)
 
 	return map[string]mp.Graphs{
-		fmt.Sprintf("jvm.%s.gc_events", lowerMetricKey): {
+		fmt.Sprintf("jvm.%s.gc_events", lowerJavaName): {
 			Label: fmt.Sprintf("JVM %s GC events", metricLabel),
 			Unit:  "integer",
 			Metrics: []mp.Metrics{
@@ -265,7 +265,7 @@ func (m JVMPlugin) GraphDefinition() map[string]mp.Graphs {
 				{Name: "CGC", Label: "Concurrent GC event", Diff: true},
 			},
 		},
-		fmt.Sprintf("jvm.%s.gc_time", lowerMetricKey): {
+		fmt.Sprintf("jvm.%s.gc_time", lowerJavaName): {
 			Label: fmt.Sprintf("JVM %s GC time (sec)", metricLabel),
 			Unit:  "float",
 			Metrics: []mp.Metrics{
@@ -274,7 +274,7 @@ func (m JVMPlugin) GraphDefinition() map[string]mp.Graphs {
 				{Name: "CGCT", Label: "Concurrent GC time", Diff: true},
 			},
 		},
-		fmt.Sprintf("jvm.%s.gc_time_percentage", lowerMetricKey): {
+		fmt.Sprintf("jvm.%s.gc_time_percentage", lowerJavaName): {
 			Label: fmt.Sprintf("JVM %s GC time percentage", metricLabel),
 			Unit:  "percentage",
 			Metrics: []mp.Metrics{
@@ -284,7 +284,7 @@ func (m JVMPlugin) GraphDefinition() map[string]mp.Graphs {
 				{Name: "CGCT", Label: "Concurrent GC time", Diff: true, Scale: (100.0 / 60)},
 			},
 		},
-		fmt.Sprintf("jvm.%s.new_space", lowerMetricKey): {
+		fmt.Sprintf("jvm.%s.new_space", lowerJavaName): {
 			Label: fmt.Sprintf("JVM %s New Space memory", metricLabel),
 			Unit:  "float",
 			Metrics: []mp.Metrics{
@@ -295,7 +295,7 @@ func (m JVMPlugin) GraphDefinition() map[string]mp.Graphs {
 				{Name: "S1U", Label: "Survivor1 used", Diff: false, Scale: 1024},
 			},
 		},
-		fmt.Sprintf("jvm.%s.old_space", lowerMetricKey): {
+		fmt.Sprintf("jvm.%s.old_space", lowerJavaName): {
 			Label: fmt.Sprintf("JVM %s Old Space memory", metricLabel),
 			Unit:  "float",
 			Metrics: []mp.Metrics{
@@ -304,7 +304,7 @@ func (m JVMPlugin) GraphDefinition() map[string]mp.Graphs {
 				{Name: "OU", Label: "Old used", Diff: false, Scale: 1024},
 			},
 		},
-		fmt.Sprintf("jvm.%s.perm_space", lowerMetricKey): {
+		fmt.Sprintf("jvm.%s.perm_space", lowerJavaName): {
 			Label: fmt.Sprintf("JVM %s Permanent Space", metricLabel),
 			Unit:  "float",
 			Metrics: []mp.Metrics{
@@ -313,7 +313,7 @@ func (m JVMPlugin) GraphDefinition() map[string]mp.Graphs {
 				{Name: "PU", Label: "Perm used", Diff: false, Scale: 1024},
 			},
 		},
-		fmt.Sprintf("jvm.%s.metaspace", lowerMetricKey): {
+		fmt.Sprintf("jvm.%s.metaspace", lowerJavaName): {
 			Label: fmt.Sprintf("JVM %s Metaspace", metricLabel),
 			Unit:  "float",
 			Metrics: []mp.Metrics{
@@ -325,7 +325,7 @@ func (m JVMPlugin) GraphDefinition() map[string]mp.Graphs {
 				{Name: "CCSU", Label: "Compressed Class Space Used", Diff: false, Scale: 1024},
 			},
 		},
-		fmt.Sprintf("jvm.%s.memorySpace", lowerMetricKey): {
+		fmt.Sprintf("jvm.%s.memorySpace", lowerJavaName): {
 			Label: fmt.Sprintf("JVM %s MemorySpace", metricLabel),
 			Unit:  "float",
 			Metrics: []mp.Metrics{
