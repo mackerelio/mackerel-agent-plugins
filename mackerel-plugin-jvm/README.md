@@ -6,7 +6,7 @@ JVM(jstat) custom metrics plugin for mackerel.io agent.
 ## Synopsis
 
 ```shell
-mackerel-plugin-jvm -javaname=<javaname> [-pidfile=</path/to/pidfile>] [-jstatpath=</path/to/jstat] [-jpspath=/path/to/jps] [-jinfopath=/path/to/jinfo] [-remote=<host:port>]
+mackerel-plugin-jvm -javaname=<javaname> [-pidfile=</path/to/pidfile>] [-jstatpath=</path/to/jstat] [-jpspath=/path/to/jps] [-jinfopath=/path/to/jinfo] [-remote=<host:port>] [-metric-key=<metric key>] [-metric-label=<metric label>]
 ```
 
 ## Requirements
@@ -38,8 +38,7 @@ You can check javaname by jps command.
 14822 Jps
 ```
 
-Please choose an arbitrary name as `javaname` when you use `pidfile` option.
-It is just used as a prefix of graph label.
+Please choose an arbitrary name as `javaname` when you use `pidfile` option. It is used as a mertric name and graph label.
 
 ## User to execute this plugin
 
@@ -53,6 +52,7 @@ When the JVM option is enabled, this plugin is no longer able to work because wh
 
 ## References
 
+- [Metric plugins - mackerel-plugin-jvm - Mackerel Docs](https://mackerel.io/docs/entry/plugins/mackerel-plugin-jvm)
 - https://github.com/sensu/sensu-community-plugins/blob/master/plugins/java/jstat-metrics.py
 - http://docs.oracle.com/javase/7/docs/technotes/tools/share/jstat.html
 - https://github.com/kazeburo/jstat2gf
