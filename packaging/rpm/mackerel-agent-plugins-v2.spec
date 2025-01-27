@@ -39,6 +39,25 @@ done
 %{__targetdir}/*
 
 %changelog
+* Mon Jan 27 2025 <mackerel-developers@hatena.ne.jp> - 0.87.0
+- Fix CI build (by ne-sachirou)
+- Bump golang.org/x/net from 0.23.0 to 0.33.0 in /mackerel-plugin-gcp-compute-engine (by dependabot[bot])
+- Bump golang.org/x/crypto from 0.17.0 to 0.31.0 in /mackerel-plugin-mongodb (by dependabot[bot])
+- use mackerelio/workflows@v1.2.0 (by yseto)
+- Bump golang.org/x/text from 0.17.0 to 0.21.0 (by dependabot[bot])
+- Bump golang.org/x/sync from 0.8.0 to 0.10.0 (by dependabot[bot])
+- Bump github.com/stretchr/testify from 1.8.1 to 1.10.0 in /mackerel-plugin-nvidia-smi (by dependabot[bot])
+- Bump github.com/stretchr/testify from 1.9.0 to 1.10.0 (by dependabot[bot])
+- [jvm] add prefix option (by masarasi)
+- Bump github.com/redis/go-redis/v9 from 9.5.1 to 9.7.0 (by dependabot[bot])
+- Bump github.com/urfave/cli from 1.22.15 to 1.22.16 (by dependabot[bot])
+- Bump github.com/mackerelio/go-mackerel-plugin-helper from 0.1.2 to 0.1.3 in /mackerel-plugin-nvidia-smi (by dependabot[bot])
+- Bump github.com/mackerelio/mackerel-plugin-mongodb from 1.1.0 to 1.1.1 in /mackerel-plugin-mongodb (by dependabot[bot])
+- Bump github.com/mackerelio/mackerel-plugin-json from 1.2.4 to 1.2.5 in /mackerel-plugin-json (by dependabot[bot])
+- Bump github.com/opencontainers/runc from 1.1.12 to 1.1.14 (by dependabot[bot])
+- Bump github.com/gosnmp/gosnmp from 1.35.0 to 1.38.0 (by dependabot[bot])
+- Bump github.com/aws/aws-sdk-go from 1.51.26 to 1.55.5 (by dependabot[bot])
+
 * Tue Oct 8 2024 <mackerel-developers@hatena.ne.jp> - 0.86.0
 - Bump github.com/mackerelio/mackerel-plugin-mysql from 1.2.1 to 1.3.0 in /mackerel-plugin-mysql (by dependabot[bot])
 - Watch every module go.mod (by yohfee)
