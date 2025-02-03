@@ -12,24 +12,24 @@ env:
   DEBIAN_FRONTEND: noninteractive
 jobs:
   lint:
-    uses: mackerelio/workflows/.github/workflows/go-lint.yml@v1.2.0
+    uses: mackerelio/workflows/.github/workflows/go-lint.yml@v1.3.0
     with:
-      os-versions: '["ubuntu-latest", "windows-latest"]'
+      os-versions: '["ubuntu-latest", "windows-2022", "windows-2025"]' # When windows-2025 become stable, remove windows-2022
   test:
-    uses: mackerelio/workflows/.github/workflows/go-test.yml@v1.2.0
+    uses: mackerelio/workflows/.github/workflows/go-test.yml@v1.3.0
     with:
-      os-versions: '["ubuntu-latest", "windows-latest"]'
+      os-versions: '["ubuntu-latest", "windows-2022", "windows-2025"]' # When windows-2025 become stable, remove windows-2022
   integration-test-linux:
-    uses: mackerelio/workflows/.github/workflows/setup-go-matrix.yml@v1.2.0
+    uses: mackerelio/workflows/.github/workflows/setup-go-matrix.yml@v1.3.0
     with:
       os-versions: '["ubuntu-latest"]'
       run: |
         make testconvention
         ./test.bash
   integration-test-windows:
-    uses: mackerelio/workflows/.github/workflows/setup-go-matrix.yml@v1.2.0
+    uses: mackerelio/workflows/.github/workflows/setup-go-matrix.yml@v1.3.0
     with:
-      os-versions: '["windows-latest"]'
+      os-versions: '["windows-2022", "windows-2025"]' # When windows-2025 become stable, remove windows-2022
       run: |
         go build -o mackerel-plugin-mssql/mackerel-plugin-mssql.exe ./mackerel-plugin-mssql
         go build -o mackerel-plugin-windows-server-sessions/mackerel-plugin-windows-server-sessions.exe ./mackerel-plugin-windows-server-sessions
