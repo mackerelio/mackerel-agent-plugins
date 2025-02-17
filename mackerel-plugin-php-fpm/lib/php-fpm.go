@@ -130,6 +130,7 @@ type PhpFpmStatus struct {
 	MaxActiveProcesses uint64 `json:"max active processes"`
 	MaxChildrenReached uint64 `json:"max children reached"`
 	SlowRequests       uint64 `json:"slow requests"`
+	MemoryPeak         uint64 `json:"memory peak"`
 }
 
 // MetricKeyPrefix interface for PluginWithPrefix
@@ -186,6 +187,13 @@ func (p PhpFpmPlugin) GraphDefinition() map[string]mp.Graphs {
 				{Name: "slow_requests_delta", Label: "Slow Requests Delta", Diff: true, Type: "uint64"},
 			},
 		},
+		"memory_peak": {
+			Label: p.LabelPrefix + " Memory Peak",
+			Unit:  "bytes",
+			Metrics: []mp.Metrics{
+				{Name: "memory_peak", Label: "Memory Peak", Diff: false, Type: "uint64"},
+			},
+		},
 	}
 }
 
@@ -196,7 +204,7 @@ func (p PhpFpmPlugin) FetchMetrics() (map[string]interface{}, error) {
 		return nil, fmt.Errorf("Failed to fetch PHP-FPM metrics: %s", err)
 	}
 
-	return map[string]interface{}{
+	result := map[string]interface{}{
 		"total_processes":      status.TotalProcesses,
 		"active_processes":     status.ActiveProcesses,
 		"idle_processes":       status.IdleProcesses,
@@ -207,7 +215,13 @@ func (p PhpFpmPlugin) FetchMetrics() (map[string]interface{}, error) {
 		"max_listen_queue":     status.MaxListenQueue,
 		"slow_requests":        status.SlowRequests,
 		"slow_requests_delta":  status.SlowRequests,
-	}, nil
+	}
+
+	if status.MemoryPeak > 0 {
+		result["memory_peak"] = status.MemoryPeak
+	}
+
+	return result, nil
 }
 
 func getStatus(p PhpFpmPlugin) (*PhpFpmStatus, error) {
