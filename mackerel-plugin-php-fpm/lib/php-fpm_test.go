@@ -51,6 +51,43 @@ func TestGetStatus(t *testing.T) {
 	assert.EqualValues(t, 2, status.ListenQueueLen)
 	assert.EqualValues(t, 3, status.MaxListenQueue)
 	assert.EqualValues(t, 1000, status.SlowRequests)
+	assert.EqualValues(t, 0, status.MemoryPeak)
+}
+
+func TestGetStatus_MemoryPeak(t *testing.T) {
+	httpmock.Activate()
+	defer httpmock.DeactivateAndReset()
+
+	jsonStr := `{
+    "pool":"www",
+    "process manager":"dynamic",
+    "start time":1461398921,
+    "start since":1624,
+    "accepted conn":664,
+    "listen queue":1,
+    "max listen queue":3,
+    "listen queue len":2,
+    "idle processes":40,
+    "active processes":10,
+    "total processes":50,
+    "max active processes":100,
+    "max children reached":200,
+    "slow requests":1000,
+    "memory peak":1280000
+  }`
+
+	httpmock.RegisterResponder("GET", "http://httpmock/status",
+		httpmock.NewStringResponder(200, jsonStr))
+
+	p := PhpFpmPlugin{
+		URL:     "http://httpmock/status",
+		Prefix:  "php-fpm",
+		Timeout: 5,
+	}
+	status, err := getStatus(p)
+
+	require.NoError(t, err)
+	assert.EqualValues(t, 1280000, status.MemoryPeak)
 }
 
 func TestSocketFlag_Set(t *testing.T) {
