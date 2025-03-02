@@ -12,22 +12,22 @@ env:
   DEBIAN_FRONTEND: noninteractive
 jobs:
   lint:
-    uses: mackerelio/workflows/.github/workflows/go-lint.yml@v1.3.0
+    uses: mackerelio/workflows/.github/workflows/go-lint.yml@v1.4.0
     with:
       os-versions: '["ubuntu-latest", "windows-2022", "windows-2025"]' # When windows-2025 become stable, remove windows-2022
   test:
-    uses: mackerelio/workflows/.github/workflows/go-test.yml@v1.3.0
+    uses: mackerelio/workflows/.github/workflows/go-test.yml@v1.4.0
     with:
       os-versions: '["ubuntu-latest", "windows-2022", "windows-2025"]' # When windows-2025 become stable, remove windows-2022
   integration-test-linux:
-    uses: mackerelio/workflows/.github/workflows/setup-go-matrix.yml@v1.3.0
+    uses: mackerelio/workflows/.github/workflows/setup-go-matrix.yml@v1.4.0
     with:
       os-versions: '["ubuntu-latest"]'
       run: |
         make testconvention
         ./test.bash
   integration-test-windows:
-    uses: mackerelio/workflows/.github/workflows/setup-go-matrix.yml@v1.3.0
+    uses: mackerelio/workflows/.github/workflows/setup-go-matrix.yml@v1.4.0
     with:
       os-versions: '["windows-2022", "windows-2025"]' # When windows-2025 become stable, remove windows-2022
       run: |
