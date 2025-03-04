@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.88.0 (2025-03-04)
+
+* support memory peak value which is introduced in PHP 8.4 on mackerel-plugin-php-fpm #1254 (kmuto)
+* Bump mackerelio/workflows from 1.2.0 to 1.3.0 #1251 (dependabot[bot])
+
+
 ## 0.87.0 (2025-01-27)
 
 * Fix CI build #1247 (ne-sachirou)

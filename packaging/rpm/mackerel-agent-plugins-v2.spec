@@ -39,6 +39,10 @@ done
 %{__targetdir}/*
 
 %changelog
+* Tue Mar 4 2025 <mackerel-developers@hatena.ne.jp> - 0.88.0
+- support memory peak value which is introduced in PHP 8.4 on mackerel-plugin-php-fpm (by kmuto)
+- Bump mackerelio/workflows from 1.2.0 to 1.3.0 (by dependabot[bot])
+
 * Mon Jan 27 2025 <mackerel-developers@hatena.ne.jp> - 0.87.0
 - Fix CI build (by ne-sachirou)
 - Bump golang.org/x/net from 0.23.0 to 0.33.0 in /mackerel-plugin-gcp-compute-engine (by dependabot[bot])
