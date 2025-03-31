@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.88.1 (2025-03-31)
+
+* replace to newer runner-images #1264 (yseto)
+* Bump golang.org/x/net from 0.33.0 to 0.36.0 in /mackerel-plugin-gcp-compute-engine #1263 (dependabot[bot])
+
+
 ## 0.88.0 (2025-03-04)
 
 * support memory peak value which is introduced in PHP 8.4 on mackerel-plugin-php-fpm #1254 (kmuto)
