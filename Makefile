@@ -9,7 +9,7 @@ BINDIR  = build/$(GOOS)/$(GOARCH)
 export GO111MODULE=on
 
 .PHONY: all
-all: testconvention rpm deb
+all: testconvention rpm deb tar
 
 .SECONDEXPANSION:
 $(BINDIR)/mackerel-plugin-%: mackerel-plugin-%/main.go $$(wildcard mackerel-plugin-%/lib/*.go)
@@ -90,9 +90,26 @@ deb-v2-arm:
 	cp build/mackerel-plugin packaging/deb-v2/debian/
 	cd packaging/deb-v2 && debuild --no-tgz-check -rfakeroot -uc -us -aarm64
 
+.PHONY: tar
+tar: tar-x86 tar-arm
+
+.PHONY: tar-x86
+tar-x86:
+	$(MAKE) build/mackerel-plugin GOOS=linux GOARCH=amd64
+	mkdir -p packaging/tar/build/mackerel-agent-plugins-$(VERSION)-x86_64
+	cp README.md CHANGELOG.md build/mackerel-plugin packaging/tar/build/mackerel-agent-plugins-$(VERSION)-x86_64/
+	cd packaging/tar && VERSION=$(VERSION) ARCH=x86_64 ./build.sh
+
+.PHONY: tar-arm
+tar-arm:
+	$(MAKE) build/mackerel-plugin GOOS=linux GOARCH=arm64
+	mkdir -p packaging/tar/build/mackerel-agent-plugins-$(VERSION)-arm64
+	cp README.md CHANGELOG.md build/mackerel-plugin packaging/tar/build/mackerel-agent-plugins-$(VERSION)-arm64/
+	cd packaging/tar && VERSION=$(VERSION) ARCH=arm64 ./build.sh
+
 .PHONY: clean
 clean:
-	@if [ -d build ]; then rm -rfv build; fi
+	@if [ -d build ]; then rm -rfv build packaging/tar/build; fi
 
 .PHONY: update
 update:
