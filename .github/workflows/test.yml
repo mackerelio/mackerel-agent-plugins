@@ -46,13 +46,15 @@ jobs:
       - uses: actions/setup-go@v5
         with:
           go-version: 1.22.x
-      - run: make clean rpm deb
+      - run: make clean rpm deb tar
       - uses: actions/upload-artifact@v4
         with:
           name: linux-build-artifacts
           path: |
             ~/rpmbuild/RPMS/*/*.rpm
             packaging/*.deb
+            packaging/tar/build/*.tar.gz
+
   release:
     needs: build
     runs-on: ubuntu-latest
