@@ -1,6 +1,5 @@
 VERSION = 0.88.1
 VERBOSE_FLAG = $(if $(VERBOSE),-verbose)
-CURRENT_REVISION = $(shell git rev-parse --short HEAD)
 
 GOOS   ?= $(shell go env GOOS)
 GOARCH ?= $(shell go env GOARCH)
@@ -24,7 +23,7 @@ build:
 
 build/mackerel-plugin: $(patsubst %,depends_on,$(GOOS)$(GOARCH))
 	mkdir -p build
-	CGO_ENABLED=0 go build -ldflags="-s -w -X main.gitcommit=$(CURRENT_REVISION)" \
+	CGO_ENABLED=0 go build -ldflags="-s -w" \
 	  -o build/mackerel-plugin
 
 .PHONY: depends_on
