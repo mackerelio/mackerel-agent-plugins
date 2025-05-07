@@ -8,6 +8,7 @@ import (
 	"path/filepath"
 	"regexp"
 	"runtime"
+	"runtime/debug"
 	"strings"
 )
 
@@ -62,9 +63,25 @@ func run(args []string) int {
 
 const version = "0.88.1"
 
-var gitcommit string
+func fromVCS() (version, rev string) {
+	version = "unknown"
+	rev = "unknown"
+	info, ok := debug.ReadBuildInfo()
+	if !ok {
+		return
+	}
+	version = info.Main.Version
+	for _, s := range info.Settings {
+		if s.Key == "vcs.revision" {
+			rev = s.Value
+			return
+		}
+	}
+	return
+}
 
 func printHelp() {
+	version, gitcommit := fromVCS()
 	fmt.Printf(`mackerel-plugin %s (rev %s) [%s %s %s]
 
 Usage: mackerel-plugin <plugin> [<args>]
