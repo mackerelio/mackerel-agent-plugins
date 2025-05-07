@@ -1,4 +1,4 @@
-VERSION = 0.88.1
+VERSION = $(subst v,,$(shell git describe --abbrev=0 --tags))
 VERBOSE_FLAG = $(if $(VERBOSE),-verbose)
 
 GOOS   ?= $(shell go env GOOS)
