@@ -61,9 +61,6 @@ func run(args []string) int {
 	return exitOK
 }
 
-// nolint
-const version = "0.88.1"
-
 func fromVCS() (version, rev string) {
 	version = "unknown"
 	rev = "unknown"
