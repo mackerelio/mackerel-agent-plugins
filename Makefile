@@ -82,12 +82,14 @@ deb-v2-x86:
 	$(MAKE) build/mackerel-plugin GOOS=linux GOARCH=amd64
 	cp build/mackerel-plugin packaging/deb-v2/debian/
 	cd packaging/deb-v2 && debuild --no-tgz-check -rfakeroot -uc -us
+	git clean -f -d ./packaging
 
 .PHONY: deb-v2-arm
 deb-v2-arm:
 	$(MAKE) build/mackerel-plugin GOOS=linux GOARCH=arm64
 	cp build/mackerel-plugin packaging/deb-v2/debian/
 	cd packaging/deb-v2 && debuild --no-tgz-check -rfakeroot -uc -us -aarm64
+	git clean -f -d ./packaging
 
 .PHONY: tar
 tar: tar-x86 tar-arm
