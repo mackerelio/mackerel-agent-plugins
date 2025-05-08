@@ -1,6 +1,5 @@
 VERSION = 0.88.1
 VERBOSE_FLAG = $(if $(VERBOSE),-verbose)
-CURRENT_REVISION = $(shell git rev-parse --short HEAD)
 
 GOOS   ?= $(shell go env GOOS)
 GOARCH ?= $(shell go env GOARCH)
@@ -24,7 +23,7 @@ build:
 
 build/mackerel-plugin: $(patsubst %,depends_on,$(GOOS)$(GOARCH))
 	mkdir -p build
-	CGO_ENABLED=0 go build -ldflags="-s -w -X main.gitcommit=$(CURRENT_REVISION)" \
+	CGO_ENABLED=0 go build -ldflags="-s -w" \
 	  -o build/mackerel-plugin
 
 .PHONY: depends_on
@@ -80,12 +79,14 @@ deb: deb-v2-x86 deb-v2-arm
 
 .PHONY: deb-v2-x86
 deb-v2-x86:
+	git clean -f -d ./packaging
 	$(MAKE) build/mackerel-plugin GOOS=linux GOARCH=amd64
 	cp build/mackerel-plugin packaging/deb-v2/debian/
 	cd packaging/deb-v2 && debuild --no-tgz-check -rfakeroot -uc -us
 
 .PHONY: deb-v2-arm
 deb-v2-arm:
+	git clean -f -d ./packaging
 	$(MAKE) build/mackerel-plugin GOOS=linux GOARCH=arm64
 	cp build/mackerel-plugin packaging/deb-v2/debian/
 	cd packaging/deb-v2 && debuild --no-tgz-check -rfakeroot -uc -us -aarm64
@@ -95,6 +96,7 @@ tar: tar-x86 tar-arm
 
 .PHONY: tar-x86
 tar-x86:
+	git clean -f -d ./packaging
 	$(MAKE) build/mackerel-plugin GOOS=linux GOARCH=amd64
 	mkdir -p packaging/tar/build/mackerel-agent-plugins-$(VERSION)-x86_64
 	cp README.md CHANGELOG.md build/mackerel-plugin packaging/tar/build/mackerel-agent-plugins-$(VERSION)-x86_64/
@@ -102,6 +104,7 @@ tar-x86:
 
 .PHONY: tar-arm
 tar-arm:
+	git clean -f -d ./packaging
 	$(MAKE) build/mackerel-plugin GOOS=linux GOARCH=arm64
 	mkdir -p packaging/tar/build/mackerel-agent-plugins-$(VERSION)-arm64
 	cp README.md CHANGELOG.md build/mackerel-plugin packaging/tar/build/mackerel-agent-plugins-$(VERSION)-arm64/
