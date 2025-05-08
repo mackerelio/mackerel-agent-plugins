@@ -96,6 +96,7 @@ tar: tar-x86 tar-arm
 
 .PHONY: tar-x86
 tar-x86:
+	git clean -f -d ./packaging
 	$(MAKE) build/mackerel-plugin GOOS=linux GOARCH=amd64
 	mkdir -p packaging/tar/build/mackerel-agent-plugins-$(VERSION)-x86_64
 	cp README.md CHANGELOG.md build/mackerel-plugin packaging/tar/build/mackerel-agent-plugins-$(VERSION)-x86_64/
@@ -103,6 +104,7 @@ tar-x86:
 
 .PHONY: tar-arm
 tar-arm:
+	git clean -f -d ./packaging
 	$(MAKE) build/mackerel-plugin GOOS=linux GOARCH=arm64
 	mkdir -p packaging/tar/build/mackerel-agent-plugins-$(VERSION)-arm64
 	cp README.md CHANGELOG.md build/mackerel-plugin packaging/tar/build/mackerel-agent-plugins-$(VERSION)-arm64/
