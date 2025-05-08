@@ -28,6 +28,7 @@ jobs:
           next_version: ${{ github.event.inputs.release_version }}
           package_name: mackerel-agent-plugins
           version_go_file_path: mackerel-plugin.go
+          ignore_update_program_files: "true"
 
       - uses: mackerelio/mackerel-create-release-pull-request-action@main
         with:
