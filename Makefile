@@ -1,3 +1,4 @@
+# This VERSION variable indicates the latest tag.
 VERSION = $(subst v,,$(shell git describe --abbrev=0 --tags))
 VERBOSE_FLAG = $(if $(VERBOSE),-verbose)
 
