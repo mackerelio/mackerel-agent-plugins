@@ -39,6 +39,14 @@ done
 %{__targetdir}/*
 
 %changelog
+* Fri May 16 2025 <mackerel-developers@hatena.ne.jp> - 0.88.2
+- read VERSION from git (by yseto)
+- git commit, version from runtime/debug (by yseto)
+- use Go 1.24 (by yseto)
+- Bump github.com/gosnmp/gosnmp from 1.38.0 to 1.40.0 (by dependabot[bot])
+- Add tar.gz packaging (by fujiwara)
+- Bump mackerelio/workflows from 1.3.0 to 1.4.0 (by dependabot[bot])
+
 * Mon Mar 31 2025 <mackerel-developers@hatena.ne.jp> - 0.88.1
 - replace to newer runner-images (by yseto)
 - Bump golang.org/x/net from 0.33.0 to 0.36.0 in /mackerel-plugin-gcp-compute-engine (by dependabot[bot])

@@ -1,5 +1,15 @@
 # Changelog
 
+## 0.88.2 (2025-05-16)
+
+* read VERSION from git #1279 (yseto)
+* git commit, version from runtime/debug #1278 (yseto)
+* use Go 1.24 #1277 (yseto)
+* Bump github.com/gosnmp/gosnmp from 1.38.0 to 1.40.0 #1273 (dependabot[bot])
+* Add tar.gz packaging #1270 (fujiwara)
+* Bump mackerelio/workflows from 1.3.0 to 1.4.0 #1258 (dependabot[bot])
+
+
 ## 0.88.1 (2025-03-31)
 
 * replace to newer runner-images #1264 (yseto)
