@@ -143,7 +143,6 @@ func doMain(c *cli.Context) error {
 func Do() {
 	app := cli.NewApp()
 	app.Name = "php-opcache_metrics"
-	app.Version = version
 	app.Usage = "Get metrics from php-opcache."
 	app.Author = "Yuichiro Mukai"
 	app.Email = "y.iky917@gmail.com"
