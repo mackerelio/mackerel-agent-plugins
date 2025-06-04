@@ -145,7 +145,6 @@ func getPhpApcMetrics(host string, port uint16, path string) (string, error) {
 func Do() {
 	app := cli.NewApp()
 	app.Name = "php-apc_metrics"
-	app.Version = version
 	app.Usage = "Get metrics from php-apc."
 	app.Author = "Yuichiro Saito"
 	app.Email = "saito@heartbeats.jp"

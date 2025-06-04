@@ -229,7 +229,6 @@ func getApache2Metrics(host string, port uint16, path string, header []string) (
 func Do() {
 	app := cli.NewApp()
 	app.Name = "apache2_metrics"
-	app.Version = version
 	app.Usage = "Get metrics from apache2."
 	app.Author = "Yuichiro Saito"
 	app.Email = "saito@heartbeats.jp"

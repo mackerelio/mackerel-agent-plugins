@@ -471,7 +471,6 @@ func atof(str string) (float64, error) {
 func Do() {
 	app := cli.NewApp()
 	app.Name = "mackerel-plugin-linux"
-	app.Version = version
 	app.Usage = "Get metrics from Linux."
 	app.Author = "Yuichiro Saito"
 	app.Email = "saito@heartbeats.jp"
