@@ -58,7 +58,7 @@ var graphdef = map[string]mp.Graphs{
 	},
 	"squid.memory_account_for": {
 		Label: "Squid Memory accounted for",
-		Unit:  "interger",
+		Unit:  "integer",
 		Metrics: []mp.Metrics{
 			{Name: "memory_poll_alloc", Label: "memPoolAlloc calls", Diff: true},
 			{Name: "memory_poll_free", Label: "memPoolFree calls", Diff: true},
