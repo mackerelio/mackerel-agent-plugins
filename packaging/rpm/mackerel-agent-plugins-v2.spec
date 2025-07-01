@@ -39,6 +39,12 @@ done
 %{__targetdir}/*
 
 %changelog
+* Tue Jul 1 2025 <mackerel-developers@hatena.ne.jp> - 0.88.3
+- The graph definition for mackerel-plugin-squid was broken. (by do-su-0805)
+- update aws-sdk-go-v2 on mackerel-plugin-aws-ec2-ebs (by yseto)
+- remove some plugin version data (by yseto)
+- Delete CI for Windows Server 2022 (by appare45)
+
 * Fri May 16 2025 <mackerel-developers@hatena.ne.jp> - 0.88.2
 - read VERSION from git (by yseto)
 - git commit, version from runtime/debug (by yseto)

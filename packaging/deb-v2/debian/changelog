@@ -1,3 +1,16 @@
+mackerel-agent-plugins (0.88.3-1.v2) stable; urgency=low
+
+  * The graph definition for mackerel-plugin-squid was broken. (by do-su-0805)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/1291>
+  * update aws-sdk-go-v2 on mackerel-plugin-aws-ec2-ebs (by yseto)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/1290>
+  * remove some plugin version data (by yseto)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/1286>
+  * Delete CI for Windows Server 2022 (by appare45)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/1283>
+
+ -- mackerel <mackerel-developers@hatena.ne.jp>  Tue, 1 Jul 2025 00:53:55 +0000
+
 mackerel-agent-plugins (0.88.2-1.v2) stable; urgency=low
 
   * read VERSION from git (by yseto)
