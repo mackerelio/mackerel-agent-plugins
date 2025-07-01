@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.88.3 (2025-07-01)
+
+* The graph definition for mackerel-plugin-squid was broken. #1291 (do-su-0805)
+* update aws-sdk-go-v2 on mackerel-plugin-aws-ec2-ebs #1290 (yseto)
+* remove some plugin version data #1286 (yseto)
+* Delete CI for Windows Server 2022 #1283 (appare45)
+
+
 ## 0.88.2 (2025-05-16)
 
 * read VERSION from git #1279 (yseto)
