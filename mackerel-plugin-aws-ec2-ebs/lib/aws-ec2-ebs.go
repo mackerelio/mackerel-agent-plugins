@@ -467,7 +467,10 @@ func Do() {
 	// get metadata in ec2 instance
 	imdsClient := imds.NewFromConfig(cfg)
 	if *optRegion == "" {
-		out, _ := imdsClient.GetRegion(ctx, nil)
+		out, err := imdsClient.GetRegion(ctx, nil)
+		if err != nil {
+			log.Fatalln(err)
+		}
 		ebs.Region = out.Region
 	}
 	if *optInstanceID == "" {
