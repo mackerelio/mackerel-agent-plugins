@@ -1,28 +1,6 @@
 mackerel-plugin-aws-rds
-=======================
+=================================
 
-AWS RDS custom metrics plugin for mackerel.io agent.
+This plugin moved to [mackerelio/mackerel-plugin-aws-rds][url]
 
-## Synopsis
-
-```shell
-mackerel-plugin-aws-rds -identifier=<db-instance-identifer> [-region=<aws-region>] [-access-key-id=<id>] [-secret-access-key=<key>] [-tempfile=<tempfile>] [-engine=<engine>] [-metric-key-prefix=<prefix>] [-metric-label-prefix=<label-prefix>]
-```
-* if you run on an ec2-instance, you probably don't have to specify `-region`
-* if you run on an ec2-instance and the instance is associated with an appropriate IAM Role, you probably don't have to specify `-access-key-id` & `-secret-access-key`
-* select `-engine` from below:
-    * `aurora-mysql` or `aurora`
-    * `aurora-postgresql`
-    * `mariadb`
-    * `mysql`
-    * `postgresql`
-
-## AWS IAM Policy
-the credential provided manually or fetched automatically by IAM Role should have the policy that includes an action, `cloudwatch:GetMetricStatistics`
-
-## Example of mackerel-agent.conf
-
-```
-[plugin.metrics.aws-rds]
-command = "/path/to/mackerel-plugin-aws-rds -identifier=mysql01 -engine=mysql"
-```
+[url]: https://github.com/mackerelio/mackerel-plugin-aws-rds
