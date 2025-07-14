@@ -12,8 +12,8 @@ import (
 	"golang.org/x/text/cases"
 	"golang.org/x/text/language"
 
-	"github.com/StackExchange/wmi"
 	mp "github.com/mackerelio/go-mackerel-plugin"
+	"github.com/yusufpapurcu/wmi"
 )
 
 // MSSQLPlugin store the name of servers
