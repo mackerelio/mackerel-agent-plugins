@@ -5,6 +5,7 @@ import (
 	"errors"
 	"flag"
 	"fmt"
+	"net/url"
 	"os"
 	"regexp"
 	"sort"
@@ -114,9 +115,11 @@ func getLatestCSN(host, base, bind, passwd string, useTLS, insecureSkipVerify bo
 	var err error
 	var res time.Time
 	if useTLS {
-		l, err = ldap.DialTLS("tcp", host, &tls.Config{InsecureSkipVerify: insecureSkipVerify})
+		u := url.URL{Scheme: "ldaps", Host: host}
+		l, err = ldap.DialURL(u.String(), ldap.DialWithTLSConfig(&tls.Config{InsecureSkipVerify: insecureSkipVerify}))
 	} else {
-		l, err = ldap.Dial("tcp", host)
+		u := url.URL{Scheme: "ldap", Host: host}
+		l, err = ldap.DialURL(u.String())
 	}
 	if err != nil {
 		return res, err
@@ -359,9 +362,11 @@ func Do() {
 	}
 	var err error
 	if m.UseTLS {
-		m.l, err = ldap.DialTLS("tcp", m.TargetHost, &tls.Config{InsecureSkipVerify: m.InsecureSkipVerify})
+		u := url.URL{Scheme: "ldaps", Host: m.TargetHost}
+		m.l, err = ldap.DialURL(u.String(), ldap.DialWithTLSConfig(&tls.Config{InsecureSkipVerify: m.InsecureSkipVerify}))
 	} else {
-		m.l, err = ldap.Dial("tcp", m.TargetHost)
+		u := url.URL{Scheme: "ldap", Host: m.TargetHost}
+		m.l, err = ldap.DialURL(u.String())
 	}
 	if err != nil {
 		logger.Errorf("Failed to Dial %s, err: %s", m.TargetHost, err)
