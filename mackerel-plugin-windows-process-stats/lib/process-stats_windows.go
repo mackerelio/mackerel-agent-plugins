@@ -10,9 +10,9 @@ import (
 	"sort"
 	"strconv"
 
-	"github.com/StackExchange/wmi"
 	mp "github.com/mackerelio/go-mackerel-plugin-helper"
 	"github.com/mackerelio/golib/logging"
+	"github.com/yusufpapurcu/wmi"
 )
 
 var logger = logging.GetLogger("metrics.plugin.windows-process-stats")
