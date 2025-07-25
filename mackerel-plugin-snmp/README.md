@@ -7,7 +7,7 @@ SNMP V2c custom metrics plugin for mackerel.io agent.
 can specify multiple metric-definitions in the form of `OID:NAME[:DIFF?][:STACK?]` args.
 
 ```shell
-mackerel-plugin-snmp [-name=<graph-name>] [-unit=<graph-unit>] [-host=<host>] [-community=<snmp-v2c-community>] [-tempfile=<tempfile>] 'OID:NAME[:DIFF?][:STACK?]' ['OID:NAME[:DIFF?][:STACK?][:COUNTER?]' ...]
+mackerel-plugin-snmp [-name=<graph-name>] [-unit=<graph-unit>] [-host=<host>] [-port=<port>] [-community=<snmp-v2c-community>] [-tempfile=<tempfile>] 'OID:NAME[:DIFF?][:STACK?]' ['OID:NAME[:DIFF?][:STACK?][:COUNTER?]' ...]
  
 ```
 

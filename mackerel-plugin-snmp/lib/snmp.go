@@ -23,6 +23,7 @@ type SNMPPlugin struct {
 	GraphName        string
 	GraphUnit        string
 	Host             string
+	Port             uint16
 	Community        string
 	Tempfile         string
 	SNMPMetricsSlice []SNMPMetrics
@@ -33,6 +34,7 @@ func (m SNMPPlugin) FetchMetrics() (map[string]interface{}, error) {
 	stat := make(map[string]interface{})
 
 	gosnmp.Default.Target = m.Host
+	gosnmp.Default.Port = uint16(m.Port)
 	gosnmp.Default.Community = m.Community
 	gosnmp.Default.Version = gosnmp.Version2c
 	gosnmp.Default.Timeout = time.Duration(30) * time.Second
@@ -93,6 +95,7 @@ func Do() {
 	optGraphUnit := flag.String("unit", "float", "Graph unit")
 
 	optHost := flag.String("host", "localhost", "Hostname")
+	optPort := flag.Uint("port", 161, "Port")
 	optCommunity := flag.String("community", "public", "SNMP V2c Community")
 
 	optTempfile := flag.String("tempfile", "", "Temp file name")
@@ -100,6 +103,7 @@ func Do() {
 
 	var snmp SNMPPlugin
 	snmp.Host = *optHost
+	snmp.Port = uint16(*optPort)
 	snmp.Community = *optCommunity
 	snmp.GraphName = *optGraphName
 	snmp.GraphUnit = *optGraphUnit
