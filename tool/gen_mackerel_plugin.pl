@@ -62,7 +62,7 @@ sub update_packaging_specs {
         $content =~ s/for i in.*?;\s*do/$for_in/ms;
         $content;
     };
-    replace $_, $replace_sub for ("packaging/rpm/$PACKAGE_NAME*.spec", "packaging/deb*/debian/rules");
+    replace $_, $replace_sub for ("packaging/rpm/$PACKAGE_NAME*.spec", "packaging/deb*/debian/rules", "packaging/tar/build.sh");
 }
 
 ####

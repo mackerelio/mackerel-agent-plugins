@@ -6,9 +6,20 @@ use Test::More;
 
 # The plugins placed in other mackerelio's repositories
 my $plugins_in_other_repository = [qw(
+    mackerel-plugin-aws-cloudfront
+    mackerel-plugin-aws-dynamodb
     mackerel-plugin-aws-ec2
+    mackerel-plugin-aws-ec2-cpucredit
+    mackerel-plugin-aws-elasticache
+    mackerel-plugin-aws-elasticsearch
+    mackerel-plugin-aws-elb
     mackerel-plugin-aws-kinesis-firehose
+    mackerel-plugin-aws-kinesis-streams
+    mackerel-plugin-aws-lambda
+    mackerel-plugin-aws-rds
     mackerel-plugin-aws-rekognition
+    mackerel-plugin-aws-s3-requests
+    mackerel-plugin-aws-ses
     mackerel-plugin-aws-waf
     mackerel-plugin-flume
     mackerel-plugin-gcp-compute-engine
