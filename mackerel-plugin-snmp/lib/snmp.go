@@ -34,7 +34,7 @@ func (m SNMPPlugin) FetchMetrics() (map[string]interface{}, error) {
 	stat := make(map[string]interface{})
 
 	gosnmp.Default.Target = m.Host
-	gosnmp.Default.Port = uint16(m.Port)
+	gosnmp.Default.Port = m.Port
 	gosnmp.Default.Community = m.Community
 	gosnmp.Default.Version = gosnmp.Version2c
 	gosnmp.Default.Timeout = time.Duration(30) * time.Second
