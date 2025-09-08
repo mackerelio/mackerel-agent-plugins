@@ -1,28 +1,5 @@
 # Changelog
 
-## 0.89.0 (2025-09-08)
-
-* Bump golang.org/x/crypto from 0.31.0 to 0.35.0 in /mackerel-plugin-mongodb #1321 (dependabot[bot])
-* Bump actions/setup-go from 5 to 6 #1320 (dependabot[bot])
-* Bump actions/checkout from 4 to 5 #1314 (dependabot[bot])
-* Bump actions/download-artifact from 4 to 5 #1311 (dependabot[bot])
-* add -port option to mackerel-plugin-snmp plugin #1306 (kmuto)
-* Bump github.com/mackerelio/mackerel-plugin-mysql from 1.3.0 to 1.3.2 in /mackerel-plugin-mysql #1305 (dependabot[bot])
-* Bump github.com/mackerelio/mackerel-plugin-mysql from 1.3.0 to 1.3.2 #1304 (dependabot[bot])
-* Bump golang.org/x/oauth2 from 0.7.0 to 0.27.0 in /mackerel-plugin-gcp-compute-engine #1300 (dependabot[bot])
-* update github.com/go-ldap/ldap/v3 #1299 (yseto)
-* replace to github.com/yusufpapurcu/wmi #1298 (yseto)
-* Bump golang.org/x/text from 0.21.0 to 0.27.0 #1297 (dependabot[bot])
-* Bump golang.org/x/sync from 0.10.0 to 0.16.0 #1296 (dependabot[bot])
-* Remove aws-* plugins #1295 (yseto)
-* fix error handling #1294 (yseto)
-* Bump github.com/redis/go-redis/v9 from 9.7.0 to 9.11.0 #1292 (dependabot[bot])
-* Bump mackerelio/workflows from 1.4.0 to 1.5.0 #1284 (dependabot[bot])
-* Bump golang.org/x/net from 0.36.0 to 0.38.0 in /mackerel-plugin-gcp-compute-engine #1272 (dependabot[bot])
-* Bump golang.org/x/crypto from 0.23.0 to 0.35.0 #1271 (dependabot[bot])
-* Bump github.com/containerd/containerd from 1.6.26 to 1.6.38 #1265 (dependabot[bot])
-
-
 ## 0.88.3 (2025-07-01)
 
 * The graph definition for mackerel-plugin-squid was broken. #1291 (do-su-0805)
