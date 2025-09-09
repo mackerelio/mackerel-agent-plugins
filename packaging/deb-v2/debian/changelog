@@ -1,3 +1,52 @@
+mackerel-agent-plugins (0.89.0-1.v2) stable; urgency=low
+
+  * fix tarball version (by yseto)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/1324>
+  * Revert "Release version 0.89.0" (by yseto)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/1323>
+  * Release version 0.89.0 (by mackerelbot)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/1322>
+  * Bump golang.org/x/crypto from 0.31.0 to 0.35.0 in /mackerel-plugin-mongodb (by dependabot[bot])
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/1321>
+  * Bump actions/setup-go from 5 to 6 (by dependabot[bot])
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/1320>
+  * Bump actions/checkout from 4 to 5 (by dependabot[bot])
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/1314>
+  * Bump actions/download-artifact from 4 to 5 (by dependabot[bot])
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/1311>
+  * add -port option to mackerel-plugin-snmp plugin (by kmuto)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/1306>
+  * Bump github.com/mackerelio/mackerel-plugin-mysql from 1.3.0 to 1.3.2 in /mackerel-plugin-mysql (by dependabot[bot])
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/1305>
+  * Bump github.com/mackerelio/mackerel-plugin-mysql from 1.3.0 to 1.3.2 (by dependabot[bot])
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/1304>
+  * Bump golang.org/x/oauth2 from 0.7.0 to 0.27.0 in /mackerel-plugin-gcp-compute-engine (by dependabot[bot])
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/1300>
+  * update github.com/go-ldap/ldap/v3 (by yseto)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/1299>
+  * replace to github.com/yusufpapurcu/wmi (by yseto)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/1298>
+  * Bump golang.org/x/text from 0.21.0 to 0.27.0 (by dependabot[bot])
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/1297>
+  * Bump golang.org/x/sync from 0.10.0 to 0.16.0 (by dependabot[bot])
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/1296>
+  * Remove aws-* plugins (by yseto)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/1295>
+  * fix error handling (by yseto)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/1294>
+  * Bump github.com/redis/go-redis/v9 from 9.7.0 to 9.11.0 (by dependabot[bot])
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/1292>
+  * Bump mackerelio/workflows from 1.4.0 to 1.5.0 (by dependabot[bot])
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/1284>
+  * Bump golang.org/x/net from 0.36.0 to 0.38.0 in /mackerel-plugin-gcp-compute-engine (by dependabot[bot])
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/1272>
+  * Bump golang.org/x/crypto from 0.23.0 to 0.35.0 (by dependabot[bot])
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/1271>
+  * Bump github.com/containerd/containerd from 1.6.26 to 1.6.38 (by dependabot[bot])
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/1265>
+
+ -- mackerel <mackerel-developers@hatena.ne.jp>  Tue, 9 Sep 2025 01:52:36 +0000
+
 mackerel-agent-plugins (0.88.3-1.v2) stable; urgency=low
 
   * The graph definition for mackerel-plugin-squid was broken. (by do-su-0805)

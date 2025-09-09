@@ -39,6 +39,30 @@ done
 %{__targetdir}/*
 
 %changelog
+* Tue Sep 9 2025 <mackerel-developers@hatena.ne.jp> - 0.89.0
+- fix tarball version (by yseto)
+- Revert "Release version 0.89.0" (by yseto)
+- Release version 0.89.0 (by mackerelbot)
+- Bump golang.org/x/crypto from 0.31.0 to 0.35.0 in /mackerel-plugin-mongodb (by dependabot[bot])
+- Bump actions/setup-go from 5 to 6 (by dependabot[bot])
+- Bump actions/checkout from 4 to 5 (by dependabot[bot])
+- Bump actions/download-artifact from 4 to 5 (by dependabot[bot])
+- add -port option to mackerel-plugin-snmp plugin (by kmuto)
+- Bump github.com/mackerelio/mackerel-plugin-mysql from 1.3.0 to 1.3.2 in /mackerel-plugin-mysql (by dependabot[bot])
+- Bump github.com/mackerelio/mackerel-plugin-mysql from 1.3.0 to 1.3.2 (by dependabot[bot])
+- Bump golang.org/x/oauth2 from 0.7.0 to 0.27.0 in /mackerel-plugin-gcp-compute-engine (by dependabot[bot])
+- update github.com/go-ldap/ldap/v3 (by yseto)
+- replace to github.com/yusufpapurcu/wmi (by yseto)
+- Bump golang.org/x/text from 0.21.0 to 0.27.0 (by dependabot[bot])
+- Bump golang.org/x/sync from 0.10.0 to 0.16.0 (by dependabot[bot])
+- Remove aws-* plugins (by yseto)
+- fix error handling (by yseto)
+- Bump github.com/redis/go-redis/v9 from 9.7.0 to 9.11.0 (by dependabot[bot])
+- Bump mackerelio/workflows from 1.4.0 to 1.5.0 (by dependabot[bot])
+- Bump golang.org/x/net from 0.36.0 to 0.38.0 in /mackerel-plugin-gcp-compute-engine (by dependabot[bot])
+- Bump golang.org/x/crypto from 0.23.0 to 0.35.0 (by dependabot[bot])
+- Bump github.com/containerd/containerd from 1.6.26 to 1.6.38 (by dependabot[bot])
+
 * Tue Jul 1 2025 <mackerel-developers@hatena.ne.jp> - 0.88.3
 - The graph definition for mackerel-plugin-squid was broken. (by do-su-0805)
 - update aws-sdk-go-v2 on mackerel-plugin-aws-ec2-ebs (by yseto)
