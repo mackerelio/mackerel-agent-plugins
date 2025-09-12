@@ -3,7 +3,8 @@ updates:
   - package-ecosystem: gomod
     directories:
       - "/"
-      - "/mackerel-plugin-*"
+      - "/mackerel-plugin-mongodb"
+      - "/mackerel-plugin-mysql"
     schedule:
       interval: weekly
       time: "01:00"
