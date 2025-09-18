@@ -27,7 +27,7 @@ require (
 	github.com/lib/pq v1.10.9
 	github.com/mackerelio/go-mackerel-plugin v0.1.5
 	github.com/mackerelio/go-mackerel-plugin-helper v0.1.3
-	github.com/mackerelio/go-osstat v0.2.5
+	github.com/mackerelio/go-osstat v0.2.6
 	github.com/mackerelio/golib v1.2.1
 	github.com/mackerelio/mackerel-plugin-mongodb v1.1.1
 	github.com/mackerelio/mackerel-plugin-mysql v1.3.2
