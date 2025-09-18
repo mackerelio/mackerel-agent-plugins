@@ -26,10 +26,13 @@ my $plugins_in_other_repository = [qw(
     mackerel-plugin-gearmand
     mackerel-plugin-graphite
     mackerel-plugin-json
+    mackerel-plugin-mcrouter
     mackerel-plugin-mongodb
     mackerel-plugin-murmur
     mackerel-plugin-mysql
     mackerel-plugin-nvidia-smi
+    mackerel-plugin-rack-stats
+    mackerel-plugin-redash
     mackerel-plugin-xentop
 )];
 my $is_in_other_repository = {
