@@ -1,5 +1,15 @@
 # Changelog
 
+## 0.89.1 (2025-09-19)
+
+* Bump github.com/mackerelio/mackerel-plugin-mongodb from 1.1.1 to 1.1.2 in /mackerel-plugin-mongodb #1336 (dependabot[bot])
+* Bump github.com/mackerelio/go-osstat from 0.2.5 to 0.2.6 #1334 (dependabot[bot])
+* Bump github.com/jarcoal/httpmock from 1.3.1 to 1.4.1 #1332 (dependabot[bot])
+* Bump github.com/mackerelio/mackerel-plugin-mongodb from 1.1.1 to 1.1.2 #1330 (dependabot[bot])
+* Bump golang.org/x/text from 0.27.0 to 0.29.0 #1329 (dependabot[bot])
+* Bump github.com/fsouza/go-dockerclient from 1.9.6 to 1.12.2 #1319 (dependabot[bot])
+
+
 ## 0.89.0 (2025-09-09)
 
 * fix tarball version #1324 (yseto)
