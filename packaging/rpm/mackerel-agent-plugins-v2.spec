@@ -39,6 +39,14 @@ done
 %{__targetdir}/*
 
 %changelog
+* Fri Sep 19 2025 <mackerel-developers@hatena.ne.jp> - 0.89.1
+- Bump github.com/mackerelio/mackerel-plugin-mongodb from 1.1.1 to 1.1.2 in /mackerel-plugin-mongodb (by dependabot[bot])
+- Bump github.com/mackerelio/go-osstat from 0.2.5 to 0.2.6 (by dependabot[bot])
+- Bump github.com/jarcoal/httpmock from 1.3.1 to 1.4.1 (by dependabot[bot])
+- Bump github.com/mackerelio/mackerel-plugin-mongodb from 1.1.1 to 1.1.2 (by dependabot[bot])
+- Bump golang.org/x/text from 0.27.0 to 0.29.0 (by dependabot[bot])
+- Bump github.com/fsouza/go-dockerclient from 1.9.6 to 1.12.2 (by dependabot[bot])
+
 * Tue Sep 9 2025 <mackerel-developers@hatena.ne.jp> - 0.89.0
 - fix tarball version (by yseto)
 - Bump golang.org/x/crypto from 0.31.0 to 0.35.0 in /mackerel-plugin-mongodb (by dependabot[bot])
