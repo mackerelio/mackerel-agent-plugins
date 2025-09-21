@@ -26,7 +26,7 @@ require (
 	github.com/lestrrat-go/tcptest v0.0.0-20180223004312-f0345789c593
 	github.com/lib/pq v1.10.9
 	github.com/mackerelio/go-mackerel-plugin v0.1.5
-	github.com/mackerelio/go-mackerel-plugin-helper v0.1.3
+	github.com/mackerelio/go-mackerel-plugin-helper v0.1.4
 	github.com/mackerelio/go-osstat v0.2.6
 	github.com/mackerelio/golib v1.2.1
 	github.com/mackerelio/mackerel-plugin-mongodb v1.1.2
