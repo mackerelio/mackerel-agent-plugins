@@ -36,7 +36,7 @@ require (
 	github.com/michaelklishin/rabbit-hole v1.5.0
 	github.com/montanaflynn/stats v0.7.1
 	github.com/redis/go-redis/v9 v9.11.0
-	github.com/stretchr/testify v1.10.0
+	github.com/stretchr/testify v1.11.1
 	github.com/tomasen/fcgi_client v0.0.0-20180423082037-2bb3d819fd19
 	github.com/urfave/cli v1.22.16
 	github.com/yusufpapurcu/wmi v1.2.4
