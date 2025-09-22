@@ -5,6 +5,7 @@ updates:
       - "/"
       - "/mackerel-plugin-mongodb"
       - "/mackerel-plugin-mysql"
+      - "/mackerel-plugin-json"
     schedule:
       interval: weekly
       time: "01:00"
