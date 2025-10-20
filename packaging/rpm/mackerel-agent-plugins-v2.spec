@@ -39,6 +39,18 @@ done
 %{__targetdir}/*
 
 %changelog
+* Mon Oct 20 2025 <mackerel-developers@hatena.ne.jp> - 0.89.2
+- added dependabot cooldown (by yseto)
+- Bump github.com/mackerelio/mackerel-plugin-json from 1.2.5 to 1.2.7 in /mackerel-plugin-json in the mackerelio group across 1 directory (by dependabot[bot])
+- Bump github.com/stretchr/testify from 1.10.0 to 1.11.1 (by dependabot[bot])
+- Bump the aws-aws-sdk-go-v2 group across 1 directory with 6 updates (by dependabot[bot])
+- grouping some libraries (by yseto)
+- Bump github.com/mackerelio/go-mackerel-plugin-helper from 0.1.3 to 0.1.4 (by dependabot[bot])
+- Bump github.com/gosnmp/gosnmp from 1.40.0 to 1.42.1 (by dependabot[bot])
+- rewrite files not included in the package (by yseto)
+- Bump github.com/redis/go-redis/v9 from 9.11.0 to 9.14.0 (by dependabot[bot])
+- Bump github.com/urfave/cli from 1.22.16 to 1.22.17 (by dependabot[bot])
+
 * Fri Sep 19 2025 <mackerel-developers@hatena.ne.jp> - 0.89.1
 - Bump github.com/mackerelio/mackerel-plugin-mongodb from 1.1.1 to 1.1.2 in /mackerel-plugin-mongodb (by dependabot[bot])
 - Bump github.com/mackerelio/go-osstat from 0.2.5 to 0.2.6 (by dependabot[bot])
