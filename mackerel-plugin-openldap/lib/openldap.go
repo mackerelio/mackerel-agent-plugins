@@ -49,7 +49,7 @@ func transformKeyName(key string) string {
 	if len(results) < 2 {
 		return ""
 	}
-	return strings.Replace(strings.ToLower(strings.TrimSpace(results[1])), " ", "_", -1)
+	return strings.ReplaceAll(strings.ToLower(strings.TrimSpace(results[1])), " ", "_")
 }
 
 func getStats(sr *ldap.SearchResult, prefix string) map[string]float64 {

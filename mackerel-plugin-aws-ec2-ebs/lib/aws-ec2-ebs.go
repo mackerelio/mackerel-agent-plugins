@@ -422,7 +422,7 @@ func (p EBSPlugin) FetchMetrics() (map[string]interface{}, error) {
 						return nil, err
 					}
 				} else {
-					stat[strings.Replace(metricKey, "#", volumeID, -1)] = val
+					stat[strings.ReplaceAll(metricKey, "#", volumeID)] = val
 				}
 			}
 		}
@@ -436,7 +436,7 @@ func (p EBSPlugin) GraphDefinition() map[string]mp.Graphs {
 }
 
 func normalizeVolumeID(volumeID string) string {
-	return strings.Replace(volumeID, ".", "_", -1)
+	return strings.ReplaceAll(volumeID, ".", "_")
 }
 
 // overwritten with syscall.SIGTERM on unix environment (see aws-ec2-ebs_unix.go)
