@@ -41,7 +41,7 @@ func (u UptimePlugin) GraphDefinition() map[string]mp.Graphs {
 func (u UptimePlugin) FetchMetrics() (map[string]float64, error) {
 	ut, err := uptime.Get()
 	if err != nil {
-		return nil, fmt.Errorf("Failed to fetch uptime metrics: %s", err)
+		return nil, fmt.Errorf("Failed to fetch uptime metrics: %s", err) // nolint
 	}
 	return map[string]float64{"seconds": ut.Seconds()}, nil
 }

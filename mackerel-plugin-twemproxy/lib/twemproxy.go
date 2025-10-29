@@ -123,7 +123,7 @@ func (p TwemproxyPlugin) GraphDefinition() map[string]mp.Graphs {
 func (p TwemproxyPlugin) FetchMetrics() (map[string]interface{}, error) {
 	stats, err := getStats(p)
 	if err != nil {
-		return nil, fmt.Errorf("Failed to fetch twemproxy metrics: %s", err)
+		return nil, fmt.Errorf("Failed to fetch twemproxy metrics: %s", err) // nolint
 	}
 
 	metrics := make(map[string]interface{})

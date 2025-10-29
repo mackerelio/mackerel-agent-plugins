@@ -14,7 +14,7 @@ func workersMemory() (string, error) {
 		[]string{"awk", "{m+=$6*1024} END{print m;}"},
 	)
 	if err != nil {
-		return "", fmt.Errorf("Cannot get unicorn workers memory: %s", err)
+		return "", fmt.Errorf("Cannot get unicorn workers memory: %s", err) // nolint
 	}
 	return strings.Trim(string(out), "\n"), nil
 }
@@ -27,7 +27,7 @@ func masterMemory() (string, error) {
 		[]string{"awk", "{m+=$6*1024} END{print m;}"},
 	)
 	if err != nil {
-		return "", fmt.Errorf("Cannot get unicorn master memory: %s", err)
+		return "", fmt.Errorf("Cannot get unicorn master memory: %s", err) // nolint
 	}
 	return strings.Trim(string(out), "\n"), nil
 }
@@ -40,7 +40,7 @@ func workersMemoryAvg() (string, error) {
 		[]string{"awk", "{mem=$6*1024+mem; proc++} END{print mem/proc}"},
 	)
 	if err != nil {
-		return "", fmt.Errorf("Cannot get unicorn memory average: %s", err)
+		return "", fmt.Errorf("Cannot get unicorn memory average: %s", err) // nolint
 	}
 	return strings.Trim(string(out), "\n"), nil
 }

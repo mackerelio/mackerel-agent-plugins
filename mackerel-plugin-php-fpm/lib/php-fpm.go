@@ -201,7 +201,7 @@ func (p PhpFpmPlugin) GraphDefinition() map[string]mp.Graphs {
 func (p PhpFpmPlugin) FetchMetrics() (map[string]interface{}, error) {
 	status, err := getStatus(p)
 	if err != nil {
-		return nil, fmt.Errorf("Failed to fetch PHP-FPM metrics: %s", err)
+		return nil, fmt.Errorf("Failed to fetch PHP-FPM metrics: %s", err) // nolint
 	}
 
 	result := map[string]interface{}{

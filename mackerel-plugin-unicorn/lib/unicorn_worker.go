@@ -44,7 +44,7 @@ func fetchUnicornWorkerPids(m string) ([]string, error) {
 
 	out, err := command.Output("ps", "wh", "--ppid", m)
 	if err != nil {
-		return workerPids, fmt.Errorf("Failed to ps of command: %s", err)
+		return workerPids, fmt.Errorf("Failed to ps of command: %s", err) // nolint
 	}
 
 	for _, line := range strings.Split(string(out), "\n") {
@@ -62,7 +62,7 @@ func fetchUnicornWorkerPids(m string) ([]string, error) {
 		return workerPids, nil
 	}
 
-	return workerPids, fmt.Errorf("Cannot get unicorn worker pids")
+	return workerPids, fmt.Errorf("Cannot get unicorn worker pids") // nolint
 }
 
 func cpuTime(pid string) (string, error) {
@@ -71,7 +71,7 @@ func cpuTime(pid string) (string, error) {
 		[]string{"awk", "{print $14+$15}"},
 	)
 	if err != nil {
-		return "", fmt.Errorf("Failed to cat /proc/%s/stat: %s", pid, err)
+		return "", fmt.Errorf("Failed to cat /proc/%s/stat: %s", pid, err) // nolint
 	}
 
 	return strings.Trim(string(out), "\n"), nil
