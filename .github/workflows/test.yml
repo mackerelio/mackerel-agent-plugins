@@ -19,11 +19,14 @@ jobs:
     uses: mackerelio/workflows/.github/workflows/go-test.yml@7653987676cc233af59a390d142b5cf6e65a526f # v1.6.0
     with:
       os-versions: '["ubuntu-latest", "windows-2025"]'
+      pre: |
+        echo "GOTOOLCHAIN=auto" >> $GITHUB_ENV
   integration-test-linux:
     uses: mackerelio/workflows/.github/workflows/setup-go-matrix.yml@7653987676cc233af59a390d142b5cf6e65a526f # v1.6.0
     with:
       os-versions: '["ubuntu-latest"]'
       run: |
+        export GOTOOLCHAIN=auto
         make testconvention
         ./test.bash
   integration-test-windows:
@@ -31,6 +34,7 @@ jobs:
     with:
       os-versions: '["windows-2025"]'
       run: |
+        export GOTOOLCHAIN=auto
         go build -o mackerel-plugin-mssql/mackerel-plugin-mssql.exe ./mackerel-plugin-mssql
         go build -o mackerel-plugin-windows-server-sessions/mackerel-plugin-windows-server-sessions.exe ./mackerel-plugin-windows-server-sessions
   build:
