@@ -243,11 +243,12 @@ func parseProcStat(r io.Reader, p *map[string]interface{}) error {
 			return errParse
 		}
 
-		if name == "intr" {
+		switch name {
+		case "intr":
 			(*p)["interrupts"] = value
-		} else if name == "ctxt" {
+		case "ctxt":
 			(*p)["context_switches"] = value
-		} else if name == "processes" {
+		case "processes":
 			(*p)["forks"] = value
 		}
 	}

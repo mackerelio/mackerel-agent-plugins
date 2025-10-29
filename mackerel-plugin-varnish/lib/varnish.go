@@ -147,11 +147,12 @@ func (m VarnishPlugin) FetchMetrics() (map[string]interface{}, error) {
 			if smamatch == nil {
 				continue
 			}
-			if smamatch[2] == "g_alloc" {
+			switch smamatch[2] {
+			case "g_alloc":
 				stat["varnish.sma.g_alloc."+smamatch[1]+".g_alloc"] = tmpv
-			} else if smamatch[2] == "g_bytes" {
+			case "g_bytes":
 				stat["varnish.sma.memory."+smamatch[1]+".allocated"] = tmpv
-			} else if smamatch[2] == "g_space" {
+			case "g_space":
 				stat["varnish.sma.memory."+smamatch[1]+".available"] = tmpv
 			}
 		}
