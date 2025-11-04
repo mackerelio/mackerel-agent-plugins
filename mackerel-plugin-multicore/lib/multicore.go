@@ -186,7 +186,7 @@ func fetchSavedItem(tempFileName string) (*saveItem, error) {
 
 func calcCPUUsage(currentValues map[string]procStats, now time.Time, savedItem *saveItem) ([]cpuPercentages, error) {
 	if now.Sub(savedItem.LastTime).Seconds() > 600 {
-		return nil, errors.New("Too long duration")
+		return nil, errors.New("Too long duration") // nolint
 	}
 
 	var result []cpuPercentages

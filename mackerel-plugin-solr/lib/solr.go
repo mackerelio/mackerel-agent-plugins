@@ -216,7 +216,7 @@ func (s *SolrPlugin) loadStats() error {
 }
 
 func escapeSlash(slashIncludedString string) (str string) {
-	str = strings.Replace(slashIncludedString, "/", "", -1)
+	str = strings.ReplaceAll(slashIncludedString, "/", "")
 	return
 }
 

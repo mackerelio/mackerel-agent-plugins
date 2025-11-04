@@ -77,14 +77,14 @@ func getFloatValue(s map[string]interface{}, keys []string) (float64, error) {
 			case map[string]interface{}:
 				sm = sm[k].(map[string]interface{})
 			default:
-				return 0, errors.New("Cannot handle as a hash")
+				return 0, errors.New("Cannot handle as a hash") // nolint
 			}
 		} else {
 			switch sm[k].(type) {
 			case float64:
 				val = sm[k].(float64)
 			default:
-				return 0, errors.New("Not float64")
+				return 0, errors.New("Not float64") // nolint
 			}
 		}
 	}
@@ -137,7 +137,7 @@ func (p ElasticsearchPlugin) FetchMetrics() (map[string]float64, error) {
 	n := ""
 	for k := range nodes {
 		if n != "" {
-			return nil, errors.New("Multiple node found")
+			return nil, errors.New("Multiple node found") // nolint
 		}
 		n = k
 	}

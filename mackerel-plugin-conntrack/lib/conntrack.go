@@ -35,7 +35,7 @@ func FindFile(paths []string) (f string, err error) {
 		}
 	}
 
-	return "", fmt.Errorf("Cannot find files %s", paths)
+	return "", fmt.Errorf("Cannot find files %s", paths) // nolint
 }
 
 // CurrentValue returns a value from a file.

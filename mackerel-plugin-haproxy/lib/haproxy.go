@@ -83,7 +83,7 @@ func (p HAProxyPlugin) fetchMetricsFromTCP() (map[string]float64, error) {
 	defer resp.Body.Close()
 
 	if resp.StatusCode != 200 {
-		return nil, fmt.Errorf("Request failed. Status: %s, URI: %s", resp.Status, requestURI)
+		return nil, fmt.Errorf("Request failed. Status: %s, URI: %s", resp.Status, requestURI) // nolint
 	}
 
 	return p.parseStats(resp.Body)
