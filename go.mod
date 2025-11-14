@@ -39,7 +39,7 @@ require (
 	github.com/tomasen/fcgi_client v0.0.0-20180423082037-2bb3d819fd19
 	github.com/urfave/cli v1.22.17
 	github.com/yusufpapurcu/wmi v1.2.4
-	golang.org/x/text v0.29.0
+	golang.org/x/text v0.30.0
 )
 
 require (
