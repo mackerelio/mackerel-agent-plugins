@@ -17,7 +17,7 @@ require (
 	github.com/erikstmartin/go-testdb v0.0.0-20160219214506-8d10e4a1bae5
 	github.com/fsouza/go-dockerclient v1.12.3
 	github.com/fukata/golang-stats-api-handler v1.0.0
-	github.com/go-ldap/ldap/v3 v3.4.11
+	github.com/go-ldap/ldap/v3 v3.4.12
 	github.com/go-redis/redismock/v9 v9.2.0
 	github.com/gosnmp/gosnmp v1.42.1
 	github.com/jarcoal/httpmock v1.4.1
