@@ -13,7 +13,7 @@ require (
 	github.com/aws/aws-sdk-go-v2/credentials v1.19.3
 	github.com/aws/aws-sdk-go-v2/feature/ec2/imds v1.18.15
 	github.com/aws/aws-sdk-go-v2/service/cloudwatch v1.52.6
-	github.com/aws/aws-sdk-go-v2/service/ec2 v1.269.0
+	github.com/aws/aws-sdk-go-v2/service/ec2 v1.275.1
 	github.com/erikstmartin/go-testdb v0.0.0-20160219214506-8d10e4a1bae5
 	github.com/fsouza/go-dockerclient v1.12.3
 	github.com/fukata/golang-stats-api-handler v1.0.0
