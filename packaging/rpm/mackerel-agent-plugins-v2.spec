@@ -39,6 +39,31 @@ done
 %{__targetdir}/*
 
 %changelog
+* Wed Dec 10 2025 <mackerel-developers@hatena.ne.jp> - 0.89.3
+- Bump the aws-aws-sdk-go-v2 group across 1 directory with 6 updates (by dependabot[bot])
+- Bump github.com/redis/go-redis/v9 from 9.17.1 to 9.17.2 (by dependabot[bot])
+- Bump actions/checkout from 6.0.0 to 6.0.1 (by dependabot[bot])
+- Bump mackerelio/workflows/.github/workflows/setup-go-matrix.yml from 1.7.0 to 1.8.0 (by dependabot[bot])
+- Bump mackerelio/workflows/.github/workflows/go-lint.yml from 1.7.0 to 1.8.0 (by dependabot[bot])
+- Bump mackerelio/workflows/.github/workflows/go-test.yml from 1.7.0 to 1.8.0 (by dependabot[bot])
+- Bump github.com/aws/aws-sdk-go-v2/service/ec2 from 1.269.0 to 1.275.1 in the aws-aws-sdk-go-v2 group across 1 directory (by dependabot[bot])
+- Bump the aws-aws-sdk-go-v2 group across 1 directory with 5 updates (by dependabot[bot])
+- Bump github.com/redis/go-redis/v9 from 9.17.0 to 9.17.1 (by dependabot[bot])
+- Bump the mackerelio group across 2 directories with 1 update (by dependabot[bot])
+- Bump mackerelio/workflows/.github/workflows/go-test.yml from 1.6.0 to 1.7.0 (by dependabot[bot])
+- Bump mackerelio/workflows/.github/workflows/setup-go-matrix.yml from 1.6.0 to 1.7.0 (by dependabot[bot])
+- Bump mackerelio/workflows/.github/workflows/go-lint.yml from 1.6.0 to 1.7.0 (by dependabot[bot])
+- Bump actions/checkout from 5.0.0 to 6.0.0 (by dependabot[bot])
+- Bump github.com/redis/go-redis/v9 from 9.14.0 to 9.17.0 (by dependabot[bot])
+- Bump actions/setup-go from 6.0.0 to 6.1.0 (by dependabot[bot])
+- Bump github.com/fsouza/go-dockerclient from 1.12.2 to 1.12.3 (by dependabot[bot])
+- Bump golang.org/x/crypto from 0.40.0 to 0.45.0 (by dependabot[bot])
+- Bump golang.org/x/crypto from 0.35.0 to 0.45.0 in /mackerel-plugin-mongodb (by dependabot[bot])
+- Update mackerel-plugin-sidekiq dependency (by yseto)
+- update CI (by yseto)
+- Bump github.com/go-ldap/ldap/v3 from 3.4.11 to 3.4.12 (by dependabot[bot])
+- Bump the aws-aws-sdk-go-v2 group across 1 directory with 6 updates (by dependabot[bot])
+
 * Mon Oct 20 2025 <mackerel-developers@hatena.ne.jp> - 0.89.2
 - added dependabot cooldown (by yseto)
 - Bump github.com/mackerelio/mackerel-plugin-json from 1.2.5 to 1.2.7 in /mackerel-plugin-json in the mackerelio group across 1 directory (by dependabot[bot])

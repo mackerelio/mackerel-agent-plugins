@@ -1,5 +1,32 @@
 # Changelog
 
+## 0.89.3 (2025-12-10)
+
+* Bump the aws-aws-sdk-go-v2 group across 1 directory with 6 updates #1382 (dependabot[bot])
+* Bump github.com/redis/go-redis/v9 from 9.17.1 to 9.17.2 #1381 (dependabot[bot])
+* Bump actions/checkout from 6.0.0 to 6.0.1 #1380 (dependabot[bot])
+* Bump mackerelio/workflows/.github/workflows/setup-go-matrix.yml from 1.7.0 to 1.8.0 #1379 (dependabot[bot])
+* Bump mackerelio/workflows/.github/workflows/go-lint.yml from 1.7.0 to 1.8.0 #1378 (dependabot[bot])
+* Bump mackerelio/workflows/.github/workflows/go-test.yml from 1.7.0 to 1.8.0 #1377 (dependabot[bot])
+* Bump github.com/aws/aws-sdk-go-v2/service/ec2 from 1.269.0 to 1.275.1 in the aws-aws-sdk-go-v2 group across 1 directory #1376 (dependabot[bot])
+* Bump the aws-aws-sdk-go-v2 group across 1 directory with 5 updates #1375 (dependabot[bot])
+* Bump github.com/redis/go-redis/v9 from 9.17.0 to 9.17.1 #1374 (dependabot[bot])
+* Bump the mackerelio group across 2 directories with 1 update #1372 (dependabot[bot])
+* Bump mackerelio/workflows/.github/workflows/go-test.yml from 1.6.0 to 1.7.0 #1371 (dependabot[bot])
+* Bump mackerelio/workflows/.github/workflows/setup-go-matrix.yml from 1.6.0 to 1.7.0 #1370 (dependabot[bot])
+* Bump mackerelio/workflows/.github/workflows/go-lint.yml from 1.6.0 to 1.7.0 #1369 (dependabot[bot])
+* Bump actions/checkout from 5.0.0 to 6.0.0 #1368 (dependabot[bot])
+* Bump github.com/redis/go-redis/v9 from 9.14.0 to 9.17.0 #1367 (dependabot[bot])
+* Bump actions/setup-go from 6.0.0 to 6.1.0 #1366 (dependabot[bot])
+* Bump github.com/fsouza/go-dockerclient from 1.12.2 to 1.12.3 #1365 (dependabot[bot])
+* Bump golang.org/x/crypto from 0.40.0 to 0.45.0 #1364 (dependabot[bot])
+* Bump golang.org/x/crypto from 0.35.0 to 0.45.0 in /mackerel-plugin-mongodb #1363 (dependabot[bot])
+* Update mackerel-plugin-sidekiq dependency #1361 (yseto)
+* update CI #1357 (yseto)
+* Bump github.com/go-ldap/ldap/v3 from 3.4.11 to 3.4.12 #1351 (dependabot[bot])
+* Bump the aws-aws-sdk-go-v2 group across 1 directory with 6 updates #1350 (dependabot[bot])
+
+
 ## 0.89.2 (2025-10-20)
 
 * added dependabot cooldown #1349 (yseto)
