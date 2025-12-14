@@ -9,5 +9,5 @@ require (
 	github.com/go-sql-driver/mysql v1.9.3 // indirect
 	github.com/mackerelio/go-mackerel-plugin v0.1.5 // indirect
 	github.com/mackerelio/golib v1.2.1 // indirect
-	golang.org/x/text v0.31.0 // indirect
+	golang.org/x/text v0.32.0 // indirect
 )
