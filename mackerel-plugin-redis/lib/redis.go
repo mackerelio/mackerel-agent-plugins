@@ -443,7 +443,7 @@ func (m RedisPlugin) GraphDefinition() map[string]mp.Graphs {
 	if len(metricsOffsetDelay) > 0 {
 		graphdef["offset_delay"] = mp.Graphs{
 			Label:   (labelPrefix + " Slave Offset Delay"),
-			Unit:    "count",
+			Unit:    "integer",
 			Metrics: metricsOffsetDelay,
 		}
 	}
