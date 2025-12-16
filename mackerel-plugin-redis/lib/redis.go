@@ -245,11 +245,54 @@ func (m RedisPlugin) FetchMetrics() (map[string]interface{}, error) {
 		}
 	}
 
+	if v, ok := stat["cluster_enabled"].(float64); ok && v > 0 {
+		logger.Debugf("Cluster mode enabled. Fetching cluster metrics.")
+		err := m.fetchClusterMetrics(stat)
+		if err != nil {
+			logger.Warningf("Failed to fetch cluster metrics. %s", err)
+		}
+	}
+
 	for _, slave := range slaves {
 		stat[fmt.Sprintf("%s_offset_delay", slave)] = stat["master_repl_offset"].(float64) - stat[fmt.Sprintf("%s_offset_delay", slave)].(float64)
 	}
 
 	return stat, nil
+}
+
+// fetchClusterMetrics fetches cluster metrics with `CLUSTER INFO` command.
+//
+//	https://redis.io/docs/latest/commands/cluster-info/
+func (m RedisPlugin) fetchClusterMetrics(stat map[string]interface{}) error {
+	str, err := m.rdb.ClusterInfo(m.ctx).Result()
+	if err != nil {
+		logger.Errorf("Failed to run info command. %s", err)
+		return err
+	}
+	for line := range strings.SplitSeq(str, "\r\n") {
+		if line == "" {
+			continue
+		}
+		record := strings.SplitN(line, ":", 2)
+		if len(record) < 2 {
+			continue
+		}
+		key, value := record[0], record[1]
+		if key == "cluster_state" {
+			if value == "ok" {
+				stat[key] = float64(1.0)
+			} else {
+				stat[key] = float64(0.0)
+			}
+		} else {
+			v, err := strconv.ParseFloat(value, 64)
+			if err != nil {
+				continue
+			}
+			stat[key] = v
+		}
+	}
+	return nil
 }
 
 // GraphDefinition interface for mackerelplugin
@@ -324,6 +367,45 @@ func (m RedisPlugin) GraphDefinition() map[string]mp.Graphs {
 				{Name: "uptime_in_seconds", Label: "Uptime In Seconds", Diff: false},
 			},
 		},
+		"cluster": {
+			Label: (labelPrefix + " Cluster"),
+			Unit:  "integer",
+			Metrics: []mp.Metrics{
+				{Name: "cluster_known_nodes", Label: "Known Nodes", Diff: false},
+				{Name: "cluster_size", Label: "Size", Diff: false},
+			},
+		},
+		"cluster_state": {
+			Label: (labelPrefix + " Cluster State"),
+			Unit:  "integer",
+			Metrics: []mp.Metrics{
+				{Name: "cluster_state", Label: "State (1: ok, 0: fail)", Diff: false},
+			},
+		},
+		"cluster_slots": {
+			Label: (labelPrefix + " Cluster Slots"),
+			Unit:  "integer",
+			Metrics: []mp.Metrics{
+				{Name: "cluster_slots_assigned", Label: "Slots Assigned", Diff: false},
+				{Name: "cluster_slots_ok", Label: "Slots OK", Diff: false},
+				{Name: "cluster_slots_pfail", Label: "Slots PFAIL", Diff: false},
+				{Name: "cluster_slots_fail", Label: "Slots FAIL", Diff: false},
+			},
+		},
+		"cluster_stats": {
+			Label: (labelPrefix + " Cluster Stats"),
+			Unit:  "integer",
+			Metrics: []mp.Metrics{
+				{Name: "cluster_stats_messages_ping_sent", Label: "Messages PING Sent", Diff: true},
+				{Name: "cluster_stats_messages_pong_sent", Label: "Messages PONG Sent", Diff: true},
+				{Name: "cluster_stats_messages_fail_sent", Label: "Messages FAIL Sent", Diff: true},
+				{Name: "cluster_stats_messages_sent", Label: "Messages Sent", Diff: true},
+				{Name: "cluster_stats_messages_ping_received", Label: "Messages PING Received", Diff: true},
+				{Name: "cluster_stats_messages_pong_received", Label: "Messages PONG Received", Diff: true},
+				{Name: "cluster_stats_messages_fail_received", Label: "Messages FAIL Received", Diff: true},
+				{Name: "cluster_stats_messages_received", Label: "Messages Received", Diff: true},
+			},
+		},
 	}
 
 	str, err := m.rdb.Info(m.ctx).Result()
@@ -361,7 +443,7 @@ func (m RedisPlugin) GraphDefinition() map[string]mp.Graphs {
 	if len(metricsOffsetDelay) > 0 {
 		graphdef["offset_delay"] = mp.Graphs{
 			Label:   (labelPrefix + " Slave Offset Delay"),
-			Unit:    "count",
+			Unit:    "integer",
 			Metrics: metricsOffsetDelay,
 		}
 	}
