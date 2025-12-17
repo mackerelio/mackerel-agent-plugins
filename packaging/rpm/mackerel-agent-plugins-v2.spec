@@ -39,6 +39,14 @@ done
 %{__targetdir}/*
 
 %changelog
+* Wed Dec 17 2025 <mackerel-developers@hatena.ne.jp> - 0.90.0
+- Bump github.com/aws/aws-sdk-go-v2/service/ec2 from 1.276.1 to 1.277.0 in the aws-aws-sdk-go-v2 group across 1 directory (by dependabot[bot])
+- Supports metrics of Redis / Valkey cluster. (by fujiwara)
+- Bump golang.org/x/text from 0.31.0 to 0.32.0 in the golang-x group across 1 directory (by dependabot[bot])
+- Bump github.com/aws/aws-sdk-go-v2/service/cloudwatch from 1.52.8 to 1.53.0 in the aws-aws-sdk-go-v2 group across 1 directory (by dependabot[bot])
+- Bump the aws-aws-sdk-go-v2 group across 1 directory with 4 updates (by dependabot[bot])
+- Bump the mackerelio group across 2 directories with 1 update (by dependabot[bot])
+
 * Wed Dec 10 2025 <mackerel-developers@hatena.ne.jp> - 0.89.3
 - Bump the aws-aws-sdk-go-v2 group across 1 directory with 6 updates (by dependabot[bot])
 - Bump github.com/redis/go-redis/v9 from 9.17.1 to 9.17.2 (by dependabot[bot])
