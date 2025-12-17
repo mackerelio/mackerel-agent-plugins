@@ -1,5 +1,15 @@
 # Changelog
 
+## 0.90.0 (2025-12-17)
+
+* Bump github.com/aws/aws-sdk-go-v2/service/ec2 from 1.276.1 to 1.277.0 in the aws-aws-sdk-go-v2 group across 1 directory #1389 (dependabot[bot])
+* Supports metrics of Redis / Valkey cluster. #1388 (fujiwara)
+* Bump golang.org/x/text from 0.31.0 to 0.32.0 in the golang-x group across 1 directory #1387 (dependabot[bot])
+* Bump github.com/aws/aws-sdk-go-v2/service/cloudwatch from 1.52.8 to 1.53.0 in the aws-aws-sdk-go-v2 group across 1 directory #1386 (dependabot[bot])
+* Bump the aws-aws-sdk-go-v2 group across 1 directory with 4 updates #1385 (dependabot[bot])
+* Bump the mackerelio group across 2 directories with 1 update #1384 (dependabot[bot])
+
+
 ## 0.89.3 (2025-12-10)
 
 * Bump the aws-aws-sdk-go-v2 group across 1 directory with 6 updates #1382 (dependabot[bot])
