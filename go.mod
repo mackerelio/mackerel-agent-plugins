@@ -19,7 +19,7 @@ require (
 	github.com/fukata/golang-stats-api-handler v1.0.0
 	github.com/go-ldap/ldap/v3 v3.4.12
 	github.com/go-redis/redismock/v9 v9.2.0
-	github.com/gosnmp/gosnmp v1.43.1
+	github.com/gosnmp/gosnmp v1.43.2
 	github.com/jarcoal/httpmock v1.4.1
 	github.com/jmoiron/sqlx v1.4.0
 	github.com/lestrrat-go/tcptest v0.0.0-20180223004312-f0345789c593
@@ -97,6 +97,6 @@ require (
 	go.mongodb.org/mongo-driver v1.17.6 // indirect
 	golang.org/x/crypto v0.45.0 // indirect
 	golang.org/x/sync v0.19.0 // indirect
-	golang.org/x/sys v0.38.0 // indirect
+	golang.org/x/sys v0.40.0 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 )
