@@ -17,5 +17,5 @@ require (
 	go.mongodb.org/mongo-driver v1.17.6 // indirect
 	golang.org/x/crypto v0.45.0 // indirect
 	golang.org/x/sync v0.19.0 // indirect
-	golang.org/x/text v0.33.0 // indirect
+	golang.org/x/text v0.34.0 // indirect
 )
