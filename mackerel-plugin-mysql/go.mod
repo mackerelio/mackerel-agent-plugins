@@ -5,7 +5,7 @@ go 1.24.0
 require github.com/mackerelio/mackerel-plugin-mysql v1.3.3
 
 require (
-	filippo.io/edwards25519 v1.1.0 // indirect
+	filippo.io/edwards25519 v1.1.1 // indirect
 	github.com/go-sql-driver/mysql v1.9.3 // indirect
 	github.com/mackerelio/go-mackerel-plugin v0.1.5 // indirect
 	github.com/mackerelio/golib v1.2.1 // indirect
