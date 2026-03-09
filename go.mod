@@ -24,7 +24,7 @@ require (
 	github.com/lib/pq v1.11.2
 	github.com/mackerelio/go-mackerel-plugin v0.1.5
 	github.com/mackerelio/go-mackerel-plugin-helper v0.1.4
-	github.com/mackerelio/go-osstat v0.2.6
+	github.com/mackerelio/go-osstat v0.2.7
 	github.com/mackerelio/golib v1.2.1
 	github.com/mackerelio/mackerel-plugin-mongodb v1.1.3
 	github.com/mackerelio/mackerel-plugin-mysql v1.3.3
@@ -95,6 +95,6 @@ require (
 	go.uber.org/atomic v1.11.0 // indirect
 	golang.org/x/crypto v0.47.0 // indirect
 	golang.org/x/sync v0.19.0 // indirect
-	golang.org/x/sys v0.40.0 // indirect
+	golang.org/x/sys v0.42.0 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 )
