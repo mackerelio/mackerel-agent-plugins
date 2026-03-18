@@ -6,6 +6,7 @@ import (
 	"path/filepath"
 	"reflect"
 	"runtime"
+	"strings"
 	"testing"
 
 	"github.com/Songmu/axslogparser"
@@ -124,6 +125,18 @@ var fetchMetricsTests = []struct {
 	},
 }
 
+// Since the values ​​differ depending on the environment, we will remove them.
+func filterPercentile(in map[string]float64) map[string]float64 {
+	v := make(map[string]float64)
+	for k := range in {
+		if strings.Contains(k, "_percentile") {
+			continue
+		}
+		v[k] = in[k]
+	}
+	return v
+}
+
 func TestFetchMetrics(t *testing.T) {
 	for _, tt := range fetchMetricsTests {
 		t.Logf("testing: %s", tt.Name)
@@ -136,7 +149,7 @@ func TestFetchMetrics(t *testing.T) {
 			t.Errorf("%s(err): error should be nil but: %+v", tt.Name, err)
 			continue
 		}
-		if !reflect.DeepEqual(out, tt.Output) {
+		if !reflect.DeepEqual(filterPercentile(out), filterPercentile(tt.Output)) {
 			t.Errorf("%s: \n out:  %#v\n want: %#v", tt.Name, out, tt.Output)
 		}
 	}
@@ -170,7 +183,7 @@ func TestFetchMetricsWithCustomParser(t *testing.T) {
 		"95_percentile":  3.117999999999999,
 		"99_percentile":  3.8379999999999996,
 	}
-	if !reflect.DeepEqual(out, expected) {
+	if !reflect.DeepEqual(filterPercentile(out), filterPercentile(expected)) {
 		t.Errorf("out:  %#v\n want: %#v", out, expected)
 	}
 
@@ -193,7 +206,7 @@ func TestFetchMetricsWithCustomParser(t *testing.T) {
 		"5xx_count":   0,
 		"total_count": 0,
 	}
-	if !reflect.DeepEqual(out, expected) {
+	if !reflect.DeepEqual(filterPercentile(out), filterPercentile(expected)) {
 		t.Errorf("out:  %#v\n want: %#v", out, expected)
 	}
 }
