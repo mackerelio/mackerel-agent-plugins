@@ -1,6 +1,6 @@
 module github.com/mackerelio/mackerel-agent-plugins
 
-go 1.25.0
+go 1.25.5
 
 require (
 	github.com/Songmu/axslogparser v1.4.0
@@ -68,14 +68,14 @@ require (
 	github.com/go-sql-driver/mysql v1.9.3 // indirect
 	github.com/golang/snappy v0.0.4 // indirect
 	github.com/google/uuid v1.6.0 // indirect
-	github.com/klauspost/compress v1.18.3 // indirect
+	github.com/klauspost/compress v1.18.4 // indirect
 	github.com/kr/pretty v0.2.1 // indirect
 	github.com/lestrrat-go/tcputil v0.0.0-20180223003554-d3c7f98154fb // indirect
 	github.com/moby/go-archive v0.2.0 // indirect
-	github.com/moby/moby/api v1.53.0 // indirect
-	github.com/moby/moby/client v0.2.2 // indirect
-	github.com/moby/moby/v2 v2.0.0-beta.6 // indirect
-	github.com/moby/patternmatcher v0.6.0 // indirect
+	github.com/moby/moby/api v1.54.0 // indirect
+	github.com/moby/moby/client v0.3.0 // indirect
+	github.com/moby/moby/v2 v2.0.0-beta.8 // indirect
+	github.com/moby/patternmatcher v0.6.1 // indirect
 	github.com/moby/sys/sequential v0.6.0 // indirect
 	github.com/moby/sys/user v0.4.0 // indirect
 	github.com/moby/sys/userns v0.1.0 // indirect
