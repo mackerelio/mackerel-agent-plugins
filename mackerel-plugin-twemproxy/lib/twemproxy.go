@@ -120,13 +120,13 @@ func (p TwemproxyPlugin) GraphDefinition() map[string]mp.Graphs {
 }
 
 // FetchMetrics interface for mackerelplugin
-func (p TwemproxyPlugin) FetchMetrics() (map[string]interface{}, error) {
+func (p TwemproxyPlugin) FetchMetrics() (map[string]any, error) {
 	stats, err := getStats(p)
 	if err != nil {
 		return nil, fmt.Errorf("Failed to fetch twemproxy metrics: %s", err) // nolint
 	}
 
-	metrics := make(map[string]interface{})
+	metrics := make(map[string]any)
 
 	if stats.TotalConnections != nil {
 		metrics["total_connections"] = *stats.TotalConnections

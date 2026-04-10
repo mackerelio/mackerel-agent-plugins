@@ -102,13 +102,13 @@ func (p *plugin) fetchMailqCount() (count uint64, err error) {
 	return
 }
 
-func (p *plugin) FetchMetrics() (map[string]interface{}, error) {
+func (p *plugin) FetchMetrics() (map[string]any, error) {
 	count, err := p.fetchMailqCount()
 	if err != nil {
 		return nil, err
 	}
 
-	return map[string]interface{}{"count": count}, nil
+	return map[string]any{"count": count}, nil
 }
 
 func (p *plugin) GraphDefinition() map[string]mp.Graphs {

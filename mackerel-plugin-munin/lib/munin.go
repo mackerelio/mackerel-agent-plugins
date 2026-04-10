@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"io"
 	"log"
+	"maps"
 	"os"
 	"os/exec"
 	"path"
@@ -112,9 +113,7 @@ func compileEnvPairs(s *services, plg string) *map[string]string {
 	// apply envs
 	envs := make(map[string]string)
 	for _, srv := range srvs {
-		for k, v := range servenvs[srv] {
-			envs[k] = v
-		}
+		maps.Copy(envs, servenvs[srv])
 	}
 
 	return &envs
@@ -146,7 +145,7 @@ func setPluginEnvironments(plg string, confdir string) {
 }
 
 func parsePluginConfig(str string, m *map[string](*MuninMetric), title *string) {
-	for _, line := range strings.Split(str, "\n") {
+	for line := range strings.SplitSeq(str, "\n") {
 		lineM := getExp("^([^ ]+) +(.*)$").FindStringSubmatch(line)
 		if lineM == nil {
 			continue
@@ -179,7 +178,7 @@ func parsePluginConfig(str string, m *map[string](*MuninMetric), title *string) 
 }
 
 func parsePluginVals(str string, m *map[string](*MuninMetric)) {
-	for _, line := range strings.Split(str, "\n") {
+	for line := range strings.SplitSeq(str, "\n") {
 		lineM := getExp("^([^ ]+) +(.*)$").FindStringSubmatch(line)
 		if lineM == nil {
 			continue

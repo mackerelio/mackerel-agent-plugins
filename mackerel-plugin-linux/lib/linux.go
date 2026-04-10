@@ -39,7 +39,7 @@ type LinuxPlugin struct {
 func (c LinuxPlugin) GraphDefinition() map[string]mp.Graphs {
 	var err error
 
-	p := make(map[string]interface{})
+	p := make(map[string]any)
 
 	if c.Typemap["all"] || c.Typemap["swap"] {
 		err = collectProcVmstat(pathVmstat, &p)
@@ -102,10 +102,10 @@ func doMain(c *cli.Context) error {
 }
 
 // FetchMetrics interface for mackerelplugin
-func (c LinuxPlugin) FetchMetrics() (map[string]interface{}, error) {
+func (c LinuxPlugin) FetchMetrics() (map[string]any, error) {
 	var err error
 
-	p := make(map[string]interface{})
+	p := make(map[string]any)
 
 	if c.Typemap["all"] || c.Typemap["swap"] {
 		err = collectProcVmstat(pathVmstat, &p)
@@ -146,7 +146,7 @@ func (c LinuxPlugin) FetchMetrics() (map[string]interface{}, error) {
 }
 
 // collect who
-func collectWho(p *map[string]interface{}) error {
+func collectWho(p *map[string]any) error {
 	var err error
 	var data string
 
@@ -171,7 +171,7 @@ func collectWho(p *map[string]interface{}) error {
 }
 
 // parsing metrics from /proc/stat
-func parseWho(str string, p *map[string]interface{}) error {
+func parseWho(str string, p *map[string]any) error {
 	str = strings.TrimSpace(str)
 	if str == "" {
 		(*p)["users"] = float64(0)
@@ -196,7 +196,7 @@ func getWho() (string, error) {
 }
 
 // collect /proc/stat
-func collectProcStat(path string, p *map[string]interface{}) error {
+func collectProcStat(path string, p *map[string]any) error {
 	graphdef["linux.interrupts"] = mp.Graphs{
 		Label: "Linux Interrupts",
 		Unit:  "integer",
@@ -228,7 +228,7 @@ func collectProcStat(path string, p *map[string]interface{}) error {
 }
 
 // parsing metrics from /proc/stat
-func parseProcStat(r io.Reader, p *map[string]interface{}) error {
+func parseProcStat(r io.Reader, p *map[string]any) error {
 	scanner := bufio.NewScanner(r)
 
 	for scanner.Scan() {
@@ -258,7 +258,7 @@ func parseProcStat(r io.Reader, p *map[string]interface{}) error {
 
 // collect /sys/block/<device>/stat
 // See also. http://man7.org/linux/man-pages/man5/sysfs.5.html
-func collectDiskStats(path string, p *map[string]interface{}) error {
+func collectDiskStats(path string, p *map[string]any) error {
 	var elapsedData []mp.Metrics
 	var rwtimeData []mp.Metrics
 
@@ -334,7 +334,7 @@ func collectDiskStats(path string, p *map[string]interface{}) error {
 	return nil
 }
 
-func parseDiskStat(name, stat string, p *map[string]interface{}) error {
+func parseDiskStat(name, stat string, p *map[string]any) error {
 	fields := strings.Fields(stat)
 	if len(fields) < 11 {
 		return nil
@@ -350,7 +350,7 @@ func parseDiskStat(name, stat string, p *map[string]interface{}) error {
 }
 
 // collect ss
-func collectNetworkStat(p *map[string]interface{}) error {
+func collectNetworkStat(p *map[string]any) error {
 	graphdef["linux.ss"] = mp.Graphs{
 		Label: "Linux Network Connection States",
 		Unit:  "integer",
@@ -385,7 +385,7 @@ func collectNetworkStat(p *map[string]interface{}) error {
 }
 
 // parsing metrics from ss
-func parseSs(r io.Reader, p *map[string]interface{}) error {
+func parseSs(r io.Reader, p *map[string]any) error {
 	var (
 		status      = 0
 		first       = true
@@ -425,7 +425,7 @@ func parseSs(r io.Reader, p *map[string]interface{}) error {
 }
 
 // collect /proc/vmstat
-func collectProcVmstat(path string, p *map[string]interface{}) error {
+func collectProcVmstat(path string, p *map[string]any) error {
 	graphdef["linux.swap"] = mp.Graphs{
 		Label: "Linux Swap Usage",
 		Unit:  "integer",
@@ -444,7 +444,7 @@ func collectProcVmstat(path string, p *map[string]interface{}) error {
 }
 
 // parsing metrics from /proc/vmstat
-func parseProcVmstat(r io.Reader, p *map[string]interface{}) error {
+func parseProcVmstat(r io.Reader, p *map[string]any) error {
 	scanner := bufio.NewScanner(r)
 
 	for scanner.Scan() {

@@ -23,8 +23,8 @@ type UnicornPlugin struct {
 }
 
 // FetchMetrics interface for mackerelplugin
-func (u UnicornPlugin) FetchMetrics() (map[string]interface{}, error) {
-	stat := make(map[string]interface{})
+func (u UnicornPlugin) FetchMetrics() (map[string]any, error) {
+	stat := make(map[string]any)
 
 	workers := len(u.WorkerPids)
 	idles, err := idleWorkerCount(u.WorkerPids)

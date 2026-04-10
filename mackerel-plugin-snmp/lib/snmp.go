@@ -30,8 +30,8 @@ type SNMPPlugin struct {
 }
 
 // FetchMetrics interface for mackerelplugin
-func (m SNMPPlugin) FetchMetrics() (map[string]interface{}, error) {
-	stat := make(map[string]interface{})
+func (m SNMPPlugin) FetchMetrics() (map[string]any, error) {
+	stat := make(map[string]any)
 
 	gosnmp.Default.Target = m.Host
 	gosnmp.Default.Port = m.Port

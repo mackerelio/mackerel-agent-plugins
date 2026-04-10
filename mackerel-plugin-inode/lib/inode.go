@@ -41,7 +41,7 @@ var deviceUnacceptablePattern = regexp.MustCompile(
 // /dev/disk1  974737408 176727800 797497608    19% 22154973 99687201   18%   /
 
 // FetchMetrics interface for mackerelplugin
-func (p InodePlugin) FetchMetrics() (map[string]interface{}, error) {
+func (p InodePlugin) FetchMetrics() (map[string]any, error) {
 	dfOpt := "-i"
 	if runtime.GOOS == "linux" {
 		dfOpt = "-iP"
@@ -53,8 +53,8 @@ func (p InodePlugin) FetchMetrics() (map[string]interface{}, error) {
 		logger.Warningf("'df -i' command exited with a non-zero status: '%s'", err)
 		return nil, err
 	}
-	result := make(map[string]interface{})
-	for _, line := range strings.Split(string(out), "\n") {
+	result := make(map[string]any)
+	for line := range strings.SplitSeq(string(out), "\n") {
 		if dfHeaderPattern.MatchString(line) {
 			continue
 		} else if matches := dfColumnsPattern.FindStringSubmatch(line); matches != nil {

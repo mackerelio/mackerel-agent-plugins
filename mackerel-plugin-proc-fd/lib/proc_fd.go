@@ -20,13 +20,13 @@ type ProcfdPlugin struct {
 }
 
 // FetchMetrics fetch the metrics
-func (p ProcfdPlugin) FetchMetrics() (map[string]interface{}, error) {
+func (p ProcfdPlugin) FetchMetrics() (map[string]any, error) {
 	fds, err := openFd.getNumOpenFileDesc()
 	if err != nil {
 		return nil, err
 	}
 
-	stat := make(map[string]interface{})
+	stat := make(map[string]any)
 
 	// Compute maximum open file descriptor
 	var maxFD uint64

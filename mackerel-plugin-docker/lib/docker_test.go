@@ -87,7 +87,7 @@ func TestGenerateName(t *testing.T) {
 }
 
 func TestAddCPUPercentageStats(t *testing.T) {
-	stats := map[string]interface{}{
+	stats := map[string]any{
 		"docker._internal.cpuacct.containerA.user":       uint64(3000),
 		"docker._internal.cpuacct.containerA.system":     uint64(2000),
 		"docker._internal.cpuacct.containerA.host":       uint64(100000),
@@ -104,7 +104,7 @@ func TestAddCPUPercentageStats(t *testing.T) {
 		"docker._internal.cpuacct.containerF.host":       uint64(100000100000),
 		"docker._internal.cpuacct.containerF.onlineCPUs": int(2),
 	}
-	oldStats := map[string]interface{}{
+	oldStats := map[string]any{
 		"docker._internal.cpuacct.containerA.host":   float64(90000),
 		"docker._internal.cpuacct.containerA.user":   float64(1000),
 		"docker._internal.cpuacct.containerA.system": float64(1500),

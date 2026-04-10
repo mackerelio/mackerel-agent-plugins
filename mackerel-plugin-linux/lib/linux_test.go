@@ -15,7 +15,7 @@ func TestCollectWho(t *testing.T) {
 	if err != nil {
 		return
 	}
-	p := make(map[string]interface{})
+	p := make(map[string]any)
 
 	assert.Nil(t, collectWho(&p))
 }
@@ -24,7 +24,7 @@ func TestParseWho(t *testing.T) {
 	stub := `test0  pts/48       2014-09-30 08:00 (192.168.24.123)
 test1  pts/48       2014-09-30 08:59 (192.168.24.123)
 test2  pts/48       2014-09-30 09:00 (192.168.24.123)`
-	stat := make(map[string]interface{})
+	stat := make(map[string]any)
 
 	err := parseWho(stub, &stat)
 	assert.Nil(t, err)
@@ -33,7 +33,7 @@ test2  pts/48       2014-09-30 09:00 (192.168.24.123)`
 
 func TestParseWho2(t *testing.T) {
 	stub := ""
-	stat := make(map[string]interface{})
+	stat := make(map[string]any)
 
 	err := parseWho(stub, &stat)
 	assert.Nil(t, err)
@@ -57,7 +57,7 @@ func TestCollectStat(t *testing.T) {
 	if err != nil {
 		return
 	}
-	p := make(map[string]interface{})
+	p := make(map[string]any)
 
 	assert.Nil(t, collectProcStat(path, &p))
 }
@@ -67,7 +67,7 @@ func TestParseProcStat(t *testing.T) {
  ctxt 879305394
  btime 1409212617
  processes 1959410`
-	stat := make(map[string]interface{})
+	stat := make(map[string]any)
 
 	err := parseProcStat(bytes.NewBufferString(stub), &stat)
 	assert.Nil(t, err)
@@ -81,7 +81,7 @@ func TestCollectNetworkStat(t *testing.T) {
 	if err != nil {
 		return
 	}
-	p := make(map[string]interface{})
+	p := make(map[string]any)
 
 	assert.Nil(t, collectNetworkStat(&p))
 }
@@ -90,7 +90,7 @@ func TestParseSs(t *testing.T) {
 	testCases := []struct {
 		name   string
 		input  string
-		expect map[string]interface{}
+		expect map[string]any
 	}{
 		{
 			name: "Cent6",
@@ -99,7 +99,7 @@ LISTEN     0      128                                     :::45103              
 LISTEN     0      128                                     :::111                                    :::* 
 TIME-WAIT  0      0                         ::ffff:127.0.0.1:80                       ::ffff:127.0.0.1:50082 
 ESTAB      0      0                              10.0.25.101:60826                         10.0.25.104:5672  `,
-			expect: map[string]interface{}{
+			expect: map[string]any{
 				"LISTEN":    2.0,
 				"TIME-WAIT": 1.0,
 				"ESTAB":     1.0,
@@ -115,7 +115,7 @@ u_dgr LISTEN     0      0                                       /run/udev/contro
 u_str LISTEN     0      10                                  /var/run/acpid.socket 9649                                                   * 0
 u_str ESTAB      0      0                                    @/com/ubuntu/upstart 10582                                                  * 1887`,
 
-			expect: map[string]interface{}{
+			expect: map[string]any{
 				"LISTEN": 2.0,
 				"UNCONN": 3.0,
 				"ESTAB":  1.0,
@@ -130,7 +130,7 @@ u_dgrUNCONN     0      0                                                /dev/log
 u_dgrLISTEN     0      0                                       /run/udev/control 8552                                                   * 0
 u_strLISTEN     0      10                                  /var/run/acpid.socket 9649                                                   * 0
 u_strESTAB      0      0                                    @/com/ubuntu/upstart 10582                                                  * 1887`,
-			expect: map[string]interface{}{
+			expect: map[string]any{
 				"LISTEN": 2.0,
 				"UNCONN": 3.0,
 				"ESTAB":  1.0,
@@ -140,7 +140,7 @@ u_strESTAB      0      0                                    @/com/ubuntu/upstart
 
 	for _, tc := range testCases {
 		t.Run(tc.name, func(t *testing.T) {
-			out := make(map[string]interface{})
+			out := make(map[string]any)
 			err := parseSs(bytes.NewBufferString(tc.input), &out)
 			if err != nil {
 				t.Errorf("error should be nil but: %s", err)
@@ -157,7 +157,7 @@ func TestCollectProcVmstat(t *testing.T) {
 	if err != nil {
 		return
 	}
-	p := make(map[string]interface{})
+	p := make(map[string]any)
 
 	assert.Nil(t, collectProcVmstat(path, &p))
 }
@@ -167,7 +167,7 @@ func TestParseProcVmstat(t *testing.T) {
 pgpgout 31351354
 pswpin 0
 pswpout 113`
-	stat := make(map[string]interface{})
+	stat := make(map[string]any)
 
 	err := parseProcVmstat(bytes.NewBufferString(stub), &stat)
 	assert.Nil(t, err)
@@ -184,7 +184,7 @@ func TestCollectDiskStats(t *testing.T) {
 	if err != nil {
 		return
 	}
-	p := make(map[string]interface{})
+	p := make(map[string]any)
 
 	assert.Nil(t, collectDiskStats(path, &p))
 }
@@ -192,7 +192,7 @@ func TestCollectDiskStats(t *testing.T) {
 func TestParseDiskStat(t *testing.T) {
 	name := "testdevice"
 	stub := `  36049      277  3702446    36470  1165021   131631 15197712  1648460        0   771090  1684180`
-	stat := make(map[string]interface{})
+	stat := make(map[string]any)
 
 	err := parseDiskStat(name, stub, &stat)
 	assert.Nil(t, err)
@@ -205,7 +205,7 @@ func TestParseDiskStat(t *testing.T) {
 func TestParseDiskStat_Kernel4_18(t *testing.T) {
 	name := "testdevice"
 	stub := `   28994        0   304494    16115    10063    42070  1546600    41730        0     3434    55235        0        0        0        0`
-	stat := make(map[string]interface{})
+	stat := make(map[string]any)
 
 	err := parseDiskStat(name, stub, &stat)
 	assert.Nil(t, err)

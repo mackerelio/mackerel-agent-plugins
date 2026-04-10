@@ -104,8 +104,8 @@ func (m DockerPlugin) listContainer() ([]docker.APIContainers, error) {
 }
 
 // FetchMetrics interface for mackerel plugin
-func (m DockerPlugin) FetchMetrics() (map[string]interface{}, error) {
-	var stats map[string]interface{}
+func (m DockerPlugin) FetchMetrics() (map[string]any, error) {
+	var stats map[string]any
 
 	if m.Method == "File" {
 		return nil, errors.New("no longer supported")
@@ -149,10 +149,10 @@ func (m DockerPlugin) generateName(container docker.APIContainers) string {
 }
 
 // FetchMetricsWithAPI use docker API to fetch metrics
-func (m DockerPlugin) FetchMetricsWithAPI(containers []docker.APIContainers) (map[string]interface{}, error) {
+func (m DockerPlugin) FetchMetricsWithAPI(containers []docker.APIContainers) (map[string]any, error) {
 	var wg sync.WaitGroup
 	var mu sync.Mutex
-	res := map[string]interface{}{}
+	res := map[string]any{}
 	for _, container := range containers {
 		wg.Add(1)
 		go func(cont docker.APIContainers) {
@@ -196,7 +196,7 @@ func (m DockerPlugin) FetchMetricsWithAPI(containers []docker.APIContainers) (ma
 
 const internalCPUStatPrefix = "docker._internal.cpuacct."
 
-func (m DockerPlugin) parseStats(stats *map[string]interface{}, name string, result *docker.Stats) error {
+func (m DockerPlugin) parseStats(stats *map[string]any, name string, result *docker.Stats) error {
 	if m.UseCPUPercentage {
 		// intermediate data to calc CPU percentage
 		(*stats)[internalCPUStatPrefix+name+".user"] = (*result).CPUStats.CPUUsage.UsageInUsermode
@@ -250,7 +250,7 @@ func (m DockerPlugin) parseStats(stats *map[string]interface{}, name string, res
 	return nil
 }
 
-func addCPUPercentageStats(stats *map[string]interface{}, lastStat map[string]interface{}) {
+func addCPUPercentageStats(stats *map[string]any, lastStat map[string]any) {
 	for k, v := range lastStat {
 		if !strings.HasPrefix(k, internalCPUStatPrefix) || !strings.HasSuffix(k, ".host") {
 			continue

@@ -67,7 +67,7 @@ type NginxPlugin struct {
 // Reading: 66 Writing: 16 Waiting: 41
 
 // FetchMetrics interface for mackerelplugin
-func (n NginxPlugin) FetchMetrics() (map[string]interface{}, error) {
+func (n NginxPlugin) FetchMetrics() (map[string]any, error) {
 	req, err := http.NewRequest("GET", n.URI, nil)
 	if err != nil {
 		return nil, err
@@ -100,8 +100,8 @@ func (n NginxPlugin) FetchMetrics() (map[string]interface{}, error) {
 	return n.parseStats(resp.Body)
 }
 
-func (n NginxPlugin) parseStats(body io.Reader) (map[string]interface{}, error) {
-	stat := make(map[string]interface{})
+func (n NginxPlugin) parseStats(body io.Reader) (map[string]any, error) {
+	stat := make(map[string]any)
 
 	r := bufio.NewReader(body)
 	line, _, err := r.ReadLine()

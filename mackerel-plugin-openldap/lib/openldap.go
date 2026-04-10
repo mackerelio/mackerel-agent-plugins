@@ -5,6 +5,7 @@ import (
 	"errors"
 	"flag"
 	"fmt"
+	"maps"
 	"net/url"
 	"os"
 	"regexp"
@@ -79,9 +80,7 @@ func fetchOpenldapMetrics(l *ldap.Conn, base, prefix string, attrs []string) (ma
 }
 
 func mergeStat(dst, src map[string]float64) {
-	for k, v := range src {
-		dst[k] = v
-	}
+	maps.Copy(dst, src)
 }
 
 func latestCSN(sr *ldap.SearchResult) (time.Time, error) {
@@ -141,7 +140,7 @@ func getLatestCSN(host, base, bind, passwd string, useTLS, insecureSkipVerify bo
 }
 
 // FetchMetrics interface for mackerelplugin
-func (m OpenLDAPPlugin) FetchMetrics() (map[string]interface{}, error) {
+func (m OpenLDAPPlugin) FetchMetrics() (map[string]any, error) {
 	stat := make(map[string]float64)
 	if m.ReplBase != "" {
 		masterTime, err := getLatestCSN(m.ReplMasterHost, m.ReplBase, m.ReplMasterBind, m.ReplMasterPass, m.ReplMasterUseTLS, m.InsecureSkipVerify)
@@ -198,7 +197,7 @@ func (m OpenLDAPPlugin) FetchMetrics() (map[string]interface{}, error) {
 	}
 	mergeStat(stat, ldapCurrentConns)
 
-	result := make(map[string]interface{})
+	result := make(map[string]any)
 	for k, v := range stat {
 		result[k] = v
 	}

@@ -20,7 +20,7 @@ func TestFetchStatDatabase(t *testing.T) {
 
 	stat, err := fetchStatDatabase(db)
 
-	expected := map[string]interface{}{
+	expected := map[string]any{
 		"xact_commit":  uint64(11),
 		"blks_hit":     uint64(44),
 		"tup_returned": uint64(77),

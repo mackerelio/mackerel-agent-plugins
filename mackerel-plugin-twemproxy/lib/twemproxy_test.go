@@ -279,7 +279,7 @@ func TestFetchMetrics_disableEachMetrics(t *testing.T) {
 }
 
 func TestFetchMetricsFail(t *testing.T) {
-	assertPanic := func(t *testing.T, f func() (map[string]interface{}, error)) {
+	assertPanic := func(t *testing.T, f func() (map[string]any, error)) {
 		defer func() {
 			if r := recover(); r == nil {
 				t.Errorf("FetchMetrics should be panic: stats=%v", getReply())

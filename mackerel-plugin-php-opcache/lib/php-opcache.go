@@ -83,7 +83,7 @@ func (c PhpOpcachePlugin) FetchMetrics() (map[string]float64, error) {
 }
 
 func parsePhpOpcacheStatus(str string, p *map[string]float64) error {
-	for _, line := range strings.Split(str, "\n") {
+	for line := range strings.SplitSeq(str, "\n") {
 		record := strings.Split(line, ":")
 		if len(record) != 2 {
 			continue

@@ -110,13 +110,13 @@ func doMain(c *cli.Context) error {
 }
 
 // FetchMetrics fetch the metrics
-func (c Apache2Plugin) FetchMetrics() (map[string]interface{}, error) {
+func (c Apache2Plugin) FetchMetrics() (map[string]any, error) {
 	data, err := getApache2Metrics(c.Host, c.Port, c.Path, c.Header)
 	if err != nil {
 		return nil, err
 	}
 
-	stat := make(map[string]interface{})
+	stat := make(map[string]any)
 	errStat := parseApache2Status(data, &stat)
 	if errStat != nil {
 		return nil, errStat
@@ -132,13 +132,13 @@ func (c Apache2Plugin) FetchMetrics() (map[string]interface{}, error) {
 var scoreboardLine = regexp.MustCompile("Scoreboard(.*)")
 
 // parsing scoreboard from server-status?auto
-func parseApache2Scoreboard(str string, p *map[string]interface{}) error {
-	for _, line := range strings.Split(str, "\n") {
+func parseApache2Scoreboard(str string, p *map[string]any) error {
+	for line := range strings.SplitSeq(str, "\n") {
 		if !scoreboardLine.MatchString(line) {
 			continue
 		}
 		record := strings.Split(line, ":")
-		for _, sb := range strings.Split(strings.Trim(record[1], " "), "") {
+		for sb := range strings.SplitSeq(strings.Trim(record[1], " "), "") {
 			if sb == "." {
 				sb = ""
 			}
@@ -156,7 +156,7 @@ func parseApache2Scoreboard(str string, p *map[string]interface{}) error {
 }
 
 // parsing metrics from server-status?auto
-func parseApache2Status(str string, p *map[string]interface{}) error {
+func parseApache2Status(str string, p *map[string]any) error {
 	Params := map[string]string{
 		"Total Accesses": "requests",
 		"Total kBytes":   "bytes_sent",
@@ -164,7 +164,7 @@ func parseApache2Status(str string, p *map[string]interface{}) error {
 		"BusyWorkers":    "busy_workers",
 		"IdleWorkers":    "idle_workers"}
 
-	for _, line := range strings.Split(str, "\n") {
+	for line := range strings.SplitSeq(str, "\n") {
 		record := strings.Split(line, ":")
 		_, assert := Params[record[0]]
 		if !assert {

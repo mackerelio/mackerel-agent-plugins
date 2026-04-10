@@ -392,8 +392,8 @@ func (p EBSPlugin) fetch(ctx context.Context, volume types.Volume, setting cloud
 }
 
 // FetchMetrics fetch the metrics
-func (p EBSPlugin) FetchMetrics() (map[string]interface{}, error) {
-	stat := make(map[string]interface{})
+func (p EBSPlugin) FetchMetrics() (map[string]any, error) {
+	stat := make(map[string]any)
 
 	// Override when Nitro instance.
 	if p.Hypervisor == types.InstanceTypeHypervisorNitro {

@@ -52,7 +52,7 @@ func (m *RedisPlugin) configCmd(key string) (*redis.MapStringStringCmd, error) {
 	return cmd, nil
 }
 
-func (m *RedisPlugin) fetchPercentageOfMemory(stat map[string]interface{}) error {
+func (m *RedisPlugin) fetchPercentageOfMemory(stat map[string]any) error {
 	cmd, err := m.configCmd("maxmemory")
 	if err != nil {
 		logger.Errorf("Failed to run `%s GET maxmemory` command. %s", m.ConfigCommand, err)
@@ -79,7 +79,7 @@ func (m *RedisPlugin) fetchPercentageOfMemory(stat map[string]interface{}) error
 	return nil
 }
 
-func (m *RedisPlugin) fetchPercentageOfClients(stat map[string]interface{}) error {
+func (m *RedisPlugin) fetchPercentageOfClients(stat map[string]any) error {
 	cmd, err := m.configCmd("maxclients")
 	if err != nil {
 		logger.Errorf("Failed to run `%s GET maxclients` command. %s", m.ConfigCommand, err)
@@ -102,7 +102,7 @@ func (m *RedisPlugin) fetchPercentageOfClients(stat map[string]interface{}) erro
 	return nil
 }
 
-func (m *RedisPlugin) calculateCapacity(stat map[string]interface{}) error {
+func (m *RedisPlugin) calculateCapacity(stat map[string]any) error {
 	if err := m.fetchPercentageOfMemory(stat); err != nil {
 		return err
 	}
@@ -147,20 +147,20 @@ func (m *RedisPlugin) Connect() {
 }
 
 // FetchMetrics interface for mackerelplugin
-func (m RedisPlugin) FetchMetrics() (map[string]interface{}, error) {
+func (m RedisPlugin) FetchMetrics() (map[string]any, error) {
 	str, err := m.rdb.Info(m.ctx).Result()
 	if err != nil {
 		logger.Errorf("Failed to run info command. %s", err)
 		return nil, err
 	}
 
-	stat := make(map[string]interface{})
+	stat := make(map[string]any)
 
 	keysStat := 0.0
 	expiresStat := 0.0
 	var slaves []string
 
-	for _, line := range strings.Split(str, "\r\n") {
+	for line := range strings.SplitSeq(str, "\r\n") {
 		if line == "" {
 			continue
 		}
@@ -263,7 +263,7 @@ func (m RedisPlugin) FetchMetrics() (map[string]interface{}, error) {
 // fetchClusterMetrics fetches cluster metrics with `CLUSTER INFO` command.
 //
 //	https://redis.io/docs/latest/commands/cluster-info/
-func (m RedisPlugin) fetchClusterMetrics(stat map[string]interface{}) error {
+func (m RedisPlugin) fetchClusterMetrics(stat map[string]any) error {
 	str, err := m.rdb.ClusterInfo(m.ctx).Result()
 	if err != nil {
 		logger.Errorf("Failed to run info command. %s", err)
@@ -416,7 +416,7 @@ func (m RedisPlugin) GraphDefinition() map[string]mp.Graphs {
 
 	var metricsLag []mp.Metrics
 	var metricsOffsetDelay []mp.Metrics
-	for _, line := range strings.Split(str, "\r\n") {
+	for line := range strings.SplitSeq(str, "\r\n") {
 		if line == "" {
 			continue
 		}

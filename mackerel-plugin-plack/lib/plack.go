@@ -67,16 +67,16 @@ type PlackRequest struct{}
 
 // PlackServerStatus sturct for server-status's json
 type PlackServerStatus struct {
-	Uptime        interface{}    `json:"Uptime"` // Plack::Middleware::ServerStatus::Lite 0.35 outputs Uptime as a JSON number, though pre-0.35 outputs it as a JSON string.
-	TotalAccesses interface{}    `json:"TotalAccesses"`
-	TotalKbytes   interface{}    `json:"TotalKbytes"`
-	BusyWorkers   interface{}    `json:"BusyWorkers"`
-	IdleWorkers   interface{}    `json:"IdleWorkers"`
+	Uptime        any            `json:"Uptime"` // Plack::Middleware::ServerStatus::Lite 0.35 outputs Uptime as a JSON number, though pre-0.35 outputs it as a JSON string.
+	TotalAccesses any            `json:"TotalAccesses"`
+	TotalKbytes   any            `json:"TotalKbytes"`
+	BusyWorkers   any            `json:"BusyWorkers"`
+	IdleWorkers   any            `json:"IdleWorkers"`
 	Stats         []PlackRequest `json:"stats"`
 }
 
 // FetchMetrics interface for mackerelplugin
-func (p PlackPlugin) FetchMetrics() (map[string]interface{}, error) {
+func (p PlackPlugin) FetchMetrics() (map[string]any, error) {
 	req, err := http.NewRequest(http.MethodGet, p.URI, nil)
 	if err != nil {
 		return nil, err
@@ -92,7 +92,7 @@ func (p PlackPlugin) FetchMetrics() (map[string]interface{}, error) {
 	return p.parseStats(resp.Body)
 }
 
-func parseNumber(s interface{}) (float64, error) {
+func parseNumber(s any) (float64, error) {
 	switch v := s.(type) {
 	case string:
 		if f, err := strconv.ParseFloat(v, 64); err == nil {
@@ -104,8 +104,8 @@ func parseNumber(s interface{}) (float64, error) {
 	return 0, fmt.Errorf("failed to parse %v as Number", s)
 }
 
-func (p PlackPlugin) parseStats(body io.Reader) (map[string]interface{}, error) {
-	stat := make(map[string]interface{})
+func (p PlackPlugin) parseStats(body io.Reader) (map[string]any, error) {
+	stat := make(map[string]any)
 	decoder := json.NewDecoder(body)
 
 	var s PlackServerStatus

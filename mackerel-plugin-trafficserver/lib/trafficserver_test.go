@@ -7,7 +7,7 @@ import (
 )
 
 func TestParsePluginConfig(t *testing.T) {
-	stat := make(map[string]interface{})
+	stat := make(map[string]any)
 	parseVars(&parseVarsStub, &stat)
 
 	assert.EqualValues(t, stat["cache_hits"], 6565601)

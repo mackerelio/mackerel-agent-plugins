@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"io"
 	"log"
+	"maps"
 	"net"
 	"strconv"
 	"strings"
@@ -55,9 +56,7 @@ func (m MemcachedPlugin) FetchMetrics() (map[string]float64, error) {
 	if err != nil {
 		log.Printf("failed to get stats items: %s", err.Error())
 	} else {
-		for k, v := range ret2 {
-			ret[k] = v
-		}
+		maps.Copy(ret, ret2)
 	}
 	return ret, nil
 }

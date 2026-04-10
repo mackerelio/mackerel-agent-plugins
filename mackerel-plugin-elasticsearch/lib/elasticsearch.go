@@ -68,14 +68,14 @@ var metricPlace = map[string][]string{
 	"compilation_limit_triggered": {"script", "compilation_limit_triggered"},
 }
 
-func getFloatValue(s map[string]interface{}, keys []string) (float64, error) {
+func getFloatValue(s map[string]any, keys []string) (float64, error) {
 	var val float64
 	sm := s
 	for i, k := range keys {
 		if i+1 < len(keys) {
 			switch sm[k].(type) {
-			case map[string]interface{}:
-				sm = sm[k].(map[string]interface{})
+			case map[string]any:
+				sm = sm[k].(map[string]any)
 			default:
 				return 0, errors.New("Cannot handle as a hash") // nolint
 			}
@@ -127,13 +127,13 @@ func (p ElasticsearchPlugin) FetchMetrics() (map[string]float64, error) {
 	stat := make(map[string]float64)
 	decoder := json.NewDecoder(resp.Body)
 
-	var s map[string]interface{}
+	var s map[string]any
 	err = decoder.Decode(&s)
 	if err != nil {
 		return nil, err
 	}
 
-	nodes := s["nodes"].(map[string]interface{})
+	nodes := s["nodes"].(map[string]any)
 	n := ""
 	for k := range nodes {
 		if n != "" {
@@ -141,7 +141,7 @@ func (p ElasticsearchPlugin) FetchMetrics() (map[string]float64, error) {
 		}
 		n = k
 	}
-	node := nodes[n].(map[string]interface{})
+	node := nodes[n].(map[string]any)
 
 	for k, v := range metricPlace {
 		val, err := getFloatValue(node, v)

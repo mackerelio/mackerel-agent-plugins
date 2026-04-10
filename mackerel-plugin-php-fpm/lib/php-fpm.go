@@ -198,13 +198,13 @@ func (p PhpFpmPlugin) GraphDefinition() map[string]mp.Graphs {
 }
 
 // FetchMetrics interface for mackerelplugin
-func (p PhpFpmPlugin) FetchMetrics() (map[string]interface{}, error) {
+func (p PhpFpmPlugin) FetchMetrics() (map[string]any, error) {
 	status, err := getStatus(p)
 	if err != nil {
 		return nil, fmt.Errorf("Failed to fetch PHP-FPM metrics: %s", err) // nolint
 	}
 
-	result := map[string]interface{}{
+	result := map[string]any{
 		"total_processes":      status.TotalProcesses,
 		"active_processes":     status.ActiveProcesses,
 		"idle_processes":       status.IdleProcesses,

@@ -56,14 +56,14 @@ type TrafficserverPlugin struct {
 }
 
 // FetchMetrics interface for mackerelplugin
-func (m TrafficserverPlugin) FetchMetrics() (map[string]interface{}, error) {
+func (m TrafficserverPlugin) FetchMetrics() (map[string]any, error) {
 	var err error
 	strp, err := getDataWithCommand()
 	if err != nil {
 		return nil, err
 	}
 
-	stat := make(map[string]interface{})
+	stat := make(map[string]any)
 	err = parseVars(strp, &stat)
 	if err != nil {
 		return nil, err
@@ -72,7 +72,7 @@ func (m TrafficserverPlugin) FetchMetrics() (map[string]interface{}, error) {
 	return stat, nil
 }
 
-func parseVars(text *string, statp *map[string]interface{}) error {
+func parseVars(text *string, statp *map[string]any) error {
 	stat := *statp
 
 	varMetric := make(map[string]string)
@@ -80,8 +80,8 @@ func parseVars(text *string, statp *map[string]interface{}) error {
 		varMetric[varkey] = metric
 	}
 
-	lines := strings.Split(*text, "\n")
-	for _, line := range lines {
+	lines := strings.SplitSeq(*text, "\n")
+	for line := range lines {
 		factors := strings.Split(line, " ")
 		varkey := factors[0]
 

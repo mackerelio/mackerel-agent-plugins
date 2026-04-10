@@ -81,7 +81,7 @@ func TestFetchMetricsPercentageOfMemory(t *testing.T) {
 		ConfigCommand: "config",
 	}
 
-	stat1 := make(map[string]interface{})
+	stat1 := make(map[string]any)
 	err := rp.fetchPercentageOfMemory(stat1)
 	if err != nil {
 		t.Errorf("something went wrong")
@@ -106,7 +106,7 @@ func TestFetchMetricsPercentageOfMemory_100percent(t *testing.T) {
 		ConfigCommand: "config",
 	}
 
-	stat1 := make(map[string]interface{})
+	stat1 := make(map[string]any)
 	stat1["used_memory"] = float64(1048576)
 	err := rp.fetchPercentageOfMemory(stat1)
 	if err != nil {

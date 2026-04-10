@@ -98,7 +98,7 @@ func (c PhpApcPlugin) FetchMetrics() (map[string]float64, error) {
 
 // parsing metrics from server-status?auto
 func parsePhpApcStatus(str string, p *map[string]float64) error {
-	for _, line := range strings.Split(str, "\n") {
+	for line := range strings.SplitSeq(str, "\n") {
 		record := strings.Split(line, ":")
 		if len(record) != 2 {
 			continue
