@@ -138,7 +138,7 @@ func (s *SolrPlugin) loadStatsMbeanHandler(core string, cat string) error {
 	var uri strings.Builder
 	uri.WriteString(s.BaseURL + "/" + core + "/admin/mbeans?stats=true&wt=json&cat=" + cat)
 	for _, path := range handlerPaths {
-		uri.WriteString(fmt.Sprintf("&key=%s", url.QueryEscape(path)))
+		fmt.Fprintf(&uri, "&key=%s", url.QueryEscape(path))
 	}
 	stats, err := fetchJSONData(uri.String())
 	if err != nil {
