@@ -1,6 +1,6 @@
 module github.com/mackerelio/mackerel-agent-plugins/mackerel-plugin-mysql
 
-go 1.25.0
+go 1.25.9
 
 require github.com/mackerelio/mackerel-plugin-mysql v1.3.4
 

@@ -1,6 +1,6 @@
 module github.com/mackerelio/mackerel-agent-plugins/mackerel-plugin-gcp-compute-engine
 
-go 1.24.0
+go 1.25.9
 
 require github.com/mackerelio/mackerel-plugin-gcp-compute-engine v1.0.2
 

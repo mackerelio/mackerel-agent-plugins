@@ -1,6 +1,6 @@
 module github.com/mackerelio/mackerel-agent-plugins/mackerel-plugin-mcrouter
 
-go 1.25.1
+go 1.25.9
 
 require github.com/mackerelio/mackerel-plugin-mcrouter v0.1.0
 

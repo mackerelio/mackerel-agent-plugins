@@ -1,6 +1,6 @@
 module github.com/mackerelio/mackerel-agent-plugins/mackerel-plugin-rack-stats
 
-go 1.25.1
+go 1.25.9
 
 require github.com/mackerelio/mackerel-plugin-rack-stats v0.1.0
 

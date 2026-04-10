@@ -1,6 +1,6 @@
 module github.com/mackerelio/mackerel-agent-plugins/mackerel-plugin-aws-ec2
 
-go 1.19
+go 1.25.9
 
 require github.com/mackerelio/mackerel-plugin-aws-ec2 v1.0.1
 

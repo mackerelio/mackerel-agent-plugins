@@ -1,6 +1,6 @@
 module github.com/mackerelio/mackerel-agent-plugins/mackerel-plugin-gearmand
 
-go 1.19
+go 1.25.9
 
 require github.com/mackerelio/mackerel-plugin-gearmand v1.0.1
 

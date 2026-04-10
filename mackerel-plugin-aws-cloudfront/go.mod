@@ -1,6 +1,6 @@
 module github.com/mackerelio/mackerel-agent-plugins/mackerel-plugin-aws-cloudfront
 
-go 1.24.2
+go 1.25.9
 
 require github.com/mackerelio/mackerel-plugin-aws-cloudfront v0.1.1
 
