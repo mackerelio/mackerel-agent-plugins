@@ -1,3 +1,148 @@
+mackerel-agent-plugins (0.90.1-1.v2) stable; urgency=low
+
+  * Use Go 1.26 for builds, supports Go 1.25 and above. (by ne-sachirou)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/1463>
+  * Bump the mackerelio group across 4 directories with 4 updates (by dependabot[bot])
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/1462>
+  * Bump github.com/lib/pq from 1.12.1 to 1.12.3 (by dependabot[bot])
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/1461>
+  * Bump github.com/aws/aws-sdk-go-v2/service/ec2 from 1.296.2 to 1.297.0 in the aws-aws-sdk-go-v2 group across 1 directory (by dependabot[bot])
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/1460>
+  * Bump github.com/mackerelio/go-mackerel-plugin from 0.1.5 to 0.1.6 in the mackerelio group across 1 directory (by dependabot[bot])
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/1458>
+  * Bump github.com/lib/pq from 1.12.0 to 1.12.1 (by dependabot[bot])
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/1457>
+  * Bump github.com/fsouza/go-dockerclient from 1.13.0 to 1.13.1 (by dependabot[bot])
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/1456>
+  * Bump the aws-aws-sdk-go-v2 group across 1 directory with 3 updates (by dependabot[bot])
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/1455>
+  * Bump shogo82148/actions-setup-perl from 1.38.1 to 1.39.0 (by dependabot[bot])
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/1454>
+  * Bump github.com/aws/aws-sdk-go-v2/service/ec2 from 1.296.1 to 1.296.2 in the aws-aws-sdk-go-v2 group across 1 directory (by dependabot[bot])
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/1453>
+  * Bump github.com/montanaflynn/stats from 0.8.2 to 0.9.0 (by dependabot[bot])
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/1452>
+  * Bump actions/setup-go from 6.3.0 to 6.4.0 (by dependabot[bot])
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/1451>
+  * Bump the aws-aws-sdk-go-v2 group across 1 directory with 6 updates (by dependabot[bot])
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/1450>
+  * Bump github.com/moby/moby/v2 from 2.0.0-beta.6 to 2.0.0-beta.8 (by dependabot[bot])
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/1449>
+  * Bump shogo82148/actions-setup-perl from 1.37.1 to 1.38.1 (by dependabot[bot])
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/1448>
+  * Bump github.com/lib/pq from 1.11.2 to 1.12.0 (by dependabot[bot])
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/1447>
+  * Bump github.com/aws/aws-sdk-go-v2/service/ec2 from 1.294.1 to 1.296.0 in the aws-aws-sdk-go-v2 group across 1 directory (by dependabot[bot])
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/1446>
+  * Bump google.golang.org/grpc from 1.56.3 to 1.79.3 in /mackerel-plugin-gcp-compute-engine (by dependabot[bot])
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/1444>
+  * Bump github.com/go-ldap/ldap/v3 from 3.4.12 to 3.4.13 (by dependabot[bot])
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/1443>
+  * fix tests (by yseto)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/1442>
+  * Bump github.com/montanaflynn/stats from 0.7.1 to 0.8.2 (by dependabot[bot])
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/1441>
+  * Bump actions/download-artifact from 8.0.0 to 8.0.1 (by dependabot[bot])
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/1440>
+  * Bump the aws-aws-sdk-go-v2 group across 1 directory with 6 updates (by dependabot[bot])
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/1439>
+  * Bump golang.org/x/text from 0.34.0 to 0.35.0 in the golang-x group across 1 directory (by dependabot[bot])
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/1438>
+  * Bump github.com/mackerelio/go-osstat from 0.2.6 to 0.2.7 in the mackerelio group across 1 directory (by dependabot[bot])
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/1437>
+  * Bump github.com/aws/aws-sdk-go-v2/service/ec2 from 1.293.1 to 1.294.0 in the aws-aws-sdk-go-v2 group across 1 directory (by dependabot[bot])
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/1436>
+  * Bump the aws-aws-sdk-go-v2 group across 1 directory with 6 updates (by dependabot[bot])
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/1435>
+  * Bump actions/setup-go from 6.2.0 to 6.3.0 (by dependabot[bot])
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/1434>
+  * Bump actions/upload-artifact from 6.0.0 to 7.0.0 (by dependabot[bot])
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/1433>
+  * Bump mackerelio/workflows/.github/workflows/setup-go-matrix.yml from 1.8.0 to 1.9.0 (by dependabot[bot])
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/1432>
+  * Bump mackerelio/workflows/.github/workflows/go-lint.yml from 1.8.0 to 1.9.0 (by dependabot[bot])
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/1431>
+  * Bump mackerelio/workflows/.github/workflows/go-test.yml from 1.8.0 to 1.9.0 (by dependabot[bot])
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/1430>
+  * Bump github.com/aws/aws-sdk-go-v2/service/ec2 from 1.291.0 to 1.293.0 in the aws-aws-sdk-go-v2 group across 1 directory (by dependabot[bot])
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/1429>
+  * Bump actions/download-artifact from 7.0.0 to 8.0.0 (by dependabot[bot])
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/1428>
+  * Bump the aws-aws-sdk-go-v2 group across 1 directory with 2 updates (by dependabot[bot])
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/1426>
+  * Bump the aws-aws-sdk-go-v2 group across 1 directory with 6 updates (by dependabot[bot])
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/1425>
+  * Bump github.com/redis/go-redis/v9 from 9.17.3 to 9.18.0 (by dependabot[bot])
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/1424>
+  * Bump shogo82148/actions-setup-perl from 1.37.0 to 1.37.1 (by dependabot[bot])
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/1423>
+  * Bump filippo.io/edwards25519 from 1.1.0 to 1.1.1 (by dependabot[bot])
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/1422>
+  * Bump the aws-aws-sdk-go-v2 group across 1 directory with 2 updates (by dependabot[bot])
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/1421>
+  * Bump filippo.io/edwards25519 from 1.1.0 to 1.1.1 in /mackerel-plugin-mysql (by dependabot[bot])
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/1420>
+  * Bump the aws-aws-sdk-go-v2 group across 1 directory with 3 updates (by dependabot[bot])
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/1419>
+  * Bump github.com/aws/aws-sdk-go-v2/service/ec2 from 1.289.0 to 1.289.1 in the aws-aws-sdk-go-v2 group across 1 directory (by dependabot[bot])
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/1418>
+  * Bump github.com/lib/pq from 1.11.1 to 1.11.2 (by dependabot[bot])
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/1417>
+  * Bump the aws-aws-sdk-go-v2 group across 1 directory with 2 updates (by dependabot[bot])
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/1416>
+  * Bump golang.org/x/text from 0.33.0 to 0.34.0 in the golang-x group across 1 directory (by dependabot[bot])
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/1415>
+  * Bump github.com/aws/aws-sdk-go-v2/service/ec2 from 1.286.0 to 1.287.0 in the aws-aws-sdk-go-v2 group across 1 directory (by dependabot[bot])
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/1414>
+  * Bump github.com/aws/aws-sdk-go-v2/service/ec2 from 1.285.0 to 1.286.0 in the aws-aws-sdk-go-v2 group across 1 directory (by dependabot[bot])
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/1413>
+  * Bump github.com/fsouza/go-dockerclient from 1.12.3 to 1.13.0 (by dependabot[bot])
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/1412>
+  * Bump github.com/lib/pq from 1.10.9 to 1.11.1 (by dependabot[bot])
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/1411>
+  * Bump github.com/aws/aws-sdk-go-v2/service/ec2 from 1.284.0 to 1.285.0 in the aws-aws-sdk-go-v2 group across 1 directory (by dependabot[bot])
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/1410>
+  * Bump github.com/redis/go-redis/v9 from 9.17.2 to 9.17.3 (by dependabot[bot])
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/1409>
+  * Bump github.com/aws/aws-sdk-go-v2/service/ec2 from 1.283.0 to 1.284.0 in the aws-aws-sdk-go-v2 group across 1 directory (by dependabot[bot])
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/1408>
+  * Bump github.com/aws/aws-sdk-go-v2/service/ec2 from 1.282.0 to 1.283.0 in the aws-aws-sdk-go-v2 group across 1 directory (by dependabot[bot])
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/1407>
+  * Bump github.com/aws/aws-sdk-go-v2/service/ec2 from 1.281.0 to 1.282.0 in the aws-aws-sdk-go-v2 group across 1 directory (by dependabot[bot])
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/1406>
+  * Bump github.com/aws/aws-sdk-go-v2/service/ec2 from 1.280.0 to 1.281.0 in the aws-aws-sdk-go-v2 group across 1 directory (by dependabot[bot])
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/1405>
+  * Bump actions/checkout from 6.0.1 to 6.0.2 (by dependabot[bot])
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/1404>
+  * Bump github.com/aws/aws-sdk-go-v2/service/ec2 from 1.279.2 to 1.280.0 in the aws-aws-sdk-go-v2 group across 1 directory (by dependabot[bot])
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/1403>
+  * Bump github.com/gosnmp/gosnmp from 1.43.1 to 1.43.2 (by dependabot[bot])
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/1402>
+  * Bump github.com/aws/aws-sdk-go-v2/service/ec2 from 1.279.1 to 1.279.2 in the aws-aws-sdk-go-v2 group across 1 directory (by dependabot[bot])
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/1401>
+  * Bump actions/setup-go from 6.1.0 to 6.2.0 (by dependabot[bot])
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/1400>
+  * Bump golang.org/x/text from 0.32.0 to 0.33.0 in the golang-x group across 1 directory (by dependabot[bot])
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/1399>
+  * Bump github.com/gosnmp/gosnmp from 1.42.1 to 1.43.1 (by dependabot[bot])
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/1398>
+  * Bump the aws-aws-sdk-go-v2 group across 1 directory with 6 updates (by dependabot[bot])
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/1397>
+  * Bump shogo82148/actions-setup-perl from 1.36.0 to 1.37.0 (by dependabot[bot])
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/1396>
+  * Bump github.com/aws/aws-sdk-go-v2/service/ec2 from 1.278.0 to 1.279.0 in the aws-aws-sdk-go-v2 group across 1 directory (by dependabot[bot])
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/1395>
+  * Bump github.com/aws/aws-sdk-go-v2/service/ec2 from 1.277.0 to 1.278.0 in the aws-aws-sdk-go-v2 group across 1 directory (by dependabot[bot])
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/1394>
+  * Bump actions/upload-artifact from 5.0.0 to 6.0.0 (by dependabot[bot])
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/1393>
+  * Bump actions/download-artifact from 6.0.0 to 7.0.0 (by dependabot[bot])
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/1392>
+  * Bump the aws-aws-sdk-go-v2 group across 1 directory with 2 updates (by dependabot[bot])
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/1391>
+
+ -- mackerel <mackerel-developers@hatena.ne.jp>  Mon, 13 Apr 2026 08:23:05 +0000
+
 mackerel-agent-plugins (0.90.0-1.v2) stable; urgency=low
 
   * Bump github.com/aws/aws-sdk-go-v2/service/ec2 from 1.276.1 to 1.277.0 in the aws-aws-sdk-go-v2 group across 1 directory (by dependabot[bot])
