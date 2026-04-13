@@ -1,6 +1,6 @@
 module github.com/mackerelio/mackerel-agent-plugins/mackerel-plugin-aws-ec2-cpucredit
 
-go 1.25.9
+go 1.24.2
 
 require github.com/mackerelio/mackerel-plugin-aws-ec2-cpucredit v0.1.0
 

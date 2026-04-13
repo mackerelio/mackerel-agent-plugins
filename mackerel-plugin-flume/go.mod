@@ -1,6 +1,6 @@
 module github.com/mackerelio/mackerel-agent-plugins/mackerel-plugin-flume
 
-go 1.25.9
+go 1.19
 
 require github.com/mackerelio/mackerel-plugin-flume v1.0.0
 
