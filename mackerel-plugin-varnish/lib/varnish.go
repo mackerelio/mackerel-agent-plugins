@@ -80,7 +80,7 @@ type VarnishPlugin struct {
 }
 
 // FetchMetrics interface for mackerelplugin
-func (m VarnishPlugin) FetchMetrics() (map[string]interface{}, error) {
+func (m VarnishPlugin) FetchMetrics() (map[string]any, error) {
 	var out []byte
 	var err error
 
@@ -96,12 +96,12 @@ func (m VarnishPlugin) FetchMetrics() (map[string]interface{}, error) {
 	lineexp := regexp.MustCompile(`^([^ ]+) +(\d+)`)
 	smaexp := regexp.MustCompile(`^SMA\.([^\.]+)\.(.+)$`)
 
-	stat := map[string]interface{}{
+	stat := map[string]any{
 		"requests": float64(0),
 	}
 
 	var tmpv float64
-	for _, line := range strings.Split(string(out), "\n") {
+	for line := range strings.SplitSeq(string(out), "\n") {
 		match := lineexp.FindStringSubmatch(line)
 		if match == nil {
 			continue

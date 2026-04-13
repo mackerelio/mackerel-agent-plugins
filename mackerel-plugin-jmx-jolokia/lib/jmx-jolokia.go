@@ -22,8 +22,8 @@ type JmxJolokiaPlugin struct {
 type JmxJolokiaResponse struct {
 	Status    uint32
 	Timestamp uint32
-	Request   map[string]interface{}
-	Value     map[string]interface{}
+	Request   map[string]any
+	Value     map[string]any
 	Error     string
 }
 
@@ -77,8 +77,8 @@ var graphdef = map[string]mp.Graphs{
 }
 
 // FetchMetrics interface for mackerelplugin
-func (j JmxJolokiaPlugin) FetchMetrics() (map[string]interface{}, error) {
-	stat := make(map[string]interface{})
+func (j JmxJolokiaPlugin) FetchMetrics() (map[string]any, error) {
+	stat := make(map[string]any)
 	if err := j.fetchMemory(stat); err != nil {
 		logger.Warningf(err.Error())
 	}
@@ -98,18 +98,18 @@ func (j JmxJolokiaPlugin) FetchMetrics() (map[string]interface{}, error) {
 	return stat, nil
 }
 
-func (j JmxJolokiaPlugin) fetchMemory(stat map[string]interface{}) error {
+func (j JmxJolokiaPlugin) fetchMemory(stat map[string]any) error {
 	resp, err := j.executeGetRequest("java.lang:type=Memory")
 	if err != nil {
 		return err
 	}
-	heap := resp.Value["HeapMemoryUsage"].(map[string]interface{})
+	heap := resp.Value["HeapMemoryUsage"].(map[string]any)
 	stat["HeapMemoryInit"] = heap["init"]
 	stat["HeapMemoryCommitted"] = heap["committed"]
 	stat["HeapMemoryMax"] = heap["max"]
 	stat["HeapMemoryUsed"] = heap["used"]
 
-	nonHeap := resp.Value["NonHeapMemoryUsage"].(map[string]interface{})
+	nonHeap := resp.Value["NonHeapMemoryUsage"].(map[string]any)
 	stat["NonHeapMemoryInit"] = nonHeap["init"]
 	stat["NonHeapMemoryCommitted"] = nonHeap["committed"]
 	stat["NonHeapMemoryMax"] = nonHeap["max"]
@@ -118,7 +118,7 @@ func (j JmxJolokiaPlugin) fetchMemory(stat map[string]interface{}) error {
 	return nil
 }
 
-func (j JmxJolokiaPlugin) fetchClassLoad(stat map[string]interface{}) error {
+func (j JmxJolokiaPlugin) fetchClassLoad(stat map[string]any) error {
 	resp, err := j.executeGetRequest("java.lang:type=ClassLoading")
 	if err != nil {
 		return err
@@ -130,7 +130,7 @@ func (j JmxJolokiaPlugin) fetchClassLoad(stat map[string]interface{}) error {
 	return nil
 }
 
-func (j JmxJolokiaPlugin) fetchThread(stat map[string]interface{}) error {
+func (j JmxJolokiaPlugin) fetchThread(stat map[string]any) error {
 	resp, err := j.executeGetRequest("java.lang:type=Threading")
 	if err != nil {
 		return err
@@ -142,7 +142,7 @@ func (j JmxJolokiaPlugin) fetchThread(stat map[string]interface{}) error {
 	return nil
 }
 
-func (j JmxJolokiaPlugin) fetchOperatingSystem(stat map[string]interface{}) error {
+func (j JmxJolokiaPlugin) fetchOperatingSystem(stat map[string]any) error {
 	resp, err := j.executeGetRequest("java.lang:type=OperatingSystem")
 	if err != nil {
 		return err

@@ -248,7 +248,7 @@ func (h2o H2OPlugin) FetchMetrics() (map[string]float64, error) {
 }
 
 func (h2o H2OPlugin) parseStats(body io.Reader) (map[string]float64, error) {
-	stat := make(map[string]interface{})
+	stat := make(map[string]any)
 	metrics := make(map[string]float64)
 
 	b, err := io.ReadAll(body)
@@ -267,7 +267,7 @@ func (h2o H2OPlugin) parseStats(body io.Reader) (map[string]float64, error) {
 		switch k {
 		case "server-version", "openssl-version", "current-time", "restart-time", "generation":
 		case "requests":
-			requests, ok := stat["requests"].([]interface{})
+			requests, ok := stat["requests"].([]any)
 			if !ok {
 				return nil, errors.New("cannot get \"requests\" value")
 			}

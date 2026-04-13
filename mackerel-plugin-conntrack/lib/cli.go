@@ -34,7 +34,7 @@ func (c ConntrackPlugin) GraphDefinition() map[string]mp.Graphs {
 }
 
 // FetchMetrics interface for mackerelplugin.
-func (c ConntrackPlugin) FetchMetrics() (map[string]interface{}, error) {
+func (c ConntrackPlugin) FetchMetrics() (map[string]any, error) {
 	conntrackCount, err := CurrentValue(ConntrackCountPaths)
 	if err != nil {
 		return nil, err
@@ -45,7 +45,7 @@ func (c ConntrackPlugin) FetchMetrics() (map[string]interface{}, error) {
 		return nil, err
 	}
 
-	stat := make(map[string]interface{})
+	stat := make(map[string]any)
 	stat["conntrack.count.used"] = conntrackCount
 	stat["conntrack.count.free"] = (conntrackMax - conntrackCount)
 

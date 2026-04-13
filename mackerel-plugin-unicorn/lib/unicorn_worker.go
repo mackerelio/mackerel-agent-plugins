@@ -47,7 +47,7 @@ func fetchUnicornWorkerPids(m string) ([]string, error) {
 		return workerPids, fmt.Errorf("Failed to ps of command: %s", err) // nolint
 	}
 
-	for _, line := range strings.Split(string(out), "\n") {
+	for line := range strings.SplitSeq(string(out), "\n") {
 		if !strings.Contains(line, "worker") {
 			continue
 		}

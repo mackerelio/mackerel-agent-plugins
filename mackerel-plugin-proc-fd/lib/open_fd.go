@@ -37,7 +37,7 @@ func (o RealOpenFd) getNumOpenFileDesc() (map[string]uint64, error) {
 	}
 
 	// List the number of all open files beloging to each pid
-	for _, pid := range strings.Split(strings.TrimSpace(string(out)), "\n") {
+	for pid := range strings.SplitSeq(strings.TrimSpace(string(out)), "\n") {
 		out, err = pipeline.Output(
 			[]string{"ls", "-l", fmt.Sprintf("/proc/%s/fd", pid)},
 			[]string{"grep", "-v", "total"},

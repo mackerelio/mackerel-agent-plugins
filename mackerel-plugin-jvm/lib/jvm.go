@@ -3,6 +3,7 @@ package mpjvm
 import (
 	"flag"
 	"fmt"
+	"maps"
 	"os"
 	"os/exec"
 	"strconv"
@@ -51,7 +52,7 @@ func fetchLvmidByAppname(appname, target, jpsPath string) (string, error) {
 		return "", err
 	}
 
-	for _, line := range strings.Split(string(stdout), "\n") {
+	for line := range strings.SplitSeq(string(stdout), "\n") {
 		words := strings.Split(line, " ")
 		if len(words) != 2 {
 			continue
@@ -157,9 +158,7 @@ func fetchCMSInitiatingOccupancyFraction(lvmid, JinfoPath string) (float64, erro
 }
 
 func mergeStat(dst, src map[string]float64) {
-	for k, v := range src {
-		dst[k] = v
-	}
+	maps.Copy(dst, src)
 }
 
 func runTimeoutCommand(Path string, Args ...string) (string, string, *timeout.ExitStatus, error) {
@@ -206,7 +205,7 @@ func runTimeoutCommand(Path string, Args ...string) (string, string, *timeout.Ex
 // 3072.0 3072.0    0.0 2848.0  1  15 3072.0 693248.0 626782.2   3463   33.658
 
 // FetchMetrics interface for mackerelplugin
-func (m JVMPlugin) FetchMetrics() (map[string]interface{}, error) {
+func (m JVMPlugin) FetchMetrics() (map[string]any, error) {
 	gcStat, err := m.fetchJstatMetrics("-gc")
 	if err != nil {
 		return nil, err
@@ -235,7 +234,7 @@ func (m JVMPlugin) FetchMetrics() (map[string]interface{}, error) {
 	mergeStat(stat, gcOldStat)
 	mergeStat(stat, gcSpaceRate)
 
-	result := make(map[string]interface{})
+	result := make(map[string]any)
 	for k, v := range stat {
 		result[k] = v
 	}

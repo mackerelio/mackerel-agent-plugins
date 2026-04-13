@@ -59,7 +59,7 @@ func (s *SolrPlugin) greaterThanOrEqualToMajorVersion(minVer int) bool {
 	return currentVer >= minVer
 }
 
-func fetchJSONData(url string) (map[string]interface{}, error) {
+func fetchJSONData(url string) (map[string]any, error) {
 	req, err := http.NewRequest(http.MethodGet, url, nil)
 	if err != nil {
 		return nil, err
@@ -73,7 +73,7 @@ func fetchJSONData(url string) (map[string]interface{}, error) {
 	}
 	defer resp.Body.Close()
 	dec := json.NewDecoder(resp.Body)
-	var stats map[string]interface{}
+	var stats map[string]any
 	err = dec.Decode(&stats)
 	if err != nil {
 		logger.Errorf("Failed to %s", err)
@@ -82,8 +82,8 @@ func fetchJSONData(url string) (map[string]interface{}, error) {
 	return stats, nil
 }
 
-func (s *SolrPlugin) loadStatsCore(core string, values interface{}) error {
-	coreStats := values.(map[string]interface{})["index"].(map[string]interface{})
+func (s *SolrPlugin) loadStatsCore(core string, values any) error {
+	coreStats := values.(map[string]any)["index"].(map[string]any)
 	for _, k := range coreStatKeys {
 		v, ok := coreStats[k].(float64)
 		if !ok {
@@ -95,23 +95,23 @@ func (s *SolrPlugin) loadStatsCore(core string, values interface{}) error {
 	return nil
 }
 
-func (s *SolrPlugin) setStatsMbean(core string, stats map[string]interface{}, allowKeys []string, keyIndex int) {
-	for _, values := range stats["solr-mbeans"].([]interface{}) {
+func (s *SolrPlugin) setStatsMbean(core string, stats map[string]any, allowKeys []string, keyIndex int) {
+	for _, values := range stats["solr-mbeans"].([]any) {
 		switch values.(type) {
 		case string:
 			continue
 		default:
-			for key, value := range values.(map[string]interface{}) {
-				for k, v := range value.(map[string]interface{}) {
+			for key, value := range values.(map[string]any) {
+				for k, v := range value.(map[string]any) {
 					if k != "stats" {
 						continue
 					}
 					if v == nil {
 						continue
 					}
-					statValues := v.(map[string]interface{})
+					statValues := v.(map[string]any)
 					if s.greaterThanOrEqualToMajorVersion(7) {
-						keyConvertedStatValues := make(map[string]interface{})
+						keyConvertedStatValues := make(map[string]any)
 						var keyParts []string
 						for k, v := range statValues {
 							keyParts = strings.Split(k, ".")
@@ -135,11 +135,12 @@ func (s *SolrPlugin) setStatsMbean(core string, stats map[string]interface{}, al
 }
 
 func (s *SolrPlugin) loadStatsMbeanHandler(core string, cat string) error {
-	uri := s.BaseURL + "/" + core + "/admin/mbeans?stats=true&wt=json&cat=" + cat
+	var uri strings.Builder
+	uri.WriteString(s.BaseURL + "/" + core + "/admin/mbeans?stats=true&wt=json&cat=" + cat)
 	for _, path := range handlerPaths {
-		uri += fmt.Sprintf("&key=%s", url.QueryEscape(path))
+		fmt.Fprintf(&uri, "&key=%s", url.QueryEscape(path))
 	}
-	stats, err := fetchJSONData(uri)
+	stats, err := fetchJSONData(uri.String())
 	if err != nil {
 		return err
 	}
@@ -167,7 +168,7 @@ func (s *SolrPlugin) loadVersion() error {
 	if err != nil {
 		return err
 	}
-	lucene, ok := stats["lucene"].(map[string]interface{})
+	lucene, ok := stats["lucene"].(map[string]any)
 	if !ok {
 		return errors.New("type assersion error")
 	}
@@ -187,7 +188,7 @@ func (s *SolrPlugin) loadStats() error {
 		return err
 	}
 	s.Cores = []string{}
-	for core, values := range stats["status"].(map[string]interface{}) {
+	for core, values := range stats["status"].(map[string]any) {
 		s.Cores = append(s.Cores, core)
 		s.Stats[core] = map[string]float64{}
 		err := s.loadStatsCore(core, values)
@@ -221,8 +222,8 @@ func escapeSlash(slashIncludedString string) (str string) {
 }
 
 // FetchMetrics interface for mackerelplugin
-func (s SolrPlugin) FetchMetrics() (map[string]interface{}, error) {
-	stat := make(map[string]interface{})
+func (s SolrPlugin) FetchMetrics() (map[string]any, error) {
+	stat := make(map[string]any)
 	for core, stats := range s.Stats {
 		for k, v := range stats {
 			stat[core+"_"+k] = v

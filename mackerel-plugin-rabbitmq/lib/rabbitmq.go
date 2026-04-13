@@ -36,7 +36,7 @@ type RabbitMQPlugin struct {
 }
 
 // FetchMetrics interface for mackerelplugin
-func (r RabbitMQPlugin) FetchMetrics() (map[string]interface{}, error) {
+func (r RabbitMQPlugin) FetchMetrics() (map[string]any, error) {
 	rmqc, err := rabbithole.NewClient(r.URI, r.User, r.Password)
 	if err != nil {
 		return nil, err
@@ -49,8 +49,8 @@ func (r RabbitMQPlugin) FetchMetrics() (map[string]interface{}, error) {
 	return r.parseStats(*res)
 }
 
-func (r RabbitMQPlugin) parseStats(res rabbithole.Overview) (map[string]interface{}, error) {
-	stat := make(map[string]interface{})
+func (r RabbitMQPlugin) parseStats(res rabbithole.Overview) (map[string]any, error) {
+	stat := make(map[string]any)
 
 	stat["messages"] = float64(res.QueueTotals.Messages)
 	stat["ready"] = float64(res.QueueTotals.MessagesReady)

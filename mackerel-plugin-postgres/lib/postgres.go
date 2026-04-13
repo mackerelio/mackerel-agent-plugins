@@ -4,6 +4,7 @@ import (
 	"errors"
 	"flag"
 	"fmt"
+	"maps"
 	"os"
 	"regexp"
 	"strconv"
@@ -33,7 +34,7 @@ type PostgresPlugin struct {
 	Option   string
 }
 
-func fetchStatDatabase(db *sqlx.DB) (map[string]interface{}, error) {
+func fetchStatDatabase(db *sqlx.DB) (map[string]any, error) {
 	db = db.Unsafe()
 	rows, err := db.Queryx(`SELECT * FROM pg_stat_database`)
 	if err != nil {
@@ -102,7 +103,7 @@ func fetchStatDatabase(db *sqlx.DB) (map[string]interface{}, error) {
 			}
 		}
 	}
-	stat := make(map[string]interface{})
+	stat := make(map[string]any)
 	stat["xact_commit"] = totalStat.XactCommit
 	stat["xact_rollback"] = totalStat.XactRollback
 	stat["blks_read"] = totalStat.BlksRead
@@ -127,7 +128,7 @@ func fetchStatDatabase(db *sqlx.DB) (map[string]interface{}, error) {
 	return stat, nil
 }
 
-func fetchConnections(db *sqlx.DB, version version) (map[string]interface{}, error) {
+func fetchConnections(db *sqlx.DB, version version) (map[string]any, error) {
 	var query string
 
 	if version.first > 9 || version.first == 9 && version.second >= 6 {
@@ -141,7 +142,7 @@ func fetchConnections(db *sqlx.DB, version version) (map[string]interface{}, err
 		return nil, err
 	}
 
-	stat := map[string]interface{}{
+	stat := map[string]any{
 		"active":                      0.0,
 		"active_waiting":              0.0,
 		"idle":                        0.0,
@@ -170,7 +171,7 @@ func fetchConnections(db *sqlx.DB, version version) (map[string]interface{}, err
 	return stat, nil
 }
 
-func fetchDatabaseSize(db *sqlx.DB) (map[string]interface{}, error) {
+func fetchDatabaseSize(db *sqlx.DB) (map[string]any, error) {
 	rows, err := db.Query("select sum(pg_database_size(datname)) as dbsize from pg_database where has_database_privilege(datname, 'connect')")
 	if err != nil {
 		logger.Errorf("Failed to select pg_database_size. %s", err)
@@ -187,12 +188,12 @@ func fetchDatabaseSize(db *sqlx.DB) (map[string]interface{}, error) {
 		totalSize += dbsize
 	}
 
-	return map[string]interface{}{
+	return map[string]any{
 		"total_size": totalSize,
 	}, nil
 }
 
-func fetchXlogLocation(db *sqlx.DB, version version) (map[string]interface{}, error) {
+func fetchXlogLocation(db *sqlx.DB, version version) (map[string]any, error) {
 	var recovery bool
 	{
 		rows, err := db.Query("SELECT pg_is_in_recovery()")
@@ -221,7 +222,7 @@ func fetchXlogLocation(db *sqlx.DB, version version) (map[string]interface{}, er
 		}
 	}
 
-	stat := map[string]interface{}{
+	stat := map[string]any{
 		"xlog_location_bytes": 0.0,
 	}
 
@@ -307,10 +308,8 @@ func fetchVersion(db *sqlx.DB) (version, error) {
 	return res, errors.New("failed to select version()")
 }
 
-func mergeStat(dst, src map[string]interface{}) {
-	for k, v := range src {
-		dst[k] = v
-	}
+func mergeStat(dst, src map[string]any) {
+	maps.Copy(dst, src)
 }
 
 // MetricKeyPrefix returns the metrics key prefix
@@ -322,7 +321,7 @@ func (p PostgresPlugin) MetricKeyPrefix() string {
 }
 
 // FetchMetrics interface for mackerelplugin
-func (p PostgresPlugin) FetchMetrics() (map[string]interface{}, error) {
+func (p PostgresPlugin) FetchMetrics() (map[string]any, error) {
 
 	cmd := fmt.Sprintf("user=%s host=%s port=%s sslmode=%s connect_timeout=%d %s", p.Username, p.Host, p.Port, p.SSLmode, p.Timeout, p.Option)
 	if p.Password != "" {
@@ -359,7 +358,7 @@ func (p PostgresPlugin) FetchMetrics() (map[string]interface{}, error) {
 		return nil, err
 	}
 
-	stat := make(map[string]interface{})
+	stat := make(map[string]any)
 	mergeStat(stat, statStatDatabase)
 	mergeStat(stat, statConnections)
 	mergeStat(stat, statDatabaseSize)

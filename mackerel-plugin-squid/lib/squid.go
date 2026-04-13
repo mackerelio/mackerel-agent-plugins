@@ -73,7 +73,7 @@ type SquidPlugin struct {
 }
 
 // FetchMetrics interface for mackerelplugin
-func (m SquidPlugin) FetchMetrics() (map[string]interface{}, error) {
+func (m SquidPlugin) FetchMetrics() (map[string]any, error) {
 	conn, err := net.Dial("tcp", m.Target)
 	if err != nil {
 		return nil, err
@@ -83,11 +83,11 @@ func (m SquidPlugin) FetchMetrics() (map[string]interface{}, error) {
 }
 
 // ParseMgrInfo parser for squid mgr:info
-func (m SquidPlugin) ParseMgrInfo(info io.Reader) (map[string]interface{}, error) {
+func (m SquidPlugin) ParseMgrInfo(info io.Reader) (map[string]any, error) {
 	// https://wiki.squid-cache.org/Features/CacheManager/Info?highlight=%28Feature..Squid.Cache.Manager%29
 	scanner := bufio.NewScanner(info)
 
-	stat := make(map[string]interface{})
+	stat := make(map[string]any)
 	//regexpmap := make(map[string]*regexp.Regexp)
 	regexpmap := map[*regexp.Regexp]string{
 		regexp.MustCompile("Number of HTTP requests received:\t([0-9]+)"): "requests",

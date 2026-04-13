@@ -44,8 +44,8 @@ func getTables(m TDTablePlugin) ([]td.Table, error) {
 }
 
 // FetchMetrics interface for mackerelplugin
-func (m TDTablePlugin) FetchMetrics() (map[string]interface{}, error) {
-	stat := make(map[string]interface{})
+func (m TDTablePlugin) FetchMetrics() (map[string]any, error) {
+	stat := make(map[string]any)
 
 	tables, _ := getTables(m)
 	for _, table := range tables {

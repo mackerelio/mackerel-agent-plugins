@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"flag"
 	"fmt"
+	"maps"
 	"os"
 	"strconv"
 	"strings"
@@ -167,8 +168,8 @@ func (sp SidekiqPlugin) getDead(ctx context.Context) uint64 {
 	return sp.zCard(ctx, key)
 }
 
-func (sp SidekiqPlugin) getProcessedFailed(ctx context.Context) map[string]interface{} {
-	data := make(map[string]interface{}, 20)
+func (sp SidekiqPlugin) getProcessedFailed(ctx context.Context) map[string]any {
+	data := make(map[string]any, 20)
 
 	data["processed"] = sp.getProcessed(ctx)
 	data["failed"] = sp.getFailed(ctx)
@@ -176,8 +177,8 @@ func (sp SidekiqPlugin) getProcessedFailed(ctx context.Context) map[string]inter
 	return data
 }
 
-func (sp SidekiqPlugin) getStats(ctx context.Context, field []string) map[string]interface{} {
-	stats := make(map[string]interface{}, 20)
+func (sp SidekiqPlugin) getStats(ctx context.Context, field []string) map[string]any {
+	stats := make(map[string]any, 20)
 	for _, e := range field {
 		switch e {
 		case "busy":
@@ -200,8 +201,8 @@ func metricName(names ...string) string {
 	return strings.Join(names, ".")
 }
 
-func (sp SidekiqPlugin) getQueueLatency(ctx context.Context) map[string]interface{} {
-	latency := make(map[string]interface{}, 10)
+func (sp SidekiqPlugin) getQueueLatency(ctx context.Context) map[string]any {
+	latency := make(map[string]any, 10)
 
 	key := addNamespace(sp.Namespace, "queues")
 	queues := sp.sMembers(ctx, key)
@@ -217,7 +218,7 @@ func (sp SidekiqPlugin) getQueueLatency(ctx context.Context) map[string]interfac
 			latency[metricName("QueueLatency", q)] = 0.0
 			continue
 		}
-		var job map[string]interface{}
+		var job map[string]any
 		var thence float64
 
 		err = json.Unmarshal([]byte(queuesLRange[0]), &job)
@@ -239,7 +240,7 @@ func (sp SidekiqPlugin) getQueueLatency(ctx context.Context) map[string]interfac
 }
 
 // FetchMetrics fetch the metrics
-func (sp SidekiqPlugin) FetchMetrics() (map[string]interface{}, error) {
+func (sp SidekiqPlugin) FetchMetrics() (map[string]any, error) {
 	field := []string{"busy", "enqueued", "schedule", "retry", "dead", "latency"}
 	ctx := context.Background()
 	stats := sp.getStats(ctx, field)
@@ -247,12 +248,10 @@ func (sp SidekiqPlugin) FetchMetrics() (map[string]interface{}, error) {
 	latency := sp.getQueueLatency(ctx)
 
 	// merge maps
-	m := func(m ...map[string]interface{}) map[string]interface{} {
-		r := make(map[string]interface{}, 20)
+	m := func(m ...map[string]any) map[string]any {
+		r := make(map[string]any, 20)
 		for _, c := range m {
-			for k, v := range c {
-				r[k] = v
-			}
+			maps.Copy(r, c)
 		}
 
 		return r

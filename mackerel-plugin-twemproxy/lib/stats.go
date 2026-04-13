@@ -63,7 +63,7 @@ func getStats(p TwemproxyPlugin) (*TwemproxyStats, error) {
 
 // UnmarshalJSON interface for json.Unmarshaler
 func (t *TwemproxyStats) UnmarshalJSON(data []byte) error {
-	var raw map[string]interface{}
+	var raw map[string]any
 	err := json.Unmarshal(data, &raw)
 	if err != nil {
 		return err
@@ -87,7 +87,7 @@ L:
 				err = fmt.Errorf("invalid key: %v in rawTwemproxy: %v", k, raw)
 				break L
 			}
-		case map[string]interface{}:
+		case map[string]any:
 			pool, perr := decodePoolStats(v)
 			if perr != nil {
 				err = perr
@@ -105,7 +105,7 @@ L:
 	return err
 }
 
-func decodePoolStats(rawStats map[string]interface{}) (*PoolStats, error) {
+func decodePoolStats(rawStats map[string]any) (*PoolStats, error) {
 	pool := new(PoolStats)
 	pool.Servers = make(map[string]*ServerStats)
 
@@ -133,7 +133,7 @@ L:
 				err = fmt.Errorf("invalid key: %v in rawPool: %v", k, rawStats)
 				break L
 			}
-		case map[string]interface{}:
+		case map[string]any:
 			server, serr := decodeServerStats(v)
 			if serr != nil {
 				err = serr
@@ -152,7 +152,7 @@ L:
 	return pool, nil
 }
 
-func decodeServerStats(rawStats map[string]interface{}) (*ServerStats, error) {
+func decodeServerStats(rawStats map[string]any) (*ServerStats, error) {
 	server := new(ServerStats)
 
 	var err error

@@ -115,12 +115,12 @@ func (fpm FluentdPluginMetrics) getNormalizedPluginID() string {
 	return fpm.normalizedPluginID
 }
 
-func (f *FluentdPlugin) parseStats(body []byte) (map[string]interface{}, error) {
+func (f *FluentdPlugin) parseStats(body []byte) (map[string]any, error) {
 	var j FluentMonitorJSON
 	err := json.Unmarshal(body, &j)
 	f.plugins = j.Plugins
 
-	metrics := make(map[string]interface{})
+	metrics := make(map[string]any)
 	for _, p := range f.plugins {
 		if f.nonTargetPlugin(p) {
 			continue
@@ -149,7 +149,7 @@ func (f *FluentdPlugin) nonTargetPlugin(plugin FluentdPluginMetrics) bool {
 	return false
 }
 
-func (f *FluentdPlugin) fetchFluentdMetrics(host string, port int) (map[string]interface{}, error) {
+func (f *FluentdPlugin) fetchFluentdMetrics(host string, port int) (map[string]any, error) {
 	target := fmt.Sprintf("http://%s:%d/api/plugins.json", host, port)
 	req, err := http.NewRequest(http.MethodGet, target, nil)
 	if err != nil {
@@ -171,13 +171,13 @@ func (f *FluentdPlugin) fetchFluentdMetrics(host string, port int) (map[string]i
 }
 
 // FetchMetrics interface for mackerelplugin
-func (f FluentdPlugin) FetchMetrics() (map[string]interface{}, error) {
+func (f FluentdPlugin) FetchMetrics() (map[string]any, error) {
 	port, err := strconv.Atoi(f.Port)
 	if err != nil {
 		return nil, err
 	}
 	if f.Workers > 1 {
-		metrics := make(map[string]interface{})
+		metrics := make(map[string]any)
 		for workerNumber := 0; workerNumber < int(f.Workers); workerNumber++ {
 			m, e := f.fetchFluentdMetrics(f.Host, port+workerNumber)
 			if e != nil {
@@ -358,7 +358,7 @@ func Do() {
 		}
 	case "":
 	default:
-		for _, name := range strings.Split(*extendedMetricNames, ",") {
+		for name := range strings.SplitSeq(*extendedMetricNames, ",") {
 			fullName := metricName(name)
 			if _, exists := extendedGraphs[fullName]; !exists {
 				fmt.Fprintf(os.Stderr, "extended_metrics %s is not supported. See also https://www.fluentd.org/blog/fluentd-v1.6.0-has-been-released\n", name)

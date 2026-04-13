@@ -131,8 +131,8 @@ func (p UWSGIVassalPlugin) FetchMetrics() (map[string]float64, error) {
 	stat["requests"] = 0.0
 
 	var decoder *json.Decoder
-	if strings.HasPrefix(p.Socket, "unix://") {
-		conn, err := net.Dial("unix", strings.TrimPrefix(p.Socket, "unix://"))
+	if after, ok := strings.CutPrefix(p.Socket, "unix://"); ok {
+		conn, err := net.Dial("unix", after)
 		if err != nil {
 			return nil, err
 		}
