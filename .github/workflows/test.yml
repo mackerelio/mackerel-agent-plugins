@@ -51,7 +51,7 @@ jobs:
           fetch-depth: 0
       - uses: actions/setup-go@4a3601121dd01d1626a1e23e37211e3254c1c06c # v6.4.0
         with:
-          go-version: 1.26.x
+          go-version-file: 'go.mod'
       - run: make clean rpm deb tar
       - uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f # v7.0.0
         with:

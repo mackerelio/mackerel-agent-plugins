@@ -1,6 +1,8 @@
 module github.com/mackerelio/mackerel-agent-plugins
 
-go 1.25.9
+go 1.25.5
+
+toolchain go1.26.2
 
 require (
 	github.com/Songmu/axslogparser v1.4.0
