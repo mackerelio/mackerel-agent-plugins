@@ -28,7 +28,7 @@ require (
 	github.com/mackerelio/go-mackerel-plugin-helper v0.1.4
 	github.com/mackerelio/go-osstat v0.2.7
 	github.com/mackerelio/golib v1.2.2
-	github.com/mackerelio/mackerel-plugin-mongodb v1.1.4
+	github.com/mackerelio/mackerel-plugin-mongodb v1.2.0
 	github.com/mackerelio/mackerel-plugin-mysql v1.3.4
 	github.com/mattn/go-pipeline v0.0.0-20190323144519-32d779b32768
 	github.com/mattn/go-treasuredata v0.0.0-20170920030233-31758907cfc4
@@ -69,7 +69,6 @@ require (
 	github.com/go-asn1-ber/asn1-ber v1.5.8-0.20250403174932-29230038a667 // indirect
 	github.com/go-ole/go-ole v1.2.6 // indirect
 	github.com/go-sql-driver/mysql v1.9.3 // indirect
-	github.com/golang/snappy v0.0.4 // indirect
 	github.com/google/uuid v1.6.0 // indirect
 	github.com/klauspost/compress v1.18.4 // indirect
 	github.com/kr/pretty v0.2.1 // indirect
@@ -90,10 +89,10 @@ require (
 	github.com/sirupsen/logrus v1.9.4 // indirect
 	github.com/streadway/amqp v0.0.0-20190827072141-edfb9018d271 // indirect
 	github.com/xdg-go/pbkdf2 v1.0.0 // indirect
-	github.com/xdg-go/scram v1.1.2 // indirect
+	github.com/xdg-go/scram v1.2.0 // indirect
 	github.com/xdg-go/stringprep v1.0.4 // indirect
 	github.com/youmark/pkcs8 v0.0.0-20240726163527-a2c0da244d78 // indirect
-	go.mongodb.org/mongo-driver v1.17.7 // indirect
+	go.mongodb.org/mongo-driver/v2 v2.5.0 // indirect
 	go.uber.org/atomic v1.11.0 // indirect
 	golang.org/x/crypto v0.48.0 // indirect
 	golang.org/x/net v0.51.0 // indirect
