@@ -17,6 +17,7 @@ mackerel-plugin-aws-ec2-ebs [-instance-id=<id>] [-region=<aws-region>] [-access-
 the credential provided manually or fetched automatically with IAM Role, should have the policy that allows actions below.
 
 * `cloudwatch:GetMetricStatistics`
+* `cloudwatch:GetMetricData`
 * `ec2:DescribeInstanceTypes`
 * `ec2:DescribeInstances`
 * `ec2:DescribeVolumes`
