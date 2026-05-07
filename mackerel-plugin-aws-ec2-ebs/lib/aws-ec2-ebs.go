@@ -239,10 +239,11 @@ var graphdef = map[string]mp.Graphs{
 // EBSPlugin mackerel plugin for ebs
 type EBSPlugin struct {
 	// command line options
-	Region          string
-	AccessKeyID     string
-	SecretAccessKey string
-	InstanceID      string
+	Region           string
+	AccessKeyID      string
+	SecretAccessKey  string
+	InstanceID       string
+	UseGetMetricData bool
 
 	// internal states
 	EC2        *ec2.Client
@@ -393,6 +394,9 @@ func (p EBSPlugin) fetch(ctx context.Context, volume types.Volume, setting cloud
 
 // FetchMetrics fetch the metrics
 func (p EBSPlugin) FetchMetrics() (map[string]any, error) {
+	if p.UseGetMetricData {
+		return p.fetchMetrics_GetMetricData()
+	}
 	stat := make(map[string]any)
 
 	// Override when Nitro instance.
@@ -448,6 +452,7 @@ func Do() {
 	optInstanceID := flag.String("instance-id", "", "Instance ID")
 	optAccessKeyID := flag.String("access-key-id", "", "AWS Access Key ID")
 	optSecretAccessKey := flag.String("secret-access-key", "", "AWS Secret Access Key")
+	optUseGetMetricData := flag.Bool("use-get-metric-data", false, "use GetMetricData of Cloudwatch Metrics API")
 	optTempfile := flag.String("tempfile", "", "Temp file name")
 	flag.Parse()
 
@@ -486,6 +491,7 @@ func Do() {
 
 	ebs.AccessKeyID = *optAccessKeyID
 	ebs.SecretAccessKey = *optSecretAccessKey
+	ebs.UseGetMetricData = *optUseGetMetricData
 
 	if err := ebs.prepare(ctx); err != nil {
 		log.Fatalln(err)
