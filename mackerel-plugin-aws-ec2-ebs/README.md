@@ -6,12 +6,13 @@ AWS EC2 EBS custom metrics plugin for mackerel.io agent.
 ## Synopsis
 
 ```shell
-mackerel-plugin-aws-ec2-ebs [-instance-id=<id>] [-region=<aws-region>] [-access-key-id=<id>] [-secret-access-key=<key>] [-tempfile=<tempfile>]
+mackerel-plugin-aws-ec2-ebs [-instance-id=<id>] [-region=<aws-region>] [-access-key-id=<id>] [-secret-access-key=<key>] [-tempfile=<tempfile>] [-use-get-metric-data]
 ```
 * collect data from all volumes which attached to the instance
 * if you run on an ec2-instance, you probably don't have to specify `-instance-id` & `-region`
 * if you run on an ec2-instance and the instance is associated with an appropriate IAM Role, you probably don't have to specify `-access-key-id` & `-secret-access-key`
 * you can set keys by environment variables: `AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY` (see https://github.com/aws/aws-sdk-go#configuring-credentials)
+* if you use `cloudwatch:GetMetricData` have to specify `-use-get-metric-data`
 
 ## AWS IAM Policy
 the credential provided manually or fetched automatically with IAM Role, should have the policy that allows actions below.
