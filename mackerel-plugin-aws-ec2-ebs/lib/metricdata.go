@@ -120,7 +120,7 @@ func (p EBSPlugin) fetchMetrics_GetMetricData() (map[string]interface{}, error) 
 			for _, metric := range graphdef[graphName].Metrics {
 				metricKey := graphName + "." + metric.Name
 				cloudwatchdef := cloudwatchdefs[metricKey]
-				val, err := fetch_GetMetricData(idValues, vol, cloudwatchdef)
+				val, err := fetch_GetMetricData(idValues, cloudwatchdef)
 				if err != nil {
 					if errors.Is(err, errNoDataPoint) {
 						// nop
@@ -137,7 +137,7 @@ func (p EBSPlugin) fetchMetrics_GetMetricData() (map[string]interface{}, error) 
 	return stat, nil
 }
 
-func fetch_GetMetricData(idValues map[string]float64, volume types.Volume, setting cloudWatchSetting) (float64, error) {
+func fetch_GetMetricData(idValues map[string]float64, setting cloudWatchSetting) (float64, error) {
 	val, ok := idValues[metricDataID(setting.MetricName, setting.Statistics)]
 	if !ok {
 		return 0, errNoDataPoint
