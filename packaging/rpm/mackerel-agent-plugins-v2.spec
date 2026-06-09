@@ -39,6 +39,32 @@ done
 %{__targetdir}/*
 
 %changelog
+* Tue Jun 9 2026 <mackerel-developers@hatena.ne.jp> - 0.91.0
+- Add -tls-skip-verify flag to nginx plugin (by fujiwara)
+- Bump the aws-aws-sdk-go-v2 group across 1 directory with 6 updates (by dependabot[bot])
+- Bump actions/checkout from 6.0.2 to 6.0.3 (by dependabot[bot])
+- Bump github.com/fsouza/go-dockerclient from 1.13.1 to 1.13.2 (by dependabot[bot])
+- Bump the aws-aws-sdk-go-v2 group across 1 directory with 6 updates (by dependabot[bot])
+- Bump github.com/redis/go-redis/v9 from 9.19.0 to 9.20.0 (by dependabot[bot])
+- Bump the aws-aws-sdk-go-v2 group across 1 directory with 6 updates (by dependabot[bot])
+- Bump the aws-aws-sdk-go-v2 group across 1 directory with 3 updates (by dependabot[bot])
+- Bump github.com/aws/aws-sdk-go-v2/service/ec2 from 1.301.0 to 1.303.0 in the aws-aws-sdk-go-v2 group across 1 directory (by dependabot[bot])
+- Bump shogo82148/actions-setup-perl from 1.41.0 to 1.41.1 (by dependabot[bot])
+- Bump golang.org/x/text from 0.36.0 to 0.37.0 in the golang-x group across 1 directory (by dependabot[bot])
+- Bump github.com/aws/aws-sdk-go-v2/service/ec2 from 1.300.0 to 1.301.0 in the aws-aws-sdk-go-v2 group across 1 directory (by dependabot[bot])
+- Bump the aws-aws-sdk-go-v2 group across 1 directory with 6 updates (by dependabot[bot])
+- Bump github.com/redis/go-redis/v9 from 9.18.0 to 9.19.0 (by dependabot[bot])
+- Bump shogo82148/actions-setup-perl from 1.40.0 to 1.41.0 (by dependabot[bot])
+- Bump github.com/aws/aws-sdk-go-v2/service/ec2 from 1.298.0 to 1.299.0 in the aws-aws-sdk-go-v2 group across 1 directory (by dependabot[bot])
+- Bump github.com/Azure/go-ntlmssp from 0.1.0 to 0.1.1 (by dependabot[bot])
+- use a cloudwatch:GetMetricData on mackerel-plugin-aws-ec2-ebs (by yseto)
+- Bump github.com/aws/aws-sdk-go-v2/service/ec2 from 1.297.1 to 1.298.0 in the aws-aws-sdk-go-v2 group across 1 directory (by dependabot[bot])
+- Bump the aws-aws-sdk-go-v2 group across 1 directory with 6 updates (by dependabot[bot])
+- Bump the mackerelio group across 2 directories with 1 update (by dependabot[bot])
+- Bump actions/upload-artifact from 7.0.0 to 7.0.1 (by dependabot[bot])
+- Bump golang.org/x/text from 0.35.0 to 0.36.0 in the golang-x group across 1 directory (by dependabot[bot])
+- Bump shogo82148/actions-setup-perl from 1.39.0 to 1.40.0 (by dependabot[bot])
+
 * Mon Apr 13 2026 <mackerel-developers@hatena.ne.jp> - 0.90.1
 - Use Go 1.26 for builds, supports Go 1.25 and above. (by ne-sachirou)
 - Bump the mackerelio group across 4 directories with 4 updates (by dependabot[bot])
