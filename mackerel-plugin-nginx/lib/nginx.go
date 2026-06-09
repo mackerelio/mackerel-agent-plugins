@@ -2,6 +2,7 @@ package mpnginx
 
 import (
 	"bufio"
+	"crypto/tls"
 	"flag"
 	"fmt"
 	"io"
@@ -56,8 +57,9 @@ func (s *stringSlice) String() string {
 
 // NginxPlugin mackerel plugin for Nginx
 type NginxPlugin struct {
-	URI    string
-	Header stringSlice
+	URI           string
+	Header        stringSlice
+	TLSSkipVerify bool
 }
 
 // % wget -qO- http://localhost:8080/nginx_status
@@ -91,7 +93,14 @@ func (n NginxPlugin) FetchMetrics() (map[string]any, error) {
 		req.Header.Set("User-Agent", "mackerel-plugin-nginx")
 	}
 
-	resp, err := http.DefaultClient.Do(req)
+	client := http.Client{}
+	if n.TLSSkipVerify {
+		tr := &http.Transport{
+			TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
+		}
+		client.Transport = tr
+	}
+	resp, err := client.Do(req)
 	if err != nil {
 		return nil, err
 	}
@@ -184,6 +193,7 @@ func Do() {
 	optTempfile := flag.String("tempfile", "", "Temp file name")
 	optHeader := &stringSlice{}
 	flag.Var(optHeader, "header", "Set http header (e.g. \"Host: servername\")")
+	optTLSSkipVerify := flag.Bool("tls-skip-verify", false, "Skip TLS certificate verification")
 	flag.Parse()
 
 	var nginx NginxPlugin
@@ -192,6 +202,7 @@ func Do() {
 	} else {
 		nginx.URI = fmt.Sprintf("%s://%s:%s%s", *optScheme, *optHost, *optPort, *optPath)
 	}
+	nginx.TLSSkipVerify = *optTLSSkipVerify
 	nginx.Header = *optHeader
 
 	helper := mp.NewMackerelPlugin(nginx)

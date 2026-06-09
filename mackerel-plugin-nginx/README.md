@@ -6,7 +6,7 @@ Nginx custom metrics plugin for mackerel.io agent.
 ## Synopsis
 
 ```shell
-mackerel-plugin-nginx [-header=<header>] [-host=<host>] [-path=<path>] [-port=<port>] [-scheme=<'http'|'https'>] [-tempfile=<tempfile>] [-uri=<uri>]
+mackerel-plugin-nginx [-header=<header>] [-host=<host>] [-path=<path>] [-port=<port>] [-scheme=<'http'|'https'>] [-tempfile=<tempfile>] [-tls-skip-verify] [-uri=<uri>]
 ```
 
 ## Requirements
