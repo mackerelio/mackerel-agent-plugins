@@ -58,7 +58,7 @@ func TestHTTP(t *testing.T) {
 	assert.EqualValues(t, stat["accepts"], 1693613501)
 }
 
-// TestHTTPSInsecure tests that FetchMetrics cannot fetch metrics from HTTPS endpoint when TLS certificate is invalid.
+// TestHTTPSWithInvalidCert tests that FetchMetrics cannot fetch metrics from HTTPS endpoint when TLS certificate is invalid.
 // This is the default behavior of this plugin.
 func TestHTTPSWithInvalidCert(t *testing.T) {
 	sv := httptest.NewTLSServer(
