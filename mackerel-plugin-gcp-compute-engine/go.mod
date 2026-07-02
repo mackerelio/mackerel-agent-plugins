@@ -1,6 +1,6 @@
 module github.com/mackerelio/mackerel-agent-plugins/mackerel-plugin-gcp-compute-engine
 
-go 1.24.0
+go 1.25.0
 
 require github.com/mackerelio/mackerel-plugin-gcp-compute-engine v1.0.2
 
@@ -15,11 +15,11 @@ require (
 	github.com/mackerelio/golib v1.2.1 // indirect
 	go.opencensus.io v0.24.0 // indirect
 	golang.org/x/lint v0.0.0-20210508222113-6edffad5e616 // indirect
-	golang.org/x/net v0.48.0 // indirect
+	golang.org/x/net v0.55.0 // indirect
 	golang.org/x/oauth2 v0.34.0 // indirect
-	golang.org/x/sys v0.39.0 // indirect
-	golang.org/x/text v0.32.0 // indirect
-	golang.org/x/tools v0.39.0 // indirect
+	golang.org/x/sys v0.45.0 // indirect
+	golang.org/x/text v0.37.0 // indirect
+	golang.org/x/tools v0.44.0 // indirect
 	google.golang.org/api v0.114.0 // indirect
 	google.golang.org/appengine v1.6.7 // indirect
 	google.golang.org/genproto v0.0.0-20230410155749-daa745c078e1 // indirect
