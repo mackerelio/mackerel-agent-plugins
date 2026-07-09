@@ -26,7 +26,7 @@ require (
 	github.com/lib/pq v1.12.3
 	github.com/mackerelio/go-mackerel-plugin v0.1.6
 	github.com/mackerelio/go-mackerel-plugin-helper v0.1.4
-	github.com/mackerelio/go-osstat v0.2.7
+	github.com/mackerelio/go-osstat v0.2.8
 	github.com/mackerelio/golib v1.2.2
 	github.com/mackerelio/mackerel-plugin-mongodb v1.2.0
 	github.com/mackerelio/mackerel-plugin-mysql v1.3.4
@@ -96,6 +96,6 @@ require (
 	golang.org/x/crypto v0.51.0 // indirect
 	golang.org/x/net v0.55.0 // indirect
 	golang.org/x/sync v0.21.0 // indirect
-	golang.org/x/sys v0.45.0 // indirect
+	golang.org/x/sys v0.46.0 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 )
