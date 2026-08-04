@@ -20,7 +20,7 @@ require (
 	github.com/go-ldap/ldap/v3 v3.4.14
 	github.com/go-redis/redismock/v9 v9.2.0
 	github.com/gosnmp/gosnmp v1.44.0
-	github.com/jarcoal/httpmock v1.4.1
+	github.com/jarcoal/httpmock v1.4.2
 	github.com/jmoiron/sqlx v1.4.0
 	github.com/lestrrat-go/tcptest v0.0.0-20180223004312-f0345789c593
 	github.com/lib/pq v1.12.3
