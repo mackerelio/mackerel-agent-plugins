@@ -28,7 +28,7 @@ require (
 	github.com/mackerelio/go-mackerel-plugin-helper v0.1.4
 	github.com/mackerelio/go-osstat v0.2.8
 	github.com/mackerelio/golib v1.2.2
-	github.com/mackerelio/mackerel-plugin-mongodb v1.2.0
+	github.com/mackerelio/mackerel-plugin-mongodb v1.2.1
 	github.com/mackerelio/mackerel-plugin-mysql v1.3.4
 	github.com/mattn/go-pipeline v0.0.0-20190323144519-32d779b32768
 	github.com/mattn/go-treasuredata v0.0.0-20170920030233-31758907cfc4
@@ -90,7 +90,7 @@ require (
 	github.com/xdg-go/scram v1.2.0 // indirect
 	github.com/xdg-go/stringprep v1.0.4 // indirect
 	github.com/youmark/pkcs8 v0.0.0-20240726163527-a2c0da244d78 // indirect
-	go.mongodb.org/mongo-driver/v2 v2.5.0 // indirect
+	go.mongodb.org/mongo-driver/v2 v2.8.2 // indirect
 	go.uber.org/atomic v1.11.0 // indirect
 	go.yaml.in/yaml/v3 v3.0.5 // indirect
 	golang.org/x/crypto v0.54.0 // indirect
