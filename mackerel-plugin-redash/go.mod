@@ -1,6 +1,6 @@
 module github.com/mackerelio/mackerel-agent-plugins/mackerel-plugin-redash
 
-go 1.25.1
+go 1.27.0
 
 require github.com/mackerelio/mackerel-plugin-redash v0.1.0
 
