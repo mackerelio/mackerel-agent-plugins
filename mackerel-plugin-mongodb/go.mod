@@ -1,6 +1,6 @@
 module github.com/mackerelio/mackerel-agent-plugins/mackerel-plugin-mongodb
 
-go 1.25.0
+go 1.27.0
 
 require github.com/mackerelio/mackerel-plugin-mongodb v1.2.1
 

@@ -68,8 +68,8 @@ func createMetricDataQuery(id string, vol types.Volume, metricName string, statT
 	}
 }
 
-func (p EBSPlugin) fetchMetrics_GetMetricData() (map[string]interface{}, error) {
-	stat := make(map[string]interface{})
+func (p EBSPlugin) fetchMetrics_GetMetricData() (map[string]any, error) {
+	stat := make(map[string]any)
 
 	now := time.Now()
 
