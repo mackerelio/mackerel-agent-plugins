@@ -5,7 +5,7 @@ go 1.25.0
 require github.com/mackerelio/mackerel-plugin-mongodb v1.2.1
 
 require (
-	github.com/klauspost/compress v1.17.6 // indirect
+	github.com/klauspost/compress v1.18.7 // indirect
 	github.com/mackerelio/go-mackerel-plugin-helper v0.1.4 // indirect
 	github.com/mackerelio/golib v1.2.2 // indirect
 	github.com/xdg-go/pbkdf2 v1.0.0 // indirect
