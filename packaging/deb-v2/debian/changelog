@@ -1,3 +1,160 @@
+mackerel-agent-plugins (0.91.1-1.v2) stable; urgency=low
+
+  * Bump shogo82148/actions-setup-perl from 1.44.2 to 1.44.4 (by dependabot[bot])
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/1577>
+  * Bump github.com/gosnmp/gosnmp from 1.45.0 to 1.47.0 (by dependabot[bot])
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/1576>
+  * Bump github.com/montanaflynn/stats from 0.13.0 to 0.14.0 (by dependabot[bot])
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/1575>
+  * Bump the aws-aws-sdk-go-v2 group across 1 directory with 6 updates (by dependabot[bot])
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/1572>
+  * Bump github.com/klauspost/compress from 1.17.6 to 1.18.7 in /mackerel-plugin-mongodb (by dependabot[bot])
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/1571>
+  * Bump the aws-aws-sdk-go-v2 group across 1 directory with 2 updates (by dependabot[bot])
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/1570>
+  * Bump the aws-aws-sdk-go-v2 group across 1 directory with 6 updates (by dependabot[bot])
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/1569>
+  * Bump github.com/montanaflynn/stats from 0.12.7 to 0.13.0 (by dependabot[bot])
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/1568>
+  * Bump github.com/redis/go-redis/v9 from 9.22.0 to 9.23.0 (by dependabot[bot])
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/1567>
+  * Bump github.com/go-ldap/ldap/v3 from 3.4.14 to 3.4.15 (by dependabot[bot])
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/1566>
+  * Bump actions/download-artifact from 8.0.1 to 8.0.2 (by dependabot[bot])
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/1565>
+  * Bump actions/upload-artifact from 7.0.1 to 7.0.2 (by dependabot[bot])
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/1564>
+  * Bump mackerelio/workflows/.github/workflows/go-test.yml from 1.9.0 to 1.10.0 (by dependabot[bot])
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/1563>
+  * Bump shogo82148/actions-setup-perl from 1.44.0 to 1.44.2 (by dependabot[bot])
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/1562>
+  * Bump github.com/aws/aws-sdk-go-v2/service/ec2 from 1.337.0 to 1.338.1 in the aws-aws-sdk-go-v2 group across 1 directory (by dependabot[bot])
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/1561>
+  * Bump mackerelio/workflows/.github/workflows/go-lint.yml from 1.9.0 to 1.10.0 (by dependabot[bot])
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/1560>
+  * Bump mackerelio/workflows/.github/workflows/setup-go-matrix.yml from 1.9.0 to 1.10.0 (by dependabot[bot])
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/1559>
+  * Bump github.com/montanaflynn/stats from 0.12.6 to 0.12.7 (by dependabot[bot])
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/1558>
+  * Bump github.com/gosnmp/gosnmp from 1.44.0 to 1.45.0 (by dependabot[bot])
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/1557>
+  * Bump the aws-aws-sdk-go-v2 group across 1 directory with 6 updates (by dependabot[bot])
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/1556>
+  * Bump golang.org/x/crypto from 0.51.0 to 0.52.0 in /mackerel-plugin-gcp-compute-engine (by dependabot[bot])
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/1555>
+  * Bump google.golang.org/grpc from 1.83.1 to 1.83.2 in /mackerel-plugin-gcp-compute-engine (by dependabot[bot])
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/1554>
+  * Bump github.com/montanaflynn/stats from 0.12.5 to 0.12.6 (by dependabot[bot])
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/1552>
+  * Bump the aws-aws-sdk-go-v2 group across 1 directory with 6 updates (by dependabot[bot])
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/1551>
+  * Bump shogo82148/actions-setup-perl from 1.43.1 to 1.44.0 (by dependabot[bot])
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/1550>
+  * Bump golang.org/x/text from 0.41.0 to 0.43.0 in the golang-x group across 1 directory (by dependabot[bot])
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/1549>
+  * Bump github.com/montanaflynn/stats from 0.12.4 to 0.12.5 (by dependabot[bot])
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/1548>
+  * Bump the aws-aws-sdk-go-v2 group across 1 directory with 6 updates (by dependabot[bot])
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/1547>
+  * Bump the mackerelio group across 2 directories with 1 update (by dependabot[bot])
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/1546>
+  * Bump google.golang.org/grpc from 1.82.1 to 1.83.1 in /mackerel-plugin-gcp-compute-engine (by dependabot[bot])
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/1545>
+  * Bump github.com/fsouza/go-dockerclient from 1.13.2 to 1.13.3 (by dependabot[bot])
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/1544>
+  * Bump the aws-aws-sdk-go-v2 group across 1 directory with 6 updates (by dependabot[bot])
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/1543>
+  * Bump github.com/stretchr/testify from 1.12.0 to 1.12.1 (by dependabot[bot])
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/1542>
+  * Bump github.com/montanaflynn/stats from 0.12.3 to 0.12.4 (by dependabot[bot])
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/1541>
+  * Bump the aws-aws-sdk-go-v2 group across 1 directory with 6 updates (by dependabot[bot])
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/1540>
+  * Bump github.com/moby/go-archive from 0.2.0 to 0.3.0 (by dependabot[bot])
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/1539>
+  * Bump github.com/montanaflynn/stats from 0.12.2 to 0.12.3 (by dependabot[bot])
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/1538>
+  * Bump github.com/stretchr/testify from 1.11.1 to 1.12.0 (by dependabot[bot])
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/1537>
+  * Bump the aws-aws-sdk-go-v2 group across 1 directory with 6 updates (by dependabot[bot])
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/1536>
+  * Bump shogo82148/actions-setup-perl from 1.43.0 to 1.43.1 (by dependabot[bot])
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/1535>
+  * Bump golang.org/x/text from 0.40.0 to 0.41.0 in the golang-x group across 1 directory (by dependabot[bot])
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/1534>
+  * Bump github.com/redis/go-redis/v9 from 9.21.0 to 9.22.0 (by dependabot[bot])
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/1533>
+  * Bump the aws-aws-sdk-go-v2 group across 1 directory with 6 updates (by dependabot[bot])
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/1532>
+  * Bump shogo82148/actions-setup-perl from 1.42.0 to 1.43.0 (by dependabot[bot])
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/1531>
+  * Bump github.com/jarcoal/httpmock from 1.4.1 to 1.4.2 (by dependabot[bot])
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/1530>
+  * Bump the aws-aws-sdk-go-v2 group across 1 directory with 6 updates (by dependabot[bot])
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/1529>
+  * Bump github.com/gosnmp/gosnmp from 1.43.2 to 1.44.0 (by dependabot[bot])
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/1528>
+  * Bump github.com/montanaflynn/stats from 0.9.0 to 0.12.2 (by dependabot[bot])
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/1527>
+  * Bump the aws-aws-sdk-go-v2 group across 1 directory with 6 updates (by dependabot[bot])
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/1526>
+  * Bump actions/checkout from 7.0.0 to 7.0.1 (by dependabot[bot])
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/1525>
+  * Bump google.golang.org/grpc from 1.79.3 to 1.82.1 in /mackerel-plugin-gcp-compute-engine (by dependabot[bot])
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/1524>
+  * Bump github.com/go-ldap/ldap/v3 from 3.4.13 to 3.4.14 (by dependabot[bot])
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/1523>
+  * Bump shogo82148/actions-setup-perl from 1.41.1 to 1.42.0 (by dependabot[bot])
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/1521>
+  * Bump actions/setup-go from 6.5.0 to 7.0.0 (by dependabot[bot])
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/1520>
+  * Bump the aws-aws-sdk-go-v2 group across 1 directory with 4 updates (by dependabot[bot])
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/1519>
+  * Bump golang.org/x/text from 0.39.0 to 0.40.0 in the golang-x group across 1 directory (by dependabot[bot])
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/1518>
+  * Bump the aws-aws-sdk-go-v2 group across 1 directory with 3 updates (by dependabot[bot])
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/1517>
+  * Bump github.com/mackerelio/go-osstat from 0.2.7 to 0.2.8 in the mackerelio group across 1 directory (by dependabot[bot])
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/1515>
+  * Bump golang.org/x/crypto from 0.51.0 to 0.52.0 (by dependabot[bot])
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/1514>
+  * Bump golang.org/x/crypto from 0.45.0 to 0.52.0 in /mackerel-plugin-mongodb (by dependabot[bot])
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/1513>
+  * Bump the aws-aws-sdk-go-v2 group across 1 directory with 4 updates (by dependabot[bot])
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/1512>
+  * Bump golang.org/x/text from 0.38.0 to 0.39.0 in the golang-x group across 1 directory (by dependabot[bot])
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/1511>
+  * Change Dependabot schedule from daily to weekly (by yseto)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/1510>
+  * Bump the aws-aws-sdk-go-v2 group across 1 directory with 6 updates (by dependabot[bot])
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/1509>
+  * Bump golang.org/x/net from 0.48.0 to 0.55.0 in /mackerel-plugin-gcp-compute-engine (by dependabot[bot])
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/1508>
+  * Bump golang.org/x/net from 0.51.0 to 0.55.0 (by dependabot[bot])
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/1507>
+  * Bump the aws-aws-sdk-go-v2 group across 1 directory with 2 updates (by dependabot[bot])
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/1506>
+  * Bump the aws-aws-sdk-go-v2 group across 1 directory with 4 updates (by dependabot[bot])
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/1505>
+  * Bump github.com/redis/go-redis/v9 from 9.20.1 to 9.21.0 (by dependabot[bot])
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/1504>
+  * Bump actions/setup-go from 6.4.0 to 6.5.0 (by dependabot[bot])
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/1503>
+  * Bump github.com/aws/aws-sdk-go-v2/service/ec2 from 1.307.0 to 1.308.0 in the aws-aws-sdk-go-v2 group across 1 directory (by dependabot[bot])
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/1502>
+  * Bump actions/checkout from 6.0.3 to 7.0.0 (by dependabot[bot])
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/1501>
+  * Bump github.com/redis/go-redis/v9 from 9.20.0 to 9.20.1 (by dependabot[bot])
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/1499>
+  * Bump golang.org/x/text from 0.37.0 to 0.38.0 in the golang-x group across 1 directory (by dependabot[bot])
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/1498>
+  * Bump the aws-aws-sdk-go-v2 group across 1 directory with 4 updates (by dependabot[bot])
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/1497>
+  * Bump the aws-aws-sdk-go-v2 group across 1 directory with 6 updates (by dependabot[bot])
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/1495>
+
+ -- mackerel <mackerel-developers@hatena.ne.jp>  Thu, 5 Nov 2026 08:18:37 +0000
+
 mackerel-agent-plugins (0.91.0-1.v2) stable; urgency=low
 
   * Add -tls-skip-verify flag to nginx plugin (by fujiwara)
