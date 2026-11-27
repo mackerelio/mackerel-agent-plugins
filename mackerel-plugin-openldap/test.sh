@@ -20,7 +20,7 @@ fi
 docker run --name test-$plugin -p 389:389 -d \
 	-e 'LDAP_ADMIN_PASSWORD=passpass' \
 	-v $(pwd)/ldif:/container/service/slapd/assets/config/bootstrap/ldif/custom \
-	osixia/openldap --copy-service
+	osixia/openldap:stable --copy-service
 trap 'docker stop test-$plugin; docker rm test-$plugin; exit' EXIT
 sleep 10
 
